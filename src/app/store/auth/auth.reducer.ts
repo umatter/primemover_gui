@@ -1,0 +1,41 @@
+import {
+  useTokenFromLocalStorageRequested,
+  updateUserRequested,
+  User,
+  noLocalStorageTokenFound,
+  invalidLocalStorageTokenFound,
+  signInCompleted,
+  logoutRequested,
+  signInFailed
+} from './auth.actions';
+import { Action, createReducer, on } from '@ngrx/store';
+
+export interface AuthState {
+  token?: string | null;
+  user?: User | null;
+  response?: any;
+}
+
+export const initialState: AuthState = {
+  token: null,
+  user: null
+};
+
+const reducer = createReducer(
+  initialState,
+  on(updateUserRequested, (state, action) => ({ ...state, user: action.user })),
+  on(useTokenFromLocalStorageRequested, (state, action) => ({ ...state, token: action.token })),
+  on(noLocalStorageTokenFound, (state) => ({ ...state, token: null })),
+  on(invalidLocalStorageTokenFound, (state) => ({ ...state, token: null })),
+  on(signInCompleted, (state, action) => ({ ...state, token: action.token })),
+  on(logoutRequested, (state) => ({ ...state, token: null })),
+  on(signInFailed, (state, action) => ({ ...state, response: action.error }))
+  //on(completeOrderSuccess, (_state, action) => ({...initialState, response: action.response})),
+  //on(completeOrderError, (state) => ({...state, processing: false, error: true})),
+  //on(resetOrder, () => initialState),
+  //on(resetOrderError, (state) => ({...state, error: false}))
+);
+
+export function authReducer(state: AuthState | undefined, action: Action): any {
+  return reducer(state, action);
+}

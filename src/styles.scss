@@ -1,0 +1,93 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+pagination-controls {
+  & ul.ngx-pagination {
+    & * {
+      position: unset;
+      top: unset;
+      left: unset;
+      width: unset;
+      height: unset;
+      padding: unset;
+      margin: unset;
+      background: unset;
+      border-radius: unset;
+      color: unset;
+      content: unset;
+      font-size: unset;
+      font-weight: normal;
+      line-height: unset;
+    }
+
+    & .pagination-previous a::before,
+    .pagination-next a::after,
+    .pagination-previous.disabled::before,
+    .pagination-previous.disabled::after {
+      display: unset;
+      margin-right: unset;
+      content: unset;
+    }
+
+    & > li::before,
+    > li::after {
+      position: unset;
+      top: unset;
+      left: unset;
+      display: unset;
+      width: unset;
+      height: unset;
+      margin: unset;
+      background-color: unset;
+      border-radius: unset;
+      content: unset;
+    }
+
+    & li {
+      & a {
+        padding: 0 5px;
+        margin: 0 6px;
+
+        &:hover {
+          background-color: unset;
+        }
+
+        &:not(:hover) {
+          box-shadow: none;
+        }
+      }
+    }
+
+    & li.current {
+      background: #444;
+      color: white;
+    }
+
+    width: 100%;
+    margin-bottom: 0 !important;
+  }
+}
+
+.dot {
+  display: flex;
+  width: 1.6rem;
+  height: 1.6rem;
+  justify-content: center;
+  border-radius: 50%;
+  color: white;
+  font-weight: 700;
+  text-align: center;
+
+  &.red {
+    background-color: #b91c1c;
+  }
+
+  &.green {
+    background-color: #14532d;
+  }
+
+  &.yellow {
+    background-color: #eab308;
+  }
+}

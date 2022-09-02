@@ -1,0 +1,36 @@
+<header class="bg-white shadow-sm" *ngIf="hasFilter$ | async">
+  <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
+    <app-removable-badge
+      *ngFor="let queryFilter of queryFilter$ | async"
+      [pillStyle]="true"
+      link="#"
+      label="{{ queryFilter.name }}/{{ queryFilter.value }}"
+      (clickEvent)="resetQueryFilter(queryFilter.name)"
+    >
+    </app-removable-badge>
+    <app-removable-badge
+      *ngIf="currentExperiment$ | async"
+      [pillStyle]="true"
+      link="experiments"
+      label="{{ (currentExperiment$ | async)?.name }}"
+      (clickEvent)="resetExperimentFilter($event)"
+    >
+    </app-removable-badge>
+    <app-removable-badge
+      *ngIf="currentCrawler$ | async"
+      [pillStyle]="true"
+      link="crawlers"
+      label="{{ (currentCrawler$ | async)?.name }}"
+      (clickEvent)="resetCrawlerFilter($event)"
+    >
+    </app-removable-badge>
+    <app-removable-badge
+      *ngIf="currentQueue$ | async"
+      [pillStyle]="true"
+      link="queues"
+      label="{{ (currentQueue$ | async)?.name }}"
+      (clickEvent)="resetQueueFilter($event)"
+    >
+    </app-removable-badge>
+  </div>
+</header>

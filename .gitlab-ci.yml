@@ -1,0 +1,11 @@
+image: node:14
+
+include:
+  - project: 'beratungsservices/common/pipelines'
+    ref: '2.1.6'
+    file: 'frontend-gitlab-ci.yml'
+
+variables:
+  DIST_FOLDER: 'calc'
+  OPENSHIFT_PROJECT: 'savingscalc'
+  OPENSHIFT_PROJECT_PREFIX_INTERNAL: 'rch-savingscalc-h'
