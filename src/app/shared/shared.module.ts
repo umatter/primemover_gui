@@ -34,10 +34,11 @@ import { queueReducer } from '../queue/store/queue.reducer';
 import { EffectsModule } from '@ngrx/effects';
 import { SharedEffects } from './store/shared.effects';
 import { sharedReducer } from './store/shared.reducer';
-import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
-
-
+import { MatDialogModule } from "@angular/material/dialog";
+import { MatInputModule } from "@angular/material/input";
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSelectModule } from '@angular/material/select';
 
 @NgModule({
   declarations: [
@@ -83,9 +84,13 @@ import { MatButtonModule } from '@angular/material/button';
     FormsModule,
     ReactiveFormsModule,
     DragDropModule,
+    NgxPaginationModule,
     MatDialogModule,
+    MatInputModule,
+    MatCheckboxModule,
+    MatSelectModule,
     MatButtonModule,
-    NgxPaginationModule
+
   ],
   exports: [
     TranslateModule,
@@ -107,6 +112,9 @@ import { MatButtonModule } from '@angular/material/button';
     RemovableBadgeComponent,
     LoadingSpinnerComponent,
     MatDialogModule,
+    MatInputModule,
+    MatCheckboxModule,
+    MatSelectModule,
     MatButtonModule,
   ],
   providers: [DatePipe]
