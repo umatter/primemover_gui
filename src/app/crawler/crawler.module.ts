@@ -10,6 +10,8 @@ import { SharedModule } from '../shared/shared.module';
 import { experimentReducer } from '../experiment/store/experiment.reducer';
 import { CrawlerComponent } from './component/crawler/crawler.component';
 import { CrawlerCreateComponent } from './component/crawler-create/crawler-create.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
 
 @NgModule({
   declarations: [CrawlerComponent, CrawlerCreateComponent],
@@ -21,7 +23,9 @@ import { CrawlerCreateComponent } from './component/crawler-create/crawler-creat
     StoreModule.forFeature('queue', experimentReducer),
     EffectsModule.forFeature([CrawlerEffects]),
     NgxPaginationModule,
-    SharedModule
+    SharedModule,
+    MatDialogModule,
+    MatButtonModule,
   ]
 })
-export class CrawlerModule {}
+export class CrawlerModule { }

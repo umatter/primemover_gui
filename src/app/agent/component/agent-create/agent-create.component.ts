@@ -67,6 +67,7 @@ export class AgentCreateComponent implements OnInit, OnDestroy {
             multilogin_profile: formValue.multilogin_profile,
             location: formValue.location,
             active: formValue.active,
+            valid: this.agentForm.valid
 
           })
         );

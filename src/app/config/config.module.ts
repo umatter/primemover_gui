@@ -20,7 +20,6 @@ import { experimentReducer } from '../experiment/store/experiment.reducer';
     ConfigurationRoutingModule,
     StoreModule.forFeature('experiment', experimentReducer),
     StoreModule.forFeature('config', configReducer),
-
     StoreModule.forFeature('crawler', crawlerReducer),
     StoreModule.forFeature('queue', queueReducer),
     EffectsModule.forFeature([ConfigEffects]),

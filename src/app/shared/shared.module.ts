@@ -34,6 +34,10 @@ import { queueReducer } from '../queue/store/queue.reducer';
 import { EffectsModule } from '@ngrx/effects';
 import { SharedEffects } from './store/shared.effects';
 import { sharedReducer } from './store/shared.reducer';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+
+
 
 @NgModule({
   declarations: [
@@ -79,6 +83,8 @@ import { sharedReducer } from './store/shared.reducer';
     FormsModule,
     ReactiveFormsModule,
     DragDropModule,
+    MatDialogModule,
+    MatButtonModule,
     NgxPaginationModule
   ],
   exports: [
@@ -99,8 +105,10 @@ import { sharedReducer } from './store/shared.reducer';
     SelectNativeComponent,
     LinkSortableComponent,
     RemovableBadgeComponent,
-    LoadingSpinnerComponent
+    LoadingSpinnerComponent,
+    MatDialogModule,
+    MatButtonModule,
   ],
   providers: [DatePipe]
 })
-export class SharedModule {}
+export class SharedModule { }

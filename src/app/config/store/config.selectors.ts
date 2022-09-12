@@ -13,7 +13,7 @@ export const selectCurrentPage = createSelector(selectConfigurationsList, (state
 export const selectTotalRecords = createSelector(selectConfigurationsList, (state) => state.meta?.total || 0);
 export const selectPageRequested = createSelector(selectConfiguration, (state) => state.pageRequested || 1);
 export const selectIsLoading = createSelector(selectConfiguration, (state) => state.isLoading);
-export const selectConfigurationCreateFormValues = createSelector(selectConfiguration, (state) => state.form);
+export const selectConfigurationCreateFormValues = createSelector(selectConfiguration, (state) => state?.form);
 export const selectConfigurationFormValid = createSelector(
   selectConfigurationCreateFormValues,
   (form) => form?.valid || false

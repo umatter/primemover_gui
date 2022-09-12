@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { fadeIn } from '../../../shared/animation/trigger';
-import { debounceTime, Observable, Subscription } from 'rxjs';
+import { debounceTime, Observable, Subscription, takeUntil } from 'rxjs';
 import { Router } from '@angular/router';
 import { completeCrawlerCreateRequested, updateCrawlerCreateValues } from '../../store/crawler.actions';
 import { CrawlerFormValues } from '../../model/crawler-form-values';
@@ -12,6 +12,8 @@ import { experimentsSimpleListRequested } from '../../../experiment/store/experi
 import { selectProxiesListData } from 'src/app/proxy/store/proxy.selectors';
 import { selectAgentsListData, selectAgentsPagination } from 'src/app/agent/store/agent.selectors';
 import { PaginatePipeArgs } from 'ngx-pagination';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfigCreateComponent } from 'src/app/config/component/config-create/config-create.component';
 
 @Component({
   selector: 'app-crawler-create',
@@ -29,7 +31,7 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
   paginationConfig: PaginatePipeArgs;
 
 
-  constructor(private store: Store, private formBuilder: FormBuilder, public router: Router) { }
+  constructor(private store: Store, private formBuilder: FormBuilder, public router: Router, private matDialog: MatDialog) { }
 
   ngOnInit(): void {
     this.agentsData$ = this.store.pipe(select(selectAgentsListData));
@@ -99,6 +101,35 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
 
   saveCrawler(): void {
     this.store.dispatch(completeCrawlerCreateRequested());
+  }
+
+  /**
+   * @methodName configurationPopup
+   * @description open configuration Popup
+   * @parameters none
+   * @return void
+   */
+  configurationPopup(): void {
+    const configurationDialog = this.matDialog.open(ConfigCreateComponent, {
+      data: {},
+      width: '550px',
+      hasBackdrop: true
+    });
+    if (configurationDialog) {
+      this.subscriptions.add(
+        configurationDialog.afterClosed().subscribe(configuration => {
+          if (configuration) {
+            const { data } = configuration;
+            if (data.id) {
+              // this.configurations.push(data);
+              // this.crawlerFormControls[APPCONSTANTS.FORMCONTROLS.CRAWLER.CONFIGURATION_ID].setValue(data.id);
+            }
+          }
+        }, (err) => {
+          console.error(err);
+        })
+      )
+    }
   }
 
   ngOnDestroy() {
