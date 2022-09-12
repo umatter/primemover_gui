@@ -6,6 +6,7 @@ import { fadeIn } from '../../../shared/animation/trigger';
 import { debounceTime, Observable, Subscription } from 'rxjs';
 import { completeAgentCreateRequested, updateAgentCreateValues } from '../../store/agent.actions';
 import { Router } from '@angular/router';
+import { MatDialogRef } from '@angular/material/dialog';
 // import { selectAgentFormValid } from '../../store/agent.selectors';
 
 @Component({
@@ -18,7 +19,7 @@ export class AgentCreateComponent implements OnInit, OnDestroy {
   subscriptions = new Subscription();
   formValid$: Observable<boolean>;
 
-  constructor(private store: Store, private formBuilder: FormBuilder, public router: Router) { }
+  constructor(private store: Store, private formBuilder: FormBuilder, public router: Router, private agentDialog: MatDialogRef<AgentCreateComponent>) { }
 
   get name(): string | null {
     return this.agentForm.get('name')?.value;
