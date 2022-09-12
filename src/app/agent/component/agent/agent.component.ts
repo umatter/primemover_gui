@@ -8,7 +8,8 @@ import { fadeIn } from '../../../shared/animation/trigger';
 import {
   agentDeleteRequested,
   agentPageRequested,
-  agentRequested
+  agentRequested,
+  getAgetList
 } from '../../store/agent.actions';
 import {
   agentsList,
@@ -35,12 +36,12 @@ export class AgentComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.agentsData$ = this.store.pipe(select(selectAgentsListData));
+    this.store.dispatch(getAgetList());
+    const a=  this.store.pipe(select(agentsList));
+    a.subscribe(x=>{
+      console.log(x)
+    })
 
-    this.agentListData$ = this.store.pipe(select(agentsList));
-    this.agentListData$.subscribe((x) => console.log('x======', x));
-    console.log('this.agentListData$', this.agentListData$)
-
-    console.log('this.agentsData$', this.agentsData$);
     this.isLoading$ = this.store.pipe(select(selectIsLoading));
 
     this.getData();

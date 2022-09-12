@@ -10,13 +10,14 @@ import { selectCrawlerFormValid } from '../../store/crawler.selectors';
 import { selectExperimentsSimpleList } from '../../../experiment/store/experiment.selectors';
 import { experimentsSimpleListRequested } from '../../../experiment/store/experiment.actions';
 import { selectProxiesListData } from 'src/app/proxy/store/proxy.selectors';
-import { selectAgentsListData, selectAgentsPagination } from 'src/app/agent/store/agent.selectors';
+import { agentsList, selectAgentsListData, selectAgentsPagination } from 'src/app/agent/store/agent.selectors';
 import { PaginatePipeArgs } from 'ngx-pagination';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfigCreateComponent } from 'src/app/config/component/config-create/config-create.component';
 import { AgentCreateComponent } from 'src/app/agent/component/agent-create/agent-create.component';
 import { ProxyCreateComponent } from 'src/app/proxy/component/proxy-create/proxy-create.component';
 import { ExperimentCreateComponent } from 'src/app/experiment/component/experiment-create/experiment-create.component';
+import { getAgetList } from 'src/app/agent/store/agent.actions';
 
 @Component({
   selector: 'app-crawler-create',
@@ -30,21 +31,20 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
   experiments$: Observable<any>;
   proxies$: Observable<any>;
   configuration$: Observable<any>;
-  agentsData$: Observable<any>;
+  agentsData: any;
   paginationConfig: PaginatePipeArgs;
 
 
   constructor(private store: Store, private formBuilder: FormBuilder, public router: Router, private matDialog: MatDialog) { }
 
   ngOnInit(): void {
-    this.agentsData$ = this.store.pipe(select(selectAgentsListData));
-    this.agentsData$.subscribe(x => console.log('x', x));
+    this.store.dispatch(getAgetList());
+    const agent = this.store.pipe(select(agentsList));
+    agent.subscribe(agent => { this.agentsData = agent.data })
     this.initPagination()
     this.store.dispatch(experimentsSimpleListRequested());
 
     this.proxies$ = this.store.pipe(select(selectProxiesListData));
-
-
     this.experiments$ = this.store.pipe(select(selectExperimentsSimpleList));
     this.experiments$.subscribe(x => {
       console.log(x)

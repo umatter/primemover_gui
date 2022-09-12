@@ -14,7 +14,8 @@ import {
   agentPageRequested,
   agentsRequested,
   agentsRequestFailed,
-  agentsRetrieved, agentsSimpleListRequested, agentsSimpleListRetrieved, getAgetList
+  agentsRetrieved, agentsSimpleListRequested, agentsSimpleListRetrieved, getAgetList,
+  agentList
 } from './agent.actions';
 import { updateQueryFilter } from '../../shared/store/shared.actions';
 import { selectAgentCreateFormValues } from './agent.selectors';
@@ -110,7 +111,7 @@ export class AgentEffects {
       tap((val) => console.log(val)),
       switchMap(() =>
         this.apiService.agentList().pipe(
-          map((list) => agentsSimpleListRetrieved({ list })),
+          map((list) => agentList({ list })),
           catchError((error) => of(agentsRequestFailed(error)))
         )
       )

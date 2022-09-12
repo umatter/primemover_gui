@@ -42,7 +42,7 @@
                 {{ 'common.experimentRequiredError' | translate }}
               </p>
             </div>
-            <button mat-raised-button color="primary" (click)="expirementPopup()">New Experiment</button>
+            <button mat-raised-button color="primary" (click)="agentPopup()">New Agent</button>
 
           </div>
 
@@ -54,7 +54,7 @@
               <select id="experiment_id" name="experiment_id"
                 class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
                 <option selected>{{ 'common.select' | translate }} ...</option>
-                <option *ngFor="let agent of (agentsData$ | async)" [ngValue]="agent.id">
+                <option *ngFor="let agent of agentsData" [ngValue]="agent.id">
                   {{ agent.name }}
                 </option>
               </select>
