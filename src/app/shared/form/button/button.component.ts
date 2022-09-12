@@ -10,7 +10,7 @@ export class ButtonComponent implements OnInit {
   @Input() text: string = 'Button';
   @Input() disabled: boolean = false;
 
-  constructor() {}
+  constructor() { }
 
   extraSmall = (): boolean => this.size === 'xs';
   small = (): boolean => this.size === 'sm';
@@ -27,6 +27,5 @@ export class ButtonComponent implements OnInit {
   circular = (): boolean => this.type === 'circular';
 
   ngOnInit(): void {
-    console.log('ButtonComponent init');
   }
 }
