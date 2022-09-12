@@ -24,7 +24,7 @@ import localeFr from '@angular/common/locales/fr-CH';
 import localeIt from '@angular/common/locales/it-CH';
 import { Language } from './core/language/language.enum';
 import { LogoutComponent } from './core/auth/logout/logout.component';
-import { ConfigModule } from './config/config.module';
+// import { ConfigModule } from './config/config.module';
 
 registerLocaleData(localeDe, Language.DE);
 registerLocaleData(localeFr, Language.FR);
@@ -39,7 +39,6 @@ registerLocaleData(localeIt, Language.IT);
     BrowserAnimationsModule,
     AppStoreModule,
     SharedModule,
-    ConfigModule,
     StoreModule.forFeature('auth', authReducer),
     EffectsModule.forFeature([AuthEffects])
   ],
@@ -69,4 +68,4 @@ registerLocaleData(localeIt, Language.IT);
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule {}
+export class AppModule { }

@@ -41,6 +41,30 @@
     "selected": "Experiment ausgewählt",
     "notSelected": "Kein Experiment ausgewählt"
   },
+  "agent": {
+    "label": "Agent",
+    "add": "Agent hinzufügen",
+    "list": "Liste aller Agent.",
+    "generalInfo": "Bitte einen Namen und eine Kontaktinformation angeben, um ein Agent anzulegen.",
+    "selected": "Agent ausgewählt",
+    "notSelected": "Kein Agent ausgewählt"
+  },
+  "config": {
+    "label": "Config",
+    "add": "Configuration hinzufügen",
+    "list": "Liste aller Configuration.",
+    "generalInfo": "Bitte einen Namen und eine Kontaktinformation angeben, um ein Configuration anzulegen.",
+    "selected": "Configuration ausgewählt",
+    "notSelected": "Kein Configuration ausgewählt"
+  },
+  "proxy": {
+    "label": "Proxy",
+    "add": "Proxy hinzufügen",
+    "list": "Liste aller Proxy.",
+    "generalInfo": "Bitte einen Namen und eine Kontaktinformation angeben, um ein Proxy anzulegen.",
+    "selected": "Proxy ausgewählt",
+    "notSelected": "Kein Proxy ausgewählt"
+  },
   "queue": {
     "label": "Queue",
     "add": "Queue hinzufügen",

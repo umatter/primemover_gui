@@ -1,0 +1,114 @@
+<div class="px-4 sm:px-6 lg:px-8">
+  <form class="space-y-8 divide-y divide-gray-200" [formGroup]="proxyForm">
+    <div class="space-y-8 divide-y divide-gray-200 sm:space-y-5">
+      <div class="sm:flex sm:items-center">
+        <div class="sm:flex-auto">
+          <h1 class="text-xl font-semibold text-gray-900">{{ 'proxy.label' | translate }}</h1>
+          <p class="mt-2 text-sm text-gray-700">
+            A list of all the proxies in your account including their name, description and contact.
+          </p>
+        </div>
+      </div>
+      <div class="space-y-6 sm:space-y-5">
+        <div class="space-y-6 sm:space-y-5">
+          <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+            <label for="name" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
+              {{ 'common.name' | translate }}
+            </label>
+            <div class="mt-1 sm:mt-0 sm:col-span-2">
+              <input type="text" name="name" id="name" autocomplete="name" formControlName="name"
+                placeholder="{{ 'common.namePlaceholder' | translate }}"
+                class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md" />
+              <p @fadeIn *ngIf="hasError('name', 'required')" class="mt-2 text-sm text-red-600" id="name-error">
+                {{ 'common.nameRequiredError' | translate }}
+              </p>
+            </div>
+          </div>
+
+          <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+            <label for="description" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
+              {{ 'common.description' | translate }}
+            </label>
+            <div class="mt-1 sm:mt-0 sm:col-span-2">
+              <textarea id="description" name="description" rows="3" formControlName="description"
+                class="shadow-sm block w-full focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border border-gray-300 rounded-md"
+                placeholder="{{ 'common.descriptionPlaceholder' | translate }}"></textarea>
+            </div>
+          </div>
+
+          <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+            <label for="hostName" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
+              {{ 'common.hostName' | translate }}
+            </label>
+            <div class="mt-1 sm:mt-0 sm:col-span-2">
+              <input type="text" name="hostName" id="hostName" autocomplete="hostName" formControlName="hostName"
+                placeholder="{{ 'common.hostNamePlaceholder' | translate }}"
+                class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md" />
+              <p @fadeIn *ngIf="hasError('hostName', 'required')" class="mt-2 text-sm text-red-600" id="hostName-error">
+                {{ 'common.hostNameRequiredError' | translate }}
+              </p>
+            </div>
+          </div>
+
+          <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+            <label for="port" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
+              {{ 'common.port' | translate }}
+            </label>
+            <div class="mt-1 sm:mt-0 sm:col-span-2">
+              <input type="number" name="port" id="port" autocomplete="port" formControlName="port"
+                placeholder="{{ 'common.portPlaceholder' | translate }}"
+                class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md" />
+              <p @fadeIn *ngIf="hasError('port', 'required')" class="mt-2 text-sm text-red-600" id="port-error">
+                {{ 'common.portRequiredError' | translate }}
+              </p>
+            </div>
+          </div>
+
+          <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+            <label for="username" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
+              {{ 'common.username' | translate }}
+            </label>
+            <div class="mt-1 sm:mt-0 sm:col-span-2">
+              <input type="text" name="username" id="username" autocomplete="username" formControlName="username"
+                placeholder="{{ 'common.usernamePlaceholder' | translate }}"
+                class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md" />
+              <p @fadeIn *ngIf="hasError('username', 'required')" class="mt-2 text-sm text-red-600" id="username-error">
+                {{ 'common.usernameRequiredError' | translate }}
+              </p>
+            </div>
+          </div>
+
+          <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+            <label for="password" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
+              {{ 'common.password' | translate }}
+            </label>
+            <div class="mt-1 sm:mt-0 sm:col-span-2">
+              <input type="password" name="password" id="password" autocomplete="password" formControlName="password"
+                placeholder="{{ 'common.passwordPlaceholder' | translate }}"
+                class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md" />
+              <p @fadeIn *ngIf="hasError('password', 'required')" class="mt-2 text-sm text-red-600" id="password-error">
+                {{ 'common.passwordRequiredError' | translate }}
+              </p>
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+
+    <div class="pt-5">
+      <div class="flex justify-end">
+        <button type="button" (click)="router.navigate(['proxies'])"
+          class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+          {{ 'common.cancel' | translate }}
+        </button>
+        <button type="button" [disabled]="(formValid$ | async) === false"
+          [ngClass]="{ 'opacity-25 hover:bg-indigo-600 ': (formValid$ | async) === false }" (click)="saveProxy()"
+          class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+          {{ 'common.save' | translate }}
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

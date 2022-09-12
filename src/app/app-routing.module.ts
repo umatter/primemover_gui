@@ -35,7 +35,12 @@ const routes: Routes = [
     path: 'jobs',
     loadChildren: () => import('./job/job.module').then((m) => m.JobModule)
   },
-  { path: 'config', loadChildren: () => import('./config/config.module').then((m) => m.ConfigModule) },
+  {
+    path: 'agents',
+    loadChildren: () => import('./agent/agent.module').then((m) => m.AgentModule)
+  },
+  { path: 'configurations', loadChildren: () => import('./config/config.module').then((m) => m.ConfigurationModule) },
+  { path: 'proxies', loadChildren: () => import('./proxy/proxy.module').then((m) => m.ProxyModule) },
   {
     path: '**',
     component: HomeComponent
@@ -46,4 +51,4 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }
