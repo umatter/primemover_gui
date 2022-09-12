@@ -50,6 +50,60 @@
           </div>
 
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+            <label for="experiment_id" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
+              {{ 'agent.label' | translate }}
+            </label>
+            <div class="mt-1 sm:mt-0 sm:col-span-2">
+              <select id="experiment_id" name="experiment_id"
+                      class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                <option selected>{{ 'common.select' | translate }} ...</option>
+                <option *ngFor="let experiment of (experiments$ | async)" [ngValue]="experiment.id">
+                  {{ experiment.name }}
+                </option>
+              </select>
+              <p @fadeIn *ngIf="hasError('experiment_id', 'required')" class="mt-2 text-sm text-red-600" id="experiment-error">
+                {{ 'common.experimentRequiredError' | translate }}
+              </p>
+            </div>
+          </div>
+
+          <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+            <label for="experiment_id" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
+              {{ 'config.label' | translate }}
+            </label>
+            <div class="mt-1 sm:mt-0 sm:col-span-2">
+              <select id="experiment_id" name="experiment_id"
+                      class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                <option selected>{{ 'common.select' | translate }} ...</option>
+                <option *ngFor="let experiment of (experiments$ | async)" [ngValue]="experiment.id">
+                  {{ experiment.name }}
+                </option>
+              </select>
+              <p @fadeIn *ngIf="hasError('experiment_id', 'required')" class="mt-2 text-sm text-red-600" id="experiment-error">
+                {{ 'common.experimentRequiredError' | translate }}
+              </p>
+            </div>
+          </div>
+
+          <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+            <label for="experiment_id" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
+              {{ 'proxy.label' | translate }}
+            </label>
+            <div class="mt-1 sm:mt-0 sm:col-span-2">
+              <select id="experiment_id" name="experiment_id"
+                      class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                <option selected>{{ 'common.select' | translate }} ...</option>
+                <option *ngFor="let proxy of (proxies$ | async)" [ngValue]="proxy.id">
+                  {{ proxy.name }}
+                </option>
+              </select>
+              <p @fadeIn *ngIf="hasError('experiment_id', 'required')" class="mt-2 text-sm text-red-600" id="experiment-error">
+                {{ 'common.experimentRequiredError' | translate }}
+              </p>
+            </div>
+          </div>
+
+          <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
             <label for="description" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
               {{ 'common.description' | translate }}
             </label>

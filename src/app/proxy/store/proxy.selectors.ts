@@ -3,7 +3,7 @@ import { ProxyState } from './proxy.reducer';
 
 export const selectProxy = createFeatureSelector<ProxyState>('proxy');
 export const selectProxiesList = createSelector(selectProxy, (state) => state.collection);
-export const selectProxiesListData = createSelector(selectProxy, (state) => state.collection?.data);
+export const selectProxiesListData = createSelector(selectProxy, (state) => state?.collection?.data);
 export const selectProxiesSimpleList = createSelector(selectProxy, (state) => state.list);
 export const selectProxiesPagination = createSelector(selectProxy, (state) => state.pagination);
 export const selectProxiesPaginationMeta = createSelector(selectProxy, (state) => state.collection?.meta);
@@ -14,7 +14,7 @@ export const selectTotalRecords = createSelector(selectProxiesList, (state) => s
 export const selectPageRequested = createSelector(selectProxy, (state) => state.pageRequested || 1);
 export const selectIsLoading = createSelector(selectProxy, (state) => state.isLoading);
 export const selectProxyCreateFormValues = createSelector(selectProxy, (state) => state.form);
-export const selectProxyFormValid = createSelector(
-  selectProxyCreateFormValues,
-  (form) => form?.valid || false
-);
+// export const selectProxyFormValid = createSelector(
+//   selectProxyCreateFormValues,
+//   (form) => form?.valid || false
+// );

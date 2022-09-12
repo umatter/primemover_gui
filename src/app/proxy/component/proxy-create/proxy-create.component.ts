@@ -6,7 +6,7 @@ import { fadeIn } from '../../../shared/animation/trigger';
 import { debounceTime, Observable, Subscription } from 'rxjs';
 import { completeProxyCreateRequested, updateProxyCreateValues } from '../../store/proxy.actions';
 import { Router } from '@angular/router';
-import { selectProxyFormValid } from '../../store/proxy.selectors';
+// import { selectProxyFormValid } from '../../store/proxy.selectors';
 
 @Component({
   selector: 'app-proxy-create',
@@ -40,7 +40,7 @@ export class ProxyCreateComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.formValid$ = this.store.pipe(select(selectProxyFormValid));
+    // this.formValid$ = this.store.pipe(select(selectProxyFormValid));
     this.proxyForm = this.formBuilder.group({
       name: [null, [Validators.required, Validators.maxLength(255)]],
       description: [null, [Validators.maxLength(1024)]],
