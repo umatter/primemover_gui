@@ -5,7 +5,8 @@ import {
   agentRequested,
   agentResetRequested,
   agentsRetrieved, agentsSimpleListRetrieved,
-  updateAgentCreateValues
+  updateAgentCreateValues,
+  getAgetList
 } from './agent.actions';
 import { DataCollection } from '../../shared/model/data-collection';
 import { Agent } from '../model/agent';
@@ -14,6 +15,7 @@ import { AgentFormValues } from '../component/model/agent-form-values';
 
 export interface AgentState {
   collection: DataCollection;
+  data: any;
   pagination: PaginatePipeArgs;
   pageRequested: number;
   isLoading: boolean;
@@ -23,6 +25,8 @@ export interface AgentState {
 }
 
 export const initialState: AgentState = {
+  data: null,
+
   collection: { data: [], links: null, meta: null },
   pageRequested: 0,
   pagination: { id: '', itemsPerPage: 10, currentPage: 1, totalItems: 0 },
@@ -48,7 +52,8 @@ const reducer = createReducer(
       currentPage: action.collection.meta?.current_page,
       totalItems: action.collection.meta?.total
     }
-  }))
+  })),
+  on(getAgetList, (state, action) => ({ ...state }))
 );
 
 export function agentReducer(state: AgentState | undefined, action: Action): any {

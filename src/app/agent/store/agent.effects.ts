@@ -14,7 +14,7 @@ import {
   agentPageRequested,
   agentsRequested,
   agentsRequestFailed,
-  agentsRetrieved, agentsSimpleListRequested, agentsSimpleListRetrieved
+  agentsRetrieved, agentsSimpleListRequested, agentsSimpleListRetrieved, getAgetList
 } from './agent.actions';
 import { updateQueryFilter } from '../../shared/store/shared.actions';
 import { selectAgentCreateFormValues } from './agent.selectors';
@@ -100,6 +100,20 @@ export class AgentEffects {
     this.actions$.pipe(
       ofType(agentPageRequested),
       map(() => agentsRequested())
+    )
+  );
+
+
+  agentsListRequested$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(getAgetList),
+      tap((val) => console.log(val)),
+      switchMap(() =>
+        this.apiService.agentList().pipe(
+          map((list) => agentsSimpleListRetrieved({ list })),
+          catchError((error) => of(agentsRequestFailed(error)))
+        )
+      )
     )
   );
 

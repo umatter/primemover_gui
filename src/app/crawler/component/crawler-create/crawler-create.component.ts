@@ -7,9 +7,12 @@ import { Router } from '@angular/router';
 import { completeCrawlerCreateRequested, updateCrawlerCreateValues } from '../../store/crawler.actions';
 import { CrawlerFormValues } from '../../model/crawler-form-values';
 import { selectCrawlerFormValid } from '../../store/crawler.selectors';
-import {  selectExperimentsSimpleList } from '../../../experiment/store/experiment.selectors';
+import { selectExperimentsSimpleList } from '../../../experiment/store/experiment.selectors';
 import { experimentsSimpleListRequested } from '../../../experiment/store/experiment.actions';
 import { selectProxiesListData } from 'src/app/proxy/store/proxy.selectors';
+import { selectAgentsListData, selectAgentsPagination } from 'src/app/agent/store/agent.selectors';
+import { PaginatePipeArgs } from 'ngx-pagination';
+
 @Component({
   selector: 'app-crawler-create',
   templateUrl: './crawler-create.component.html',
@@ -20,20 +23,25 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
   subscriptions = new Subscription();
   formValid$: Observable<boolean>;
   experiments$: Observable<any>;
-  proxies$:Observable<any>;
-  configuration$:Observable<any>;
-  agents$:Observable<any>;
+  proxies$: Observable<any>;
+  configuration$: Observable<any>;
+  agentsData$: Observable<any>;
+  paginationConfig: PaginatePipeArgs;
 
-  constructor(private store: Store, private formBuilder: FormBuilder, public router: Router) {}
+
+  constructor(private store: Store, private formBuilder: FormBuilder, public router: Router) { }
 
   ngOnInit(): void {
+    this.agentsData$ = this.store.pipe(select(selectAgentsListData));
+    this.agentsData$.subscribe(x => console.log('x', x));
+    this.initPagination()
     this.store.dispatch(experimentsSimpleListRequested());
-    
+
     this.proxies$ = this.store.pipe(select(selectProxiesListData));
 
 
     this.experiments$ = this.store.pipe(select(selectExperimentsSimpleList));
-    this.experiments$.subscribe(x=>{
+    this.experiments$.subscribe(x => {
       console.log(x)
     })
     console.log(this.experiments$)
@@ -47,6 +55,9 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
       proxy_id: [null, [Validators.required]],
       configuration_id: [null, [Validators.required]],
     });
+
+
+
 
     this.subscriptions.add(
       this.crawlerForm.valueChanges.pipe(debounceTime(500)).subscribe((formValue: CrawlerFormValues) => {
@@ -62,6 +73,15 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
           })
         );
       })
+    );
+  }
+
+
+  initPagination(): void {
+    this.subscriptions.add(
+      this.store
+        .pipe(select(selectAgentsPagination))
+        .subscribe((paginatePipeArgs) => (this.paginationConfig = paginatePipeArgs))
     );
   }
 

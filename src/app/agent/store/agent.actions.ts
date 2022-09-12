@@ -23,3 +23,7 @@ export const agentCreateSuccess = createAction('[Agent] Create success', props<a
 export const agentDeleteSuccess = createAction('[Agent] Delete success', props<any>());
 export const agentCreateError = createAction('[Agent] Create error', props<{ err: HttpErrorResponse }>());
 export const agentDeleteError = createAction('[Agent] Delete error', props<{ err: HttpErrorResponse }>());
+
+
+export const getAgetList = createAction('[Agent-List] Agent list requested');
+

@@ -11,6 +11,7 @@ import {
   agentRequested
 } from '../../store/agent.actions';
 import {
+  agentsList,
   selectAgentsListData,
   selectAgentsPagination,
   selectIsLoading
@@ -26,12 +27,20 @@ export class AgentComponent implements OnInit, OnDestroy {
   private subscriptions = new Subscription();
   paginationConfig: PaginatePipeArgs;
   agentsData$: Observable<any>;
+  agentListData$: Observable<any>;
+
   isLoading$: Observable<boolean>;
 
   constructor(private store: Store, public router: Router) { }
 
   ngOnInit(): void {
     this.agentsData$ = this.store.pipe(select(selectAgentsListData));
+
+    this.agentListData$ = this.store.pipe(select(agentsList));
+    this.agentListData$.subscribe((x) => console.log('x======', x));
+    console.log('this.agentListData$', this.agentListData$)
+
+    console.log('this.agentsData$', this.agentsData$);
     this.isLoading$ = this.store.pipe(select(selectIsLoading));
 
     this.getData();

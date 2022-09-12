@@ -26,6 +26,11 @@ export class AgentService {
     return this.http.get<[]>(`${this.config.apiBaseUrl}/agents-list`);
   }
 
+
+  public agentList(): Observable<[]> {
+    return this.http.get<[]>(`${this.config.apiBaseUrl}/agents`);
+  }
+
   public index(): Observable<DataCollection> {
     this.store.pipe(select(selectPageRequested), first()).subscribe((response) => (this.pageRequested = response));
 
@@ -34,14 +39,14 @@ export class AgentService {
   }
 
   public storeAgent(AgentValues: AgentFormValues | undefined): Observable<any> {
-    let agent={
-      name:AgentValues?.name,
-      multilogin_profile:AgentValues?.multilogin_profile,
-      multilogin_id:AgentValues?.multilogin_id,
-      location:AgentValues?.location,
-      identification:AgentValues?.identification,
-      description:AgentValues?.description,
-      active:AgentValues?.active,
+    let agent = {
+      name: AgentValues?.name,
+      multilogin_profile: AgentValues?.multilogin_profile,
+      multilogin_id: AgentValues?.multilogin_id,
+      location: AgentValues?.location,
+      identification: AgentValues?.identification,
+      description: AgentValues?.description,
+      active: AgentValues?.active,
     }
     return this.http.post<any>(`${this.config.apiBaseUrl}/agents`, agent);
   }
