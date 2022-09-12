@@ -34,7 +34,16 @@ export class AgentService {
   }
 
   public storeAgent(AgentValues: AgentFormValues | undefined): Observable<any> {
-    return this.http.post<any>(`${this.config.apiBaseUrl}/agents`, AgentValues);
+    let agent={
+      name:AgentValues?.name,
+      multilogin_profile:AgentValues?.multilogin_profile,
+      multilogin_id:AgentValues?.multilogin_id,
+      location:AgentValues?.location,
+      identification:AgentValues?.identification,
+      description:AgentValues?.description,
+      active:AgentValues?.active,
+    }
+    return this.http.post<any>(`${this.config.apiBaseUrl}/agents`, agent);
   }
 
   public updateAgent(agentValues: AgentFormValues | undefined): Observable<any> {

@@ -34,7 +34,16 @@ export class ProxyService {
   }
 
   public storeProxy(proxyValues: ProxyFormValues | undefined): Observable<any> {
-    return this.http.post<any>(`${this.config.apiBaseUrl}/proxies`, proxyValues);
+    let proxy = {
+      active: proxyValues?.active,
+      description: proxyValues?.description,
+      hostName: proxyValues?.hostName,
+      name: proxyValues?.name,
+      password: proxyValues?.password,
+      port: proxyValues?.port,
+      username: proxyValues?.username,
+    }
+    return this.http.post<any>(`${this.config.apiBaseUrl}/proxies`, proxy);
   }
 
   public updateProxy(proxyValues: ProxyFormValues | undefined): Observable<any> {
