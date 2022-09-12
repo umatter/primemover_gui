@@ -17,7 +17,16 @@
     "save": "Speichern",
     "delete": "Löschen",
     "description": "Beschreibung",
-    "descriptionPlaceholder": "z.B. Es handelt sich um ein neuartiges Experiment, ..."
+    "descriptionPlaceholder": "z.B. Es handelt sich um ein neuartiges Experiment, ...",
+    "hostName":"Host Name",
+    "port":"Port",
+    "username":"User Name",
+    "password":"Password",
+    "identification":"Identification",
+    "multilogin_id":"Multi Login Id",
+    "multilogin_profile":"Multi Profile",
+    "location":"Location"
+
   },
   "filter": {
     "reset": "Filter zurücksetzen"

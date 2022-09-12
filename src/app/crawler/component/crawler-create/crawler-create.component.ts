@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { fadeIn } from '../../../shared/animation/trigger';
-import { debounceTime, Observable, Subscription, takeUntil } from 'rxjs';
+import { debounceTime, Observable, Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { completeCrawlerCreateRequested, updateCrawlerCreateValues } from '../../store/crawler.actions';
 import { CrawlerFormValues } from '../../model/crawler-form-values';
@@ -14,6 +14,9 @@ import { selectAgentsListData, selectAgentsPagination } from 'src/app/agent/stor
 import { PaginatePipeArgs } from 'ngx-pagination';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfigCreateComponent } from 'src/app/config/component/config-create/config-create.component';
+import { AgentCreateComponent } from 'src/app/agent/component/agent-create/agent-create.component';
+import { ProxyCreateComponent } from 'src/app/proxy/component/proxy-create/proxy-create.component';
+import { ExperimentCreateComponent } from 'src/app/experiment/component/experiment-create/experiment-create.component';
 
 @Component({
   selector: 'app-crawler-create',
@@ -58,9 +61,6 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
       configuration_id: [null, [Validators.required]],
     });
 
-
-
-
     this.subscriptions.add(
       this.crawlerForm.valueChanges.pipe(debounceTime(500)).subscribe((formValue: CrawlerFormValues) => {
         this.store.dispatch(
@@ -103,6 +103,87 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
     this.store.dispatch(completeCrawlerCreateRequested());
   }
 
+
+  /**
+   * @methodName expirementPopup
+   * @description set Experiment popup data
+   * @parameters none
+   * @return none
+   */
+  expirementPopup(): void {
+    const proxyDialog = this.matDialog.open(ExperimentCreateComponent, {
+      data: {},
+      width: '550px',
+      hasBackdrop: true,
+    });
+    if (proxyDialog) {
+      proxyDialog.afterClosed().pipe().subscribe(proxy => {
+        if (proxy) {
+          const { data } = proxy;
+          if (data.id) {
+            // this.proxies.push(data)
+          }
+        }
+      }, (err) => {
+        console.log(err);
+      });
+    }
+  }
+
+
+  /**
+   * @methodName proxyPopup
+   * @description set proxy popup data
+   * @parameters none
+   * @return none
+   */
+  proxyPopup(): void {
+    const proxyDialog = this.matDialog.open(ProxyCreateComponent, {
+      data: {},
+      width: '550px',
+      hasBackdrop: true,
+    });
+    if (proxyDialog) {
+      proxyDialog.afterClosed().pipe().subscribe(proxy => {
+        if (proxy) {
+          const { data } = proxy;
+          if (data.id) {
+            // this.proxies.push(data)
+          }
+        }
+      }, (err) => {
+        console.log(err);
+      });
+    }
+  }
+
+  /**
+   * @methodName agentPopup
+   * @description set agent popup data
+   * @parameters none
+   * @return void
+   */
+  agentPopup(): void {
+    const agentDialog = this.matDialog.open(AgentCreateComponent, {
+      data: {},
+      width: '550px',
+      hasBackdrop: true
+    });
+    if (agentDialog) {
+      agentDialog.afterClosed().pipe().subscribe(agent => {
+        if (agent) {
+          const { data } = agent;
+          if (data.id) {
+            // this.agents.push(data);
+          }
+        }
+      }, (err) => {
+        console.log(err);
+      });
+    }
+  }
+
+
   /**
    * @methodName configurationPopup
    * @description open configuration Popup
@@ -122,7 +203,6 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
             const { data } = configuration;
             if (data.id) {
               // this.configurations.push(data);
-              // this.crawlerFormControls[APPCONSTANTS.FORMCONTROLS.CRAWLER.CONFIGURATION_ID].setValue(data.id);
             }
           }
         }, (err) => {
