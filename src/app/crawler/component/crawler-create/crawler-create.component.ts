@@ -40,7 +40,7 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.store.dispatch(getAgetList());
     const agent = this.store.pipe(select(agentsList));
-    agent.subscribe(agent => { this.agentsData = agent.data })
+    agent.subscribe(agent => { this.agentsData = agent?.data })
     this.initPagination()
     this.store.dispatch(experimentsSimpleListRequested());
 
