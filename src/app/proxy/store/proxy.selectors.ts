@@ -14,7 +14,3 @@ export const selectTotalRecords = createSelector(selectProxiesList, (state) => s
 export const selectPageRequested = createSelector(selectProxy, (state) => state.pageRequested || 1);
 export const selectIsLoading = createSelector(selectProxy, (state) => state.isLoading);
 export const selectProxyCreateFormValues = createSelector(selectProxy, (state) => state.form);
-// export const selectProxyFormValid = createSelector(
-//   selectProxyCreateFormValues,
-//   (form) => form?.valid || false
-// );

@@ -65,7 +65,6 @@ export class ProxyCreateComponent implements OnInit, OnDestroy {
             port: formValue.port,
             username: formValue.username,
             password: formValue.password,
-            valid: this.proxyForm.valid
           })
         );
       })
@@ -85,16 +84,17 @@ export class ProxyCreateComponent implements OnInit, OnDestroy {
   }
 
   saveProxy(): void {
-    this.store.dispatch(completeProxyCreateRequested());
-    if (this.isPopup) {
-      this.proxyDialog.close(true);
+    if (!this.proxyForm.valid) {
+      return
     }
+    this.store.dispatch(completeProxyCreateRequested());
+    this.onClose(true);
   }
 
 
-  onClose() {
+  onClose(close: boolean) {
     if (this.isPopup) {
-      this.proxyDialog.close(true)
+      this.proxyDialog.close(close)
     } else {
       this.router.navigate(['proxies'])
     }

@@ -6,7 +6,6 @@ import { fadeIn } from '../../../shared/animation/trigger';
 import { debounceTime, Observable, Subscription } from 'rxjs';
 import { completeExperimentCreateRequested, updateExperimentCreateValues } from '../../store/experiment.actions';
 import { Router } from '@angular/router';
-import { selectExperimentFormValid } from '../../store/experiment.selectors';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
@@ -35,14 +34,12 @@ export class ExperimentCreateComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.formValid$ = this.store.pipe(select(selectExperimentFormValid));
     this.experimentForm = this.formBuilder.group({
       name: [null, [Validators.required]],
       contact: [null, [Validators.required]],
       description: [null, [Validators.maxLength(1024)]]
     });
     this.isPopup = this.data.isPopup;
-    console.log(this.isPopup)
     this.subscriptions.add(
       this.experimentForm.valueChanges.pipe(debounceTime(500)).subscribe((formValue: ExperimentFormValues) => {
         this.store.dispatch(
@@ -51,7 +48,6 @@ export class ExperimentCreateComponent implements OnInit, OnDestroy {
             active: true,
             description: formValue.description,
             contact: formValue.contact,
-            valid: this.experimentForm.valid
           })
         );
       })
@@ -71,17 +67,16 @@ export class ExperimentCreateComponent implements OnInit, OnDestroy {
   }
 
   saveExperiment(): void {
-    console.log('eee')
-    this.store.dispatch(completeExperimentCreateRequested());
-    if (this.isPopup) {
-      this.experiementDialog.close(true);
+    if (!this.experimentForm.valid) {
+      return
     }
+    this.store.dispatch(completeExperimentCreateRequested());
+    this.onClose(true)
   }
 
-  onClose() {
-    console.log(this.isPopup)
+  onClose(close: boolean) {
     if (this.isPopup) {
-      this.experiementDialog.close(true)
+      this.experiementDialog.close(close)
     } else {
       this.router.navigate(['experiments'])
     }

@@ -14,10 +14,5 @@ export const selectTotalRecords = createSelector(selectExperimentsList, (state) 
 export const selectPageRequested = createSelector(selectExperiment, (state) => state.pageRequested || 1);
 export const selectIsLoading = createSelector(selectExperiment, (state) => state.isLoading);
 export const selectExperimentCreateFormValues = createSelector(selectExperiment, (state) => state.form);
-export const selectExperimentFormValid = createSelector(
-  selectExperimentCreateFormValues,
-  (form) => form?.valid || false
-);
-
 export const getExperimentState = createSelector(selectExperiment, (state) => state);
 
