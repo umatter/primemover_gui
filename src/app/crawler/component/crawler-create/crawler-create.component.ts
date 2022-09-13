@@ -105,8 +105,8 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
   getProxies() {
     this.store.dispatch(proxyRequest())
     this.store.pipe(select(proxyList)).subscribe((proxy) => {
-      this.experiments = proxy.data;
-      console.log('data', proxy.data);
+      this.proxies = proxy.data;
+      console.log('prxy', proxy.data);
     })
   }
 
@@ -116,7 +116,7 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
 
     this.store.pipe(select(experimentList)).subscribe((experiment) => {
       this.experiments = experiment.data;
-      console.log('data', experiment.data);
+      console.log('experiment', experiment.data);
     })
   }
 

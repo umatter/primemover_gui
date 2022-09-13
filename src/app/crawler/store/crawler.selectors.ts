@@ -18,7 +18,7 @@ export const selectCrawlerFormValid = createSelector(
 );
 
 export const experimentList = createSelector(selectCrawler, (state) => state.collection);
-export const proxyList = createSelector(selectCrawler, (state) => state.collection);
+export const proxyList = createSelector(selectCrawler, (state) => state.proxy);
 
 
 
