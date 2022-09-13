@@ -21,7 +21,7 @@ export class CrawlerService {
     private store: Store,
     private config: AppConfig,
     private filterService: QueryFilterService
-  ) {}
+  ) { }
 
   public index(): Observable<DataCollection> {
     this.store.pipe(select(selectPageRequested), first()).subscribe((response) => (this.pageRequested = response));
@@ -32,6 +32,19 @@ export class CrawlerService {
 
     const params = this.getParams();
     return this.http.get<DataCollection>(`${this.config.apiBaseUrl}/crawlers`, { params });
+  }
+
+
+  public crawlerCreate(configurationValues: any | undefined): Observable<any> {
+    let crawler = {
+      agent_id: configurationValues.agent_id,
+      configuration_id: configurationValues.configuration_id,
+      description: configurationValues.description,
+      experiment_id: configurationValues.experiment_id,
+      name: configurationValues.name,
+      proxy_id: configurationValues.proxy_id,
+    }
+    return this.http.post<any>(`${this.config.apiBaseUrl}/crawlers`, crawler);
   }
 
   getParams(): HttpParams {

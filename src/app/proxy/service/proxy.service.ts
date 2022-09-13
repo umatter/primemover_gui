@@ -22,6 +22,11 @@ export class ProxyService {
     private filterService: QueryFilterService
   ) { }
 
+
+  public proxies(): Observable<[]> {
+    return this.http.get<[]>(`${this.config.apiBaseUrl}/proxies`);
+  }
+  
   public simpleIndex(): Observable<[]> {
     return this.http.get<[]>(`${this.config.apiBaseUrl}/proxies-list`);
   }

@@ -6,18 +6,17 @@ import { debounceTime, Observable, Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { completeCrawlerCreateRequested, updateCrawlerCreateValues } from '../../store/crawler.actions';
 import { CrawlerFormValues } from '../../model/crawler-form-values';
-import { selectCrawlerFormValid } from '../../store/crawler.selectors';
-import { selectExperimentsSimpleList } from '../../../experiment/store/experiment.selectors';
-import { experimentsSimpleListRequested } from '../../../experiment/store/experiment.actions';
-import { selectProxiesListData } from 'src/app/proxy/store/proxy.selectors';
-import { agentsList, selectAgentsListData, selectAgentsPagination } from 'src/app/agent/store/agent.selectors';
+import { selectAgentsPagination } from 'src/app/agent/store/agent.selectors';
 import { PaginatePipeArgs } from 'ngx-pagination';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfigCreateComponent } from 'src/app/config/component/config-create/config-create.component';
 import { AgentCreateComponent } from 'src/app/agent/component/agent-create/agent-create.component';
 import { ProxyCreateComponent } from 'src/app/proxy/component/proxy-create/proxy-create.component';
 import { ExperimentCreateComponent } from 'src/app/experiment/component/experiment-create/experiment-create.component';
-import { getAgetList } from 'src/app/agent/store/agent.actions';
+import { ProxyService } from '../../../proxy/service/proxy.service';
+import { AgentService } from '../../../agent/service/agent.service'
+import { ExperimentService } from '../../../experiment/service/experiment.service'
+import { ConfigService } from '../../../config/service/config.service';
 
 @Component({
   selector: 'app-crawler-create',
@@ -28,29 +27,22 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
   crawlerForm: FormGroup;
   subscriptions = new Subscription();
   formValid$: Observable<boolean>;
-  experiments$: Observable<any>;
-  proxies$: Observable<any>;
-  configuration$: Observable<any>;
+  experiments: any;
+  proxies: any;
+  agents: any;
+  configuration: any;
   agentsData: any;
   paginationConfig: PaginatePipeArgs;
+  constructor(private proxyService: ProxyService,
 
 
-  constructor(private store: Store, private formBuilder: FormBuilder, public router: Router, private matDialog: MatDialog) { }
+    private agentService: AgentService,
+    private configService: ConfigService,
+    private experimentService: ExperimentService,
+
+    private store: Store, private formBuilder: FormBuilder, public router: Router, private matDialog: MatDialog) { }
 
   ngOnInit(): void {
-    this.store.dispatch(getAgetList());
-    const agent = this.store.pipe(select(agentsList));
-    agent.subscribe(agent => { this.agentsData = agent?.data })
-    this.initPagination()
-    this.store.dispatch(experimentsSimpleListRequested());
-
-    this.proxies$ = this.store.pipe(select(selectProxiesListData));
-    this.experiments$ = this.store.pipe(select(selectExperimentsSimpleList));
-    this.experiments$.subscribe(x => {
-      console.log(x)
-    })
-    console.log(this.experiments$)
-    this.experiments$.subscribe((value) => console.log(value));
     // this.formValid$ = this.store.pipe(select(selectCrawlerFormValid));
     this.crawlerForm = this.formBuilder.group({
       name: [null, [Validators.required]],
@@ -60,7 +52,10 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
       proxy_id: [null, [Validators.required]],
       configuration_id: [null, [Validators.required]],
     });
-
+    this.getProxies();
+    this.getAgents();
+    this.getExperiment();
+    this.getConfig();
     this.subscriptions.add(
       this.crawlerForm.valueChanges.pipe(debounceTime(500)).subscribe((formValue: CrawlerFormValues) => {
         this.store.dispatch(
@@ -68,10 +63,10 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
             name: formValue.name,
             description: formValue.description,
             valid: this.crawlerForm.valid,
-            agent_id: 1,
-            configuration_id: 1,
-            experiment_id: 1,
-            proxy_id: 1
+            agent_id: formValue.agent_id,
+            configuration_id: formValue.configuration_id,
+            experiment_id: formValue.experiment_id,
+            proxy_id: formValue.proxy_id
           })
         );
       })
@@ -100,10 +95,35 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
   }
 
   saveCrawler(): void {
+    console.log('ww')
     this.store.dispatch(completeCrawlerCreateRequested());
   }
 
 
+  getProxies() {
+    this.proxyService.proxies().subscribe((proxy: any) => {
+      this.proxies = proxy?.data;
+    })
+  }
+
+
+  getExperiment() {
+    this.experimentService.list().subscribe((experiment: any) => {
+      this.experiments = experiment?.data;
+    })
+  }
+
+  getConfig() {
+    this.configService.list().subscribe((config: any) => {
+      this.configuration = config?.data;
+    })
+  }
+
+  getAgents() {
+    this.agentService.agentList().subscribe((agent: any) => {
+      this.agents = agent?.data;
+    })
+  }
   /**
    * @methodName expirementPopup
    * @description set Experiment popup data

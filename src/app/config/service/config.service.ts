@@ -22,6 +22,11 @@ export class ConfigService {
     private filterService: QueryFilterService
   ) { }
 
+
+  public list(): Observable<[]> {
+    return this.http.get<[]>(`${this.config.apiBaseUrl}/configurations`);
+  }
+
   public simpleIndex(): Observable<[]> {
     return this.http.get<[]>(`${this.config.apiBaseUrl}/configurations-list`);
   }

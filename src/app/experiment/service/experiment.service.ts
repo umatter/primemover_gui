@@ -22,6 +22,10 @@ export class ExperimentService {
     private filterService: QueryFilterService
   ) {}
 
+  public list(): Observable<[]> {
+    return this.http.get<[]>(`${this.config.apiBaseUrl}/experiments`);
+  }
+
   public simpleIndex(): Observable<[]> {
     return this.http.get<[]>(`${this.config.apiBaseUrl}/experiments-list`);
   }

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { Store } from '@ngrx/store';
-import { catchError, map, switchMap } from 'rxjs';
+import { select, Store } from '@ngrx/store';
+import { catchError, map, switchMap, tap, withLatestFrom } from 'rxjs';
 import { of } from 'rxjs';
 import { CrawlerService } from '../service/crawler.service';
 import {
@@ -9,8 +9,18 @@ import {
   crawlersRequested,
   crawlersRequestFailed,
   crawlersRetrieved,
-  initCrawlers
+  initCrawlers,
+  completeCrawlerCreateRequested,
+  experimentCreateSuccess,
+  experimentCreateError
 } from './crawler.actions';
+import {
+
+  selectCrawlerCreateFormValues
+} from './crawler.selectors';
+
+import { TypedAction } from '@ngrx/store/src/models';
+
 import { currentExperimentResetRequested, experimentPageRequested } from '../../experiment/store/experiment.actions';
 import { updateQueryFilter } from '../../shared/store/shared.actions';
 
@@ -54,5 +64,20 @@ export class CrawlerEffects {
     )
   );
 
-  constructor(private actions$: Actions, private store: Store, private apiService: CrawlerService) {}
+
+
+  completeCrawlerCreateRequested$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(completeCrawlerCreateRequested),
+      withLatestFrom(this.store.pipe(select(selectCrawlerCreateFormValues))),
+      switchMap(([_, formValues]: [TypedAction<string>, any | undefined]) =>
+        this.apiService.crawlerCreate(formValues).pipe(
+          map((response) => experimentCreateSuccess(response)),
+          catchError((err) => of(experimentCreateError(err)))
+        )
+      )
+    )
+  );
+
+  constructor(private actions$: Actions, private store: Store, private apiService: CrawlerService) { }
 }

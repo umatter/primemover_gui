@@ -10,6 +10,8 @@ export const selectPageRequested = createSelector(selectCrawler, (state) => stat
 export const selectCurrentCrawler = createSelector(selectCrawler, (state) => state?.current || null);
 export const selectIsLoading = createSelector(selectCrawler, (state) => state.isLoading);
 export const selectCrawlerCreateFormValues = createSelector(selectCrawler, (state) => state.form);
+
+
 export const selectCrawlerFormValid = createSelector(
   selectCrawlerCreateFormValues,
   (form) => form?.valid || false
