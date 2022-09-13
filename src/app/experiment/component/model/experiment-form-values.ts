@@ -3,5 +3,4 @@ export type ExperimentFormValues = {
   description: string;
   contact: string;
   active: boolean;
-  valid?: boolean;
 };

@@ -41,27 +41,31 @@
                 {{ 'common.experimentRequiredError' | translate }}
               </p>
             </div>
-            <button mat-raised-button color="primary" (click)="expirementPopup()">New Experiement</button>
           </div>
+          <!-- <button mat-raised-button color="primary" (click)="expirementPopup()">New Experiement</button> -->
 
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
             <label for="agent_id" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
               {{ 'agent.label' | translate }}
             </label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <select id="agent_id" name="agent_id" formControlName="agent_id"
-                class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+              <div class="flex">
+                <select id="agent_id" name="agent_id" formControlName="agent_id"
+                class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
                 <option *ngFor="let agent of agents" [ngValue]="agent.id">
-                  {{ agent.name |titlecase  }}
+                  {{ agent.name |titlecase }}
                 </option>
               </select>
+              <button mat-raised-button class="w-auto" color="primary" (click)="agentPopup()">New Agent</button>
+              </div>
+              
               <p @fadeIn *ngIf="hasError('agent_id', 'required')" class="mt-2 text-sm text-red-600"
                 id="experiment-error">
                 {{ 'common.agentRequiredError' | translate }}
               </p>
             </div>
-            <button mat-raised-button color="primary" (click)="agentPopup()">New Agent</button>
           </div>
+          
 
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
             <label for="configuration_id" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
@@ -71,7 +75,7 @@
               <select id="configuration_id" name="config_id" formControlName="configuration_id"
                 class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
                 <option *ngFor="let config of configurations" [ngValue]="config.id">
-                  {{ config.name |titlecase  }}
+                  {{ config.name |titlecase }}
                 </option>
               </select>
               <p @fadeIn *ngIf="hasError('configuration_id', 'required')" class="mt-2 text-sm text-red-600"
@@ -79,8 +83,9 @@
                 {{ 'common.configurationRequiredError' | translate }}
               </p>
             </div>
-            <button mat-raised-button color="primary" (click)="configurationPopup()">New Configuration</button>
           </div>
+          <button mat-raised-button color="primary" (click)="configurationPopup()">New Configuration</button>
+
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
             <label for="proxy_id" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
               {{ 'proxy.label' | translate }}
@@ -89,7 +94,7 @@
               <select id="proxy_id" name="proxy_id" formControlName="proxy_id"
                 class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
                 <option *ngFor="let proxy of proxies" [ngValue]="proxy.id">
-                  {{ proxy.name |titlecase  }}
+                  {{ proxy.name |titlecase }}
                 </option>
               </select>
               <p @fadeIn *ngIf="hasError('proxy_id', 'required')" class="mt-2 text-sm text-red-600"
@@ -97,9 +102,9 @@
                 {{ 'common.proxyRequiredError' | translate }}
               </p>
             </div>
-            <button mat-raised-button color="primary" (click)="proxyPopup()">New Proxy</button>
 
           </div>
+          <button mat-raised-button color="primary" (click)="proxyPopup()">New Proxy</button>
 
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
             <label for="description" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">

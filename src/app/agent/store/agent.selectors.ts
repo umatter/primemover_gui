@@ -13,7 +13,7 @@ export const selectCurrentPage = createSelector(selectAgentsList, (state) => sta
 export const selectTotalRecords = createSelector(selectAgentsList, (state) => state.meta?.total || 0);
 export const selectPageRequested = createSelector(selectAgent, (state) => state.pageRequested || 1);
 export const selectIsLoading = createSelector(selectAgent, (state) => state.isLoading);
-export const selectAgentCreateFormValues = createSelector(selectAgent, (state) => state.form);
+export const selectAgentCreateFormValues = createSelector(selectAgent, (state) => state?.form);
 
 
 export const agentsList = createSelector(selectAgent, (state) => state?.collection);

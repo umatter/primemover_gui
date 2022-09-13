@@ -20,7 +20,6 @@ import { experimentReducer } from '../experiment/store/experiment.reducer';
     ProxyRoutingModule,
     StoreModule.forFeature('proxy', proxyReducer),
     StoreModule.forFeature('experiment', experimentReducer),
-
     StoreModule.forFeature('crawler', crawlerReducer),
     StoreModule.forFeature('queue', queueReducer),
     EffectsModule.forFeature([ProxyEffects]),

@@ -39,18 +39,18 @@ export class ExperimentCreateComponent implements OnInit, OnDestroy {
       contact: [null, [Validators.required]],
       description: [null, [Validators.maxLength(1024)]]
     });
-    this.isPopup = this.data.isPopup;
-    this.subscriptions.add(
-      this.experimentForm.valueChanges.pipe(debounceTime(500)).subscribe((formValue: ExperimentFormValues) => {
-        this.store.dispatch(
-          updateExperimentCreateValues({
-            name: formValue.name,
-            active: true,
-            description: formValue.description,
-            contact: formValue.contact,
-          })
-        );
+    this.isPopup = this.data.isPopup ? this.data.isPopup : false;
+this.subscriptions.add(
+  this.experimentForm.valueChanges.pipe(debounceTime(500)).subscribe((formValue: ExperimentFormValues) => {
+    this.store.dispatch(
+      updateExperimentCreateValues({
+        name: formValue.name,
+        active: true,
+        description: formValue.description,
+        contact: formValue.contact,
       })
+    );
+  })
     );
   }
 
