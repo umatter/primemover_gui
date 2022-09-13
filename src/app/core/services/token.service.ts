@@ -35,7 +35,6 @@ export class TokenService {
   }
 
   isTokenExpired(expiryTime: number | null): boolean {
-    console.log(expiryTime);
     if (!expiryTime) {
       return false;
     }
