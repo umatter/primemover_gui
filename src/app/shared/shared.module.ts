@@ -39,6 +39,7 @@ import { MatDialogModule } from "@angular/material/dialog";
 import { MatInputModule } from "@angular/material/input";
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
@@ -117,6 +118,10 @@ import { MatSelectModule } from '@angular/material/select';
     MatSelectModule,
     MatButtonModule,
   ],
-  providers: [DatePipe]
+
+  providers: [DatePipe,
+    { provide: MAT_DIALOG_DATA, useValue: {} },
+    { provide: MatDialogRef, useValue: {} }
+  ]
 })
 export class SharedModule { }

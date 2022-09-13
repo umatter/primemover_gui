@@ -18,6 +18,7 @@ import { AgentService } from '../../../agent/service/agent.service'
 import { ExperimentService } from '../../../experiment/service/experiment.service'
 import { ConfigService } from '../../../config/service/config.service';
 import { agentList, configList, experimentList, proxyList } from '../../store/crawler.selectors';
+import { experimentCreateSuccess } from 'src/app/experiment/store/experiment.actions';
 
 @Component({
   selector: 'app-crawler-create',
@@ -132,19 +133,20 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
    * @return none
    */
   expirementPopup(): void {
-    const proxyDialog = this.matDialog.open(ExperimentCreateComponent, {
-      data: {},
+    const experiementDialog = this.matDialog.open(ExperimentCreateComponent, {
+      data: { isPopup: true },
       width: '550px',
       hasBackdrop: true,
     });
-    if (proxyDialog) {
-      proxyDialog.afterClosed().pipe().subscribe(proxy => {
-        if (proxy) {
-          const { data } = proxy;
-          if (data.id) {
-            // this.proxies.push(data)
-          }
-        }
+    if (experiementDialog) {
+      experiementDialog.afterClosed().pipe().subscribe(experiement => {
+
+        this.store.pipe(select(experimentCreateSuccess)).subscribe((experiement) => {
+     console.log(experiement)
+        })
+        
+        console.log('closing')
+    
       }, (err) => {
         console.log(err);
       });
@@ -160,7 +162,7 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
    */
   proxyPopup(): void {
     const proxyDialog = this.matDialog.open(ProxyCreateComponent, {
-      data: {},
+      data: { isPopup: true },
       width: '550px',
       hasBackdrop: true,
     });
@@ -186,7 +188,7 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
    */
   agentPopup(): void {
     const agentDialog = this.matDialog.open(AgentCreateComponent, {
-      data: {},
+      data: { isPopup: true },
       width: '550px',
       hasBackdrop: true
     });
@@ -213,7 +215,7 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
    */
   configurationPopup(): void {
     const configurationDialog = this.matDialog.open(ConfigCreateComponent, {
-      data: {},
+      data: { isPopup: true },
       width: '550px',
       hasBackdrop: true
     });

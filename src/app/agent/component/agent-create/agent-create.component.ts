@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AgentFormValues } from '../model/agent-form-values';
@@ -6,7 +6,7 @@ import { fadeIn } from '../../../shared/animation/trigger';
 import { debounceTime, Observable, Subscription } from 'rxjs';
 import { completeAgentCreateRequested, updateAgentCreateValues } from '../../store/agent.actions';
 import { Router } from '@angular/router';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 // import { selectAgentFormValid } from '../../store/agent.selectors';
 
 @Component({
@@ -18,8 +18,9 @@ export class AgentCreateComponent implements OnInit, OnDestroy {
   agentForm: FormGroup;
   subscriptions = new Subscription();
   formValid$: Observable<boolean>;
+  isPopup = false;
 
-  constructor(private store: Store, private formBuilder: FormBuilder, public router: Router, private agentDialog: MatDialogRef<AgentCreateComponent>) { }
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private store: Store, private formBuilder: FormBuilder, public router: Router, private agentDialog: MatDialogRef<AgentCreateComponent>) { }
 
   get name(): string | null {
     return this.agentForm.get('name')?.value;
@@ -56,6 +57,8 @@ export class AgentCreateComponent implements OnInit, OnDestroy {
       location: ['', [Validators.required]],
       active: [1],
     });
+    this.isPopup = this.data.isPopup;
+
 
     this.subscriptions.add(
       this.agentForm.valueChanges.pipe(debounceTime(500)).subscribe((formValue: AgentFormValues) => {
@@ -90,6 +93,20 @@ export class AgentCreateComponent implements OnInit, OnDestroy {
 
   saveAgent(): void {
     this.store.dispatch(completeAgentCreateRequested());
+    if (this.isPopup) {
+      this.agentDialog.close(true);
+    }
+  }
+
+
+
+  onClose() {
+    console.log(this.isPopup)
+    if (this.isPopup) {
+      this.agentDialog.close(true)
+    } else {
+      this.router.navigate(['agents'])
+    }
   }
 
   ngOnDestroy() {

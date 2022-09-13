@@ -11,6 +11,7 @@ import { crawlerReducer } from '../crawler/store/crawler.reducer';
 import { queueReducer } from '../queue/store/queue.reducer';
 import { ExperimentComponent } from './component/experiment/experiment.component';
 import { ExperimentCreateComponent } from './component/experiment-create/experiment-create.component';
+import { MatDialogModule } from "@angular/material/dialog";
 
 @NgModule({
   declarations: [ExperimentComponent, ExperimentCreateComponent],
@@ -22,7 +23,9 @@ import { ExperimentCreateComponent } from './component/experiment-create/experim
     StoreModule.forFeature('queue', queueReducer),
     EffectsModule.forFeature([ExperimentEffects]),
     NgxPaginationModule,
-    SharedModule
-  ]
+    SharedModule,
+    MatDialogModule
+  ],
+ 
 })
-export class ExperimentModule {}
+export class ExperimentModule { }

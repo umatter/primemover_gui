@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ProxyFormValues } from '../model/proxy-form-values';
@@ -6,6 +6,7 @@ import { fadeIn } from '../../../shared/animation/trigger';
 import { debounceTime, Observable, Subscription } from 'rxjs';
 import { completeProxyCreateRequested, updateProxyCreateValues } from '../../store/proxy.actions';
 import { Router } from '@angular/router';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 // import { selectProxyFormValid } from '../../store/proxy.selectors';
 
 @Component({
@@ -17,8 +18,9 @@ export class ProxyCreateComponent implements OnInit, OnDestroy {
   proxyForm: FormGroup;
   subscriptions = new Subscription();
   formValid$: Observable<boolean>;
+  isPopup = false;
 
-  constructor(private store: Store, private formBuilder: FormBuilder, public router: Router) { }
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private store: Store, private formBuilder: FormBuilder, public router: Router, private proxyDialog: MatDialogRef<ProxyCreateComponent>) { }
 
   get name(): string | null {
     return this.proxyForm.get('name')?.value;
@@ -50,6 +52,7 @@ export class ProxyCreateComponent implements OnInit, OnDestroy {
       password: ['', [Validators.required]],
       active: [1],
     });
+    this.isPopup = this.data.isPopup;
 
     this.subscriptions.add(
       this.proxyForm.valueChanges.pipe(debounceTime(500)).subscribe((formValue: ProxyFormValues) => {
@@ -83,6 +86,18 @@ export class ProxyCreateComponent implements OnInit, OnDestroy {
 
   saveProxy(): void {
     this.store.dispatch(completeProxyCreateRequested());
+    if (this.isPopup) {
+      this.proxyDialog.close(true);
+    }
+  }
+
+
+  onClose() {
+    if (this.isPopup) {
+      this.proxyDialog.close(true)
+    } else {
+      this.router.navigate(['proxies'])
+    }
   }
 
   ngOnDestroy() {

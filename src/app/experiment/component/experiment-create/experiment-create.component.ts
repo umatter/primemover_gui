@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, Optional } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ExperimentFormValues } from '../model/experiment-form-values';
@@ -7,6 +7,7 @@ import { debounceTime, Observable, Subscription } from 'rxjs';
 import { completeExperimentCreateRequested, updateExperimentCreateValues } from '../../store/experiment.actions';
 import { Router } from '@angular/router';
 import { selectExperimentFormValid } from '../../store/experiment.selectors';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-experiment-create',
@@ -17,8 +18,9 @@ export class ExperimentCreateComponent implements OnInit, OnDestroy {
   experimentForm: FormGroup;
   subscriptions = new Subscription();
   formValid$: Observable<boolean>;
+  isPopup = false;
 
-  constructor(private store: Store, private formBuilder: FormBuilder, public router: Router) {}
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private store: Store, private formBuilder: FormBuilder, @Optional() private experiementDialog: MatDialogRef<ExperimentCreateComponent>, public router: Router) { }
 
   get name(): string | null {
     return this.experimentForm.get('name')?.value;
@@ -39,7 +41,8 @@ export class ExperimentCreateComponent implements OnInit, OnDestroy {
       contact: [null, [Validators.required]],
       description: [null, [Validators.maxLength(1024)]]
     });
-
+    this.isPopup = this.data.isPopup;
+    console.log(this.isPopup)
     this.subscriptions.add(
       this.experimentForm.valueChanges.pipe(debounceTime(500)).subscribe((formValue: ExperimentFormValues) => {
         this.store.dispatch(
@@ -68,7 +71,20 @@ export class ExperimentCreateComponent implements OnInit, OnDestroy {
   }
 
   saveExperiment(): void {
+    console.log('eee')
     this.store.dispatch(completeExperimentCreateRequested());
+    if (this.isPopup) {
+      this.experiementDialog.close(true);
+    }
+  }
+
+  onClose() {
+    console.log(this.isPopup)
+    if (this.isPopup) {
+      this.experiementDialog.close(true)
+    } else {
+      this.router.navigate(['experiments'])
+    }
   }
 
   ngOnDestroy() {
