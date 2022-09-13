@@ -34,13 +34,20 @@ export class CrawlerService {
     return this.http.get<DataCollection>(`${this.config.apiBaseUrl}/crawlers`, { params });
   }
 
-
   public experimentData(): Observable<[DataCollection]> {
     return this.http.get<[DataCollection]>(`${this.config.apiBaseUrl}/experiments`);
   }
 
   public proxiesData(): Observable<[DataCollection]> {
     return this.http.get<[DataCollection]>(`${this.config.apiBaseUrl}/proxies`);
+  }
+
+  public agentList(): Observable<[DataCollection]> {
+    return this.http.get<[DataCollection]>(`${this.config.apiBaseUrl}/agents`);
+  }
+
+  public configlist(): Observable<[DataCollection]> {
+    return this.http.get<[DataCollection]>(`${this.config.apiBaseUrl}/configurations`);
   }
 
 

@@ -73,7 +73,7 @@
               <select id="experiment_id" name="config_id" formControlName="configuration_id"
                 class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
                 <option selected>{{ 'common.select' | translate }} ...</option>
-                <option *ngFor="let config of configuration" [ngValue]="config.id">
+                <option *ngFor="let config of configurations" [ngValue]="config.id">
                   {{ config.name }}
                 </option>
               </select>
@@ -89,7 +89,7 @@
               {{ 'proxy.label' | translate }}
             </label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <select id="experiment_id" name="proxy_id"  formControlName="proxy_id" 
+              <select id="experiment_id" name="proxy_id" formControlName="proxy_id"
                 class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
                 <option selected>{{ 'common.select' | translate }} ...</option>
                 <option *ngFor="let proxy of proxies" [ngValue]="proxy.id">

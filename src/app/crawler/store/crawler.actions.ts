@@ -30,11 +30,17 @@ export const experimentRequest = createAction('[Experiment] Data requested');
 export const experimentsRetrieved = createAction('[Experiment] Crawlers retrieved', props<{ collection: any }>());
 export const experimentRequestFailed = createAction('[Erawler] Request failed', props<{ error: any }>());
 
-
-
 export const proxyRequest = createAction('[proxy] Data requested');
 export const proxiesRetrieved = createAction('[proxy] proxy retrieved', props<{ proxy: any }>());
 export const proxyRequestFailed = createAction('[proxy] Request failed', props<{ error: any }>());
+
+export const agentRequest = createAction('[agent] Data requested');
+export const agentsRetrieved = createAction('[agent] agent retrieved', props<{ agent: any }>());
+export const agentRequestFailed = createAction('[agent] Request failed', props<{ error: any }>());
+
+export const configRequest = createAction('[config] Data requested');
+export const configsRetrieved = createAction('[config] config retrieved', props<{ config: any }>());
+export const configRequestFailed = createAction('[config] Request failed', props<{ error: any }>());
 
 
 

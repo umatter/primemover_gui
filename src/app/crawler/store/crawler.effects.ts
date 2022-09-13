@@ -18,7 +18,13 @@ import {
   experimentRequestFailed,
   proxyRequest,
   proxiesRetrieved,
-  proxyRequestFailed
+  proxyRequestFailed,
+  agentRequest,
+  agentsRetrieved,
+  agentRequestFailed,
+  configRequest,
+  configsRetrieved,
+  configRequestFailed
 } from './crawler.actions';
 import {
 
@@ -91,6 +97,32 @@ export class CrawlerEffects {
         this.apiService.proxiesData().pipe(
           map((response) => proxiesRetrieved({ proxy: response })),
           catchError((error) => of(proxyRequestFailed(error)))
+        )
+      )
+    )
+  );
+
+
+  agentRequested$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(agentRequest),
+      switchMap(() =>
+        this.apiService.agentList().pipe(
+          map((response) => agentsRetrieved({ agent: response })),
+          catchError((error) => of(agentRequestFailed(error)))
+        )
+      )
+    )
+  );
+
+
+  configRequested$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(configRequest),
+      switchMap(() =>
+        this.apiService.configlist().pipe(
+          map((response) => configsRetrieved({ config: response })),
+          catchError((error) => of(configRequestFailed(error)))
         )
       )
     )

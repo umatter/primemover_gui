@@ -1,5 +1,7 @@
 import { Action, createReducer, on } from '@ngrx/store';
 import {
+  agentsRetrieved,
+  configsRetrieved,
   crawlerPageRequested,
   crawlerRequested,
   crawlerResetRequested,
@@ -15,6 +17,10 @@ import { updateExperimentCreateValues } from '../../experiment/store/experiment.
 export interface CrawlerState {
   collection: DataCollection;
   proxy: DataCollection;
+  agent: DataCollection;
+  config: DataCollection;
+
+
   pagination: PaginatePipeArgs;
   current: Crawler | null;
   isLoading: boolean;
@@ -25,6 +31,9 @@ export interface CrawlerState {
 export const initialState: CrawlerState = {
   collection: { data: [], links: null, meta: null },
   proxy: { data: [], links: null, meta: null },
+  agent: { data: [], links: null, meta: null },
+  config: { data: [], links: null, meta: null },
+
   pagination: { id: 'crawlers', itemsPerPage: 10, currentPage: 1, totalItems: 0 },
   current: null,
   isLoading: false,
@@ -53,6 +62,10 @@ const reducer = createReducer(
 
   on(experimentsRetrieved, (state, action) => ({ ...state, collection: action.collection })),
   on(proxiesRetrieved, (state, action) => ({ ...state, proxy: action.proxy })),
+  on(agentsRetrieved, (state, action) => ({ ...state, agent: action.agent })),
+  on(configsRetrieved, (state, action) => ({ ...state, config: action.config })),
+
+
 
 
 );

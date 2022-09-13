@@ -4,9 +4,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { fadeIn } from '../../../shared/animation/trigger';
 import { debounceTime, Observable, Subscription } from 'rxjs';
 import { Router } from '@angular/router';
-import { completeCrawlerCreateRequested, experimentRequest, proxyRequest, updateCrawlerCreateValues } from '../../store/crawler.actions';
+import { agentRequest, completeCrawlerCreateRequested, configRequest, experimentRequest, proxyRequest, updateCrawlerCreateValues } from '../../store/crawler.actions';
 import { CrawlerFormValues } from '../../model/crawler-form-values';
-import { selectAgentsListData, selectAgentsPagination } from 'src/app/agent/store/agent.selectors';
+import { selectAgentsPagination } from 'src/app/agent/store/agent.selectors';
 import { PaginatePipeArgs } from 'ngx-pagination';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfigCreateComponent } from 'src/app/config/component/config-create/config-create.component';
@@ -17,10 +17,7 @@ import { ProxyService } from '../../../proxy/service/proxy.service';
 import { AgentService } from '../../../agent/service/agent.service'
 import { ExperimentService } from '../../../experiment/service/experiment.service'
 import { ConfigService } from '../../../config/service/config.service';
-import { selectConfigurationsListData } from 'src/app/config/store/config.selectors';
-import { selectProxiesListData } from 'src/app/proxy/store/proxy.selectors';
-import { getExperimentState, selectExperimentsListData } from 'src/app/experiment/store/experiment.selectors';
-import { experimentList, proxyList } from '../../store/crawler.selectors';
+import { agentList, configList, experimentList, proxyList } from '../../store/crawler.selectors';
 
 @Component({
   selector: 'app-crawler-create',
@@ -34,14 +31,10 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
   experiments: any;
   proxies: any;
   agents: any;
-  configuration: any;
+  configurations: any;
   agentsData: any;
   paginationConfig: PaginatePipeArgs;
-  constructor(private proxyService: ProxyService,
-    private agentService: AgentService,
-    private configService: ConfigService,
-    private experimentService: ExperimentService,
-    private store: Store, private formBuilder: FormBuilder, public router: Router, private matDialog: MatDialog) { }
+  constructor(private store: Store, private formBuilder: FormBuilder, public router: Router, private matDialog: MatDialog) { }
 
   ngOnInit(): void {
 
@@ -55,9 +48,9 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
       configuration_id: [null, [Validators.required]],
     });
     this.getProxies();
-    // this.getAgents();
+    this.getAgents();
     this.getExperiment();
-    // this.getConfig();
+    this.getConfig();
     this.subscriptions.add(
       this.crawlerForm.valueChanges.pipe(debounceTime(500)).subscribe((formValue: CrawlerFormValues) => {
         this.store.dispatch(
@@ -97,7 +90,6 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
   }
 
   saveCrawler(): void {
-    console.log('ww')
     this.store.dispatch(completeCrawlerCreateRequested());
   }
 
@@ -106,7 +98,6 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
     this.store.dispatch(proxyRequest())
     this.store.pipe(select(proxyList)).subscribe((proxy) => {
       this.proxies = proxy.data;
-      console.log('prxy', proxy.data);
     })
   }
 
@@ -116,27 +107,22 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
 
     this.store.pipe(select(experimentList)).subscribe((experiment) => {
       this.experiments = experiment.data;
-      console.log('experiment', experiment.data);
     })
   }
 
   getConfig() {
-    // this.configService.list().subscribe((config: any) => {
-    //   this.configuration = config?.data;
-    // })
-    this.store.pipe(select(selectConfigurationsListData)).subscribe((config) => {
-      this.configuration = config;
+    this.store.dispatch(configRequest())
+
+    this.store.pipe(select(configList)).subscribe((configurations) => {
+      this.configurations = configurations.data;
     })
   }
 
   getAgents() {
-    // this.agentService.agentList().subscribe((agent: any) => {
-    //   this.agents = agent?.data;
-    // })
-    this.store.pipe(select(selectAgentsListData)).subscribe((agent) => {
-      this.agents = agent;
-      console.log('this.configuration', this.configuration);
+    this.store.dispatch(agentRequest())
 
+    this.store.pipe(select(agentList)).subscribe((agent) => {
+      this.agents = agent.data;
     })
   }
   /**
