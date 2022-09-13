@@ -13,12 +13,7 @@ import { ConfigCreateComponent } from 'src/app/config/component/config-create/co
 import { AgentCreateComponent } from 'src/app/agent/component/agent-create/agent-create.component';
 import { ProxyCreateComponent } from 'src/app/proxy/component/proxy-create/proxy-create.component';
 import { ExperimentCreateComponent } from 'src/app/experiment/component/experiment-create/experiment-create.component';
-import { ProxyService } from '../../../proxy/service/proxy.service';
-import { AgentService } from '../../../agent/service/agent.service'
-import { ExperimentService } from '../../../experiment/service/experiment.service'
-import { ConfigService } from '../../../config/service/config.service';
 import { agentList, configList, experimentList, proxyList } from '../../store/crawler.selectors';
-import { experimentCreateSuccess } from 'src/app/experiment/store/experiment.actions';
 
 @Component({
   selector: 'app-crawler-create',
@@ -38,8 +33,6 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
   constructor(private store: Store, private formBuilder: FormBuilder, public router: Router, private matDialog: MatDialog) { }
 
   ngOnInit(): void {
-
-    // this.formValid$ = this.store.pipe(select(selectCrawlerFormValid));
     this.crawlerForm = this.formBuilder.group({
       name: [null, [Validators.required]],
       description: [null, [Validators.maxLength(1024)]],
@@ -58,7 +51,6 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
           updateCrawlerCreateValues({
             name: formValue.name,
             description: formValue.description,
-            valid: this.crawlerForm.valid,
             agent_id: formValue.agent_id,
             configuration_id: formValue.configuration_id,
             experiment_id: formValue.experiment_id,
@@ -68,7 +60,6 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
       })
     );
   }
-
 
   initPagination(): void {
     this.subscriptions.add(
@@ -91,7 +82,11 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
   }
 
   saveCrawler(): void {
+    if (!this.crawlerForm.valid) {
+      return
+    }
     this.store.dispatch(completeCrawlerCreateRequested());
+    this.router.navigate(['/crawlers'])
   }
 
 
@@ -99,39 +94,37 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
     this.store.dispatch(proxyRequest())
     this.store.pipe(select(proxyList)).subscribe((proxy) => {
       this.proxies = proxy.data;
+      this.crawlerForm.controls['proxy_id']?.setValue(this.proxies[0]?.id)
     })
   }
 
 
   getExperiment() {
     this.store.dispatch(experimentRequest())
-
     this.store.pipe(select(experimentList)).subscribe((experiment) => {
       this.experiments = experiment.data;
+      this.crawlerForm.controls['experiment_id']?.setValue(this.experiments[0]?.id)
+
     })
   }
 
   getConfig() {
     this.store.dispatch(configRequest())
-
     this.store.pipe(select(configList)).subscribe((configurations) => {
       this.configurations = configurations.data;
-    })
+      this.crawlerForm.controls['configuration_id']?.setValue(this.configurations[0]?.id)
+    });
   }
 
   getAgents() {
     this.store.dispatch(agentRequest())
-
     this.store.pipe(select(agentList)).subscribe((agent) => {
       this.agents = agent.data;
+      this.crawlerForm.controls['agent_id']?.setValue(this.agents[0]?.id)
     })
   }
-  /**
-   * @methodName expirementPopup
-   * @description set Experiment popup data
-   * @parameters none
-   * @return none
-   */
+
+
   expirementPopup(): void {
     const experiementDialog = this.matDialog.open(ExperimentCreateComponent, {
       data: { isPopup: true },
@@ -140,12 +133,9 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
     });
     if (experiementDialog) {
       experiementDialog.afterClosed().pipe().subscribe(experiement => {
-
-        this.store.pipe(select(experimentCreateSuccess)).subscribe((experiement) => {
-          console.log(experiement)
-        })
-
-        console.log('closing')
+        if (experiement) {
+          this.getExperiment();
+        }
 
       }, (err) => {
         console.log(err);
@@ -153,13 +143,6 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
     }
   }
 
-
-  /**
-   * @methodName proxyPopup
-   * @description set proxy popup data
-   * @parameters none
-   * @return none
-   */
   proxyPopup(): void {
     const proxyDialog = this.matDialog.open(ProxyCreateComponent, {
       data: { isPopup: true },
@@ -169,10 +152,7 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
     if (proxyDialog) {
       proxyDialog.afterClosed().pipe().subscribe(proxy => {
         if (proxy) {
-          const { data } = proxy;
-          // if (data.id) {
-          //   // this.proxies.push(data)
-          // }
+          this.getProxies();
         }
       }, (err) => {
         console.log(err);
@@ -180,12 +160,7 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  /**
-   * @methodName agentPopup
-   * @description set agent popup data
-   * @parameters none
-   * @return void
-   */
+
   agentPopup(): void {
     const agentDialog = this.matDialog.open(AgentCreateComponent, {
       data: { isPopup: true },
@@ -195,10 +170,7 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
     if (agentDialog) {
       agentDialog.afterClosed().pipe().subscribe(agent => {
         if (agent) {
-          const { data } = agent;
-          // if (data.id) {
-          //   // this.agents.push(data);
-          // }
+          this.getAgents();
         }
       }, (err) => {
         console.log(err);
@@ -206,13 +178,6 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
     }
   }
 
-
-  /**
-   * @methodName configurationPopup
-   * @description open configuration Popup
-   * @parameters none
-   * @return void
-   */
   configurationPopup(): void {
     const configurationDialog = this.matDialog.open(ConfigCreateComponent, {
       data: { isPopup: true },
@@ -223,10 +188,7 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
       this.subscriptions.add(
         configurationDialog.afterClosed().subscribe(configuration => {
           if (configuration) {
-            const { data } = configuration;
-            // if (data.id) {
-            //   // this.configurations.push(data);
-            // }
+            this.getConfig();
           }
         }, (err) => {
           console.error(err);

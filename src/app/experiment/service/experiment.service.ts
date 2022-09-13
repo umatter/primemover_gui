@@ -46,7 +46,6 @@ export class ExperimentService {
   }
 
   public deleteExperiment(experimentId: number): Observable<any> {
-    console.log(experimentId);
     return this.http.delete<any>(`${this.config.apiBaseUrl}/experiments/${experimentId}`);
   }
 

@@ -8,6 +8,5 @@ export class AlertLeftAlignedButtonsComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
-    console.log('AlertLeftAlignedButtonsComponent init');
   }
 }

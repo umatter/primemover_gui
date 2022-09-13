@@ -5,5 +5,4 @@ export type CrawlerFormValues = {
   proxy_id: number;
   agent_id: number;
   configuration_id: number;
-  valid: boolean;
 };

@@ -37,13 +37,7 @@ export class AgentComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.agentsData$ = this.store.pipe(select(selectAgentsListData));
     this.store.dispatch(getAgetList());
-    const a=  this.store.pipe(select(agentsList));
-    a.subscribe(x=>{
-      console.log(x)
-    })
-
     this.isLoading$ = this.store.pipe(select(selectIsLoading));
-
     this.getData();
     this.initPagination();
   }
@@ -67,7 +61,6 @@ export class AgentComponent implements OnInit, OnDestroy {
   }
 
   deleteAgent(agentId: number): void {
-    console.log(agentId);
     this.store.dispatch(agentDeleteRequested({ agentId }));
   }
 

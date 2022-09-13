@@ -35,7 +35,6 @@ export class AuthGuard implements CanActivate {
   canActivate(next: ActivatedRouteSnapshot, { url }: RouterStateSnapshot): Observable<boolean> | boolean {
     const requiresLogin = next.data['requiresLogin'] || false;
     if (!requiresLogin) {
-      console.log(requiresLogin);
     }
     this.accessToken$ = this.store.select(selectAccessToken);
 

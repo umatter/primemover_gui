@@ -27,8 +27,6 @@ export class SelectNativeComponent implements OnInit {
   }
 
   onValueChanged(value: any) {
-    console.log('onValueChanged');
-    console.log(value);
   }
 
   setDefaults() {
@@ -36,11 +34,8 @@ export class SelectNativeComponent implements OnInit {
   }
 
   submit() {
-    console.log('Form Submitted');
-    console.log(this.form.value);
   }
 
   clicked(test: any) {
-    console.log(test);
   }
 }

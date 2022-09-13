@@ -8,6 +8,5 @@ export class WithFooterComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
-    console.log('WithFooterComponent init');
   }
 }

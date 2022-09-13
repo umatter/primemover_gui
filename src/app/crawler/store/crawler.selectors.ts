@@ -10,21 +10,7 @@ export const selectPageRequested = createSelector(selectCrawler, (state) => stat
 export const selectCurrentCrawler = createSelector(selectCrawler, (state) => state?.current || null);
 export const selectIsLoading = createSelector(selectCrawler, (state) => state.isLoading);
 export const selectCrawlerCreateFormValues = createSelector(selectCrawler, (state) => state.form);
-
-
-export const selectCrawlerFormValid = createSelector(
-  selectCrawlerCreateFormValues,
-  (form) => form?.valid || false
-);
-
 export const experimentList = createSelector(selectCrawler, (state) => state.collection);
 export const proxyList = createSelector(selectCrawler, (state) => state.proxy);
 export const agentList = createSelector(selectCrawler, (state) => state.agent);
 export const configList = createSelector(selectCrawler, (state) => state.config);
-
-
-
-
-
-
-

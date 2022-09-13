@@ -57,7 +57,6 @@ export class ExperimentComponent implements OnInit, OnDestroy {
   }
 
   deleteExperiment(experimentId: number): void {
-    console.log(experimentId);
     this.store.dispatch(experimentDeleteRequested({ experimentId }));
   }
 

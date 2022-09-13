@@ -10,6 +10,5 @@ export class MainWrapperComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
-    console.log('MainWrapperComponent init');
   }
 }

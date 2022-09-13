@@ -8,6 +8,5 @@ export class MobileMenuComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
-    console.log('MobileMenuComponent init');
   }
 }

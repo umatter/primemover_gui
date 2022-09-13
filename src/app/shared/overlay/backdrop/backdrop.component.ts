@@ -10,6 +10,5 @@ export class BackdropComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
-    console.log('BackdropComponent init');
   }
 }

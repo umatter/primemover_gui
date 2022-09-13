@@ -32,9 +32,8 @@
             <div class="mt-1 sm:mt-0 sm:col-span-2">
               <select id="experiment_id" name="experiment_id" formControlName="experiment_id"
                 class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-                <option selected>{{ 'common.select' | translate }} ...</option>
                 <option *ngFor="let experiment of experiments" [ngValue]="experiment.id">
-                  {{ experiment.name }}
+                  {{ experiment.name |titlecase }}
                 </option>
               </select>
               <p @fadeIn *ngIf="hasError('experiment_id', 'required')" class="mt-2 text-sm text-red-600"
@@ -46,59 +45,56 @@
           </div>
 
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-            <label for="experiment_id" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
+            <label for="agent_id" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
               {{ 'agent.label' | translate }}
             </label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <select id="experiment_id" name="agent_id" formControlName="agent_id"
+              <select id="agent_id" name="agent_id" formControlName="agent_id"
                 class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-                <option selected>{{ 'common.select' | translate }} ...</option>
                 <option *ngFor="let agent of agents" [ngValue]="agent.id">
-                  {{ agent.name }}
+                  {{ agent.name |titlecase  }}
                 </option>
               </select>
-              <p @fadeIn *ngIf="hasError('experiment_id', 'required')" class="mt-2 text-sm text-red-600"
+              <p @fadeIn *ngIf="hasError('agent_id', 'required')" class="mt-2 text-sm text-red-600"
                 id="experiment-error">
-                {{ 'common.experimentRequiredError' | translate }}
+                {{ 'common.agentRequiredError' | translate }}
               </p>
             </div>
             <button mat-raised-button color="primary" (click)="agentPopup()">New Agent</button>
           </div>
 
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-            <label for="experiment_id" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
+            <label for="configuration_id" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
               {{ 'config.label' | translate }}
             </label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <select id="experiment_id" name="config_id" formControlName="configuration_id"
+              <select id="configuration_id" name="config_id" formControlName="configuration_id"
                 class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-                <option selected>{{ 'common.select' | translate }} ...</option>
                 <option *ngFor="let config of configurations" [ngValue]="config.id">
-                  {{ config.name }}
+                  {{ config.name |titlecase  }}
                 </option>
               </select>
-              <p @fadeIn *ngIf="hasError('experiment_id', 'required')" class="mt-2 text-sm text-red-600"
+              <p @fadeIn *ngIf="hasError('configuration_id', 'required')" class="mt-2 text-sm text-red-600"
                 id="experiment-error">
-                {{ 'common.experimentRequiredError' | translate }}
+                {{ 'common.configurationRequiredError' | translate }}
               </p>
             </div>
             <button mat-raised-button color="primary" (click)="configurationPopup()">New Configuration</button>
           </div>
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-            <label for="experiment_id" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
+            <label for="proxy_id" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
               {{ 'proxy.label' | translate }}
             </label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <select id="experiment_id" name="proxy_id" formControlName="proxy_id"
+              <select id="proxy_id" name="proxy_id" formControlName="proxy_id"
                 class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
-                <option selected>{{ 'common.select' | translate }} ...</option>
                 <option *ngFor="let proxy of proxies" [ngValue]="proxy.id">
-                  {{ proxy.name }}
+                  {{ proxy.name |titlecase  }}
                 </option>
               </select>
-              <p @fadeIn *ngIf="hasError('experiment_id', 'required')" class="mt-2 text-sm text-red-600"
+              <p @fadeIn *ngIf="hasError('proxy_id', 'required')" class="mt-2 text-sm text-red-600"
                 id="experiment-error">
-                {{ 'common.experimentRequiredError' | translate }}
+                {{ 'common.proxyRequiredError' | translate }}
               </p>
             </div>
             <button mat-raised-button color="primary" (click)="proxyPopup()">New Proxy</button>
@@ -125,8 +121,8 @@
           class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
           {{ 'common.cancel' | translate }}
         </button>
-        <button type="button" [disabled]="(formValid$ | async) === false"
-          [ngClass]="{ 'opacity-25 hover:bg-indigo-600 ': (formValid$ | async) === false }" (click)="saveCrawler()"
+        <button type="button" [disabled]="!crawlerForm.valid"
+          [ngClass]="{ 'opacity-25 hover:bg-indigo-600 ': !crawlerForm.valid}" (click)="saveCrawler()"
           class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
           {{ 'common.save' | translate }}
         </button>

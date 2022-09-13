@@ -8,6 +8,5 @@ export class WideButtonsCenteredComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
-    console.log('WideButtonsCenteredComponent init');
   }
 }

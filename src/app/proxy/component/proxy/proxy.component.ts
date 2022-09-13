@@ -57,7 +57,6 @@ export class ProxyComponent implements OnInit, OnDestroy {
   }
 
   deleteProxy(proxyId: number): void {
-    console.log(proxyId);
     this.store.dispatch(proxyDeleteRequested({ proxyId }));
   }
 

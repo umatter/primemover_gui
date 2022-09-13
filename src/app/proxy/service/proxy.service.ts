@@ -56,7 +56,6 @@ export class ProxyService {
   }
 
   public deleteProxy(proxyId: number): Observable<any> {
-    console.log(proxyId);
     return this.http.delete<any>(`${this.config.apiBaseUrl}/proxies/${proxyId}`);
   }
 

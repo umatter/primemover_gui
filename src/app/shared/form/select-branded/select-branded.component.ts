@@ -8,6 +8,5 @@ export class SelectBrandedComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
-    console.log('SelectBrandedComponent init');
   }
 }

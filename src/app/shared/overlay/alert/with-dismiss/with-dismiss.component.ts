@@ -8,6 +8,5 @@ export class WithDismissComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
-    console.log('WithDismissComponent init');
   }
 }

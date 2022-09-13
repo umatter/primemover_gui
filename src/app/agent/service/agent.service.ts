@@ -56,7 +56,6 @@ export class AgentService {
   }
 
   public deleteAgent(agentId: number): Observable<any> {
-    console.log(agentId);
     return this.http.delete<any>(`${this.config.apiBaseUrl}/agents/${agentId}`);
   }
 

@@ -57,7 +57,6 @@ export class ConfigComponent implements OnInit, OnDestroy {
   }
 
   deleteConfiguration(configurationId: number): void {
-    console.log(configurationId);
     this.store.dispatch(configurationDeleteRequested({ configurationId }));
   }
 

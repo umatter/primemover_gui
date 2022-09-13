@@ -8,6 +8,5 @@ export class WithButtonsComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
-    console.log('WithButtonsComponent init');
   }
 }

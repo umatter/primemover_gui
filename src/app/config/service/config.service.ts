@@ -47,7 +47,6 @@ export class ConfigService {
   }
 
   public deleteConfiguration(configurationId: number): Observable<any> {
-    console.log(configurationId);
     return this.http.delete<any>(`${this.config.apiBaseUrl}/configurations/${configurationId}`);
   }
 

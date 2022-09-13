@@ -13,7 +13,6 @@ export class ControlsComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
-    console.log('ControlsComponent init');
   }
 
   onPageChange(event: any): void {

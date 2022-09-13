@@ -10,6 +10,5 @@ export class SingleActionCenteredComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
-    console.log('SingleActionCenteredComponent init');
   }
 }
