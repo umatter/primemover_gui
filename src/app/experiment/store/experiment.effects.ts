@@ -41,7 +41,7 @@ export class ExperimentEffects {
       tap((val) => console.log(val)),
       switchMap(() =>
         this.apiService.simpleIndex().pipe(
-          map((list) => experimentsSimpleListRetrieved({list})),
+          map((list) => experimentsSimpleListRetrieved({ list })),
           catchError((error) => of(experimentsRequestFailed(error)))
         )
       )
@@ -80,14 +80,14 @@ export class ExperimentEffects {
     )
   );
 
-  experimentCreateSuccess$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(experimentCreateSuccess),
-        tap(() => this.router.navigate(['experiments']))
-      ),
-    { dispatch: false }
-  );
+  // experimentCreateSuccess$ = createEffect(
+  //   () =>
+  //     this.actions$.pipe(
+  //       ofType(experimentCreateSuccess),
+  //       tap(() => this.router.navigate(['experiments']))
+  //     ),
+  //   { dispatch: false }
+  // );
 
   experimentDeleteSuccess$ = createEffect(() =>
     this.actions$.pipe(
@@ -108,5 +108,5 @@ export class ExperimentEffects {
     private store: Store,
     private apiService: ExperimentService,
     private router: Router
-  ) {}
+  ) { }
 }

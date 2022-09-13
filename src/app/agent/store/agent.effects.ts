@@ -81,14 +81,14 @@ export class AgentEffects {
     )
   );
 
-  agentCreateSuccess$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(agentCreateSuccess),
-        tap(() => this.router.navigate(['agents']))
-      ),
-    { dispatch: false }
-  );
+  // agentCreateSuccess$ = createEffect(
+  //   () =>
+  //     this.actions$.pipe(
+  //       ofType(agentCreateSuccess),
+  //       tap(() => this.router.navigate(['agents']))
+  //     ),
+  //   { dispatch: false }
+  // );
 
   agentDeleteSuccess$ = createEffect(() =>
     this.actions$.pipe(

@@ -80,14 +80,14 @@ export class ConfigEffects {
     )
   );
 
-  configurationCreateSuccess$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(configurationCreateSuccess),
-        tap(() => this.router.navigate(['configurations']))
-      ),
-    { dispatch: false }
-  );
+  // configurationCreateSuccess$ = createEffect(
+  //   () =>
+  //     this.actions$.pipe(
+  //       ofType(configurationCreateSuccess),
+  //       tap(() => this.router.navigate(['configurations']))
+  //     ),
+  //   { dispatch: false }
+  // );
 
   configurationDeleteSuccess$ = createEffect(() =>
     this.actions$.pipe(

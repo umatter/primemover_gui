@@ -6,5 +6,4 @@ export type AgentFormValues = {
   multilogin_profile: string;
   location: string;
   active: boolean;
-  valid: boolean
 };

@@ -6,7 +6,7 @@ import { fadeIn } from '../../../shared/animation/trigger';
 import { debounceTime, Observable, Subscription } from 'rxjs';
 import { completeConfigurationCreateRequested, updateConfigurationCreateValues } from '../../store/config.actions';
 import { Router } from '@angular/router';
-import { selectConfigurationFormValid, selectConfigurationsListData } from '../../store/config.selectors';
+import { selectConfigurationsListData } from '../../store/config.selectors';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
@@ -31,7 +31,7 @@ export class ConfigCreateComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.formValid$ = this.store.pipe(select(selectConfigurationFormValid));
+    // this.formValid$ = this.store.pipe(select(selectConfigurationFormValid));
     this.configurationForm = this.formBuilder.group({
       name: [null, [Validators.required]],
       description: [null, [Validators.maxLength(1024)]]
@@ -44,7 +44,6 @@ export class ConfigCreateComponent implements OnInit, OnDestroy {
             name: formValue.name,
             active: true,
             description: formValue.description,
-            valid: this.configurationForm.valid
           })
         );
       })
@@ -64,16 +63,18 @@ export class ConfigCreateComponent implements OnInit, OnDestroy {
   }
 
   saveConfiguration(): void {
-    this.store.dispatch(completeConfigurationCreateRequested());
-    if (this.isPopup) {
-      this.configDialog.close();
+
+    if (!this.configurationForm.valid) {
+      return
     }
+    this.store.dispatch(completeConfigurationCreateRequested());
+    this.onClose(true)
   }
 
-  onClose(){
+  onClose(close: boolean) {
     if (this.isPopup) {
-      this.configDialog.close();
-    }else{
+      this.configDialog.close(close);
+    } else {
       this.router.navigate(['configurations'])
     }
   }

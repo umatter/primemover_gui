@@ -70,8 +70,7 @@ export class AgentCreateComponent implements OnInit, OnDestroy {
             multilogin_id: formValue.multilogin_id,
             multilogin_profile: formValue.multilogin_profile,
             location: formValue.location,
-            active: formValue.active,
-            valid: this.agentForm.valid
+            active: formValue.active
 
           })
         );
@@ -92,18 +91,18 @@ export class AgentCreateComponent implements OnInit, OnDestroy {
   }
 
   saveAgent(): void {
-    this.store.dispatch(completeAgentCreateRequested());
-    if (this.isPopup) {
-      this.agentDialog.close(true);
+    if (!this.agentForm.valid) {
+      return
     }
+    this.store.dispatch(completeAgentCreateRequested());
+    this.onClose(true)
   }
 
 
 
-  onClose() {
-    console.log(this.isPopup)
+  onClose(close: boolean) {
     if (this.isPopup) {
-      this.agentDialog.close(true)
+      this.agentDialog.close(close)
     } else {
       this.router.navigate(['agents'])
     }

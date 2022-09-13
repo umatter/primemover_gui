@@ -142,11 +142,11 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
       experiementDialog.afterClosed().pipe().subscribe(experiement => {
 
         this.store.pipe(select(experimentCreateSuccess)).subscribe((experiement) => {
-     console.log(experiement)
+          console.log(experiement)
         })
-        
+
         console.log('closing')
-    
+
       }, (err) => {
         console.log(err);
       });
@@ -170,9 +170,9 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
       proxyDialog.afterClosed().pipe().subscribe(proxy => {
         if (proxy) {
           const { data } = proxy;
-          if (data.id) {
-            // this.proxies.push(data)
-          }
+          // if (data.id) {
+          //   // this.proxies.push(data)
+          // }
         }
       }, (err) => {
         console.log(err);
@@ -196,9 +196,9 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
       agentDialog.afterClosed().pipe().subscribe(agent => {
         if (agent) {
           const { data } = agent;
-          if (data.id) {
-            // this.agents.push(data);
-          }
+          // if (data.id) {
+          //   // this.agents.push(data);
+          // }
         }
       }, (err) => {
         console.log(err);
@@ -224,9 +224,9 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
         configurationDialog.afterClosed().subscribe(configuration => {
           if (configuration) {
             const { data } = configuration;
-            if (data.id) {
-              // this.configurations.push(data);
-            }
+            // if (data.id) {
+            //   // this.configurations.push(data);
+            // }
           }
         }, (err) => {
           console.error(err);

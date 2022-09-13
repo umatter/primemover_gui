@@ -80,14 +80,14 @@ export class ProxyEffects {
     )
   );
 
-  proxyCreateSuccess$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(proxyCreateSuccess),
-        tap(() => this.router.navigate(['proxies']))
-      ),
-    { dispatch: false }
-  );
+  // proxyCreateSuccess$ = createEffect(
+  //   () =>
+  //     this.actions$.pipe(
+  //       ofType(proxyCreateSuccess),
+  //       tap(() => this.router.navigate(['proxies']))
+  //     ),
+  //   { dispatch: false }
+  // );
 
   proxyDeleteSuccess$ = createEffect(() =>
     this.actions$.pipe(

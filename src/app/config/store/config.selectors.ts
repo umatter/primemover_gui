@@ -14,7 +14,3 @@ export const selectTotalRecords = createSelector(selectConfigurationsList, (stat
 export const selectPageRequested = createSelector(selectConfiguration, (state) => state.pageRequested || 1);
 export const selectIsLoading = createSelector(selectConfiguration, (state) => state.isLoading);
 export const selectConfigurationCreateFormValues = createSelector(selectConfiguration, (state) => state?.form);
-export const selectConfigurationFormValid = createSelector(
-  selectConfigurationCreateFormValues,
-  (form) => form?.valid || false
-);
