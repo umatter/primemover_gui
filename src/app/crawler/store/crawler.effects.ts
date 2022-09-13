@@ -27,14 +27,12 @@ import {
   configRequestFailed
 } from './crawler.actions';
 import {
-
   selectCrawlerCreateFormValues
 } from './crawler.selectors';
-
 import { TypedAction } from '@ngrx/store/src/models';
-
 import { currentExperimentResetRequested, experimentPageRequested } from '../../experiment/store/experiment.actions';
 import { updateQueryFilter } from '../../shared/store/shared.actions';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class CrawlerEffects {
@@ -142,5 +140,15 @@ export class CrawlerEffects {
     )
   );
 
-  constructor(private actions$: Actions, private store: Store, private apiService: CrawlerService) { }
+
+  experimentCreateSuccess$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(experimentCreateSuccess),
+        tap(() => this.router.navigate(['crawlers']))
+      ),
+    { dispatch: false }
+  );
+  constructor(private actions$: Actions, private store: Store, private apiService: CrawlerService, private router: Router
+  ) { }
 }

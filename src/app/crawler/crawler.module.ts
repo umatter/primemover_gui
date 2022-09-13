@@ -17,6 +17,8 @@ import { ConfigEffects } from '../config/store/config.effects';
 import { proxyReducer } from '../proxy/store/proxy.reducer';
 import { agentReducer } from '../agent/store/agent.reducer';
 import { configReducer } from '../config/store/config.reducer';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
 @NgModule({
   declarations: [CrawlerComponent, CrawlerCreateComponent],
   imports: [
@@ -36,6 +38,7 @@ import { configReducer } from '../config/store/config.reducer';
     EffectsModule.forFeature([ConfigEffects]),
     NgxPaginationModule,
     SharedModule,
+    MatProgressSpinnerModule
   ]
 })
 export class CrawlerModule { }

@@ -30,6 +30,10 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
   configurations: any;
   agentsData: any;
   paginationConfig: PaginatePipeArgs;
+  proxyLoader: boolean = true
+  configurationLoader = true
+  agentLoader: boolean = true
+  experimentLoader: boolean = true
   constructor(private store: Store, private formBuilder: FormBuilder, public router: Router, private matDialog: MatDialog) { }
 
   ngOnInit(): void {
@@ -86,61 +90,59 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
       return
     }
     this.store.dispatch(completeCrawlerCreateRequested());
-    this.router.navigate(['/crawlers'])
   }
 
-
-  getProxies() {
+  getProxies(setFirstValue?: boolean) {
     this.store.dispatch(proxyRequest())
     this.store.pipe(select(proxyList)).subscribe((proxy) => {
-      this.proxies = proxy.data;
-      this.crawlerForm.controls['proxy_id']?.setValue(this.proxies[0]?.id)
+      if (proxy.data?.length) {
+        this.proxies = proxy.data;
+        this.proxyLoader = false;
+        if (setFirstValue) {
+          this.crawlerForm.controls['proxy_id']?.setValue(proxy.data[0]?.id)
+        }
+      }
     })
   }
-
 
   getExperiment() {
+    this.experimentLoader = true;
     this.store.dispatch(experimentRequest())
     this.store.pipe(select(experimentList)).subscribe((experiment) => {
-      this.experiments = experiment.data;
-      this.crawlerForm.controls['experiment_id']?.setValue(this.experiments[0]?.id)
-
+      if (experiment.data?.length) {
+        this.experiments = experiment.data;
+        this.experimentLoader = false;
+      }
     })
   }
 
-  getConfig() {
+  getConfig(setFirstValue?: boolean) {
+    this.configurationLoader = true;
+
     this.store.dispatch(configRequest())
     this.store.pipe(select(configList)).subscribe((configurations) => {
-      this.configurations = configurations.data;
-      this.crawlerForm.controls['configuration_id']?.setValue(this.configurations[0]?.id)
+      if (configurations.data?.length) {
+        this.configurations = configurations.data;
+        this.configurationLoader = false;
+        if (setFirstValue) {
+          this.crawlerForm.controls['configuration_id']?.setValue(configurations.data[0]?.id)
+        }
+      }
     });
   }
 
-  getAgents() {
+  getAgents(setFirstValue?: boolean) {
+    this.agentLoader = true;
     this.store.dispatch(agentRequest())
     this.store.pipe(select(agentList)).subscribe((agent) => {
-      this.agents = agent.data;
-      this.crawlerForm.controls['agent_id']?.setValue(this.agents[0]?.id)
-    })
-  }
-
-
-  expirementPopup(): void {
-    const experiementDialog = this.matDialog.open(ExperimentCreateComponent, {
-      data: { isPopup: true },
-      width: '550px',
-      hasBackdrop: true,
-    });
-    if (experiementDialog) {
-      experiementDialog.afterClosed().pipe().subscribe(experiement => {
-        if (experiement) {
-          this.getExperiment();
+      if (agent.data?.length) {
+        this.agents = agent.data;
+        this.agentLoader = false;
+        if (setFirstValue) {
+          this.crawlerForm.controls['agent_id']?.setValue(agent.data[0]?.id)
         }
-
-      }, (err) => {
-        console.log(err);
-      });
-    }
+      }
+    })
   }
 
   proxyPopup(): void {
@@ -152,7 +154,7 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
     if (proxyDialog) {
       proxyDialog.afterClosed().pipe().subscribe(proxy => {
         if (proxy) {
-          this.getProxies();
+          this.getProxies(true);
         }
       }, (err) => {
         console.log(err);
@@ -170,7 +172,7 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
     if (agentDialog) {
       agentDialog.afterClosed().pipe().subscribe(agent => {
         if (agent) {
-          this.getAgents();
+          this.getAgents(true);
         }
       }, (err) => {
         console.log(err);
@@ -188,7 +190,7 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
       this.subscriptions.add(
         configurationDialog.afterClosed().subscribe(configuration => {
           if (configuration) {
-            this.getConfig();
+            this.getConfig(true);
           }
         }, (err) => {
           console.error(err);

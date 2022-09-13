@@ -24,39 +24,50 @@
               </p>
             </div>
           </div>
-
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
             <label for="experiment_id" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
               {{ 'experiment.label' | translate }}
             </label>
+            
             <div class="mt-1 sm:mt-0 sm:col-span-2">
+              <div class="relative">
+              <div *ngIf="experimentLoader" class="spinr">
+                <mat-spinner class="spin"></mat-spinner>
+              </div>
               <select id="experiment_id" name="experiment_id" formControlName="experiment_id"
-                class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                <option [ngValue]="null" selected disabled hidden>{{'common.select' | translate}}</option>
                 <option *ngFor="let experiment of experiments" [ngValue]="experiment.id">
                   {{ experiment.name |titlecase }}
                 </option>
               </select>
+            </div>
               <p @fadeIn *ngIf="hasError('experiment_id', 'required')" class="mt-2 text-sm text-red-600"
                 id="experiment-error">
                 {{ 'common.experimentRequiredError' | translate }}
               </p>
             </div>
           </div>
-          <!-- <button mat-raised-button color="primary" (click)="expirementPopup()">New Experiement</button> -->
-
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
             <label for="agent_id" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
               {{ 'agent.label' | translate }}
             </label>
+            
             <div class="mt-1 sm:mt-0 sm:col-span-2">
               <div class="flex">
+                <div class="relative grow mr-3">
+                  <div *ngIf="agentLoader" class="spinr">
+                    <mat-spinner class="spin"></mat-spinner>
+                  </div>
                 <select id="agent_id" name="agent_id" formControlName="agent_id"
                 class="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                <option [ngValue]="null" selected disabled hidden>{{'common.select' | translate}}</option>
                 <option *ngFor="let agent of agents" [ngValue]="agent.id">
                   {{ agent.name |titlecase }}
                 </option>
               </select>
-              <button mat-raised-button class="w-auto" color="primary" (click)="agentPopup()">New Agent</button>
+            </div>
+              <button mat-raised-button class="w-28 ml-3.5" color="primary" (click)="agentPopup()">New Agent</button>
               </div>
               
               <p @fadeIn *ngIf="hasError('agent_id', 'required')" class="mt-2 text-sm text-red-600"
@@ -71,32 +82,54 @@
             <label for="configuration_id" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
               {{ 'config.label' | translate }}
             </label>
+            
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <select id="configuration_id" name="config_id" formControlName="configuration_id"
-                class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+              <div class="flex">
+                <div class="relative mr-3 grow">
+                  <div *ngIf="configurationLoader" class="spinr">
+                    <mat-spinner class="spin"></mat-spinner>
+                  </div>
+                  <select id="configuration_id" name="config_id" formControlName="configuration_id"
+                class=" block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                <option [ngValue]="null" selected disabled hidden>{{'common.select' | translate}}</option>
                 <option *ngFor="let config of configurations" [ngValue]="config.id">
                   {{ config.name |titlecase }}
                 </option>
               </select>
+                </div>
+              
+              <button mat-raised-button color="primary" (click)="configurationPopup()">New Configuration</button>
+            </div>
               <p @fadeIn *ngIf="hasError('configuration_id', 'required')" class="mt-2 text-sm text-red-600"
                 id="experiment-error">
                 {{ 'common.configurationRequiredError' | translate }}
               </p>
             </div>
           </div>
-          <button mat-raised-button color="primary" (click)="configurationPopup()">New Configuration</button>
+          
 
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
             <label for="proxy_id" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
               {{ 'proxy.label' | translate }}
             </label>
+            
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <select id="proxy_id" name="proxy_id" formControlName="proxy_id"
-                class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+              <div class="flex">
+                <div class="relative grow mr-3">
+                <div *ngIf="proxyLoader" class="spinr">
+                  <mat-spinner class="spin"></mat-spinner>
+                </div>
+                <select id="proxy_id" name="proxy_id" formControlName="proxy_id"
+                class="block grow w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                <option [ngValue]="null" selected disabled hidden>{{'common.select' | translate}}</option>
                 <option *ngFor="let proxy of proxies" [ngValue]="proxy.id">
                   {{ proxy.name |titlecase }}
                 </option>
               </select>
+            </div>
+              <button mat-raised-button color="primary" (click)="proxyPopup()">New Proxy</button>
+              </div>
+              
               <p @fadeIn *ngIf="hasError('proxy_id', 'required')" class="mt-2 text-sm text-red-600"
                 id="experiment-error">
                 {{ 'common.proxyRequiredError' | translate }}
@@ -104,7 +137,7 @@
             </div>
 
           </div>
-          <button mat-raised-button color="primary" (click)="proxyPopup()">New Proxy</button>
+          
 
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
             <label for="description" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
