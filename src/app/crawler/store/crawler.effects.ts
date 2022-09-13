@@ -12,7 +12,13 @@ import {
   initCrawlers,
   completeCrawlerCreateRequested,
   experimentCreateSuccess,
-  experimentCreateError
+  experimentCreateError,
+  experimentRequest,
+  experimentsRetrieved,
+  experimentRequestFailed,
+  proxyRequest,
+  proxiesRetrieved,
+  proxyRequestFailed
 } from './crawler.actions';
 import {
 
@@ -64,6 +70,31 @@ export class CrawlerEffects {
     )
   );
 
+
+  experimentRequested$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(experimentRequest),
+      switchMap(() =>
+        this.apiService.experimentData().pipe(
+          map((response) => experimentsRetrieved({ collection: response })),
+          catchError((error) => of(experimentRequestFailed(error)))
+        )
+      )
+    )
+  );
+
+
+  proxyRequested$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(proxyRequest),
+      switchMap(() =>
+        this.apiService.proxiesData().pipe(
+          map((response) => proxiesRetrieved({ proxy: response })),
+          catchError((error) => of(proxyRequestFailed(error)))
+        )
+      )
+    )
+  );
 
 
   completeCrawlerCreateRequested$ = createEffect(() =>

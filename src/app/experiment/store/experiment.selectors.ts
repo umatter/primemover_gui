@@ -18,3 +18,6 @@ export const selectExperimentFormValid = createSelector(
   selectExperimentCreateFormValues,
   (form) => form?.valid || false
 );
+
+export const getExperimentState = createSelector(selectExperiment, (state) => state);
+

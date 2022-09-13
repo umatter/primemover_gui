@@ -25,3 +25,19 @@ export const experimentCreateSuccess = createAction('[Crawler] Create success', 
 export const experimentDeleteSuccess = createAction('[Crawler] Delete success', props<any>());
 export const experimentCreateError = createAction('[Crawler] Create error', props<{ err: HttpErrorResponse }>());
 export const experimentDeleteError = createAction('[Crawler] Delete error', props<{ err: HttpErrorResponse }>());
+
+export const experimentRequest = createAction('[Experiment] Data requested');
+export const experimentsRetrieved = createAction('[Experiment] Crawlers retrieved', props<{ collection: any }>());
+export const experimentRequestFailed = createAction('[Erawler] Request failed', props<{ error: any }>());
+
+
+
+export const proxyRequest = createAction('[proxy] Data requested');
+export const proxiesRetrieved = createAction('[proxy] proxy retrieved', props<{ proxy: any }>());
+export const proxyRequestFailed = createAction('[proxy] Request failed', props<{ error: any }>());
+
+
+
+
+
+

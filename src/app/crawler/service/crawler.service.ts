@@ -35,6 +35,15 @@ export class CrawlerService {
   }
 
 
+  public experimentData(): Observable<[DataCollection]> {
+    return this.http.get<[DataCollection]>(`${this.config.apiBaseUrl}/experiments`);
+  }
+
+  public proxiesData(): Observable<[DataCollection]> {
+    return this.http.get<[DataCollection]>(`${this.config.apiBaseUrl}/proxies`);
+  }
+
+
   public crawlerCreate(configurationValues: any | undefined): Observable<any> {
     let crawler = {
       agent_id: configurationValues.agent_id,

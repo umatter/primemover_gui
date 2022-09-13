@@ -6,7 +6,7 @@ import { fadeIn } from '../../../shared/animation/trigger';
 import { debounceTime, Observable, Subscription } from 'rxjs';
 import { completeConfigurationCreateRequested, updateConfigurationCreateValues } from '../../store/config.actions';
 import { Router } from '@angular/router';
-import { selectConfigurationFormValid } from '../../store/config.selectors';
+import { selectConfigurationFormValid, selectConfigurationsListData } from '../../store/config.selectors';
 
 @Component({
   selector: 'app-config-create',
@@ -29,6 +29,10 @@ export class ConfigCreateComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+
+    // this.store.pipe(select(selectConfigurationsListData)).subscribe((config) => {
+    //   console.log(config);
+    // })
     this.formValid$ = this.store.pipe(select(selectConfigurationFormValid));
     this.configurationForm = this.formBuilder.group({
       name: [null, [Validators.required]],

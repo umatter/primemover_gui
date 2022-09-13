@@ -4,7 +4,7 @@ import {
   crawlerRequested,
   crawlerResetRequested,
   crawlersRetrieved,
-  currentCrawlerResetRequested, updateCrawlerCreateValues
+  currentCrawlerResetRequested, experimentsRetrieved, proxiesRetrieved, updateCrawlerCreateValues
 } from './crawler.actions';
 import { DataCollection } from '../../shared/model/data-collection';
 import { PaginatePipeArgs } from 'ngx-pagination';
@@ -14,6 +14,7 @@ import { updateExperimentCreateValues } from '../../experiment/store/experiment.
 
 export interface CrawlerState {
   collection: DataCollection;
+  proxy: DataCollection;
   pagination: PaginatePipeArgs;
   current: Crawler | null;
   isLoading: boolean;
@@ -23,6 +24,7 @@ export interface CrawlerState {
 
 export const initialState: CrawlerState = {
   collection: { data: [], links: null, meta: null },
+  proxy: { data: [], links: null, meta: null },
   pagination: { id: 'crawlers', itemsPerPage: 10, currentPage: 1, totalItems: 0 },
   current: null,
   isLoading: false,
@@ -46,7 +48,13 @@ const reducer = createReducer(
       currentPage: action.collection.meta?.current_page,
       totalItems: action.collection.meta?.total
     }
-  }))
+  })),
+
+
+  on(experimentsRetrieved, (state, action) => ({ ...state, collection: action.collection })),
+  on(proxiesRetrieved, (state, action) => ({ ...state, proxy: action.proxy })),
+
+
 );
 
 export function crawlerReducer(state: CrawlerState | undefined, action: Action): any {

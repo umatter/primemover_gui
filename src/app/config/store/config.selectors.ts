@@ -3,7 +3,7 @@ import { ConfigurationState } from './config.reducer';
 
 export const selectConfiguration = createFeatureSelector<ConfigurationState>('config');
 export const selectConfigurationsList = createSelector(selectConfiguration, (state) => state.collection);
-export const selectConfigurationsListData = createSelector(selectConfiguration, (state) => state.collection?.data);
+export const selectConfigurationsListData = createSelector(selectConfiguration, (state) => state?.collection?.data);
 export const selectConfigurationsSimpleList = createSelector(selectConfiguration, (state) => state.list);
 export const selectConfigurationsPagination = createSelector(selectConfiguration, (state) => state.pagination);
 export const selectConfigurationsPaginationMeta = createSelector(selectConfiguration, (state) => state.collection?.meta);
