@@ -41,6 +41,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { TypeaheadComponent } from './typeahead/typeahead.component';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [
@@ -93,6 +94,7 @@ import { TypeaheadComponent } from './typeahead/typeahead.component';
     MatCheckboxModule,
     MatSelectModule,
     MatButtonModule,
+    MatIconModule,
 
   ],
   exports: [
@@ -120,6 +122,7 @@ import { TypeaheadComponent } from './typeahead/typeahead.component';
     MatSelectModule,
     TypeaheadComponent,
     MatButtonModule,
+    MatIconModule,
   ],
 
   providers: [DatePipe,

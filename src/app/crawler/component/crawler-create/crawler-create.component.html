@@ -43,8 +43,8 @@
               {{ 'agent.label' | translate }}
             </label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <div class="grid grid-cols-3">
-                <div class="relative col-span-2 ">
+              <div class="flex">
+                <div class="relative grow mr-8">
                   <div *ngIf="agentLoader" class="spinr">
                     <mat-spinner class="spin"></mat-spinner>
                   </div>
@@ -60,8 +60,8 @@
               {{ 'config.label' | translate }}
             </label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <div class="grid grid-cols-3">
-                <div class="relative col-span-2 ">
+              <div class="flex">
+                <div class="relative grow mr-8">
                   
                   <div *ngIf="configurationLoader" class="spinr absolute right-2">
                     <mat-spinner class="spin"></mat-spinner>
@@ -83,8 +83,8 @@
             </label>
 
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <div class="grid grid-cols-3">
-                <div class="relative col-span-2 ">
+              <div class="flex">
+                <div class="relative grow mr-8">
                   <div *ngIf="proxyLoader" class="spinr">
                     <mat-spinner class="spin"></mat-spinner>
                   </div>
