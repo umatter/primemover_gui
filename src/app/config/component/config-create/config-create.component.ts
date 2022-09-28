@@ -19,6 +19,7 @@ export class ConfigCreateComponent implements OnInit, OnDestroy {
   subscriptions = new Subscription();
   formValid$: Observable<boolean>;
   isPopup = false;
+  selected = false;
 
   constructor(@Optional() private configDialog: MatDialogRef<ConfigCreateComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private store: Store, private formBuilder: FormBuilder, public router: Router) { }
 
@@ -62,18 +63,31 @@ export class ConfigCreateComponent implements OnInit, OnDestroy {
     );
   }
 
-  saveConfiguration(): void {
 
+  setcontrolValue(configuration: any) {
+    this.selected = true;
+    const { item } = configuration;
+    this.configurationForm.controls['name'].setValue(item.name)
+    this.configurationForm.controls['active'].setValue(item.active)
+    this.configurationForm.controls['description'].setValue(item.description)
+  }
+
+
+  saveConfiguration(): void {
     if (!this.configurationForm.valid) {
       return
     }
-    this.store.dispatch(completeConfigurationCreateRequested());
+
+    if (!this.selected) {
+      this.store.dispatch(completeConfigurationCreateRequested());
+
+    }
     this.onClose(true)
   }
 
   onClose(close: boolean) {
     if (this.isPopup) {
-      this.configDialog.close(close);
+      this.configDialog.close(this.configurationForm.value);
     } else {
       this.router.navigate(['configurations'])
     }

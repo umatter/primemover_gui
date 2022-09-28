@@ -16,12 +16,14 @@
               {{ 'common.name' | translate }}
             </label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <input type="text" name="name" id="name" autocomplete="name" formControlName="name"
+              <app-typeahead [controlField]="'configuration_id'" (typeahead)="setcontrolValue($event)">
+              </app-typeahead>
+              <!-- <input type="text" name="name" id="name" autocomplete="name" formControlName="name"
                 placeholder="{{ 'common.namePlaceholder' | translate }}"
                 class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md" />
               <p @fadeIn *ngIf="hasError('name', 'required')" class="mt-2 text-sm text-red-600" id="name-error">
                 {{ 'common.nameRequiredError' | translate }}
-              </p>
+              </p> -->
             </div>
           </div>
 

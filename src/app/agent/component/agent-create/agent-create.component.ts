@@ -19,6 +19,7 @@ export class AgentCreateComponent implements OnInit, OnDestroy {
   subscriptions = new Subscription();
   formValid$: Observable<boolean>;
   isPopup = false;
+  selected = false;
 
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, private store: Store, private formBuilder: FormBuilder, public router: Router, private agentDialog: MatDialogRef<AgentCreateComponent>) { }
 
@@ -55,6 +56,8 @@ export class AgentCreateComponent implements OnInit, OnDestroy {
       multilogin_id: ['', [Validators.required]],
       multilogin_profile: ['', [Validators.required]],
       location: ['', [Validators.required]],
+      id: [''],
+
       active: [1],
     });
     this.isPopup = this.data.isPopup;
@@ -94,15 +97,32 @@ export class AgentCreateComponent implements OnInit, OnDestroy {
     if (!this.agentForm.valid) {
       return
     }
-    this.store.dispatch(completeAgentCreateRequested());
+    if (!this.selected) {
+      this.store.dispatch(completeAgentCreateRequested());
+
+    }
     this.onClose(true)
+  }
+
+  setcontrolValue(agent: any) {
+    this.selected = true;
+    const { item } = agent;
+    this.agentForm.controls['id'].setValue(item.id)
+
+    this.agentForm.controls['name'].setValue(item.name)
+    this.agentForm.controls['description'].setValue(item.description)
+    this.agentForm.controls['identification'].setValue(item.identification)
+    this.agentForm.controls['multilogin_id'].setValue(item.multilogin_id)
+    this.agentForm.controls['multilogin_profile'].setValue(item.multilogin_profile)
+    this.agentForm.controls['location'].setValue(item.location)
+    this.agentForm.controls['active'].setValue(item.active)
   }
 
 
 
   onClose(close: boolean) {
     if (this.isPopup) {
-      this.agentDialog.close(close)
+      this.agentDialog.close(this.agentForm.value)
     } else {
       this.router.navigate(['agents'])
     }

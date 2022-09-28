@@ -33,7 +33,8 @@
                 <div *ngIf="experimentLoader" class="spinr">
                   <mat-spinner class="spin"></mat-spinner>
                 </div>
-                <app-typeahead [controlField]="'experiment_id'" [dataSet]="experiments" [maxLen]="6" (typeahead)="setcontrolValue($event)" (resetEmit)="resetTypeahead($event)">
+                <app-typeahead [controlField]="'experiment_id'" [searchText]="searchText"
+                  (typeahead)="setcontrolValue($event)" (resetEmit)="resetTypeahead($event)">
                 </app-typeahead>
               </div>
             </div>
@@ -48,10 +49,12 @@
                   <div *ngIf="agentLoader" class="spinr">
                     <mat-spinner class="spin"></mat-spinner>
                   </div>
-                  <app-typeahead [controlField]="'agent_id'" [dataSet]="agents" [maxLen]="6" (typeahead)="setcontrolValue($event)">
+                  <app-typeahead [controlField]="'agent_id'" [searchText]="searchText"
+                    (typeahead)="setcontrolValue($event)">
                   </app-typeahead>
                 </div>
-                <button mat-raised-button class="w-28 ml-3.5 h-fit w-fit" color="primary" (click)="agentPopup()">New Agent</button>
+                <button mat-raised-button class="w-28 ml-3.5 h-fit w-fit" color="primary" (click)="agentPopup()">New
+                  Agent</button>
               </div>
             </div>
           </div>
@@ -62,14 +65,16 @@
             <div class="mt-1 sm:mt-0 sm:col-span-2">
               <div class="flex">
                 <div class="relative grow mr-8">
-                  
+
                   <div *ngIf="configurationLoader" class="spinr absolute right-2">
                     <mat-spinner class="spin"></mat-spinner>
                   </div>
-                  <app-typeahead  [controlField]="'configuration_id'" [dataSet]="configurations" [maxLen]="6" (typeahead)="setcontrolValue($event)">
+                  <app-typeahead [controlField]="'configuration_id'" [searchText]="searchText"
+                    (typeahead)="setcontrolValue($event)">
                   </app-typeahead>
                 </div>
-                <button mat-raised-button color="primary" class="h-fit w-fit" (click)="configurationPopup()">New Configuration</button>
+                <button mat-raised-button color="primary" class="h-fit w-fit" (click)="configurationPopup()">New
+                  Configuration</button>
               </div>
               <p @fadeIn *ngIf="hasError('configuration_id', 'required')" class="mt-2 text-sm text-red-600"
                 id="experiment-error">
@@ -88,7 +93,8 @@
                   <div *ngIf="proxyLoader" class="spinr">
                     <mat-spinner class="spin"></mat-spinner>
                   </div>
-                  <app-typeahead  [controlField]="'proxy_id'" [dataSet]="proxies" [maxLen]="6" (typeahead)="setcontrolValue($event)">
+                  <app-typeahead [controlField]="'proxy_id'" [searchText]="searchText"
+                    (typeahead)="setcontrolValue($event)">
                   </app-typeahead>
                 </div>
                 <button mat-raised-button color="primary" class="h-fit w-fit" (click)="proxyPopup()">New Proxy</button>

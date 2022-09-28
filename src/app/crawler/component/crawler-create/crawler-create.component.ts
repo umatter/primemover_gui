@@ -30,10 +30,11 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
   configurations: any;
   agentsData: any;
   paginationConfig: PaginatePipeArgs;
-  proxyLoader: boolean = true
-  configurationLoader = true
-  agentLoader: boolean = true
-  experimentLoader: boolean = true
+  proxyLoader: boolean = false
+  configurationLoader = false
+  agentLoader: boolean = false
+  experimentLoader: boolean = false;
+  searchText: string;
   constructor(private store: Store, private formBuilder: FormBuilder, public router: Router, private matDialog: MatDialog) { }
 
   ngOnInit(): void {
@@ -45,10 +46,10 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
       proxy_id: [null, [Validators.required]],
       configuration_id: [null, [Validators.required]],
     });
-    this.getProxies();
-    this.getAgents();
-    this.getExperiment();
-    this.getConfig();
+    // this.getProxies();
+    // this.getAgents();
+    // this.getExperiment();
+    // this.getConfig();
     this.subscriptions.add(
       this.crawlerForm.valueChanges.pipe(debounceTime(500)).subscribe((formValue: CrawlerFormValues) => {
         this.store.dispatch(
@@ -154,7 +155,9 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
     if (proxyDialog) {
       proxyDialog.afterClosed().pipe().subscribe(proxy => {
         if (proxy) {
-          this.getProxies(true);
+
+          this.searchText = proxy.name;
+          this.crawlerForm.controls['proxy_id']?.setValue(proxy.id)
         }
       }, (err) => {
         console.log(err);
@@ -163,11 +166,11 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
   }
 
   setcontrolValue(control: any) {
-    this.crawlerForm.controls[control.type]?.setValue(control.id);
+    this.crawlerForm.controls[control.type]?.setValue(control.item.id);
   }
 
 
-  resetTypeahead(control: any){
+  resetTypeahead(control: any) {
     this.crawlerForm.controls[control.type]?.setValue(null);
   }
 
@@ -180,7 +183,8 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
     if (agentDialog) {
       agentDialog.afterClosed().pipe().subscribe(agent => {
         if (agent) {
-          this.getAgents(true);
+          this.searchText = agent.name;
+          this.crawlerForm.controls['agent_id']?.setValue(agent.id)
         }
       }, (err) => {
         console.log(err);
@@ -198,7 +202,8 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
       this.subscriptions.add(
         configurationDialog.afterClosed().subscribe(configuration => {
           if (configuration) {
-            this.getConfig(true);
+            this.searchText = configuration.name;
+            this.crawlerForm.controls['configuration_id']?.setValue(configuration.id)
           }
         }, (err) => {
           console.error(err);

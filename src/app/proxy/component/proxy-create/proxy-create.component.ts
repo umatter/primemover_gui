@@ -19,7 +19,7 @@ export class ProxyCreateComponent implements OnInit, OnDestroy {
   subscriptions = new Subscription();
   formValid$: Observable<boolean>;
   isPopup = false;
-
+  selected = false;
   constructor(@Inject(MAT_DIALOG_DATA) public data: any, private store: Store, private formBuilder: FormBuilder, public router: Router, private proxyDialog: MatDialogRef<ProxyCreateComponent>) { }
 
   get name(): string | null {
@@ -54,6 +54,7 @@ export class ProxyCreateComponent implements OnInit, OnDestroy {
     });
     this.isPopup = this.data.isPopup;
 
+
     this.subscriptions.add(
       this.proxyForm.valueChanges.pipe(debounceTime(500)).subscribe((formValue: ProxyFormValues) => {
         this.store.dispatch(
@@ -87,17 +88,33 @@ export class ProxyCreateComponent implements OnInit, OnDestroy {
     if (!this.proxyForm.valid) {
       return
     }
-    this.store.dispatch(completeProxyCreateRequested());
+    if (!this.selected) {
+      this.store.dispatch(completeProxyCreateRequested());
+
+    }
     this.onClose(true);
   }
 
 
   onClose(close: boolean) {
     if (this.isPopup) {
-      this.proxyDialog.close(close)
+      this.proxyDialog.close(this.proxyForm.value)
     } else {
       this.router.navigate(['proxies'])
     }
+  }
+
+  setcontrolValue(proxy: any) {
+    this.selected = true;
+
+    const { item } = proxy;
+    this.proxyForm.controls['name'].setValue(item.name)
+    this.proxyForm.controls['active'].setValue(item.active)
+    this.proxyForm.controls['description'].setValue(item.description)
+    this.proxyForm.controls['hostName'].setValue(item.hostname)
+    this.proxyForm.controls['port'].setValue(item.port)
+    this.proxyForm.controls['username'].setValue(item.username)
+    this.proxyForm.controls['password'].setValue(item.password)
   }
 
   ngOnDestroy() {

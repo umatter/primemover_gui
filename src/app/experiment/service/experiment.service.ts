@@ -20,7 +20,7 @@ export class ExperimentService {
     private store: Store,
     private config: AppConfig,
     private filterService: QueryFilterService
-  ) {}
+  ) { }
 
   public list(): Observable<[]> {
     return this.http.get<[]>(`${this.config.apiBaseUrl}/experiments`);
@@ -28,6 +28,11 @@ export class ExperimentService {
 
   public simpleIndex(): Observable<[]> {
     return this.http.get<[]>(`${this.config.apiBaseUrl}/experiments-list`);
+  }
+
+  public search(keyword: string): Observable<[]> {
+    return this.http.get<[]>(`${this.config.apiBaseUrl}/experiments?filter[search]=${keyword}
+    `);
   }
 
   public index(): Observable<DataCollection> {
