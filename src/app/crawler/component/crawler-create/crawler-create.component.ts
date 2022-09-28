@@ -96,10 +96,10 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
     this.store.dispatch(proxyRequest())
     this.store.pipe(select(proxyList)).subscribe((proxy) => {
       if (proxy.data?.length) {
-        this.proxies = proxy.data;
+        this.proxies = this.uniqueList(proxy.data, "name");
         this.proxyLoader = false;
         if (setFirstValue) {
-          this.crawlerForm.controls['proxy_id']?.setValue(proxy.data[0]?.id)
+          this.crawlerForm.controls['proxy_id']?.setValue(this.proxies[0]?.id)
         }
       }
     })
@@ -110,7 +110,7 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
     this.store.dispatch(experimentRequest())
     this.store.pipe(select(experimentList)).subscribe((experiment) => {
       if (experiment.data?.length) {
-        this.experiments = experiment.data;
+        this.experiments = this.uniqueList(experiment.data, "name");
         this.experimentLoader = false;
       }
     })
@@ -122,7 +122,7 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
     this.store.dispatch(configRequest())
     this.store.pipe(select(configList)).subscribe((configurations) => {
       if (configurations.data?.length) {
-        this.configurations = configurations.data;
+        this.configurations = this.uniqueList(configurations.data, "name");
         this.configurationLoader = false;
         if (setFirstValue) {
           this.crawlerForm.controls['configuration_id']?.setValue(configurations.data[0]?.id)
@@ -136,7 +136,7 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
     this.store.dispatch(agentRequest())
     this.store.pipe(select(agentList)).subscribe((agent) => {
       if (agent.data?.length) {
-        this.agents = agent.data;
+        this.agents = this.uniqueList(agent.data, "name");
         this.agentLoader = false;
         if (setFirstValue) {
           this.crawlerForm.controls['agent_id']?.setValue(agent.data[0]?.id)
@@ -162,6 +162,14 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
     }
   }
 
+  setcontrolValue(control: any) {
+    this.crawlerForm.controls[control.type]?.setValue(control.id);
+  }
+
+
+  resetTypeahead(control: any){
+    this.crawlerForm.controls[control.type]?.setValue(null);
+  }
 
   agentPopup(): void {
     const agentDialog = this.matDialog.open(AgentCreateComponent, {
@@ -197,6 +205,13 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
         })
       )
     }
+  }
+
+  uniqueList(array: any[], property: string) {
+    return [
+      ...new Map(array.map((item: any) => [item[property], item])).values(),
+    ];
+
   }
 
   ngOnDestroy() {

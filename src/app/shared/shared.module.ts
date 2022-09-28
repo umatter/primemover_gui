@@ -40,6 +40,8 @@ import { MatInputModule } from "@angular/material/input";
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { TypeaheadComponent } from './typeahead/typeahead.component';
+import { MatIconModule } from '@angular/material/icon';
 
 @NgModule({
   declarations: [
@@ -64,7 +66,8 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
     SelectNativeComponent,
     LinkSortableComponent,
     RemovableBadgeComponent,
-    LoadingSpinnerComponent
+    LoadingSpinnerComponent,
+    TypeaheadComponent
   ],
   imports: [
     CommonModule,
@@ -91,6 +94,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
     MatCheckboxModule,
     MatSelectModule,
     MatButtonModule,
+    MatIconModule,
 
   ],
   exports: [
@@ -116,7 +120,9 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
     MatInputModule,
     MatCheckboxModule,
     MatSelectModule,
+    TypeaheadComponent,
     MatButtonModule,
+    MatIconModule,
   ],
 
   providers: [DatePipe,
