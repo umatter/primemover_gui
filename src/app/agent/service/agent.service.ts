@@ -33,10 +33,11 @@ export class AgentService {
 
 
 
-  public search(keyword: string): Observable<[]> {
+  search(keyword: string) {
     return this.http.get<[]>(`${this.config.apiBaseUrl}/agents?filter[search]=${keyword}
     `);
   }
+
 
 
   public index(): Observable<DataCollection> {

@@ -29,13 +29,22 @@
               {{ 'experiment.label' | translate }}
             </label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <div class="relative">
+              <div class="relative width-set">
                 <div *ngIf="experimentLoader" class="spinr">
                   <mat-spinner class="spin"></mat-spinner>
                 </div>
-                <app-typeahead [controlField]="'experiment_id'" [searchText]="searchText"
-                  (typeahead)="setcontrolValue($event)" (resetEmit)="resetTypeahead($event)">
-                </app-typeahead>
+                <input type="text" name="experiment" id="experiment" autocomplete="experiment" [matAutocomplete]="auto3"
+                  [formControl]='experimentCtrl' placeholder="{{ 'common.namePlaceholder' | translate }}"
+                  class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md" />
+                <mat-autocomplete #auto3="matAutocomplete">
+                  <mat-option *ngFor="let experiment of experiments"
+                    (onSelectionChange)="setControlValue(experiment,'experiment_id')" [value]="experiment.name">
+                    <span>{{ experiment.name }}</span>
+                  </mat-option>
+                </mat-autocomplete>
+                <button class="flex ml-auto mt-2" (click)="reset('experiment_id',experimentCtrl)">
+                  <mat-icon> restore </mat-icon> Reset
+                </button>
               </div>
             </div>
           </div>
@@ -44,14 +53,23 @@
               {{ 'agent.label' | translate }}
             </label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <div class="flex">
-                <div class="relative grow mr-8">
+              <div class="flex justify-between">
+                <div class="relative width-set">
                   <div *ngIf="agentLoader" class="spinr">
                     <mat-spinner class="spin"></mat-spinner>
                   </div>
-                  <app-typeahead [controlField]="'agent_id'" [searchText]="searchText"
-                    (typeahead)="setcontrolValue($event)">
-                  </app-typeahead>
+                  <input type="text" name="agent" id="agent" autocomplete="agent" [matAutocomplete]="auto"
+                    [formControl]='agentCtrl' placeholder="{{ 'common.namePlaceholder' | translate }}"
+                    class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md" />
+                  <mat-autocomplete #auto="matAutocomplete">
+                    <mat-option *ngFor="let agent of agents" (onSelectionChange)="setControlValue(agent,'agent_id')"
+                      [value]="agent.name">
+                      <span>{{ agent.name }}</span>
+                    </mat-option>
+                  </mat-autocomplete>
+                  <button class="flex ml-auto mt-2" (click)="reset('agent_id',agentCtrl)">
+                    <mat-icon> restore </mat-icon> Reset
+                  </button>
                 </div>
                 <button mat-raised-button class="w-28 ml-3.5 h-fit w-fit" color="primary" (click)="agentPopup()">New
                   Agent</button>
@@ -63,15 +81,23 @@
               {{ 'config.label' | translate }}
             </label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <div class="flex">
-                <div class="relative grow mr-8">
-
+              <div class="flex justify-between">
+                <div class="relative width-set">
                   <div *ngIf="configurationLoader" class="spinr absolute right-2">
                     <mat-spinner class="spin"></mat-spinner>
                   </div>
-                  <app-typeahead [controlField]="'configuration_id'" [searchText]="searchText"
-                    (typeahead)="setcontrolValue($event)">
-                  </app-typeahead>
+                  <input type="text" name="config" id="config" autocomplete="config" [matAutocomplete]="auto1"
+                    [formControl]='configCtrl' placeholder="{{ 'common.namePlaceholder' | translate }}"
+                    class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md" />
+                  <mat-autocomplete #auto1="matAutocomplete">
+                    <mat-option *ngFor="let config of configurations"
+                      (onSelectionChange)="setControlValue(config,'configuration_id')" [value]="config.name">
+                      <span>{{ config.name }}</span>
+                    </mat-option>
+                  </mat-autocomplete>
+                  <button class="flex ml-auto mt-2" (click)="reset('configuration_id',configCtrl)">
+                    <mat-icon> restore </mat-icon> Reset
+                  </button>
                 </div>
                 <button mat-raised-button color="primary" class="h-fit w-fit" (click)="configurationPopup()">New
                   Configuration</button>
@@ -88,14 +114,23 @@
             </label>
 
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <div class="flex">
-                <div class="relative grow mr-8">
+              <div class="flex justify-between">
+                <div class="relative width-set">
                   <div *ngIf="proxyLoader" class="spinr">
                     <mat-spinner class="spin"></mat-spinner>
                   </div>
-                  <app-typeahead [controlField]="'proxy_id'" [searchText]="searchText"
-                    (typeahead)="setcontrolValue($event)">
-                  </app-typeahead>
+                  <input type="text" name="proxy" id="proxy" autocomplete="proxy" [matAutocomplete]="auto2"
+                    [formControl]='proxyCtrl' placeholder="{{ 'common.namePlaceholder' | translate }}"
+                    class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md" />
+                  <mat-autocomplete #auto2="matAutocomplete">
+                    <mat-option *ngFor="let proxy of proxies" (onSelectionChange)="setControlValue(proxy,'proxy_id')"
+                      [value]="proxy.name">
+                      <span>{{ proxy.name }}</span>
+                    </mat-option>
+                  </mat-autocomplete>
+                  <button class="flex ml-auto mt-2" (click)="reset('proxy_id',proxyCtrl)">
+                    <mat-icon> restore </mat-icon> Reset
+                  </button>
                 </div>
                 <button mat-raised-button color="primary" class="h-fit w-fit" (click)="proxyPopup()">New Proxy</button>
               </div>

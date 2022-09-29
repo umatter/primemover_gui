@@ -1,13 +1,13 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { select, Store } from '@ngrx/store';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Store } from '@ngrx/store';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ProxyFormValues } from '../model/proxy-form-values';
 import { fadeIn } from '../../../shared/animation/trigger';
-import { debounceTime, Observable, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Observable, Subscription } from 'rxjs';
 import { completeProxyCreateRequested, updateProxyCreateValues } from '../../store/proxy.actions';
 import { Router } from '@angular/router';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-// import { selectProxyFormValid } from '../../store/proxy.selectors';
+import { ProxyService } from '../../service/proxy.service';
 
 @Component({
   selector: 'app-proxy-create',
@@ -20,7 +20,11 @@ export class ProxyCreateComponent implements OnInit, OnDestroy {
   formValid$: Observable<boolean>;
   isPopup = false;
   selected = false;
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private store: Store, private formBuilder: FormBuilder, public router: Router, private proxyDialog: MatDialogRef<ProxyCreateComponent>) { }
+  proxyLoader = false;
+  proxies: any;
+  proxyCtrl = new FormControl();
+
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private proxy: ProxyService, private store: Store, private formBuilder: FormBuilder, public router: Router, private proxyDialog: MatDialogRef<ProxyCreateComponent>) { }
 
   get name(): string | null {
     return this.proxyForm.get('name')?.value;
@@ -42,7 +46,6 @@ export class ProxyCreateComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // this.formValid$ = this.store.pipe(select(selectProxyFormValid));
     this.proxyForm = this.formBuilder.group({
       name: [null, [Validators.required, Validators.maxLength(255)]],
       description: [null, [Validators.maxLength(1024)]],
@@ -70,6 +73,28 @@ export class ProxyCreateComponent implements OnInit, OnDestroy {
         );
       })
     );
+
+
+
+    this.proxyCtrl.valueChanges
+      .pipe(
+        debounceTime(1000)
+        , distinctUntilChanged(),
+      ).subscribe(search => {
+        if (search.length >= 2) {
+          this.proxyLoader = true;
+          this.proxy.search(search).subscribe((result: any) => {
+            this.proxies = result.data;
+            this.proxyLoader = false;
+          }, error => {
+            this.proxyLoader = false;
+          });
+        }
+        this.proxyForm.controls['name'].setValue(search);
+
+      });
+
+
   }
 
   hasValue(controlName: string): boolean {
@@ -104,17 +129,23 @@ export class ProxyCreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  setcontrolValue(proxy: any) {
-    this.selected = true;
-
-    const { item } = proxy;
+  setControlValue(item: any) {
     this.proxyForm.controls['name'].setValue(item.name)
     this.proxyForm.controls['active'].setValue(item.active)
     this.proxyForm.controls['description'].setValue(item.description)
     this.proxyForm.controls['hostName'].setValue(item.hostname)
     this.proxyForm.controls['port'].setValue(item.port)
     this.proxyForm.controls['username'].setValue(item.username)
-    this.proxyForm.controls['password'].setValue(item.password)
+    this.proxyForm.controls['password'].setValue(item.password);
+    this.selected = true;
+
+  }
+
+
+  reset() {
+    this.proxyForm.reset();
+    this.proxyCtrl.setValue(null);
+    this.selected = false;
   }
 
   ngOnDestroy() {

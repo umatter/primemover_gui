@@ -51,7 +51,7 @@ export class ConfigService {
   }
 
   
-  public search(keyword: string): Observable<[]> {
+  public search(keyword: string) {
     return this.http.get<[]>(`${this.config.apiBaseUrl}/configurations?filter[search]=${keyword}
     `);
   }

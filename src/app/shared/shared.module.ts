@@ -40,8 +40,9 @@ import { MatInputModule } from "@angular/material/input";
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { TypeaheadComponent } from './typeahead/typeahead.component';
 import { MatIconModule } from '@angular/material/icon';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [
@@ -67,7 +68,6 @@ import { MatIconModule } from '@angular/material/icon';
     LinkSortableComponent,
     RemovableBadgeComponent,
     LoadingSpinnerComponent,
-    TypeaheadComponent
   ],
   imports: [
     CommonModule,
@@ -95,6 +95,8 @@ import { MatIconModule } from '@angular/material/icon';
     MatSelectModule,
     MatButtonModule,
     MatIconModule,
+    MatAutocompleteModule,
+    MatProgressSpinnerModule
 
   ],
   exports: [
@@ -120,9 +122,10 @@ import { MatIconModule } from '@angular/material/icon';
     MatInputModule,
     MatCheckboxModule,
     MatSelectModule,
-    TypeaheadComponent,
     MatButtonModule,
     MatIconModule,
+    MatAutocompleteModule,
+    MatProgressSpinnerModule
   ],
 
   providers: [DatePipe,

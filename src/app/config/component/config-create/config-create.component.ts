@@ -1,13 +1,14 @@
 import { Component, Inject, OnDestroy, OnInit, Optional } from '@angular/core';
 import { select, Store } from '@ngrx/store';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ConfigurationFormValues } from '../model/config-form-values';
 import { fadeIn } from '../../../shared/animation/trigger';
-import { debounceTime, Observable, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Observable, Subscription } from 'rxjs';
 import { completeConfigurationCreateRequested, updateConfigurationCreateValues } from '../../store/config.actions';
 import { Router } from '@angular/router';
 import { selectConfigurationsListData } from '../../store/config.selectors';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ConfigService } from '../../service/config.service';
 
 @Component({
   selector: 'app-config-create',
@@ -20,8 +21,14 @@ export class ConfigCreateComponent implements OnInit, OnDestroy {
   formValid$: Observable<boolean>;
   isPopup = false;
   selected = false;
+  configCtrl = new FormControl();
+  configLoader: boolean = false;
+  configurations: any;
 
-  constructor(@Optional() private configDialog: MatDialogRef<ConfigCreateComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private store: Store, private formBuilder: FormBuilder, public router: Router) { }
+  constructor(@Optional() private configDialog: MatDialogRef<ConfigCreateComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private store: Store,
+  
+  private config: ConfigService,
+  private formBuilder: FormBuilder, public router: Router) { }
 
   get name(): string | null {
     return this.configurationForm.get('name')?.value;
@@ -32,7 +39,6 @@ export class ConfigCreateComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // this.formValid$ = this.store.pipe(select(selectConfigurationFormValid));
     this.configurationForm = this.formBuilder.group({
       name: [null, [Validators.required]],
       description: [null, [Validators.maxLength(1024)]]
@@ -49,6 +55,30 @@ export class ConfigCreateComponent implements OnInit, OnDestroy {
         );
       })
     );
+
+    this.configCtrl.valueChanges
+    .pipe(
+      debounceTime(1000)
+      , distinctUntilChanged(),
+    ).subscribe(search => {
+      if (search.length >= 2) {
+        this.configLoader = true;
+        this.config.search(search).subscribe((result: any) => {
+          this.configurations = result.data;
+          this.configLoader = false;
+        }, error => {
+          this.configLoader = false;
+        });
+      }
+      this.configurationForm.controls['name'].setValue(search);
+
+    });
+  }
+
+  reset() {
+    this.configurationForm.reset();
+    this.configCtrl.setValue(null);
+    this.selected = false;
   }
 
   hasValue(controlName: string): boolean {
@@ -64,12 +94,10 @@ export class ConfigCreateComponent implements OnInit, OnDestroy {
   }
 
 
-  setcontrolValue(configuration: any) {
-    this.selected = true;
-    const { item } = configuration;
+  setControlValue(item: any) {
     this.configurationForm.controls['name'].setValue(item.name)
-    this.configurationForm.controls['active'].setValue(item.active)
-    this.configurationForm.controls['description'].setValue(item.description)
+    this.configurationForm.controls['description'].setValue(item.description);
+    this.selected = true;
   }
 
 
