@@ -16,18 +16,23 @@
               {{ 'common.name' | translate }}
             </label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <input
-                type="text"
-                name="name"
-                id="name"
-                autocomplete="name"
-                formControlName="name"
-                placeholder="{{ 'common.namePlaceholder' | translate }}"
-                class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
-              />
-              <p @fadeIn *ngIf="hasError('name', 'required')" class="mt-2 text-sm text-red-600" id="name-error">
-                {{ 'common.nameRequiredError' | translate }}
-              </p>
+      
+              <div *ngIf="experimentLoader">
+                <mat-spinner class="spin"></mat-spinner>
+              </div>
+              <input type="text" name="experiment" id="experiment" autocomplete="experiment" [matAutocomplete]="auto3"
+                [formControl]='experimentCtrl' placeholder="{{ 'common.namePlaceholder' | translate }}"
+                class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md" />
+              <mat-autocomplete #auto3="matAutocomplete">
+                <mat-option *ngFor="let experiment of experiments"
+                  (onSelectionChange)="setControlValue(experiment)" [value]="experiment.name">
+                  <span>{{ experiment.name }}</span>
+                </mat-option>
+              </mat-autocomplete>
+              <button class="flex ml-auto mt-2" (click)="reset()">
+                <mat-icon> restore </mat-icon> Reset
+              </button>
+
             </div>
           </div>
 

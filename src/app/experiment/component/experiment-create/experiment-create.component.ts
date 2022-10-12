@@ -1,12 +1,13 @@
 import { Component, Inject, OnDestroy, OnInit, Optional } from '@angular/core';
 import { select, Store } from '@ngrx/store';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ExperimentFormValues } from '../model/experiment-form-values';
 import { fadeIn } from '../../../shared/animation/trigger';
-import { debounceTime, Observable, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Observable, Subscription } from 'rxjs';
 import { completeExperimentCreateRequested, updateExperimentCreateValues } from '../../store/experiment.actions';
 import { Router } from '@angular/router';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ExperimentService } from '../../service/experiment.service';
 
 @Component({
   selector: 'app-experiment-create',
@@ -18,8 +19,10 @@ export class ExperimentCreateComponent implements OnInit, OnDestroy {
   subscriptions = new Subscription();
   formValid$: Observable<boolean>;
   isPopup = false;
-
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private store: Store, private formBuilder: FormBuilder, @Optional() private experiementDialog: MatDialogRef<ExperimentCreateComponent>, public router: Router) { }
+  experimentLoader = false;
+  experimentCtrl = new FormControl()
+  experiments: any;
+  constructor(@Inject(MAT_DIALOG_DATA) public data: any,private experiment: ExperimentService, private store: Store, private formBuilder: FormBuilder, @Optional() private experiementDialog: MatDialogRef<ExperimentCreateComponent>, public router: Router) { }
 
   get name(): string | null {
     return this.experimentForm.get('name')?.value;
@@ -40,18 +43,37 @@ export class ExperimentCreateComponent implements OnInit, OnDestroy {
       description: [null, [Validators.maxLength(1024)]]
     });
     this.isPopup = this.data.isPopup ? this.data.isPopup : false;
-this.subscriptions.add(
-  this.experimentForm.valueChanges.pipe(debounceTime(500)).subscribe((formValue: ExperimentFormValues) => {
-    this.store.dispatch(
-      updateExperimentCreateValues({
-        name: formValue.name,
-        active: true,
-        description: formValue.description,
-        contact: formValue.contact,
+    this.subscriptions.add(
+      this.experimentForm.valueChanges.pipe(debounceTime(500)).subscribe((formValue: ExperimentFormValues) => {
+        this.store.dispatch(
+          updateExperimentCreateValues({
+            name: formValue.name,
+            active: true,
+            description: formValue.description,
+            contact: formValue.contact,
+          })
+        );
       })
     );
-  })
-    );
+
+
+    this.experimentCtrl.valueChanges
+      .pipe(
+        debounceTime(1000)
+        , distinctUntilChanged(),
+      ).subscribe(search => {
+        if (search.length >= 2) {
+          this.experimentLoader = true;
+          this.experiment.search(search).subscribe((result: any) => {
+            this.experiments = result.data;
+            this.experimentLoader = false;
+          }, error => {
+            this.experimentLoader = false;
+          });
+        }
+        this.experimentForm.controls['name'].setValue(search);
+
+      });
   }
 
   hasValue(controlName: string): boolean {
@@ -64,6 +86,17 @@ this.subscriptions.add(
       this.experimentForm.get(controlName)?.invalid &&
       this.experimentForm.get(controlName)?.getError(errorName)
     );
+  }
+
+  setControlValue(item: any) {
+    this.experimentForm.controls['name'].setValue(item.name);
+    this.experimentForm.controls['contact'].setValue(item.contact)
+    this.experimentForm.controls['description'].setValue(item.description)
+  }
+
+  reset() {
+    this.experimentForm.reset();
+    this.experimentCtrl.setValue(null);
   }
 
   saveExperiment(): void {

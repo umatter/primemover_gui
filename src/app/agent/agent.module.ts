@@ -12,6 +12,7 @@ import { queueReducer } from '../queue/store/queue.reducer';
 import { AgentComponent } from './component/agent/agent.component';
 import { AgentCreateComponent } from './component/agent-create/agent-create.component';
 import { experimentReducer } from '../experiment/store/experiment.reducer';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 @NgModule({
   declarations: [AgentComponent, AgentCreateComponent],
@@ -25,7 +26,8 @@ import { experimentReducer } from '../experiment/store/experiment.reducer';
 
     EffectsModule.forFeature([AgentEffects]),
     NgxPaginationModule,
-    SharedModule
+    SharedModule,
+    MatProgressSpinnerModule
   ]
 })
 export class AgentModule { }

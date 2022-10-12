@@ -50,6 +50,13 @@ export class ConfigService {
     return this.http.delete<any>(`${this.config.apiBaseUrl}/configurations/${configurationId}`);
   }
 
+  
+  public search(keyword: string) {
+    return this.http.get<[]>(`${this.config.apiBaseUrl}/configurations?filter[search]=${keyword}
+    `);
+  }
+
+
   getParams(): HttpParams {
     this.queryFilterParams = this.filterService.getFilterParams();
 

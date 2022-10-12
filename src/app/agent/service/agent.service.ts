@@ -31,6 +31,15 @@ export class AgentService {
     return this.http.get<[]>(`${this.config.apiBaseUrl}/agents`);
   }
 
+
+
+  search(keyword: string) {
+    return this.http.get<[]>(`${this.config.apiBaseUrl}/agents?filter[search]=${keyword}
+    `);
+  }
+
+
+
   public index(): Observable<DataCollection> {
     this.store.pipe(select(selectPageRequested), first()).subscribe((response) => (this.pageRequested = response));
 

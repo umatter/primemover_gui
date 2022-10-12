@@ -1,10 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { select, Store } from '@ngrx/store';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { fadeIn } from '../../../shared/animation/trigger';
-import { debounceTime, Observable, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Observable, Subscription } from 'rxjs';
 import { Router } from '@angular/router';
-import { agentRequest, completeCrawlerCreateRequested, configRequest, experimentRequest, proxyRequest, updateCrawlerCreateValues } from '../../store/crawler.actions';
+import { completeCrawlerCreateRequested, updateCrawlerCreateValues } from '../../store/crawler.actions';
 import { CrawlerFormValues } from '../../model/crawler-form-values';
 import { selectAgentsPagination } from 'src/app/agent/store/agent.selectors';
 import { PaginatePipeArgs } from 'ngx-pagination';
@@ -12,9 +12,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfigCreateComponent } from 'src/app/config/component/config-create/config-create.component';
 import { AgentCreateComponent } from 'src/app/agent/component/agent-create/agent-create.component';
 import { ProxyCreateComponent } from 'src/app/proxy/component/proxy-create/proxy-create.component';
-import { ExperimentCreateComponent } from 'src/app/experiment/component/experiment-create/experiment-create.component';
-import { agentList, configList, experimentList, proxyList } from '../../store/crawler.selectors';
-
+import { AgentService } from "../../../agent/service/agent.service";
+import { ConfigService } from "../../../config/service/config.service";
+import { ExperimentService } from "../../../experiment/service/experiment.service"
+import { ProxyService } from "../../../proxy/service/proxy.service"
 @Component({
   selector: 'app-crawler-create',
   templateUrl: './crawler-create.component.html',
@@ -23,18 +24,21 @@ import { agentList, configList, experimentList, proxyList } from '../../store/cr
 export class CrawlerCreateComponent implements OnInit, OnDestroy {
   crawlerForm: FormGroup;
   subscriptions = new Subscription();
-  formValid$: Observable<boolean>;
   experiments: any;
   proxies: any;
   agents: any;
   configurations: any;
-  agentsData: any;
   paginationConfig: PaginatePipeArgs;
-  proxyLoader: boolean = true
-  configurationLoader = true
-  agentLoader: boolean = true
-  experimentLoader: boolean = true
-  constructor(private store: Store, private formBuilder: FormBuilder, public router: Router, private matDialog: MatDialog) { }
+  proxyLoader: boolean = false
+  configurationLoader = false
+  agentLoader: boolean = false
+  experimentLoader: boolean = false;
+  agentCtrl = new FormControl();
+  proxyCtrl = new FormControl();
+  configCtrl = new FormControl();
+  experimentCtrl = new FormControl();
+
+  constructor(private agent: AgentService, private proxy: ProxyService, private configuration: ConfigService, private experiment: ExperimentService, private store: Store, private formBuilder: FormBuilder, public router: Router, private matDialog: MatDialog) { }
 
   ngOnInit(): void {
     this.crawlerForm = this.formBuilder.group({
@@ -45,10 +49,6 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
       proxy_id: [null, [Validators.required]],
       configuration_id: [null, [Validators.required]],
     });
-    this.getProxies();
-    this.getAgents();
-    this.getExperiment();
-    this.getConfig();
     this.subscriptions.add(
       this.crawlerForm.valueChanges.pipe(debounceTime(500)).subscribe((formValue: CrawlerFormValues) => {
         this.store.dispatch(
@@ -63,6 +63,81 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
         );
       })
     );
+    this.controlChangesDetection();
+  }
+
+
+  controlChangesDetection() {
+    this.agentCtrl.valueChanges
+      .pipe(
+        debounceTime(1000)
+        , distinctUntilChanged(),
+      ).subscribe(search => {
+        if (search.length >= 2) {
+          this.agentLoader = true;
+          this.agent.search(search).subscribe((result: any) => {
+            this.agents = result.data;
+            this.agentLoader = false;
+          }, error => {
+            this.agentLoader = false;
+          });
+        }
+      });
+    this.proxyCtrl.valueChanges
+      .pipe(
+        debounceTime(1000)
+        , distinctUntilChanged(),
+      ).subscribe(search => {
+        if (search.length >= 2) {
+          this.proxyLoader = true;
+          this.proxy.search(search).subscribe((result: any) => {
+            this.proxies = result.data;
+            this.proxyLoader = false;
+          }, error => {
+            this.proxyLoader = false;
+          });
+        }
+      });
+    this.configCtrl.valueChanges
+      .pipe(
+        debounceTime(1000)
+        , distinctUntilChanged(),
+      ).subscribe(search => {
+        if (search.length >= 2) {
+          this.configurationLoader = true;
+          this.configuration.search(search).subscribe((result: any) => {
+            this.configurations = result.data;
+            this.configurationLoader = false;
+          }, error => {
+            this.configurationLoader = false;
+          });
+        }
+      });
+    this.experimentCtrl.valueChanges
+      .pipe(
+        debounceTime(1000)
+        , distinctUntilChanged(),
+      ).subscribe(search => {
+        if (search.length >= 2) {
+          this.experimentLoader = true;
+          this.experiment.search(search).subscribe((result: any) => {
+            this.experiments = result.data;
+            this.experimentLoader = false;
+          }, error => {
+            this.experimentLoader = false;
+          });
+        }
+      });
+  }
+
+
+  setControlValue(item: any, control: any) {
+    this.crawlerForm.controls[control]?.setValue(item.id)
+  }
+
+  reset(control: any, typeahead: any) {
+    this.crawlerForm.controls[control]?.setValue(null)
+    typeahead.setValue(null)
   }
 
   initPagination(): void {
@@ -92,59 +167,6 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
     this.store.dispatch(completeCrawlerCreateRequested());
   }
 
-  getProxies(setFirstValue?: boolean) {
-    this.store.dispatch(proxyRequest())
-    this.store.pipe(select(proxyList)).subscribe((proxy) => {
-      if (proxy.data?.length) {
-        this.proxies = this.uniqueList(proxy.data, "name");
-        this.proxyLoader = false;
-        if (setFirstValue) {
-          this.crawlerForm.controls['proxy_id']?.setValue(this.proxies[0]?.id)
-        }
-      }
-    })
-  }
-
-  getExperiment() {
-    this.experimentLoader = true;
-    this.store.dispatch(experimentRequest())
-    this.store.pipe(select(experimentList)).subscribe((experiment) => {
-      if (experiment.data?.length) {
-        this.experiments = this.uniqueList(experiment.data, "name");
-        this.experimentLoader = false;
-      }
-    })
-  }
-
-  getConfig(setFirstValue?: boolean) {
-    this.configurationLoader = true;
-
-    this.store.dispatch(configRequest())
-    this.store.pipe(select(configList)).subscribe((configurations) => {
-      if (configurations.data?.length) {
-        this.configurations = this.uniqueList(configurations.data, "name");
-        this.configurationLoader = false;
-        if (setFirstValue) {
-          this.crawlerForm.controls['configuration_id']?.setValue(configurations.data[0]?.id)
-        }
-      }
-    });
-  }
-
-  getAgents(setFirstValue?: boolean) {
-    this.agentLoader = true;
-    this.store.dispatch(agentRequest())
-    this.store.pipe(select(agentList)).subscribe((agent) => {
-      if (agent.data?.length) {
-        this.agents = this.uniqueList(agent.data, "name");
-        this.agentLoader = false;
-        if (setFirstValue) {
-          this.crawlerForm.controls['agent_id']?.setValue(agent.data[0]?.id)
-        }
-      }
-    })
-  }
-
   proxyPopup(): void {
     const proxyDialog = this.matDialog.open(ProxyCreateComponent, {
       data: { isPopup: true },
@@ -154,21 +176,13 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
     if (proxyDialog) {
       proxyDialog.afterClosed().pipe().subscribe(proxy => {
         if (proxy) {
-          this.getProxies(true);
+          this.proxyCtrl.setValue(proxy.name)
+          this.crawlerForm.controls['proxy_id']?.setValue(proxy.id)
         }
       }, (err) => {
         console.log(err);
       });
     }
-  }
-
-  setcontrolValue(control: any) {
-    this.crawlerForm.controls[control.type]?.setValue(control.id);
-  }
-
-
-  resetTypeahead(control: any){
-    this.crawlerForm.controls[control.type]?.setValue(null);
   }
 
   agentPopup(): void {
@@ -180,7 +194,9 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
     if (agentDialog) {
       agentDialog.afterClosed().pipe().subscribe(agent => {
         if (agent) {
-          this.getAgents(true);
+          this.agentCtrl.setValue(agent.name)
+
+          this.crawlerForm.controls['agent_id']?.setValue(agent.id)
         }
       }, (err) => {
         console.log(err);
@@ -198,20 +214,14 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
       this.subscriptions.add(
         configurationDialog.afterClosed().subscribe(configuration => {
           if (configuration) {
-            this.getConfig(true);
+            this.configCtrl.setValue(configuration.name)
+            this.crawlerForm.controls['configuration_id']?.setValue(configuration.id)
           }
         }, (err) => {
           console.error(err);
         })
       )
     }
-  }
-
-  uniqueList(array: any[], property: string) {
-    return [
-      ...new Map(array.map((item: any) => [item[property], item])).values(),
-    ];
-
   }
 
   ngOnDestroy() {

@@ -15,13 +15,22 @@
             <label for="name" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
               {{ 'common.name' | translate }}
             </label>
-            <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <input type="text" name="name" id="name" autocomplete="name" formControlName="name"
-                placeholder="{{ 'common.namePlaceholder' | translate }}"
-                class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md" />
-              <p @fadeIn *ngIf="hasError('name', 'required')" class="mt-2 text-sm text-red-600" id="name-error">
-                {{ 'common.nameRequiredError' | translate }}
-              </p>
+            <div class="mt-1 sm:mt-0 sm:col-span-2 relative">
+              <div *ngIf="agentLoader" class="absolute top-0 right-0">
+                <mat-spinner class="spin spiner-style"></mat-spinner>
+              </div>
+              <input type="text" name="agent" id="agent" autocomplete="agent" [matAutocomplete]="auto"
+              [formControl]='agentCtrl' placeholder="{{ 'common.namePlaceholder' | translate }}"
+              class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md" />
+            <mat-autocomplete #auto="matAutocomplete">
+              <mat-option *ngFor="let agent of agents" (onSelectionChange)="setControlValue(agent)"
+                [value]="agent.name">
+                <span>{{ agent.name }}</span>
+              </mat-option>
+            </mat-autocomplete>
+            <button class="flex ml-auto mt-2" (click)="reset()">
+              <mat-icon> restore </mat-icon> Reset
+            </button>
             </div>
           </div>
 
