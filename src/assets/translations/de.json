@@ -2,6 +2,7 @@
   "foo": "bar",
   "common": {
     "home": "Home",
+    "id": "Id",
     "edit": "Bearbeiten",
     "show": "Anzeigen",
     "select": "Wählen",
@@ -18,15 +19,14 @@
     "delete": "Löschen",
     "description": "Beschreibung",
     "descriptionPlaceholder": "z.B. Es handelt sich um ein neuartiges Experiment, ...",
-    "hostName":"Host Name",
-    "port":"Port",
-    "username":"User Name",
-    "password":"Password",
-    "identification":"Identification",
-    "multilogin_id":"Multi Login Id",
-    "multilogin_profile":"Multi Profile",
-    "location":"Location"
-
+    "hostName": "Host Name",
+    "port": "Port",
+    "username": "User Name",
+    "password": "Password",
+    "identification": "Identification",
+    "multilogin_id": "Multi Login Id",
+    "multilogin_profile": "Multi Profile",
+    "location": "Location"
   },
   "filter": {
     "reset": "Filter zurücksetzen"
@@ -75,6 +75,7 @@
     "notSelected": "Kein Proxy ausgewählt"
   },
   "queue": {
+    "cralwer_id": "Crawler Id",
     "label": "Queue",
     "add": "Queue hinzufügen",
     "list": "Liste aller Queues."
@@ -82,7 +83,8 @@
   "job": {
     "label": "Job",
     "add": "Job hinzufügen",
-    "list": "Liste aller Jobs."
+    "list": "Liste aller Jobs.",
+    "cralwer_id": "Crawler Id"
   },
   "status": {
     "label": "Status",
@@ -92,7 +94,8 @@
     "processing": "Läuft",
     "review": "Review",
     "code": "Code",
-    "message": "Meldung"
+    "message": "Meldung",
+    "type": "Type"
   },
   "pagination": {
     "previousLabel": "Zurück",
