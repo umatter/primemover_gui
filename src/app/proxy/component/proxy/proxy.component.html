@@ -24,14 +24,17 @@
             <thead class="bg-gray-50">
               <tr>
                 <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
+                  <app-link-sortable href="/proxies" label="{{ 'common.id' | translate }}"></app-link-sortable>
+                </th>
+                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
                   <app-link-sortable href="/proxies" label="{{ 'common.name' | translate }}"></app-link-sortable>
                 </th>
                 <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
                   {{ 'common.description' | translate }}
                 </th>
-                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
+                <!-- <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
                   {{ 'common.contact' | translate }}
-                </th>
+                </th> -->
                 <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
                   <span class="sr-only"></span>
                 </th>
@@ -40,6 +43,9 @@
             <tbody class="divide-y divide-gray-200 bg-white">
               <tr class="even:bg-gray-50 odd:bg-white"
                 *ngFor="let item of proxiesData$ | async | paginate: paginationConfig">
+                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                  {{ item.id }}
+                </td>
                 <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
                   {{ item.name }}
                 </td>
