@@ -23,7 +23,7 @@
       <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8 flex">
         
         <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg flex w-full">
-          <div class="w-8/12 bordre-r-1 border">
+          <div class="grow bordre-r-1 border">
             <table class="min-w-full divide-y divide-gray-300">
               <thead class="bg-gray-50">
                 <tr>
@@ -87,15 +87,10 @@
               </tfoot>
             </table>
           </div>
-          <div class="w-4/12 bg-white px-5">
-            <div *ngFor="let dataItem of data$ | async"> 
-              <h2 class="text-lg font-bold py-3 border-bottom border-bottom-1 border-1">{{dataItem.name}}</h2>
-              <p>{{dataItem.description}}</p>
-            </div>
-            
-            
+          <div *ngIf="experiment != null" class="w-4/12 bg-white px-5">
+              <h2 class="text-lg font-bold py-3 border-bottom border-bottom-1 border-1">{{experiment.name}}</h2>
+              <p>{{experiment.description}}</p>
           </div>
-          
         </div>
       </div>
     </div>
