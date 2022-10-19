@@ -1,0 +1,9 @@
+<div *ngIf="experiment != null" class="h-full bg-white px-5">
+    <p class="text-lg py-3 border-bottom border-bottom-1 border-1"><b>Name </b> :{{experiment.name}}</p>
+    <p><b>Description</b> : {{experiment.description}}</p>
+    <p><b>Contact</b> : {{experiment.contact}}</p>
+    <p><b>user Id</b> : {{experiment.user_id}}</p>
+    <p><b>Created-At</b> : {{experiment.created_at | date: 'MM-dd-yyyy'}}</p>
+    <p><b>Updated-At</b> : {{experiment.updated_at | date: 'MM-dd-yyyy'}}</p>
+    <p><b>Active</b> : {{experiment.active == 1 ? true : false}}</p>
+  </div>
