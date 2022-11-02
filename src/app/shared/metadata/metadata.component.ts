@@ -30,9 +30,7 @@ export class MetadataComponent implements OnInit {
   })
 
   this.currentCrawler$.subscribe((selectedCrawler:any)=>{
-    if(selectedCrawler){
       this.crawler = selectedCrawler   
-    }
   })
   }
 
