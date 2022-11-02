@@ -23,6 +23,7 @@ export class CrawlerComponent implements OnInit, OnDestroy {
   experiments$: Observable<any>;
   currentExperiment$: Observable<Experiment | null>;
   isLoading$: Observable<boolean>;
+  experiment: any;
 
   constructor(private store: Store, public router: Router) {}
 
@@ -34,6 +35,7 @@ export class CrawlerComponent implements OnInit, OnDestroy {
 
     this.getData();
     this.initPagination();
+
   }
 
   getData(page: number = 1): void {
