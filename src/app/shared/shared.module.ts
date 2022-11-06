@@ -43,6 +43,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MetadataComponent } from './metadata/metadata.component';
 
 @NgModule({
   declarations: [
@@ -68,6 +69,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     LinkSortableComponent,
     RemovableBadgeComponent,
     LoadingSpinnerComponent,
+    MetadataComponent,
   ],
   imports: [
     CommonModule,
@@ -125,7 +127,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     MatButtonModule,
     MatIconModule,
     MatAutocompleteModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MetadataComponent,
+
   ],
 
   providers: [DatePipe,

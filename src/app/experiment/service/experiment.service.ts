@@ -31,7 +31,7 @@ export class ExperimentService {
   }
 
   public search(keyword: string){
-    return this.http.get<[]>(`${this.config.apiBaseUrl}/experiments?filter[search]=${keyword}
+    return this.http.get<[]>(`${this.config.apiBaseUrl}/experiments?filter[name]=${keyword}
     `);
   }
 
