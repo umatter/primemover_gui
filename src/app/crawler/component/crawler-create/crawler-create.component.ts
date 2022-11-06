@@ -16,12 +16,15 @@ import { AgentService } from "../../../agent/service/agent.service";
 import { ConfigService } from "../../../config/service/config.service";
 import { ExperimentService } from "../../../experiment/service/experiment.service"
 import { ProxyService } from "../../../proxy/service/proxy.service"
+import { selectCurrentExperiment } from 'src/app/experiment/store/experiment.selectors';
+import { Experiment } from '../../model/experiment';
 @Component({
   selector: 'app-crawler-create',
   templateUrl: './crawler-create.component.html',
   animations: [fadeIn]
 })
 export class CrawlerCreateComponent implements OnInit, OnDestroy {
+  currentExperiment$: Observable<Experiment | null>;
   crawlerForm: FormGroup;
   subscriptions = new Subscription();
   experiments: any;
@@ -41,6 +44,7 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
   constructor(private agent: AgentService, private proxy: ProxyService, private configuration: ConfigService, private experiment: ExperimentService, private store: Store, private formBuilder: FormBuilder, public router: Router, private matDialog: MatDialog) { }
 
   ngOnInit(): void {
+    this.currentExperiment$ = this.store.pipe(select(selectCurrentExperiment));
     this.crawlerForm = this.formBuilder.group({
       name: [null, [Validators.required]],
       description: [null, [Validators.maxLength(1024)]],
@@ -64,6 +68,13 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
       })
     );
     this.controlChangesDetection();
+
+    this.currentExperiment$.subscribe((currentExperiment) => {
+      if (currentExperiment) {
+        this.crawlerForm.controls['experiment_id']?.setValue(currentExperiment.id)
+        this.experimentCtrl.setValue(currentExperiment.name)
+      }
+    })
   }
 
 
@@ -73,7 +84,7 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
         debounceTime(1000)
         , distinctUntilChanged(),
       ).subscribe(search => {
-        if (search.length >= 2) {
+        if (search?.length >= 2) {
           this.agentLoader = true;
           this.agent.search(search).subscribe((result: any) => {
             this.agents = result.data;
@@ -88,7 +99,7 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
         debounceTime(1000)
         , distinctUntilChanged(),
       ).subscribe(search => {
-        if (search.length >= 2) {
+        if (search?.length >= 2) {
           this.proxyLoader = true;
           this.proxy.search(search).subscribe((result: any) => {
             this.proxies = result.data;
@@ -103,7 +114,7 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
         debounceTime(1000)
         , distinctUntilChanged(),
       ).subscribe(search => {
-        if (search.length >= 2) {
+        if (search?.length >= 2) {
           this.configurationLoader = true;
           this.configuration.search(search).subscribe((result: any) => {
             this.configurations = result.data;
@@ -118,7 +129,7 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
         debounceTime(1000)
         , distinctUntilChanged(),
       ).subscribe(search => {
-        if (search.length >= 2) {
+        if (search?.length >= 2) {
           this.experimentLoader = true;
           this.experiment.search(search).subscribe((result: any) => {
             this.experiments = result.data;
