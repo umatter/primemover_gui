@@ -13,9 +13,10 @@ import { experimentReducer } from '../experiment/store/experiment.reducer';
 import { crawlerReducer } from '../crawler/store/crawler.reducer';
 import { queueReducer } from '../queue/store/queue.reducer';
 import { QueueModule } from '../queue/queue.module';
+import { JobCreateComponent } from './component/job-create/job-create.component';
 
 @NgModule({
-  declarations: [JobComponent],
+  declarations: [JobComponent, JobCreateComponent],
   imports: [
     CommonModule,
     JobRoutingModule,
