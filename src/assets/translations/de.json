@@ -78,15 +78,13 @@
     "cralwer_id": "Crawler Id",
     "label": "Queue",
     "add": "Queue hinzufügen",
-    "list": "Liste aller Queues.",
-    "startAt":"Start At"
+    "list": "Liste aller Queues."
   },
   "job": {
     "label": "Job",
     "add": "Job hinzufügen",
     "list": "Liste aller Jobs.",
-    "cralwer_id": "Crawler Id",
-    "type":"Type"
+    "cralwer_id": "Crawler Id"
   },
   "status": {
     "label": "Status",

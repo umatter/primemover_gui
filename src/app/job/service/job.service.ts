@@ -33,11 +33,6 @@ export class JobService {
     return this.http.get<DataCollection>(`${this.config.apiBaseUrl}/jobs`, { params });
   }
 
-  public search(keyword: string) {
-    return this.http.get<[]>(`${this.config.apiBaseUrl}/jobs?filter[name]=${keyword}
-    `);
-  }
-
   getParams(): HttpParams {
     this.queryFilterParams = this.filterService.getFilterParams();
 
