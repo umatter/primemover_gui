@@ -42,7 +42,6 @@ export class JobCreateComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
     this.currentCrawler$ = this.store.pipe(select(selectCurrentCrawler));
     this.currentCrawler$.subscribe((selectedCrawler: any) => {
       this.crawler = selectedCrawler;
