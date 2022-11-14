@@ -12,6 +12,7 @@ import { currentCrawlerResetRequested } from '../../../crawler/store/crawler.act
 import { Queue } from '../../model/queue';
 import { Router } from '@angular/router';
 
+
 @Component({
   selector: 'app-queue',
   templateUrl: './queue.component.html',
@@ -25,7 +26,7 @@ export class QueueComponent implements OnInit, OnDestroy {
   currentCrawler$: Observable<Crawler | null>;
   isLoading$: Observable<boolean>;
 
-  constructor(private store: Store, private router: Router) {}
+  constructor(private store: Store, public router: Router) {}
 
   ngOnInit() {
     this.data$ = this.store.pipe(select(selectQueuesListData));
