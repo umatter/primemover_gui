@@ -11,7 +11,6 @@ import {
   selectJobsPagination
 } from '../../store/job.selectors';
 import { jobPageRequested } from '../../store/job.actions';
-import { Route, Router } from '@angular/router';
 
 @Component({
   selector: 'app-job',
@@ -24,9 +23,7 @@ export class JobComponent implements OnInit, OnDestroy {
   currentQueue$: Observable<Queue | null>;
   isLoading$: Observable<boolean>;
 
-  constructor(private store: Store,
-    public router: Router,
-    ) {}
+  constructor(private store: Store) {}
 
   ngOnInit() {
     this.data$ = this.store.pipe(distinctUntilChanged(), select(selectJobsListData));
