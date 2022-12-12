@@ -16,7 +16,8 @@
               {{ 'common.name' | translate }}
             </label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <div *ngIf="queueLoader">
+             <div class="relative max-w-lg">
+              <div *ngIf="queueLoader" class="spinr">
                 <mat-spinner class="spin"></mat-spinner>
               </div>
               <input
@@ -29,6 +30,7 @@
                 placeholder="{{ 'common.namePlaceholder' | translate }}"
                 class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
               />
+             </div>
               <mat-autocomplete #auto3="matAutocomplete">
                 <mat-option
                   *ngFor="let queue of Queues"
