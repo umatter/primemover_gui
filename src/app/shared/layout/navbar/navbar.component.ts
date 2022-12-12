@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { selectIsSignedIn } from '../../../store/auth/auth.selectors';
 import { Observable } from 'rxjs';
-import { NavigationEnd, Router } from '@angular/router';
+import { NavigationEnd, Router,ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
@@ -11,16 +11,16 @@ import { NavigationEnd, Router } from '@angular/router';
 export class NavbarComponent implements OnInit {
   isLoggedIn$: Observable<boolean>;
   currentRoute: string;
+  selectedRoute ='';
   regularClassList: string =
     'text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium';
-  activeClassList: string = 'bg-gray-900 text-white hover px-3 py-2 rounded-md text-sm font-medium';
+  activeClassList: string = 'text-gray-300 bg-gray-700 text-white px-3 py-2 rounded-md text-sm font-medium';
 
-  constructor(private store: Store, private router: Router) {}
+  constructor(private store: Store, private router: Router,private act:ActivatedRoute) {}
 
   ngOnInit(): void {
     this.isLoggedIn$ = this.store.select(selectIsSignedIn);
-
-    this.router.events.subscribe((event) => {
+    this.router.events.subscribe((event) => {      
       if (!(event instanceof NavigationEnd)) {
         return;
       }

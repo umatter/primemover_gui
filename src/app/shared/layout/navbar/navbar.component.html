@@ -8,27 +8,27 @@
         <div class="hidden md:block">
           <div class="ml-10 flex items-baseline space-x-4">
             <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-            <a routerLink="experiments" [ngClass]="isActiveRoute('experiments') ? activeClassList : regularClassList">
+            <a (click)="selectedRoute='experiments'" routerLink="experiments" [ngClass]="selectedRoute == 'experiments' ? activeClassList : regularClassList">
               {{ 'experiment.label' | translate }}
             </a>
-            <a routerLink="crawlers" [ngClass]="isActiveRoute('crawlers') ? activeClassList : regularClassList">
+            <a (click)="selectedRoute='crawlers'" routerLink="crawlers" [ngClass]="selectedRoute == 'crawlers' ? activeClassList : regularClassList">
               {{ 'crawler.label' | translate }}
             </a>
-            <a routerLink="queues" [ngClass]="isActiveRoute('queues') ? activeClassList : regularClassList">
+            <a (click)="selectedRoute='queues'" routerLink="queues" [ngClass]="selectedRoute == 'queues' ? activeClassList : regularClassList">
               {{ 'queue.label' | translate }}
             </a>
-            <a routerLink="jobs" [ngClass]="isActiveRoute('jobs') ? activeClassList : regularClassList">
+            <a (click)="selectedRoute='jobs'" routerLink="jobs" [ngClass]="selectedRoute == 'jobs' ? activeClassList : regularClassList">
               {{ 'job.label' | translate }}
             </a>
 
-            <a routerLink="agents" [ngClass]="isActiveRoute('agents') ? activeClassList : regularClassList">
+            <a (click)="selectedRoute='agents'" routerLink="agents" [ngClass]="selectedRoute == 'agents' ? activeClassList : regularClassList">
               {{ 'agent.label' | translate }}
             </a>
-            <a routerLink="configurations"
-              [ngClass]="isActiveRoute('configurations') ? activeClassList : regularClassList">
+            <a (click)="selectedRoute='configurations'" routerLink="configurations"
+              [ngClass]="selectedRoute == 'configurations' ? activeClassList : regularClassList">
               {{ 'config.label' | translate }}
             </a>
-            <a routerLink="proxies" [ngClass]="isActiveRoute('proxies') ? activeClassList : regularClassList">
+            <a (click)="selectedRoute='proxies'" routerLink="proxies" [ngClass]="selectedRoute == 'proxies' ? activeClassList : regularClassList">
               {{ 'proxy.label' | translate }}
             </a>
             <a routerLink="login" *ngIf="(isLoggedIn$ | async) === false"
