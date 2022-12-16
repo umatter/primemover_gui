@@ -1,5 +1,5 @@
-<div class="h-full bg-white ml-1">
-  <div *ngIf="experiment != null" class="border shadow-md bg-white rounded-lg px-5 ml-1">
+<div class="h-full bg-white ml-1 width-metadata-table">
+  <div *ngIf="experiment != null" class="border mb-6 shadow-md bg-white rounded-lg px-5 ml-1">
     <h1 class="mb-1"><b>Experiment</b></h1>
     <p><b>Experiment Id </b> :{{ experiment.id }}</p>
     <p><b>Experiment Name </b> :{{ experiment.name }}</p>
@@ -8,7 +8,7 @@
     <p><b>Experiment Created-At</b> : {{ experiment.created_at | date: 'MM-dd-yyyy' }}</p>
     <p><b>Experiment Updated-At</b> : {{ experiment.updated_at | date: 'MM-dd-yyyy' }}</p>
   </div>
-  <div *ngIf="crawler != null" class="mt-6 border shadow-md rounded-lg bg-white px-5 ml-1">
+  <div *ngIf="crawler != null" class="border shadow-md rounded-lg bg-white px-5 ml-1">
     <h1 class="mb-1"><b>Crawler</b></h1>
     <p><b>Crawler Id </b> :{{ crawler.id }}</p>
     <p><b>Crawler Name </b> :{{ crawler.name }}</p>

@@ -2,7 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { selectIsSignedIn } from '../../../store/auth/auth.selectors';
 import { Observable } from 'rxjs';
-import { NavigationEnd, Router,ActivatedRoute } from '@angular/router';
+import { NavigationEnd, Router ,ActivatedRoute } from '@angular/router';
+import {Location} from '@angular/common';
+
 
 @Component({
   selector: 'app-navbar',
@@ -14,7 +16,7 @@ export class NavbarComponent implements OnInit {
   selectedRoute ='';
   regularClassList: string =
     'text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium';
-  activeClassList: string = 'text-gray-300 bg-gray-700 text-white px-3 py-2 rounded-md text-sm font-medium';
+  activeClassList: string = 'bg-gray-700 text-white';
 
   constructor(private store: Store, private router: Router,private act:ActivatedRoute) {}
 
