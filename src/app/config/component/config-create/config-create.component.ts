@@ -41,7 +41,8 @@ export class ConfigCreateComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.configurationForm = this.formBuilder.group({
       name: [null, [Validators.required]],
-      description: [null, [Validators.maxLength(1024)]]
+      description: [null, [Validators.maxLength(1024)]],
+      id:['']
     });
     this.isPopup = this.data.isPopup;
     this.subscriptions.add(
@@ -95,6 +96,7 @@ export class ConfigCreateComponent implements OnInit, OnDestroy {
 
 
   setControlValue(item: any) {
+    this.configurationForm.controls['id'].setValue(item.id)
     this.configurationForm.controls['name'].setValue(item.name)
     this.configurationForm.controls['description'].setValue(item.description);
     this.selected = true;

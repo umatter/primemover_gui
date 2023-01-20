@@ -44,7 +44,7 @@
             >
               {{ 'auth.login' | translate }}
             </a>
-            <a routerLink="logout" *ngIf="isLoggedIn$ | async" [ngClass]="regularClassList">
+            <a routerLink="logout" *ngIf="isLoggedIn$ | async" [class]="regularClassList">
               {{ 'auth.signOut' | translate }}
             </a>
           </div>

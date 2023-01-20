@@ -53,6 +53,7 @@ export class ProxyCreateComponent implements OnInit, OnDestroy {
       port: ['', [Validators.required]],
       username: ['', [Validators.required]],
       password: ['', [Validators.required]],
+      id:[''],
       active: [1],
     });
     this.isPopup = this.data.isPopup;
@@ -130,6 +131,7 @@ export class ProxyCreateComponent implements OnInit, OnDestroy {
   }
 
   setControlValue(item: any) {
+    this.proxyForm.controls['id'].setValue(item.id)
     this.proxyForm.controls['name'].setValue(item.name)
     this.proxyForm.controls['active'].setValue(item.active)
     this.proxyForm.controls['description'].setValue(item.description)

@@ -1,40 +1,40 @@
 <div class=" h-full bg-white ml-1 ">
   <div  *ngIf="experiment != null" class=" border shadow-md bg-white rounded-lg px-5 ml-1">
-    <h1 class="mb-1"><b>Experiment</b></h1>
-    <p><b>Experiment Name </b> :{{experiment.name}}</p>
-    <p><b>Experiment Description</b> : {{experiment.description}}</p>
-    <p><b>Experiment Contact</b> : {{experiment.contact}}</p>
-    <p><b>Experiment user Id</b> : {{experiment.user_id}}</p>
-    <p><b>Experiment Created-At</b> : {{experiment.created_at | date: 'MM-dd-yyyy'}}</p>
-    <p><b>Experiment Updated-At</b> : {{experiment.updated_at | date: 'MM-dd-yyyy'}}</p>
-    <p><b>Experiment Active</b> : {{experiment.active == 1 ? true : false}}</p>
-  </div>
-  <div *ngIf="crawler !=null" class="mt-6 border shadow-md rounded-lg bg-white px-5 ml-1">
-    <h1 class="mb-1"><b>Crawler</b></h1>
-    <p><b>Crawler Name </b> :{{crawler.name}}</p>
-    <p><b>Agent Name</b> : {{crawler?.agent?.name}}</p>
-    <p><b>Agent Description</b> : {{crawler?.agent?.description}}</p>
-    <p><b>Agent Identification</b> : {{crawler?.agent?.identification}}</p>
-    <p><b>Agent MultiloginId</b> : {{crawler?.agent?.multilogin_id}}</p>
-    <p><b>Agent Multilogin-profile</b> : {{multiloginProfile(crawler?.agent?.multilogin_profile)}}</p>
-      <div class="pl-3">
-        <p><b>Name</b> : {{multilogin?.name}}</p>
-        <p><b>Browser</b> : {{multilogin?.browser}}</p>
-        <p><b>Canvas</b> : {{multilogin?.canvas?.mode}}</p>
-        <p><b>Geolocation</b> : {{multilogin?.geolocation?.mode}}</p>
-        <p><b>Navigator</b> : {{multilogin?.navigator?.doNotTrack}}</p>
-        <p><b>Network</b> : {{multilogin?.network.dns}}</p>
-        <p><b>Os</b> : {{multilogin?.os}}</p>
-        <p><b>Storage</b> : {{multilogin?.storage?.local}}</p>
-      </div>
-    <p><b>Agent Location</b> : {{crawler?.agent?.location}}</p>
-    <p><b>Proxy Name</b> : {{crawler?.proxy?.name}}</p>
-    <p><b>Proxy Description</b> : {{crawler?.proxy?.description}}</p>
-    <p><b>Proxy Hostname</b> : {{crawler?.proxy?.hostname}}</p>
-    <p><b>Proxy Port</b> : {{crawler?.proxy?.port}}</p>
-    <p><b>Proxy User Name</b> : {{crawler?.proxy?.username}}</p>
-    <p><b>Proxy Password</b> : {{crawler?.proxy?.password}}</p>
-    <p><b>Configuration Name</b> : {{crawler?.configuration?.name}}</p>
-    </div>
-  </div>
 
+    <h1 class="mb-1"><b>Experiment</b></h1>
+    <p><b>Experiment Id </b> :{{ experiment.id }}</p>
+    <p><b>Experiment Name </b> :{{ experiment.name }}</p>
+    <p><b>Experiment Description</b> : {{ experiment.description }}</p>
+    <p><b>Experiment Contact</b> : {{ experiment.contact }}</p>
+    <p><b>Experiment Created-At</b> : {{ experiment.created_at | date: 'MM-dd-yyyy' }}</p>
+    <p><b>Experiment Updated-At</b> : {{ experiment.updated_at | date: 'MM-dd-yyyy' }}</p>
+  </div>
+  <div *ngIf="crawler != null" class="border shadow-md rounded-lg bg-white px-5 ml-1">
+    <h1 class="mb-1"><b>Crawler</b></h1>
+    <p><b>Crawler Id </b> :{{ crawler.id }}</p>
+    <p><b>Crawler Name </b> :{{ crawler.name }}</p>
+    <p><b>Agent Name</b> : {{ crawler?.agent?.name }}</p>
+    <p><b>Agent Description</b> : {{ crawler?.agent?.description }}</p>
+    <p><b>Agent Identification</b> : {{ crawler?.agent?.identification }}</p>
+    <p><b>Agent MultiloginId</b> : {{ crawler?.agent?.multilogin_id }}</p>
+    <p><b>Agent Multilogin-profile</b> : {{ multiloginProfile(crawler?.agent?.multilogin_profile) }}</p>
+    <div class="pl-3">
+      <p><b>Name</b> : {{ multilogin?.name }}</p>
+      <p><b>Browser</b> : {{ multilogin?.browser }}</p>
+      <p><b>Canvas</b> : {{ multilogin?.canvas?.mode }}</p>
+      <p><b>Geolocation</b> : {{ multilogin?.geolocation?.mode }}</p>
+      <p><b>Navigator</b> : {{ multilogin?.navigator?.doNotTrack }}</p>
+      <p><b>Network</b> : {{ multilogin?.network.dns }}</p>
+      <p><b>Os</b> : {{ multilogin?.os }}</p>
+      <p><b>Storage</b> : {{ multilogin?.storage?.local }}</p>
+    </div>
+    <p><b>Agent Location</b> : {{ crawler?.agent?.location }}</p>
+    <p><b>Proxy Name</b> : {{ crawler?.proxy?.name }}</p>
+    <p><b>Proxy Description</b> : {{ crawler?.proxy?.description }}</p>
+    <p><b>Proxy Hostname</b> : {{ crawler?.proxy?.hostname }}</p>
+    <p><b>Proxy Port</b> : {{ crawler?.proxy?.port }}</p>
+    <p><b>Proxy User Name</b> : {{ crawler?.proxy?.username }}</p>
+    <p><b>Proxy Password</b> : {{ crawler?.proxy?.password }}</p>
+    <p><b>Configuration Name</b> : {{ crawler?.configuration?.name }}</p>
+  </div>
+</div>

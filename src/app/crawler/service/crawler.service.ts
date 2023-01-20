@@ -67,6 +67,11 @@ export class CrawlerService {
     return this.http.post<any>(`${this.config.apiBaseUrl}/crawlers`, crawler);
   }
 
+  public search(keyword: string) {
+    return this.http.get<[]>(`${this.config.apiBaseUrl}/crawlers?filter[name]=${keyword}
+    `);
+  }
+
   getParams(): HttpParams {
     this.queryFilterParams = this.filterService.getFilterParams();
 
