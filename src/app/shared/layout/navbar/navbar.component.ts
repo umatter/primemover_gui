@@ -16,7 +16,8 @@ export class NavbarComponent implements OnInit {
   selectedRoute ='';
   regularClassList: string =
     'text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium';
-  activeClassList: string = 'bg-gray-700 text-white';
+  activeClassList: string = 'bg-gray-900 text-white hover px-3 py-2 rounded-md text-lg font-medium';
+
 
   constructor(private store: Store, private router: Router,private act:ActivatedRoute) {}
 
@@ -32,10 +33,11 @@ export class NavbarComponent implements OnInit {
 
   isActiveRoute(routeName: string): boolean {
     return this.currentRoute === routeName;
+
   }
 
   isHomeRoute(): boolean {
-    return this.isActiveRoute('/') || this.isActiveRoute('/home');
+    return this.isActiveRoute('/') || this.isActiveRoute('/home') || this.isActiveRoute('/experiments');
   }
 
   isLoginRoute(): boolean {
