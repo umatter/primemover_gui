@@ -23,9 +23,16 @@ export class AgentCreateComponent implements OnInit, OnDestroy {
   selected = false;
   agents: any;
   agentCtrl = new FormControl();
-  agentLoader: boolean = false
+  agentLoader: boolean = false;
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private store: Store, private agent: AgentService, private formBuilder: FormBuilder, public router: Router, private agentDialog: MatDialogRef<AgentCreateComponent>) { }
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private store: Store,
+    private agent: AgentService,
+    private formBuilder: FormBuilder,
+    public router: Router,
+    private agentDialog: MatDialogRef<AgentCreateComponent>
+  ) {}
 
   get name(): string | null {
     return this.agentForm.get('name')?.value;
@@ -50,7 +57,6 @@ export class AgentCreateComponent implements OnInit, OnDestroy {
     return this.agentForm.get('location')?.value;
   }
 
-
   ngOnInit(): void {
     this.agentForm = this.formBuilder.group({
       name: [null, [Validators.required]],
@@ -61,10 +67,9 @@ export class AgentCreateComponent implements OnInit, OnDestroy {
       location: ['', [Validators.required]],
       id: [''],
 
-      active: [1],
+      active: [1]
     });
     this.isPopup = this.data.isPopup;
-
 
     this.subscriptions.add(
       this.agentForm.valueChanges.pipe(debounceTime(500)).subscribe((formValue: AgentFormValues) => {
@@ -77,31 +82,26 @@ export class AgentCreateComponent implements OnInit, OnDestroy {
             multilogin_profile: formValue.multilogin_profile,
             location: formValue.location,
             active: formValue.active
-
           })
         );
       })
     );
 
-
-    this.agentCtrl.valueChanges
-      .pipe(
-        debounceTime(1000)
-        , distinctUntilChanged(),
-      ).subscribe(search => {
-        if (search.length >= 2) {
-          this.agentLoader = true;
-          this.agent.search(search).subscribe((result: any) => {
+    this.agentCtrl.valueChanges.pipe(debounceTime(1000), distinctUntilChanged()).subscribe((search) => {
+      if (search.length >= 2) {
+        this.agentLoader = true;
+        this.agent.search(search).subscribe(
+          (result: any) => {
             this.agents = result.data;
             this.agentLoader = false;
-          }, error => {
+          },
+          (error) => {
             this.agentLoader = false;
-          });
-        }
-        this.agentForm.controls['name'].setValue(search);
-
-      });
-
+          }
+        );
+      }
+      this.agentForm.controls['name'].setValue(search);
+    });
   }
 
   reset() {
@@ -124,32 +124,31 @@ export class AgentCreateComponent implements OnInit, OnDestroy {
 
   saveAgent(): void {
     if (!this.agentForm.valid) {
-      return
+      return;
     }
     if (!this.selected) {
-      this.agentForm.controls['active'].setValue(1)
+      this.agentForm.controls['active'].setValue(1);
       this.store.dispatch(completeAgentCreateRequested());
-
     }
-    this.onClose(true)
+    this.onClose(true);
   }
 
   setControlValue(item: any) {
-    this.agentForm.controls['id'].setValue(item.id)
-    this.agentForm.controls['name'].setValue(item.name)
-    this.agentForm.controls['description'].setValue(item.description)
-    this.agentForm.controls['identification'].setValue(item.identification)
-    this.agentForm.controls['multilogin_id'].setValue(item.multilogin_id)
-    this.agentForm.controls['multilogin_profile'].setValue(item.multilogin_profile)
-    this.agentForm.controls['location'].setValue(item.location)
+    this.agentForm.controls['id'].setValue(item.id);
+    this.agentForm.controls['name'].setValue(item.name);
+    this.agentForm.controls['description'].setValue(item.description);
+    this.agentForm.controls['identification'].setValue(item.identification);
+    this.agentForm.controls['multilogin_id'].setValue(item.multilogin_id);
+    this.agentForm.controls['multilogin_profile'].setValue(item.multilogin_profile);
+    this.agentForm.controls['location'].setValue(item.location);
     this.selected = true;
   }
 
   onClose(close: boolean) {
     if (this.isPopup) {
-      this.agentDialog.close(this.agentForm.value)
+      this.agentDialog.close(this.agentForm.value);
     } else {
-      this.router.navigate(['agents'])
+      this.router.navigate(['agents']);
     }
   }
 

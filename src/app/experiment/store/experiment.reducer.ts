@@ -4,7 +4,8 @@ import {
   experimentPageRequested,
   experimentRequested,
   experimentResetRequested,
-  experimentsRetrieved, experimentsSimpleListRetrieved,
+  experimentsRetrieved,
+  experimentsSimpleListRetrieved,
   updateExperimentCreateValues
 } from './experiment.actions';
 import { DataCollection } from '../../shared/model/data-collection';
@@ -19,7 +20,7 @@ export interface ExperimentState {
   isLoading: boolean;
   current: Experiment | null;
   form?: ExperimentFormValues;
-  list?: []
+  list?: [];
 }
 
 export const initialState: ExperimentState = {

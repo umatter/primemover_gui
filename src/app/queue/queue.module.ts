@@ -12,10 +12,10 @@ import { queueReducer } from './store/queue.reducer';
 import { QueueEffects } from './store/queue.effects';
 import { crawlerReducer } from '../crawler/store/crawler.reducer';
 import { StatusComponent } from './component/status/status.component';
-import { QueueCraeteComponent } from './component/queue-create/queue-craete/queue-craete.component';
+import { QueueCreateComponent } from './component/queue-create/queue-craete/queue-create.component';
 
 @NgModule({
-  declarations: [QueueComponent, StatusComponent, QueueCraeteComponent],
+  declarations: [QueueComponent, StatusComponent, QueueCreateComponent],
   exports: [StatusComponent],
   imports: [
     CommonModule,

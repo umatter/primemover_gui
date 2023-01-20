@@ -24,7 +24,14 @@ export class ProxyCreateComponent implements OnInit, OnDestroy {
   proxies: any;
   proxyCtrl = new FormControl();
 
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any, private proxy: ProxyService, private store: Store, private formBuilder: FormBuilder, public router: Router, private proxyDialog: MatDialogRef<ProxyCreateComponent>) { }
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private proxy: ProxyService,
+    private store: Store,
+    private formBuilder: FormBuilder,
+    public router: Router,
+    private proxyDialog: MatDialogRef<ProxyCreateComponent>
+  ) {}
 
   get name(): string | null {
     return this.proxyForm.get('name')?.value;
@@ -53,11 +60,10 @@ export class ProxyCreateComponent implements OnInit, OnDestroy {
       port: ['', [Validators.required]],
       username: ['', [Validators.required]],
       password: ['', [Validators.required]],
-      id:[''],
-      active: [1],
+      id: [''],
+      active: [1]
     });
     this.isPopup = this.data.isPopup;
-
 
     this.subscriptions.add(
       this.proxyForm.valueChanges.pipe(debounceTime(500)).subscribe((formValue: ProxyFormValues) => {
@@ -69,33 +75,27 @@ export class ProxyCreateComponent implements OnInit, OnDestroy {
             hostName: formValue.hostName,
             port: formValue.port,
             username: formValue.username,
-            password: formValue.password,
+            password: formValue.password
           })
         );
       })
     );
 
-
-
-    this.proxyCtrl.valueChanges
-      .pipe(
-        debounceTime(1000)
-        , distinctUntilChanged(),
-      ).subscribe(search => {
-        if (search.length >= 2) {
-          this.proxyLoader = true;
-          this.proxy.search(search).subscribe((result: any) => {
+    this.proxyCtrl.valueChanges.pipe(debounceTime(1000), distinctUntilChanged()).subscribe((search) => {
+      if (search.length >= 2) {
+        this.proxyLoader = true;
+        this.proxy.search(search).subscribe(
+          (result: any) => {
             this.proxies = result.data;
             this.proxyLoader = false;
-          }, error => {
+          },
+          (error) => {
             this.proxyLoader = false;
-          });
-        }
-        this.proxyForm.controls['name'].setValue(search);
-
-      });
-
-
+          }
+        );
+      }
+      this.proxyForm.controls['name'].setValue(search);
+    });
   }
 
   hasValue(controlName: string): boolean {
@@ -112,37 +112,33 @@ export class ProxyCreateComponent implements OnInit, OnDestroy {
 
   saveProxy(): void {
     if (!this.proxyForm.valid) {
-      return
+      return;
     }
     if (!this.selected) {
       this.store.dispatch(completeProxyCreateRequested());
-
     }
     this.onClose(true);
   }
 
-
   onClose(close: boolean) {
     if (this.isPopup) {
-      this.proxyDialog.close(this.proxyForm.value)
+      this.proxyDialog.close(this.proxyForm.value);
     } else {
-      this.router.navigate(['proxies'])
+      this.router.navigate(['proxies']);
     }
   }
 
   setControlValue(item: any) {
-    this.proxyForm.controls['id'].setValue(item.id)
-    this.proxyForm.controls['name'].setValue(item.name)
-    this.proxyForm.controls['active'].setValue(item.active)
-    this.proxyForm.controls['description'].setValue(item.description)
-    this.proxyForm.controls['hostName'].setValue(item.hostname)
-    this.proxyForm.controls['port'].setValue(item.port)
-    this.proxyForm.controls['username'].setValue(item.username)
+    this.proxyForm.controls['id'].setValue(item.id);
+    this.proxyForm.controls['name'].setValue(item.name);
+    this.proxyForm.controls['active'].setValue(item.active);
+    this.proxyForm.controls['description'].setValue(item.description);
+    this.proxyForm.controls['hostName'].setValue(item.hostname);
+    this.proxyForm.controls['port'].setValue(item.port);
+    this.proxyForm.controls['username'].setValue(item.username);
     this.proxyForm.controls['password'].setValue(item.password);
     this.selected = true;
-
   }
-
 
   reset() {
     this.proxyForm.reset();

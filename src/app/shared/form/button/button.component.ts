@@ -1,16 +1,16 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-button',
   templateUrl: './button.component.html'
 })
-export class ButtonComponent implements OnInit {
+export class ButtonComponent {
   @Input() size: string;
   @Input() type: string;
   @Input() text: string = 'Button';
   @Input() disabled: boolean = false;
 
-  constructor() { }
+  constructor() {}
 
   extraSmall = (): boolean => this.size === 'xs';
   small = (): boolean => this.size === 'sm';
@@ -25,7 +25,4 @@ export class ButtonComponent implements OnInit {
   trailingIcon = (): boolean => this.type === 'trailing-icon';
   round = (): boolean => this.type === 'round';
   circular = (): boolean => this.type === 'circular';
-
-  ngOnInit(): void {
-  }
 }

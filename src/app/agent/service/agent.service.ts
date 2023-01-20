@@ -20,25 +20,20 @@ export class AgentService {
     private store: Store,
     private config: AppConfig,
     private filterService: QueryFilterService
-  ) { }
+  ) {}
 
   public simpleIndex(): Observable<[]> {
     return this.http.get<[]>(`${this.config.apiBaseUrl}/agents-list`);
   }
 
-
   public agentList(): Observable<[]> {
     return this.http.get<[]>(`${this.config.apiBaseUrl}/agents`);
   }
-
-
 
   search(keyword: string) {
     return this.http.get<[]>(`${this.config.apiBaseUrl}/agents?filter[search]=${keyword}
     `);
   }
-
-
 
   public index(): Observable<DataCollection> {
     this.store.pipe(select(selectPageRequested), first()).subscribe((response) => (this.pageRequested = response));
@@ -55,8 +50,8 @@ export class AgentService {
       location: AgentValues?.location,
       identification: AgentValues?.identification,
       description: AgentValues?.description,
-      active: AgentValues?.active,
-    }
+      active: AgentValues?.active
+    };
     return this.http.post<any>(`${this.config.apiBaseUrl}/agents`, agent);
   }
 

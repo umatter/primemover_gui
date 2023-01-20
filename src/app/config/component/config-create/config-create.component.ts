@@ -25,10 +25,15 @@ export class ConfigCreateComponent implements OnInit, OnDestroy {
   configLoader: boolean = false;
   configurations: any;
 
-  constructor(@Optional() private configDialog: MatDialogRef<ConfigCreateComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private store: Store,
-  
-  private config: ConfigService,
-  private formBuilder: FormBuilder, public router: Router) { }
+  constructor(
+    @Optional() private configDialog: MatDialogRef<ConfigCreateComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private store: Store,
+
+    private config: ConfigService,
+    private formBuilder: FormBuilder,
+    public router: Router
+  ) {}
 
   get name(): string | null {
     return this.configurationForm.get('name')?.value;
@@ -42,7 +47,7 @@ export class ConfigCreateComponent implements OnInit, OnDestroy {
     this.configurationForm = this.formBuilder.group({
       name: [null, [Validators.required]],
       description: [null, [Validators.maxLength(1024)]],
-      id:['']
+      id: ['']
     });
     this.isPopup = this.data.isPopup;
     this.subscriptions.add(
@@ -51,28 +56,26 @@ export class ConfigCreateComponent implements OnInit, OnDestroy {
           updateConfigurationCreateValues({
             name: formValue.name,
             active: true,
-            description: formValue.description,
+            description: formValue.description
           })
         );
       })
     );
 
-    this.configCtrl.valueChanges
-    .pipe(
-      debounceTime(1000)
-      , distinctUntilChanged(),
-    ).subscribe(search => {
+    this.configCtrl.valueChanges.pipe(debounceTime(1000), distinctUntilChanged()).subscribe((search) => {
       if (search.length >= 2) {
         this.configLoader = true;
-        this.config.search(search).subscribe((result: any) => {
-          this.configurations = result.data;
-          this.configLoader = false;
-        }, error => {
-          this.configLoader = false;
-        });
+        this.config.search(search).subscribe(
+          (result: any) => {
+            this.configurations = result.data;
+            this.configLoader = false;
+          },
+          (error) => {
+            this.configLoader = false;
+          }
+        );
       }
       this.configurationForm.controls['name'].setValue(search);
-
     });
   }
 
@@ -94,32 +97,29 @@ export class ConfigCreateComponent implements OnInit, OnDestroy {
     );
   }
 
-
   setControlValue(item: any) {
-    this.configurationForm.controls['id'].setValue(item.id)
-    this.configurationForm.controls['name'].setValue(item.name)
+    this.configurationForm.controls['id'].setValue(item.id);
+    this.configurationForm.controls['name'].setValue(item.name);
     this.configurationForm.controls['description'].setValue(item.description);
     this.selected = true;
   }
 
-
   saveConfiguration(): void {
     if (!this.configurationForm.valid) {
-      return
+      return;
     }
 
     if (!this.selected) {
       this.store.dispatch(completeConfigurationCreateRequested());
-
     }
-    this.onClose(true)
+    this.onClose(true);
   }
 
   onClose(close: boolean) {
     if (this.isPopup) {
       this.configDialog.close(this.configurationForm.value);
     } else {
-      this.router.navigate(['configurations'])
+      this.router.navigate(['configurations']);
     }
   }
 

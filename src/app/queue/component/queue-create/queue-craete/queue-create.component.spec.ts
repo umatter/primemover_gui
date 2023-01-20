@@ -1,18 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { QueueCraeteComponent } from './queue-craete.component';
+import { QueueCreateComponent } from './queue-create.component';
 
 describe('QueueCraeteComponent', () => {
-  let component: QueueCraeteComponent;
-  let fixture: ComponentFixture<QueueCraeteComponent>;
+  let component: QueueCreateComponent;
+  let fixture: ComponentFixture<QueueCreateComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ QueueCraeteComponent ]
-    })
-    .compileComponents();
+      declarations: [QueueCreateComponent]
+    }).compileComponents();
 
-    fixture = TestBed.createComponent(QueueCraeteComponent);
+    fixture = TestBed.createComponent(QueueCreateComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

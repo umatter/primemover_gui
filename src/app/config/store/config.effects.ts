@@ -14,7 +14,9 @@ import {
   configurationPageRequested,
   configurationsRequested,
   configurationsRequestFailed,
-  configurationsRetrieved, configurationsSimpleListRequested, configurationsSimpleListRetrieved
+  configurationsRetrieved,
+  configurationsSimpleListRequested,
+  configurationsSimpleListRetrieved
 } from './config.actions';
 import { updateQueryFilter } from '../../shared/store/shared.actions';
 import { selectConfigurationCreateFormValues } from './config.selectors';
@@ -108,5 +110,5 @@ export class ConfigEffects {
     private store: Store,
     private apiService: ConfigService,
     private router: Router
-  ) { }
+  ) {}
 }

@@ -4,7 +4,8 @@ import {
   agentPageRequested,
   agentRequested,
   agentResetRequested,
-  agentsRetrieved, agentsSimpleListRetrieved,
+  agentsRetrieved,
+  agentsSimpleListRetrieved,
   updateAgentCreateValues,
   getAgetList
 } from './agent.actions';
@@ -21,7 +22,7 @@ export interface AgentState {
   isLoading: boolean;
   current: Agent | null;
   form?: AgentFormValues;
-  list?: []
+  list?: [];
 }
 
 export const initialState: AgentState = {

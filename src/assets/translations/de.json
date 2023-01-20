@@ -79,14 +79,14 @@
     "label": "Queue",
     "add": "Queue hinzufügen",
     "list": "Liste aller Queues.",
-    "startAt":"Start At"
+    "startAt": "Start At"
   },
   "job": {
     "label": "Job",
     "add": "Job hinzufügen",
     "list": "Liste aller Jobs.",
     "cralwer_id": "Crawler Id",
-    "type":"Type"
+    "type": "Type"
   },
   "status": {
     "label": "Status",

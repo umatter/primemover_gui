@@ -35,13 +35,13 @@ import { EffectsModule } from '@ngrx/effects';
 import { SharedEffects } from './store/shared.effects';
 import { sharedReducer } from './store/shared.reducer';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialogModule } from "@angular/material/dialog";
-import { MatInputModule } from "@angular/material/input";
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MetadataComponent } from './metadata/metadata.component';
 
@@ -69,7 +69,7 @@ import { MetadataComponent } from './metadata/metadata.component';
     LinkSortableComponent,
     RemovableBadgeComponent,
     LoadingSpinnerComponent,
-    MetadataComponent,
+    MetadataComponent
   ],
   imports: [
     CommonModule,
@@ -99,7 +99,6 @@ import { MetadataComponent } from './metadata/metadata.component';
     MatIconModule,
     MatAutocompleteModule,
     MatProgressSpinnerModule
-
   ],
   exports: [
     TranslateModule,
@@ -128,13 +127,9 @@ import { MetadataComponent } from './metadata/metadata.component';
     MatIconModule,
     MatAutocompleteModule,
     MatProgressSpinnerModule,
-    MetadataComponent,
-
+    MetadataComponent
   ],
 
-  providers: [DatePipe,
-    { provide: MAT_DIALOG_DATA, useValue: {} },
-    { provide: MatDialogRef, useValue: {} }
-  ]
+  providers: [DatePipe, { provide: MAT_DIALOG_DATA, useValue: {} }, { provide: MatDialogRef, useValue: {} }]
 })
-export class SharedModule { }
+export class SharedModule {}

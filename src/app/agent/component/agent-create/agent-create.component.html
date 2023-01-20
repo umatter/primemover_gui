@@ -1,5 +1,5 @@
 <div class="px-4 sm:px-6 lg:px-8">
-  <form class="space-y-8 divide-y divide-gray-200" [formGroup]="agentForm">
+  <form [formGroup]="agentForm" class="space-y-8 divide-y divide-gray-200">
     <div class="space-y-8 divide-y divide-gray-200 sm:space-y-5">
       <div class="sm:flex sm:items-center">
         <div class="sm:flex-auto">
@@ -12,111 +12,168 @@
       <div class="space-y-6 sm:space-y-5">
         <div class="space-y-6 sm:space-y-5">
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-            <label for="name" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
+            <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="name">
               {{ 'common.name' | translate }}
             </label>
             <div class="mt-1 sm:mt-0 sm:col-span-2 relative">
               <div *ngIf="agentLoader" class="absolute top-0 right-0">
-                <mat-spinner class="spin spiner-style"></mat-spinner>
+                <mat-spinner class="spin spinnerStyle"></mat-spinner>
               </div>
-              <input type="text" name="agent" id="agent" autocomplete="agent" [matAutocomplete]="auto"
-              [formControl]='agentCtrl' placeholder="{{ 'common.namePlaceholder' | translate }}"
-              class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md" />
-            <mat-autocomplete #auto="matAutocomplete">
-              <mat-option *ngFor="let agent of agents" (onSelectionChange)="setControlValue(agent)"
-                [value]="agent.name">
-                <span>{{ agent.name }}</span>
-              </mat-option>
-            </mat-autocomplete>
-            <button class="flex ml-auto mt-2" (click)="reset()">
-              <mat-icon> restore </mat-icon> Reset
-            </button>
+              <input
+                [formControl]="agentCtrl"
+                [matAutocomplete]="auto"
+                autocomplete="agent"
+                class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+                id="agent"
+                name="agent"
+                placeholder="{{ 'common.namePlaceholder' | translate }}"
+                type="text"
+              />
+              <mat-autocomplete #auto="matAutocomplete">
+                <mat-option
+                  (onSelectionChange)="setControlValue(agent)"
+                  *ngFor="let agent of agents"
+                  [value]="agent.name"
+                >
+                  <span>{{ agent.name }}</span>
+                </mat-option>
+              </mat-autocomplete>
+              <button (click)="reset()" class="flex ml-auto mt-2">
+                <mat-icon> restore</mat-icon>
+                Reset
+              </button>
             </div>
           </div>
 
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-            <label for="description" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
+            <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="description">
               {{ 'common.description' | translate }}
             </label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <textarea id="description" name="description" rows="3" formControlName="description"
+              <textarea
                 class="shadow-sm block w-full focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border border-gray-300 rounded-md"
-                placeholder="{{ 'common.descriptionPlaceholder' | translate }}"></textarea>
+                formControlName="description"
+                id="description"
+                name="description"
+                placeholder="{{ 'common.descriptionPlaceholder' | translate }}"
+                rows="3"
+              ></textarea>
             </div>
           </div>
 
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-            <label for="identification" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
+            <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="identification">
               {{ 'common.identification' | translate }}
             </label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <input type="text" name="identification" id="identification" autocomplete="identification"
-                formControlName="identification" placeholder="{{ 'common.identificationPlaceholder' | translate }}"
-                class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md" />
-              <p @fadeIn *ngIf="hasError('identification', 'required')" class="mt-2 text-sm text-red-600"
-                id="identification-error">
+              <input
+                autocomplete="identification"
+                class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+                formControlName="identification"
+                id="identification"
+                name="identification"
+                placeholder="{{ 'common.identificationPlaceholder' | translate }}"
+                type="text"
+              />
+              <p
+                *ngIf="hasError('identification', 'required')"
+                @fadeIn
+                class="mt-2 text-sm text-red-600"
+                id="identification-error"
+              >
                 {{ 'common.identificationRequiredError' | translate }}
               </p>
             </div>
           </div>
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-            <label for="multilogin_id" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
+            <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="multilogin_id">
               {{ 'common.multilogin_id' | translate }}
             </label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <input type="text" name="multilogin_id" id="multilogin_id" autocomplete="multilogin_id"
-                formControlName="multilogin_id" placeholder="{{ 'common.multilogin_idPlaceholder' | translate }}"
-                class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md" />
-              <p @fadeIn *ngIf="hasError('multilogin_id', 'required')" class="mt-2 text-sm text-red-600"
-                id="multilogin_id-error">
+              <input
+                autocomplete="multilogin_id"
+                class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+                formControlName="multilogin_id"
+                id="multilogin_id"
+                name="multilogin_id"
+                placeholder="{{ 'common.multilogin_idPlaceholder' | translate }}"
+                type="text"
+              />
+              <p
+                *ngIf="hasError('multilogin_id', 'required')"
+                @fadeIn
+                class="mt-2 text-sm text-red-600"
+                id="multilogin_id-error"
+              >
                 {{ 'common.multilogin_idRequiredError' | translate }}
               </p>
             </div>
           </div>
 
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-            <label for="multilogin_profile" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
+            <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="multilogin_profile">
               {{ 'common.multilogin_profile' | translate }}
             </label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <input type="text" name="multilogin_profile" id="multilogin_profile" autocomplete="multilogin_profile"
+              <input
+                autocomplete="multilogin_profile"
+                class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
                 formControlName="multilogin_profile"
+                id="multilogin_profile"
+                name="multilogin_profile"
                 placeholder="{{ 'common.multilogin_profilePlaceholder' | translate }}"
-                class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md" />
-              <p @fadeIn *ngIf="hasError('multilogin_profile', 'required')" class="mt-2 text-sm text-red-600"
-                id="multilogin_profile-error">
+                type="text"
+              />
+              <p
+                *ngIf="hasError('multilogin_profile', 'required')"
+                @fadeIn
+                class="mt-2 text-sm text-red-600"
+                id="multilogin_profile-error"
+              >
                 {{ 'common.multilogin_profileRequiredError' | translate }}
               </p>
             </div>
           </div>
 
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-            <label for="location" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
+            <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="location">
               {{ 'common.location' | translate }}
             </label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <input type="text" name="location" id="location" autocomplete="location" formControlName="location"
+              <input
+                autocomplete="location"
+                class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+                formControlName="location"
+                id="location"
+                name="location"
                 placeholder="{{ 'common.locationPlaceholder' | translate }}"
-                class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md" />
-              <p @fadeIn *ngIf="hasError('location', 'required')" class="mt-2 text-sm text-red-600" id="location-error">
+                type="text"
+              />
+              <p *ngIf="hasError('location', 'required')" @fadeIn class="mt-2 text-sm text-red-600" id="location-error">
                 {{ 'common.locationRequiredError' | translate }}
               </p>
             </div>
           </div>
-
         </div>
       </div>
     </div>
 
     <div class="pt-5">
       <div class="flex justify-end">
-        <button type="button" (click)="onClose(false)"
-          class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+        <button
+          (click)="onClose(false)"
+          class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          type="button"
+        >
           {{ 'common.cancel' | translate }}
         </button>
-        <button type="button" [disabled]="!agentForm.valid"
-          [ngClass]="{ 'opacity-25 hover:bg-indigo-600 ': !agentForm.valid}" (click)="saveAgent()"
-          class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+        <button
+          (click)="saveAgent()"
+          [disabled]="!agentForm.valid"
+          [ngClass]="{ 'opacity-25 hover:bg-indigo-600 ': !agentForm.valid }"
+          class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          type="button"
+        >
           {{ 'common.save' | translate }}
         </button>
       </div>

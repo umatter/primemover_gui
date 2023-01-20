@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { modalAnimated } from '../../../animation/trigger';
 
 @Component({
@@ -6,9 +6,6 @@ import { modalAnimated } from '../../../animation/trigger';
   templateUrl: './single-action-centered.component.html',
   animations: [modalAnimated]
 })
-export class SingleActionCenteredComponent implements OnInit {
+export class SingleActionCenteredComponent {
   constructor() {}
-
-  ngOnInit(): void {
-  }
 }

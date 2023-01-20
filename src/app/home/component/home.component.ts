@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { fadeIn } from '../../shared/animation/trigger';
 
 @Component({
@@ -6,9 +6,6 @@ import { fadeIn } from '../../shared/animation/trigger';
   templateUrl: './home.component.html',
   animations: [fadeIn]
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent {
   constructor() {}
-
-  ngOnInit(): void {
-  }
 }

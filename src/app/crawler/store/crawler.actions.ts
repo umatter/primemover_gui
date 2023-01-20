@@ -16,10 +16,7 @@ export const crawlerRequested = createAction('[Crawler] Record requested', props
 export const currentCrawlerResetRequested = createAction('[Crawler] Reset current requested');
 export const completeCrawlerCreateRequested = createAction('[Crawler] Complete create requested');
 
-export const experimentDeleteRequested = createAction(
-  '[Crawler] Delete requested',
-  props<{ crawlerId: number }>()
-);
+export const experimentDeleteRequested = createAction('[Crawler] Delete requested', props<{ crawlerId: number }>());
 export const updateCrawlerCreateValues = createAction('[Crawler] Update', props<CrawlerFormValues>());
 export const experimentCreateSuccess = createAction('[Crawler] Create success', props<any>());
 export const experimentDeleteSuccess = createAction('[Crawler] Delete success', props<any>());
@@ -41,9 +38,3 @@ export const agentRequestFailed = createAction('[agent] Request failed', props<{
 export const configRequest = createAction('[config] Data requested');
 export const configsRetrieved = createAction('[config] config retrieved', props<{ config: any }>());
 export const configRequestFailed = createAction('[config] Request failed', props<{ error: any }>());
-
-
-
-
-
-

@@ -12,7 +12,6 @@ import { currentCrawlerResetRequested } from '../../../crawler/store/crawler.act
 import { Queue } from '../../model/queue';
 import { Router } from '@angular/router';
 
-
 @Component({
   selector: 'app-queue',
   templateUrl: './queue.component.html',

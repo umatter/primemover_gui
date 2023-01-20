@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { fadeIn } from '../../animation/trigger';
 
 @Component({
@@ -6,9 +6,6 @@ import { fadeIn } from '../../animation/trigger';
   templateUrl: './main-wrapper.component.html',
   animations: [fadeIn]
 })
-export class MainWrapperComponent implements OnInit {
+export class MainWrapperComponent {
   constructor() {}
-
-  ngOnInit(): void {
-  }
 }

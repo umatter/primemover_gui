@@ -20,9 +20,16 @@ export class ExperimentCreateComponent implements OnInit, OnDestroy {
   formValid$: Observable<boolean>;
   isPopup = false;
   experimentLoader = false;
-  experimentCtrl = new FormControl()
+  experimentCtrl = new FormControl();
   experiments: any;
-  constructor(@Inject(MAT_DIALOG_DATA) public data: any,private experiment: ExperimentService, private store: Store, private formBuilder: FormBuilder, @Optional() private experiementDialog: MatDialogRef<ExperimentCreateComponent>, public router: Router) { }
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private experiment: ExperimentService,
+    private store: Store,
+    private formBuilder: FormBuilder,
+    @Optional() private experiementDialog: MatDialogRef<ExperimentCreateComponent>,
+    public router: Router
+  ) {}
 
   get name(): string | null {
     return this.experimentForm.get('name')?.value;
@@ -50,30 +57,27 @@ export class ExperimentCreateComponent implements OnInit, OnDestroy {
             name: formValue.name,
             active: true,
             description: formValue.description,
-            contact: formValue.contact,
+            contact: formValue.contact
           })
         );
       })
     );
 
-
-    this.experimentCtrl.valueChanges
-      .pipe(
-        debounceTime(1000)
-        , distinctUntilChanged(),
-      ).subscribe(search => {
-        if (search.length >= 2) {
-          this.experimentLoader = true;
-          this.experiment.search(search).subscribe((result: any) => {
+    this.experimentCtrl.valueChanges.pipe(debounceTime(1000), distinctUntilChanged()).subscribe((search) => {
+      if (search.length >= 2) {
+        this.experimentLoader = true;
+        this.experiment.search(search).subscribe(
+          (result: any) => {
             this.experiments = result.data;
             this.experimentLoader = false;
-          }, error => {
+          },
+          (error) => {
             this.experimentLoader = false;
-          });
-        }
-        this.experimentForm.controls['name'].setValue(search);
-
-      });
+          }
+        );
+      }
+      this.experimentForm.controls['name'].setValue(search);
+    });
   }
 
   hasValue(controlName: string): boolean {
@@ -90,8 +94,8 @@ export class ExperimentCreateComponent implements OnInit, OnDestroy {
 
   setControlValue(item: any) {
     this.experimentForm.controls['name'].setValue(item.name);
-    this.experimentForm.controls['contact'].setValue(item.contact)
-    this.experimentForm.controls['description'].setValue(item.description)
+    this.experimentForm.controls['contact'].setValue(item.contact);
+    this.experimentForm.controls['description'].setValue(item.description);
   }
 
   reset() {
@@ -101,17 +105,17 @@ export class ExperimentCreateComponent implements OnInit, OnDestroy {
 
   saveExperiment(): void {
     if (!this.experimentForm.valid) {
-      return
+      return;
     }
     this.store.dispatch(completeExperimentCreateRequested());
-    this.onClose(true)
+    this.onClose(true);
   }
 
   onClose(close: boolean) {
     if (this.isPopup) {
-      this.experiementDialog.close(close)
+      this.experiementDialog.close(close);
     } else {
-      this.router.navigate(['experiments'])
+      this.router.navigate(['experiments']);
     }
   }
 

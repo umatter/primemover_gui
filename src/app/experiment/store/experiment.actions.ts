@@ -7,8 +7,14 @@ import { HttpErrorResponse } from '@angular/common/http';
 export const experimentsRequested = createAction('[Experiment] Collection requested');
 export const experimentsSimpleListRequested = createAction('[Experiment] Simple list requested');
 export const experimentsRequestFailed = createAction('[Experiment] Request failed', props<{ error: any }>());
-export const experimentsRetrieved = createAction('[Experiment] Collection retrieved', props<{ collection: DataCollection }>());
-export const experimentsSimpleListRetrieved = createAction('[Experiment] Simple list retrieved', props<{ list: any }>());
+export const experimentsRetrieved = createAction(
+  '[Experiment] Collection retrieved',
+  props<{ collection: DataCollection }>()
+);
+export const experimentsSimpleListRetrieved = createAction(
+  '[Experiment] Simple list retrieved',
+  props<{ list: any }>()
+);
 export const experimentResetRequested = createAction('[Experiment] Reset state requested');
 export const currentExperimentResetRequested = createAction('[Experiment] Reset current requested');
 export const completeExperimentCreateRequested = createAction('[Experiment] Complete create requested');

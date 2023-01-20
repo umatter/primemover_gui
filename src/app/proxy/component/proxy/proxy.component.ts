@@ -5,16 +5,8 @@ import { select, Store } from '@ngrx/store';
 import { PaginatePipeArgs } from 'ngx-pagination';
 import { Router } from '@angular/router';
 import { fadeIn } from '../../../shared/animation/trigger';
-import {
-  proxyDeleteRequested,
-  proxyPageRequested,
-  proxyRequested
-} from '../../store/proxy.actions';
-import {
-  selectProxiesListData,
-  selectProxiesPagination,
-  selectIsLoading
-} from '../../store/proxy.selectors';
+import { proxyDeleteRequested, proxyPageRequested, proxyRequested } from '../../store/proxy.actions';
+import { selectProxiesListData, selectProxiesPagination, selectIsLoading } from '../../store/proxy.selectors';
 import { Proxy } from '../../model/proxy';
 
 @Component({
@@ -28,7 +20,7 @@ export class ProxyComponent implements OnInit, OnDestroy {
   proxiesData$: Observable<any>;
   isLoading$: Observable<boolean>;
 
-  constructor(private store: Store, public router: Router) { }
+  constructor(private store: Store, public router: Router) {}
 
   ngOnInit(): void {
     this.proxiesData$ = this.store.pipe(select(selectProxiesListData));

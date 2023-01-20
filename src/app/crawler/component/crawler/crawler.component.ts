@@ -35,7 +35,6 @@ export class CrawlerComponent implements OnInit, OnDestroy {
 
     this.getData();
     this.initPagination();
-
   }
 
   getData(page: number = 1): void {

@@ -26,16 +26,13 @@ export class SelectNativeComponent implements OnInit {
     this.setDefaults();
   }
 
-  onValueChanged(value: any) {
-  }
+  onValueChanged(value: any) {}
 
   setDefaults() {
     this.form.get('collection')?.patchValue(null);
   }
 
-  submit() {
-  }
+  submit() {}
 
-  clicked(test: any) {
-  }
+  clicked(test: any) {}
 }

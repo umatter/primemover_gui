@@ -4,7 +4,8 @@ import {
   proxyPageRequested,
   proxyRequested,
   proxyResetRequested,
-  proxiesRetrieved, proxiesSimpleListRetrieved,
+  proxiesRetrieved,
+  proxiesSimpleListRetrieved,
   updateProxyCreateValues
 } from './proxy.actions';
 import { DataCollection } from '../../shared/model/data-collection';
@@ -19,7 +20,7 @@ export interface ProxyState {
   isLoading: boolean;
   current: Proxy | null;
   form?: ProxyFormValues;
-  list?: []
+  list?: [];
 }
 
 export const initialState: ProxyState = {

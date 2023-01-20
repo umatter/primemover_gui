@@ -14,7 +14,9 @@ import {
   experimentPageRequested,
   experimentsRequested,
   experimentsRequestFailed,
-  experimentsRetrieved, experimentsSimpleListRequested, experimentsSimpleListRetrieved
+  experimentsRetrieved,
+  experimentsSimpleListRequested,
+  experimentsSimpleListRetrieved
 } from './experiment.actions';
 import { updateQueryFilter } from '../../shared/store/shared.actions';
 import { selectExperimentCreateFormValues } from './experiment.selectors';
@@ -108,5 +110,5 @@ export class ExperimentEffects {
     private store: Store,
     private apiService: ExperimentService,
     private router: Router
-  ) { }
+  ) {}
 }

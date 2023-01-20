@@ -68,4 +68,4 @@ registerLocaleData(localeIt, Language.IT);
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}

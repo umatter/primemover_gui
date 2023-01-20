@@ -14,10 +14,7 @@ export const currentProxyResetRequested = createAction('[Proxy] Reset current re
 export const completeProxyCreateRequested = createAction('[Proxy] Complete create requested');
 export const proxyPageRequested = createAction('[Proxy] Page requested', props<{ page: number }>());
 export const proxyRequested = createAction('[Proxy] Record requested', props<{ proxy: Proxy }>());
-export const proxyDeleteRequested = createAction(
-  '[Proxy] Delete requested',
-  props<{ proxyId: number }>()
-);
+export const proxyDeleteRequested = createAction('[Proxy] Delete requested', props<{ proxyId: number }>());
 export const updateProxyCreateValues = createAction('[Proxy] Update', props<ProxyFormValues>());
 export const proxyCreateSuccess = createAction('[Proxy] Create success', props<any>());
 export const proxyDeleteSuccess = createAction('[Proxy] Delete success', props<any>());

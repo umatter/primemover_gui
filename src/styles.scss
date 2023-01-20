@@ -1,6 +1,6 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
 
 pagination-controls {
   & ul.ngx-pagination {
@@ -91,32 +91,37 @@ pagination-controls {
     background-color: #eab308;
   }
 }
-.spinr{
-  width: 32px;
-  height: 32px;
-  display: flex;
-  justify-content: end;
+
+.spinr {
   position: absolute;
   top: 3px;
   right: 4px;
-  .spin{
+  display: flex;
+  width: 32px;
+  height: 32px;
+  justify-content: end;
+
+  .spin {
+    width: 32px !important;
+    height: 32px !important;
+
+    svg {
       width: 32px !important;
       height: 32px !important;
-      svg{
-          width: 32px !important;
-          height: 32px !important;
-      }
+    }
   }
 }
 
-.spiner-style{
+.spinnerStyle {
   width: 40px !important;
   height: 40px !important;
-svg{
-  width: 30px !important;
-  height: 30px !important;
+
+  svg {
+    width: 30px !important;
+    height: 30px !important;
+  }
 }
-}
-.width-set{
+
+.width512 {
   width: 512px;
 }

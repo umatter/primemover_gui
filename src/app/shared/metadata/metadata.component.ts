@@ -18,26 +18,24 @@ export class MetadataComponent implements OnInit {
   crawler: any;
   multilogin: any;
 
-
-  constructor(private store: Store) { }
+  constructor(private store: Store) {}
 
   ngOnInit(): void {
     this.currentExperiment$ = this.store.pipe(select(selectCurrentExperiment));
     this.currentCrawler$ = this.store.pipe(select(selectCurrentCrawler));
 
-    this.currentExperiment$.subscribe((currentExperiment)=>{
-      this.experiment = currentExperiment      
-  })
+    this.currentExperiment$.subscribe((currentExperiment) => {
+      this.experiment = currentExperiment;
+    });
 
-  this.currentCrawler$.subscribe((selectedCrawler:any)=>{
-      this.crawler = selectedCrawler   
-  })
+    this.currentCrawler$.subscribe((selectedCrawler: any) => {
+      this.crawler = selectedCrawler;
+    });
   }
 
-  multiloginProfile(data:any){
-    if(data){
-      this.multilogin = JSON.parse(JSON.parse(JSON.stringify(data)))
+  multiLoginProfile(data: any): void {
+    if (data) {
+      this.multilogin = JSON.parse(JSON.parse(JSON.stringify(data)));
     }
   }
-
 }

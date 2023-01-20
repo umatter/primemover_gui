@@ -34,11 +34,6 @@ export class CrawlerService {
     return this.http.get<DataCollection>(`${this.config.apiBaseUrl}/crawlers`, { params });
   }
 
-  public search(keyword: string) {
-    return this.http.get<[]>(`${this.config.apiBaseUrl}/crawlers?filter[name]=${keyword}
-    `);
-  }
-
   public experimentData(): Observable<[DataCollection]> {
     return this.http.get<[DataCollection]>(`${this.config.apiBaseUrl}/experiments`);
   }

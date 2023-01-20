@@ -28,4 +28,4 @@ import { experimentReducer } from '../experiment/store/experiment.reducer';
     SharedModule
   ]
 })
-export class ConfigurationModule { }
+export class ConfigurationModule {}

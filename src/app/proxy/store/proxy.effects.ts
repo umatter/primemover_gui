@@ -14,7 +14,9 @@ import {
   proxyPageRequested,
   proxiesRequested,
   proxiesRequestFailed,
-  proxiesRetrieved, proxiesSimpleListRequested, proxiesSimpleListRetrieved
+  proxiesRetrieved,
+  proxiesSimpleListRequested,
+  proxiesSimpleListRetrieved
 } from './proxy.actions';
 import { updateQueryFilter } from '../../shared/store/shared.actions';
 import { selectProxyCreateFormValues } from './proxy.selectors';
@@ -108,5 +110,5 @@ export class ProxyEffects {
     private store: Store,
     private apiService: ProxyService,
     private router: Router
-  ) { }
+  ) {}
 }

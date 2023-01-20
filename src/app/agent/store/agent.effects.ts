@@ -14,7 +14,10 @@ import {
   agentPageRequested,
   agentsRequested,
   agentsRequestFailed,
-  agentsRetrieved, agentsSimpleListRequested, agentsSimpleListRetrieved, getAgetList,
+  agentsRetrieved,
+  agentsSimpleListRequested,
+  agentsSimpleListRetrieved,
+  getAgetList,
   agentList
 } from './agent.actions';
 import { updateQueryFilter } from '../../shared/store/shared.actions';
@@ -104,7 +107,6 @@ export class AgentEffects {
     )
   );
 
-
   agentsListRequested$ = createEffect(() =>
     this.actions$.pipe(
       ofType(getAgetList),
@@ -123,5 +125,5 @@ export class AgentEffects {
     private store: Store,
     private apiService: AgentService,
     private router: Router
-  ) { }
+  ) {}
 }

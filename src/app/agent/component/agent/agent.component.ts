@@ -5,18 +5,8 @@ import { select, Store } from '@ngrx/store';
 import { PaginatePipeArgs } from 'ngx-pagination';
 import { Router } from '@angular/router';
 import { fadeIn } from '../../../shared/animation/trigger';
-import {
-  agentDeleteRequested,
-  agentPageRequested,
-  agentRequested,
-  getAgetList
-} from '../../store/agent.actions';
-import {
-  agentsList,
-  selectAgentsListData,
-  selectAgentsPagination,
-  selectIsLoading
-} from '../../store/agent.selectors';
+import { agentDeleteRequested, agentPageRequested, agentRequested, getAgetList } from '../../store/agent.actions';
+import { agentsList, selectAgentsListData, selectAgentsPagination, selectIsLoading } from '../../store/agent.selectors';
 import { Agent } from '../../model/agent';
 
 @Component({
@@ -32,7 +22,7 @@ export class AgentComponent implements OnInit, OnDestroy {
 
   isLoading$: Observable<boolean>;
 
-  constructor(private store: Store, public router: Router) { }
+  constructor(private store: Store, public router: Router) {}
 
   ngOnInit(): void {
     this.agentsData$ = this.store.pipe(select(selectAgentsListData));

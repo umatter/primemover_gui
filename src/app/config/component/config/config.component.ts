@@ -28,7 +28,7 @@ export class ConfigComponent implements OnInit, OnDestroy {
   configurationsData$: Observable<any>;
   isLoading$: Observable<boolean>;
 
-  constructor(private store: Store, public router: Router) { }
+  constructor(private store: Store, public router: Router) {}
 
   ngOnInit(): void {
     this.configurationsData$ = this.store.pipe(select(selectConfigurationsListData));

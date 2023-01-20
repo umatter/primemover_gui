@@ -12,10 +12,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfigCreateComponent } from 'src/app/config/component/config-create/config-create.component';
 import { AgentCreateComponent } from 'src/app/agent/component/agent-create/agent-create.component';
 import { ProxyCreateComponent } from 'src/app/proxy/component/proxy-create/proxy-create.component';
-import { AgentService } from "../../../agent/service/agent.service";
-import { ConfigService } from "../../../config/service/config.service";
-import { ExperimentService } from "../../../experiment/service/experiment.service"
-import { ProxyService } from "../../../proxy/service/proxy.service"
+import { AgentService } from '../../../agent/service/agent.service';
+import { ConfigService } from '../../../config/service/config.service';
+import { ExperimentService } from '../../../experiment/service/experiment.service';
+import { ProxyService } from '../../../proxy/service/proxy.service';
 import { selectCurrentExperiment } from 'src/app/experiment/store/experiment.selectors';
 import { Experiment } from '../../model/experiment';
 @Component({
@@ -32,16 +32,25 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
   agents: any;
   configurations: any;
   paginationConfig: PaginatePipeArgs;
-  proxyLoader: boolean = false
-  configurationLoader = false
-  agentLoader: boolean = false
+  proxyLoader: boolean = false;
+  configurationLoader = false;
+  agentLoader: boolean = false;
   experimentLoader: boolean = false;
   agentCtrl = new FormControl();
   proxyCtrl = new FormControl();
   configCtrl = new FormControl();
   experimentCtrl = new FormControl();
 
-  constructor(private agent: AgentService, private proxy: ProxyService, private configuration: ConfigService, private experiment: ExperimentService, private store: Store, private formBuilder: FormBuilder, public router: Router, private matDialog: MatDialog) { }
+  constructor(
+    private agent: AgentService,
+    private proxy: ProxyService,
+    private configuration: ConfigService,
+    private experiment: ExperimentService,
+    private store: Store,
+    private formBuilder: FormBuilder,
+    public router: Router,
+    private matDialog: MatDialog
+  ) {}
 
   ngOnInit(): void {
     this.currentExperiment$ = this.store.pipe(select(selectCurrentExperiment));
@@ -51,7 +60,7 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
       agent_id: [null, [Validators.required]],
       experiment_id: [null, [Validators.required]],
       proxy_id: [null, [Validators.required]],
-      configuration_id: [null, [Validators.required]],
+      configuration_id: [null, [Validators.required]]
     });
     this.subscriptions.add(
       this.crawlerForm.valueChanges.pipe(debounceTime(500)).subscribe((formValue: CrawlerFormValues) => {
@@ -71,84 +80,78 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
 
     this.currentExperiment$.subscribe((currentExperiment) => {
       if (currentExperiment) {
-        this.crawlerForm.controls['experiment_id']?.setValue(currentExperiment.id)
-        this.experimentCtrl.setValue(currentExperiment.name)
+        this.crawlerForm.controls['experiment_id']?.setValue(currentExperiment.id);
+        this.experimentCtrl.setValue(currentExperiment.name);
       }
-    })
+    });
   }
-
 
   controlChangesDetection() {
-    this.agentCtrl.valueChanges
-      .pipe(
-        debounceTime(1000)
-        , distinctUntilChanged(),
-      ).subscribe(search => {
-        if (search?.length >= 2) {
-          this.agentLoader = true;
-          this.agent.search(search).subscribe((result: any) => {
+    this.agentCtrl.valueChanges.pipe(debounceTime(1000), distinctUntilChanged()).subscribe((search) => {
+      if (search?.length >= 2) {
+        this.agentLoader = true;
+        this.agent.search(search).subscribe(
+          (result: any) => {
             this.agents = result.data;
             this.agentLoader = false;
-          }, error => {
+          },
+          (error) => {
             this.agentLoader = false;
-          });
-        }
-      });
-    this.proxyCtrl.valueChanges
-      .pipe(
-        debounceTime(1000)
-        , distinctUntilChanged(),
-      ).subscribe(search => {
-        if (search?.length >= 2) {
-          this.proxyLoader = true;
-          this.proxy.search(search).subscribe((result: any) => {
+          }
+        );
+      }
+    });
+    this.proxyCtrl.valueChanges.pipe(debounceTime(1000), distinctUntilChanged()).subscribe((search) => {
+      if (search?.length >= 2) {
+        this.proxyLoader = true;
+        this.proxy.search(search).subscribe(
+          (result: any) => {
             this.proxies = result.data;
             this.proxyLoader = false;
-          }, error => {
+          },
+          (error) => {
             this.proxyLoader = false;
-          });
-        }
-      });
-    this.configCtrl.valueChanges
-      .pipe(
-        debounceTime(1000)
-        , distinctUntilChanged(),
-      ).subscribe(search => {
-        if (search?.length >= 2) {
-          this.configurationLoader = true;
-          this.configuration.search(search).subscribe((result: any) => {
+          }
+        );
+      }
+    });
+    this.configCtrl.valueChanges.pipe(debounceTime(1000), distinctUntilChanged()).subscribe((search) => {
+      if (search?.length >= 2) {
+        this.configurationLoader = true;
+        this.configuration.search(search).subscribe(
+          (result: any) => {
             this.configurations = result.data;
             this.configurationLoader = false;
-          }, error => {
+          },
+          (error) => {
             this.configurationLoader = false;
-          });
-        }
-      });
-    this.experimentCtrl.valueChanges
-      .pipe(
-        debounceTime(1000)
-        , distinctUntilChanged(),
-      ).subscribe(search => {
-        if (search?.length >= 2) {
-          this.experimentLoader = true;
-          this.experiment.search(search).subscribe((result: any) => {
+          }
+        );
+      }
+    });
+    this.experimentCtrl.valueChanges.pipe(debounceTime(1000), distinctUntilChanged()).subscribe((search) => {
+      if (search?.length >= 2) {
+        this.experimentLoader = true;
+        this.experiment.search(search).subscribe(
+          (result: any) => {
             this.experiments = result.data;
             this.experimentLoader = false;
-          }, error => {
+          },
+          (error) => {
             this.experimentLoader = false;
-          });
-        }
-      });
+          }
+        );
+      }
+    });
   }
 
-
   setControlValue(item: any, control: any) {
-    this.crawlerForm.controls[control]?.setValue(item.id)
+    this.crawlerForm.controls[control]?.setValue(item.id);
   }
 
   reset(control: any, typeahead: any) {
-    this.crawlerForm.controls[control]?.setValue(null)
-    typeahead.setValue(null)
+    this.crawlerForm.controls[control]?.setValue(null);
+    typeahead.setValue(null);
   }
 
   initPagination(): void {
@@ -173,7 +176,7 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
 
   saveCrawler(): void {
     if (!this.crawlerForm.valid) {
-      return
+      return;
     }
     this.store.dispatch(completeCrawlerCreateRequested());
   }
@@ -182,17 +185,23 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
     const proxyDialog = this.matDialog.open(ProxyCreateComponent, {
       data: { isPopup: true },
       width: '550px',
-      hasBackdrop: true,
+      hasBackdrop: true
     });
     if (proxyDialog) {
-      proxyDialog.afterClosed().pipe().subscribe(proxy => {
-        if (proxy) {
-          this.proxyCtrl.setValue(proxy.name)
-          this.crawlerForm.controls['proxy_id']?.setValue(proxy.id)
-        }
-      }, (err) => {
-        console.log(err);
-      });
+      proxyDialog
+        .afterClosed()
+        .pipe()
+        .subscribe(
+          (proxy) => {
+            if (proxy) {
+              this.proxyCtrl.setValue(proxy.name);
+              this.crawlerForm.controls['proxy_id']?.setValue(proxy.id);
+            }
+          },
+          (err) => {
+            console.log(err);
+          }
+        );
     }
   }
 
@@ -203,15 +212,21 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
       hasBackdrop: true
     });
     if (agentDialog) {
-      agentDialog.afterClosed().pipe().subscribe(agent => {
-        if (agent) {
-          this.agentCtrl.setValue(agent.name)
+      agentDialog
+        .afterClosed()
+        .pipe()
+        .subscribe(
+          (agent) => {
+            if (agent) {
+              this.agentCtrl.setValue(agent.name);
 
-          this.crawlerForm.controls['agent_id']?.setValue(agent.id)
-        }
-      }, (err) => {
-        console.log(err);
-      });
+              this.crawlerForm.controls['agent_id']?.setValue(agent.id);
+            }
+          },
+          (err) => {
+            console.log(err);
+          }
+        );
     }
   }
 
@@ -223,15 +238,18 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
     });
     if (configurationDialog) {
       this.subscriptions.add(
-        configurationDialog.afterClosed().subscribe(configuration => {
-          if (configuration) {
-            this.configCtrl.setValue(configuration.name)
-            this.crawlerForm.controls['configuration_id']?.setValue(configuration.id)
+        configurationDialog.afterClosed().subscribe(
+          (configuration) => {
+            if (configuration) {
+              this.configCtrl.setValue(configuration.name);
+              this.crawlerForm.controls['configuration_id']?.setValue(configuration.id);
+            }
+          },
+          (err) => {
+            console.error(err);
           }
-        }, (err) => {
-          console.error(err);
-        })
-      )
+        )
+      );
     }
   }
 

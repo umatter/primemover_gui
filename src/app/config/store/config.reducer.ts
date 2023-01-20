@@ -4,7 +4,8 @@ import {
   configurationPageRequested,
   configurationRequested,
   configurationResetRequested,
-  configurationsRetrieved, configurationsSimpleListRetrieved,
+  configurationsRetrieved,
+  configurationsSimpleListRetrieved,
   updateConfigurationCreateValues
 } from './config.actions';
 import { DataCollection } from '../../shared/model/data-collection';
@@ -19,7 +20,7 @@ export interface ConfigurationState {
   isLoading: boolean;
   current: Configuration | null;
   form?: ConfigurationFormValues;
-  list?: []
+  list?: [];
 }
 
 export const initialState: ConfigurationState = {

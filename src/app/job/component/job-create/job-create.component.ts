@@ -1,9 +1,9 @@
-import { Component, Inject, OnInit, Optional } from '@angular/core';
-import { FormGroup, FormControl, FormBuilder, Validators } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { select, Store } from '@ngrx/store';
-import { Subscription, Observable, debounceTime, distinctUntilChanged } from 'rxjs';
+import { debounceTime, distinctUntilChanged, Observable, Subscription } from 'rxjs';
 import { Crawler } from 'src/app/crawler/model/crawler';
 import { selectCurrentCrawler } from 'src/app/crawler/store/crawler.selectors';
 import { ExperimentFormValues } from 'src/app/experiment/component/model/experiment-form-values';
@@ -12,10 +12,9 @@ import { CrawlerService } from 'src/app/crawler/service/crawler.service';
 
 @Component({
   selector: 'app-job-create',
-  templateUrl: './job-create.component.html',
-  styleUrls: ['./job-create.component.scss']
+  templateUrl: './job-create.component.html'
 })
-export class JobCreateComponent implements OnInit {
+export class JobCreateComponent implements OnInit, OnDestroy {
   jobForm: FormGroup;
   subscriptions = new Subscription();
   formValid$: Observable<boolean>;
@@ -27,6 +26,7 @@ export class JobCreateComponent implements OnInit {
   job: any;
   currentCrawler$: Observable<Crawler | null>;
   experiementDialog: any;
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private crawlerService: CrawlerService,

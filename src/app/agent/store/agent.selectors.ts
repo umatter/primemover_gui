@@ -15,6 +15,4 @@ export const selectPageRequested = createSelector(selectAgent, (state) => state.
 export const selectIsLoading = createSelector(selectAgent, (state) => state.isLoading);
 export const selectAgentCreateFormValues = createSelector(selectAgent, (state) => state?.form);
 
-
 export const agentsList = createSelector(selectAgent, (state) => state?.collection);
-

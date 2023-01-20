@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { backdropAnimated } from '../../animation/trigger';
 
 @Component({
@@ -6,9 +6,6 @@ import { backdropAnimated } from '../../animation/trigger';
   templateUrl: './backdrop.component.html',
   animations: [backdropAnimated]
 })
-export class BackdropComponent implements OnInit {
+export class BackdropComponent {
   constructor() {}
-
-  ngOnInit(): void {
-  }
 }

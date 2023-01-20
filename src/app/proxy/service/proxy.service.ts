@@ -20,13 +20,12 @@ export class ProxyService {
     private store: Store,
     private config: AppConfig,
     private filterService: QueryFilterService
-  ) { }
-
+  ) {}
 
   public proxies(): Observable<[]> {
     return this.http.get<[]>(`${this.config.apiBaseUrl}/proxies`);
   }
-  
+
   public simpleIndex(): Observable<[]> {
     return this.http.get<[]>(`${this.config.apiBaseUrl}/proxies-list`);
   }
@@ -46,8 +45,8 @@ export class ProxyService {
       name: proxyValues?.name,
       password: proxyValues?.password,
       port: proxyValues?.port,
-      username: proxyValues?.username,
-    }
+      username: proxyValues?.username
+    };
     return this.http.post<any>(`${this.config.apiBaseUrl}/proxies`, proxy);
   }
 
@@ -55,7 +54,7 @@ export class ProxyService {
     return this.http.put<any>(`${this.config.apiBaseUrl}/proxies`, proxyValues);
   }
 
-  public search(keyword: string){
+  public search(keyword: string) {
     return this.http.get<[]>(`${this.config.apiBaseUrl}/proxies?filter[search]=${keyword}
     `);
   }

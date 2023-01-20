@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { QueueComponent } from './component/queue/queue.component';
-import { QueueCraeteComponent } from './component/queue-create/queue-craete/queue-craete.component';
+import { QueueCreateComponent } from './component/queue-create/queue-craete/queue-create.component';
 import { AuthGuard } from '../core/guards/auth.guard';
 
 const routes: Routes = [
@@ -13,11 +13,10 @@ const routes: Routes = [
   },
   {
     path: 'create',
-    component: QueueCraeteComponent,
+    component: QueueCreateComponent,
     canActivate: [AuthGuard],
     data: { requiresLogin: true }
-  },
-
+  }
 ];
 
 @NgModule({

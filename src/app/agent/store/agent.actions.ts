@@ -14,10 +14,7 @@ export const currentAgentResetRequested = createAction('[Agent] Reset current re
 export const completeAgentCreateRequested = createAction('[Agent] Complete create requested');
 export const agentPageRequested = createAction('[Agent] Page requested', props<{ page: number }>());
 export const agentRequested = createAction('[Agent] Record requested', props<{ agent: Agent }>());
-export const agentDeleteRequested = createAction(
-  '[Agent] Delete requested',
-  props<{ agentId: number }>()
-);
+export const agentDeleteRequested = createAction('[Agent] Delete requested', props<{ agentId: number }>());
 export const updateAgentCreateValues = createAction('[Agent] Update', props<AgentFormValues>());
 export const agentCreateSuccess = createAction('[Agent] Create success', props<any>());
 export const agentDeleteSuccess = createAction('[Agent] Delete success', props<any>());
@@ -27,4 +24,3 @@ export const agentDeleteError = createAction('[Agent] Delete error', props<{ err
 export const agentList = createAction('[Agent] Simple list retrieved', props<{ list: any }>());
 
 export const getAgetList = createAction('[Agent-List] Agent list requested');
-

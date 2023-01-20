@@ -1,7 +1,7 @@
-import { Component, Inject, OnInit, Optional } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, Optional } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { debounceTime, distinctUntilChanged, Observable, Subscription } from 'rxjs';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { select, Store } from '@ngrx/store';
 import { ExperimentCreateComponent } from 'src/app/experiment/component/experiment-create/experiment-create.component';
@@ -10,11 +10,11 @@ import { selectCurrentCrawler } from 'src/app/crawler/store/crawler.selectors';
 import { Crawler } from 'src/app/crawler/model/crawler';
 
 @Component({
-  selector: 'app-queue-craete',
-  templateUrl: './queue-craete.component.html',
-  styleUrls: ['./queue-craete.component.scss']
+  selector: 'app-queue-create',
+  templateUrl: './queue-create.component.html',
+  styleUrls: ['./queue-create.component.scss']
 })
-export class QueueCraeteComponent implements OnInit {
+export class QueueCreateComponent implements OnInit, OnDestroy {
   queueForm: FormGroup;
   subscriptions = new Subscription();
   formValid$: Observable<boolean>;
@@ -30,7 +30,6 @@ export class QueueCraeteComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store,
     private formBuilder: FormBuilder,
-
     @Optional() private experiementDialog: MatDialogRef<ExperimentCreateComponent>,
     public router: Router,
     public CrawlerService: CrawlerService

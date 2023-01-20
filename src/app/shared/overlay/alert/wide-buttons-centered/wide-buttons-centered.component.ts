@@ -1,12 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-wide-buttons-centered',
   templateUrl: './wide-buttons-centered.component.html'
 })
-export class WideButtonsCenteredComponent implements OnInit {
+export class WideButtonsCenteredComponent {
   constructor() {}
-
-  ngOnInit(): void {
-  }
 }

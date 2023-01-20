@@ -26,9 +26,7 @@ import {
   configsRetrieved,
   configRequestFailed
 } from './crawler.actions';
-import {
-  selectCrawlerCreateFormValues
-} from './crawler.selectors';
+import { selectCrawlerCreateFormValues } from './crawler.selectors';
 import { TypedAction } from '@ngrx/store/src/models';
 import { currentExperimentResetRequested, experimentPageRequested } from '../../experiment/store/experiment.actions';
 import { updateQueryFilter } from '../../shared/store/shared.actions';
@@ -74,7 +72,6 @@ export class CrawlerEffects {
     )
   );
 
-
   experimentRequested$ = createEffect(() =>
     this.actions$.pipe(
       ofType(experimentRequest),
@@ -86,7 +83,6 @@ export class CrawlerEffects {
       )
     )
   );
-
 
   proxyRequested$ = createEffect(() =>
     this.actions$.pipe(
@@ -100,7 +96,6 @@ export class CrawlerEffects {
     )
   );
 
-
   agentRequested$ = createEffect(() =>
     this.actions$.pipe(
       ofType(agentRequest),
@@ -113,7 +108,6 @@ export class CrawlerEffects {
     )
   );
 
-
   configRequested$ = createEffect(() =>
     this.actions$.pipe(
       ofType(configRequest),
@@ -125,7 +119,6 @@ export class CrawlerEffects {
       )
     )
   );
-
 
   completeCrawlerCreateRequested$ = createEffect(() =>
     this.actions$.pipe(
@@ -140,7 +133,6 @@ export class CrawlerEffects {
     )
   );
 
-
   experimentCreateSuccess$ = createEffect(
     () =>
       this.actions$.pipe(
@@ -149,6 +141,10 @@ export class CrawlerEffects {
       ),
     { dispatch: false }
   );
-  constructor(private actions$: Actions, private store: Store, private apiService: CrawlerService, private router: Router
-  ) { }
+  constructor(
+    private actions$: Actions,
+    private store: Store,
+    private apiService: CrawlerService,
+    private router: Router
+  ) {}
 }
