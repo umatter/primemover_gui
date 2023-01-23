@@ -44,6 +44,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MetadataComponent } from './metadata/metadata.component';
+import { ConfirmationPrimeoverDialogComponent } from './dialog/primeover-dialog/confirmation-primeover-dialog.component';
 
 @NgModule({
   declarations: [
@@ -69,7 +70,8 @@ import { MetadataComponent } from './metadata/metadata.component';
     LinkSortableComponent,
     RemovableBadgeComponent,
     LoadingSpinnerComponent,
-    MetadataComponent
+    MetadataComponent,
+    ConfirmationPrimeoverDialogComponent
   ],
   imports: [
     CommonModule,
@@ -127,7 +129,8 @@ import { MetadataComponent } from './metadata/metadata.component';
     MatIconModule,
     MatAutocompleteModule,
     MatProgressSpinnerModule,
-    MetadataComponent
+    MetadataComponent,
+    ConfirmationPrimeoverDialogComponent
   ],
 
   providers: [DatePipe, { provide: MAT_DIALOG_DATA, useValue: {} }, { provide: MatDialogRef, useValue: {} }]
