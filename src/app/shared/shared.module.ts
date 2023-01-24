@@ -43,6 +43,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MetadataComponent } from './metadata/metadata.component';
 
 @NgModule({
@@ -77,16 +78,7 @@ import { MetadataComponent } from './metadata/metadata.component';
     StoreModule.forFeature('shared', sharedReducer),
     EffectsModule.forFeature([SharedEffects]),
 
-    TranslateModule.forRoot({
-      defaultLanguage: 'de',
-      loader: {
-        provide: TranslateLoader,
-        useFactory: (http: HttpClient) => {
-          return new TranslateHttpLoader(http, '/assets/translations/', '.json');
-        },
-        deps: [HttpClient]
-      }
-    }),
+    TranslateModule,
     FormsModule,
     ReactiveFormsModule,
     DragDropModule,
@@ -98,7 +90,8 @@ import { MetadataComponent } from './metadata/metadata.component';
     MatButtonModule,
     MatIconModule,
     MatAutocompleteModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatSlideToggleModule,
   ],
   exports: [
     TranslateModule,
@@ -127,6 +120,7 @@ import { MetadataComponent } from './metadata/metadata.component';
     MatIconModule,
     MatAutocompleteModule,
     MatProgressSpinnerModule,
+    MatSlideToggleModule,
     MetadataComponent
   ],
 

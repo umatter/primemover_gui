@@ -125,3 +125,15 @@ pagination-controls {
 .width512 {
   width: 512px;
 }
+.navabar-select-language{
+
+  .mat-select-min-line{
+    color: white;
+  }
+  .mat-select-arrow {
+    color: white;
+  }
+  .mat-form-field-appearance-legacy .mat-form-field-underline{
+    background-color: white;
+  }
+}
