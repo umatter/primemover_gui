@@ -1,5 +1,5 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { Component, EventEmitter, Inject, Input, Output } from '@angular/core';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-primeover-dialog',
@@ -8,19 +8,14 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 })
 export class ConfirmationPrimeoverDialogComponent {
   constructor(
+    @Inject(MAT_DIALOG_DATA) public data: any,
     public dialog: MatDialog,
     public confirmationDialog: MatDialogRef<ConfirmationPrimeoverDialogComponent>
   ) {}
 
-  @Input() title: string='title'
-  @Input() description: string='description'
-  @Input() cancelButtonName: string='cancel'
-  @Input() otherButtonName: string='accept'
-
-  // eslint-disable-next-line @angular-eslint/no-output-on-prefix
-  @Output() onButtonClick = new EventEmitter();
+  event = new EventEmitter();
 
   emitEvent(emitType: string) {
-    this.onButtonClick.emit(emitType);
+    this.event.emit(emitType);
   }
 }
