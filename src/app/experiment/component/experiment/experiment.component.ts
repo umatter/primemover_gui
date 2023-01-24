@@ -16,6 +16,8 @@ import {
   selectIsLoading
 } from '../../store/experiment.selectors';
 import { Experiment } from '../../model/experiment';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationPrimeoverDialogComponent } from 'src/app/shared/dialog/primeover-dialog/confirmation-primeover-dialog.component';
 
 @Component({
   selector: 'app-experiment',
@@ -28,7 +30,7 @@ export class ExperimentComponent implements OnInit, OnDestroy {
   experimentsData$: Observable<any>;
   isLoading$: Observable<boolean>;
 
-  constructor(private store: Store, public router: Router) {}
+  constructor(private store: Store, public router: Router, private matDialog: MatDialog) {}
 
   ngOnInit(): void {
     this.experimentsData$ = this.store.pipe(select(selectExperimentsListData));
@@ -56,8 +58,25 @@ export class ExperimentComponent implements OnInit, OnDestroy {
     this.router.navigate(['crawlers']).then();
   }
 
-  deleteExperiment(experimentId: number): void {
-    this.store.dispatch(experimentDeleteRequested({ experimentId }));
+  deleteExperiment(experiment: any): void {
+    const confirmationDialog = this.matDialog.open(ConfirmationPrimeoverDialogComponent, {
+      data: {
+        title: `${experiment.name} Delete`,
+        description: `Are you sure you want to delete experiment ${experiment.name}?`,
+        otherButtonName: 'Yes',
+        cancelButtonName: 'No'
+      },
+      width: '550px'
+    });
+    confirmationDialog.componentInstance.event.subscribe((eventType: string) => {
+      if (eventType === 'cancel') {
+        confirmationDialog.close();
+      } else {
+        const experimentId = experiment.id;
+        this.store.dispatch(experimentDeleteRequested({ experimentId }));
+        confirmationDialog.close();
+      }
+    });
   }
 
   ngOnDestroy(): void {
