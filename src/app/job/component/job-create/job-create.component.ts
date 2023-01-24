@@ -112,6 +112,14 @@ export class JobCreateComponent implements OnInit, OnDestroy {
     // this.onClose(true)
   }
 
+  hasError(controlName: string, errorName: string): boolean {
+    return (
+      this.jobForm.get(controlName)?.touched &&
+      this.jobForm.get(controlName)?.invalid &&
+      this.jobForm.get(controlName)?.getError(errorName)
+    );
+  }
+
   ngOnDestroy() {
     this.subscriptions.unsubscribe();
   }

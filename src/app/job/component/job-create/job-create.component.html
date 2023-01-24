@@ -29,6 +29,9 @@
                 placeholder="{{ 'common.namePlaceholder' | translate }}"
                 class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
               />
+              <p *ngIf="hasError('name', 'required')" @fadeIn class="mt-2 text-sm text-red-600" id="name-error">
+                {{ 'common.nameRequiredError' | translate }}
+              </p>
               <mat-autocomplete #auto3="matAutocomplete">
                 <mat-option *ngFor="let job of jobs" (onSelectionChange)="setControlValue(job)" [value]="job.name">
                   <span>{{ job.name }}</span>
