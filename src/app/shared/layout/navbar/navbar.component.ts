@@ -23,7 +23,9 @@ export class NavbarComponent implements OnInit {
     { name: 'German', value: 'de' }
   ];
 
-  constructor(private store: Store, private router: Router, private translate: TranslateService) {}
+  constructor(private store: Store, private router: Router, private translate: TranslateService) {
+    this.currentRoute = router.url;
+  }
 
   ngOnInit(): void {
     this.isLoggedIn$ = this.store.select(selectIsSignedIn);
