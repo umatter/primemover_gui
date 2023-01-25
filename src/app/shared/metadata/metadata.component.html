@@ -1,39 +1,102 @@
 <div class="h-full bg-white ml-1 text-sm">
   <div *ngIf="experiment" class="px-5 ml-1">
-    <h1 class="mb-1"><b>Experiment</b></h1>
-    <p><b>Experiment Id </b> :{{ experiment.id }}</p>
-    <p><b>Experiment Name </b> :{{ experiment.name }}</p>
-    <p><b>Experiment Description</b> : {{ experiment.description }}</p>
-    <p><b>Experiment Contact</b> : {{ experiment.contact }}</p>
-    <p><b>Experiment Created-At</b> : {{ experiment.created_at | euFormat }}</p>
-    <p><b>Experiment Updated-At</b> : {{ experiment.updated_at | euFormat }}</p>
+    <h1 class="mb-1">
+      <b>{{ 'meta.experiment.experiment' | translate }}</b>
+    </h1>
+    <p>
+      <b>{{ 'meta.experiment.experimentId' | translate }} </b> :{{ experiment.id }}
+    </p>
+    <p>
+      <b>{{ 'meta.experiment.experimentName' | translate }} </b> :{{ experiment.name }}
+    </p>
+    <p>
+      <b>{{ 'meta.experiment.experimentDescription' | translate }}</b> : {{ experiment.description }}
+    </p>
+    <p>
+      <b>{{ 'meta.experiment.experimentContant' | translate }}</b> : {{ experiment.contact }}
+    </p>
+    <p>
+      <b>{{ 'meta.experiment.exprimentCreatedAt' | translate }}</b> : {{ experiment.created_at | euFormat }}
+    </p>
+    <p>
+      <b>{{ 'meta.experiment.experimentUpdatedAt' | translate }}</b> : {{ experiment.updated_at | euFormat }}
+    </p>
   </div>
   <div *ngIf="crawler" class="border shadow-md rounded-lg bg-white px-5 ml-1">
-    <h1 class="mb-1"><b>Crawler</b></h1>
-    <p><b>Crawler Id </b> :{{ crawler.id }}</p>
-    <p><b>Crawler Name </b> :{{ crawler.name }}</p>
-    <p><b>Agent Name</b> : {{ crawler?.agent?.name }}</p>
-    <p><b>Agent Description</b> : {{ crawler?.agent?.description }}</p>
-    <p><b>Agent Identification</b> : {{ crawler?.agent?.identification }}</p>
-    <p><b>Agent MultiloginId</b> : {{ crawler?.agent?.multilogin_id }}</p>
-    <p><b>Agent Multilogin-profile</b> : {{ multiLoginProfile(crawler?.agent?.multilogin_profile) }}</p>
+    <h1 class="mb-1">
+      <b>{{ 'meta.crawler.crawler' | translate }}</b>
+    </h1>
+    <p>
+      <b>{{ 'meta.crawler.crawlerId' | translate }}</b> :{{ crawler.id }}
+    </p>
+    <p>
+      <b>{{ 'meta.crawler.cracrawlerNamewlerId' | translate }}</b> :{{ crawler.name }}
+    </p>
+    <p>
+      <b>{{ 'meta.agent.agentName' | translate }}</b> : {{ crawler?.agent?.name }}
+    </p>
+    <p>
+      <b>{{ 'meta.agent.agentDescription' | translate }}</b> : {{ crawler?.agent?.description }}
+    </p>
+    <p>
+      <b>{{ 'meta.agent.agentIdentification' | translate }}</b> : {{ crawler?.agent?.identification }}
+    </p>
+    <p>
+      <b>{{ 'meta.agent.agentMultiloginId' | translate }}</b> : {{ crawler?.agent?.multilogin_id }}
+    </p>
+    <p>
+      <b>{{ 'meta.agent.agentMultiloginprofile' | translate }}</b> :
+      {{ multiLoginProfile(crawler?.agent?.multilogin_profile) }}
+    </p>
     <div class="pl-3">
-      <p><b>Name</b> : {{ multilogin?.name }}</p>
-      <p><b>Browser</b> : {{ multilogin?.browser }}</p>
-      <p><b>Canvas</b> : {{ multilogin?.canvas?.mode }}</p>
-      <p><b>Geolocation</b> : {{ multilogin?.geolocation?.mode }}</p>
-      <p><b>Navigator</b> : {{ multilogin?.navigator?.doNotTrack }}</p>
-      <p><b>Network</b> : {{ multilogin?.network.dns }}</p>
-      <p><b>Os</b> : {{ multilogin?.os }}</p>
-      <p><b>Storage</b> : {{ multilogin?.storage?.local }}</p>
+      <p>
+        <b>{{ 'meta.common.name' | translate }}</b> : {{ multilogin?.name }}
+      </p>
+      <p>
+        <b>{{ 'meta.common.browser' | translate }}</b> : {{ multilogin?.browser }}
+      </p>
+      <p>
+        <b>{{ 'meta.common.canvas' | translate }}</b> : {{ multilogin?.canvas?.mode }}
+      </p>
+      <p>
+        <b>{{ 'meta.common.geolocation' | translate }}</b> : {{ multilogin?.geolocation?.mode }}
+      </p>
+      <p>
+        <b>{{ 'meta.common.navigator' | translate }}</b> : {{ multilogin?.navigator?.doNotTrack }}
+      </p>
+      <p>
+        <b>{{ 'meta.common.network' | translate }}</b> : {{ multilogin?.network.dns }}
+      </p>
+      <p>
+        <b>{{ 'meta.common.os' | translate }}</b> : {{ multilogin?.os }}
+      </p>
+      <p>
+        <b>{{ 'meta.common.storage' | translate }}</b> : {{ multilogin?.storage?.local }}
+      </p>
     </div>
-    <p><b>Agent Location</b> : {{ crawler?.agent?.location }}</p>
-    <p><b>Proxy Name</b> : {{ crawler?.proxy?.name }}</p>
-    <p><b>Proxy Description</b> : {{ crawler?.proxy?.description }}</p>
-    <p><b>Proxy Hostname</b> : {{ crawler?.proxy?.hostname }}</p>
-    <p><b>Proxy Port</b> : {{ crawler?.proxy?.port }}</p>
-    <p><b>Proxy User Name</b> : {{ crawler?.proxy?.username }}</p>
-    <p><b>Proxy Password</b> : {{ crawler?.proxy?.password }}</p>
-    <p><b>Configuration Name</b> : {{ crawler?.configuration?.name }}</p>
+    <p>
+      <b>{{ 'meta.agent.agentLocation' | translate }}</b> : {{ crawler?.agent?.location }}
+    </p>
+    <p>
+      <b>{{ 'meta.proxy.proxyName' | translate }}</b> : {{ crawler?.proxy?.name }}
+    </p>
+    <p>
+      <b>{{ 'meta.proxy.proxyDescription' | translate }}</b> : {{ crawler?.proxy?.description }}
+    </p>
+    <p>
+      <b>{{ 'meta.proxy.proxyHostname' | translate }}</b> : {{ crawler?.proxy?.hostname }}
+    </p> 
+    <p>
+      <b>{{ 'meta.proxy.ProxyPort' | translate }}</b> : {{ crawler?.proxy?.port }}
+    </p>
+    <p>
+      <b>{{ 'meta.proxy.proxyUserName' | translate }}</b> : {{ crawler?.proxy?.username }}
+    </p>
+    <p>
+      <b>{{ 'meta.proxy.proxyPassword' | translate }}</b> : {{ crawler?.proxy?.password }}
+    </p>
+    <p>
+      <b>{{ 'meta.configuration.configurationName' | translate }}</b> : {{ crawler?.configuration?.name }}
+    </p>
   </div>
 </div>

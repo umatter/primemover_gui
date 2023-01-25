@@ -19,8 +19,8 @@ export class NavbarComponent implements OnInit {
   selectedLanguage: string;
 
   availableLanguages = [
-    { name: 'English', value: 'en' },
-    { name: 'German', value: 'de' }
+    { name: 'EN', value: 'en' },
+    { name: 'DE', value: 'de' }
   ];
 
   constructor(private store: Store, private router: Router, private translate: TranslateService) {

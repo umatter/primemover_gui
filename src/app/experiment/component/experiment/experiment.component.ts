@@ -18,6 +18,7 @@ import {
 import { Experiment } from '../../model/experiment';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationPrimeoverDialogComponent } from 'src/app/shared/dialog/primeover-dialog/confirmation-primeover-dialog.component';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-experiment',
@@ -30,7 +31,12 @@ export class ExperimentComponent implements OnInit, OnDestroy {
   experimentsData$: Observable<any>;
   isLoading$: Observable<boolean>;
 
-  constructor(private store: Store, public router: Router, private matDialog: MatDialog) {}
+  constructor(
+    private store: Store,
+    public router: Router,
+    private matDialog: MatDialog,
+    private translate: TranslateService
+  ) {}
 
   ngOnInit(): void {
     this.experimentsData$ = this.store.pipe(select(selectExperimentsListData));
@@ -61,10 +67,12 @@ export class ExperimentComponent implements OnInit, OnDestroy {
   deleteExperiment(experiment: any): void {
     const confirmationDialog = this.matDialog.open(ConfirmationPrimeoverDialogComponent, {
       data: {
-        title: `${experiment.name} Delete`,
-        description: `Are you sure you want to delete experiment ${experiment.name}?`,
-        otherButtonName: 'Yes',
-        cancelButtonName: 'No'
+        title: experiment.name,
+        description: this.translate.instant('confirmation-delete.experiment.experimentDeleteMSG', {
+          experimentName: experiment.name
+        }),
+        otherButtonName: this.translate.instant('confirmation-delete.experiment.otherButton'),
+        cancelButtonName: this.translate.instant('confirmation-delete.experiment.cancelButton')
       },
       width: '550px'
     });
