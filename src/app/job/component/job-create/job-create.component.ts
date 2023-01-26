@@ -20,7 +20,7 @@ export class JobCreateComponent implements OnInit, OnDestroy {
   formValid$: Observable<boolean>;
   isPopup = false;
   jobLoader = false;
-  jobCtrl = new FormControl();
+  jobCtrl = new FormControl('',[Validators.required]);
   crawler: any;
   jobs: any;
   job: any;
@@ -66,7 +66,7 @@ export class JobCreateComponent implements OnInit, OnDestroy {
     );
 
     this.jobCtrl.valueChanges.pipe(debounceTime(1000), distinctUntilChanged()).subscribe((search) => {
-      if (search.length >= 2) {
+      if (search && search.length >= 2) {
         this.jobLoader = true;
         this.crawlerService.search(search).subscribe(
           (result: any) => {
@@ -110,6 +110,18 @@ export class JobCreateComponent implements OnInit, OnDestroy {
     // make an end point on store
     // this.store.dispatch(completeExperimentCreateRequested());
     // this.onClose(true)
+  }
+
+  hasError(controlName: string, errorName: string): boolean {
+    return (
+      this.jobForm.get(controlName)?.touched &&
+      this.jobForm.get(controlName)?.invalid &&
+      this.jobForm.get(controlName)?.getError(errorName)
+    );
+  }
+
+  autoCompleteHasError(errorName: string) {
+    return this.jobCtrl?.touched && this.jobCtrl?.invalid && this.jobCtrl.getError(errorName);
   }
 
   ngOnDestroy() {

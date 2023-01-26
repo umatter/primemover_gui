@@ -13,6 +13,14 @@
     "contact": "Kontakt",
     "contactPlaceholder": "z.B. Max Mustermann, 066 555 22 44",
     "contactRequiredError": "Mindestens ein Kontakt ist erforderlich",
+    "experimentRequiredError": "Experiment ist erforderlich",
+    "agentRequiredError": "Agent ist erforderlich",
+    "configRequiredError": "Konfiguration ist erforderlich",
+    "proxyRequiredError": "Proxy ist erforderlich",
+    "descriptionRequiredError": "Beschreibung ist erforderlich",
+    "startDateRequiredError": "Startdatum ist erforderlich",
+    "typeRequiredError": "Typ ist erforderlich",
+    "maxLengthExceed": "Maximale Länge überschritten",
     "reset": "Zurücksetzen",
     "cancel": "Abbrechen",
     "save": "Speichern",
@@ -105,5 +113,57 @@
     "label": "Pagination",
     "page": "Seite",
     "onPage": "Auf der Seite"
+  },
+  "confirmation-delete": {
+    "experiment": {
+      "experimentDeleteMSG": "Möchten Sie den Test wirklich löschen: {{experimentName}}?",
+      "cancelButton": "Nein",
+      "otherButton": "Ja"
+    }
+  },
+  "meta": {
+    "experiment": {
+      "experiment": "Experiment",
+      "experimentId": "Experiment-ID",
+      "experimentName": "Versuchsname",
+      "experimentDescription": "Versuchsbeschreibung",
+      "experimentContant": "Versuchskontakt",
+      "exprimentCreatedAt": "Experiment Erstellt am",
+      "experimentUpdatedAt": "Test aktualisiert um"
+    },
+    "crawler": {
+      "crawler": "Crawler",
+      "crawlerId": "Crawler-ID",
+      "crawlerName": "Crawler-Name"
+    },
+    "agent": {
+      "agentName": "Agentenname",
+      "agentDescription": "Agentenbeschreibung",
+      "agentIdentification": "Agentenidentifikation",
+      "agentMultiloginId": "Agent-Multilogin-ID",
+      "agentMultiloginprofile": "Agent Multilogin-Profil",
+      "agentLocation": "Standort des Agenten"
+    },
+    "proxy": {
+      "proxyName": "Proxy-Name",
+      "proxyDescription": "Proxy-Beschreibung",
+      "proxyHostname": "Proxy-Hostname",
+      "ProxyPort": "Proxy-Port",
+      "proxyUserName": "Proxy-Benutzername",
+      "proxyPassword": "Proxy-Passwort"
+    },
+    "configuration": {
+      "configurationName": "Konfigurationsname"
+    },
+    "common": {
+      "name": "Name",
+      "browser": "Browser",
+      "canvas": "Segeltuch",
+      "geolocation": "Geolokalisierung",
+      "navigator": "Navigator",
+      "network": "Netzwerk",
+      "os": "Os",
+      "storage": "Lagerung"
+    }
   }
 }

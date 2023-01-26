@@ -22,7 +22,7 @@ export class AgentCreateComponent implements OnInit, OnDestroy {
   isPopup = false;
   selected = false;
   agents: any;
-  agentCtrl = new FormControl();
+  agentCtrl = new FormControl('',[Validators.required]);
   agentLoader: boolean = false;
 
   constructor(
@@ -66,7 +66,6 @@ export class AgentCreateComponent implements OnInit, OnDestroy {
       multilogin_profile: ['', [Validators.required]],
       location: ['', [Validators.required]],
       id: [''],
-
       active: [1]
     });
     this.isPopup = this.data.isPopup;
@@ -88,7 +87,7 @@ export class AgentCreateComponent implements OnInit, OnDestroy {
     );
 
     this.agentCtrl.valueChanges.pipe(debounceTime(1000), distinctUntilChanged()).subscribe((search) => {
-      if (search.length >= 2) {
+      if (search && search.length >= 2) {
         this.agentLoader = true;
         this.agent.search(search).subscribe(
           (result: any) => {
@@ -120,6 +119,10 @@ export class AgentCreateComponent implements OnInit, OnDestroy {
       this.agentForm.get(controlName)?.invalid &&
       this.agentForm.get(controlName)?.getError(errorName)
     );
+  }
+
+  autoCompleteHasError(errorName: string) {
+    return this.agentCtrl?.touched && this.agentCtrl?.invalid && this.agentCtrl.getError(errorName);
   }
 
   saveAgent(): void {

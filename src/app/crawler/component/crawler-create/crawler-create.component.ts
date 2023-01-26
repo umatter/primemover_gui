@@ -36,10 +36,10 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
   configurationLoader = false;
   agentLoader: boolean = false;
   experimentLoader: boolean = false;
-  agentCtrl = new FormControl();
-  proxyCtrl = new FormControl();
-  configCtrl = new FormControl();
-  experimentCtrl = new FormControl();
+  agentCtrl = new FormControl('',[Validators.required]);
+  proxyCtrl = new FormControl('',[Validators.required]);
+  configCtrl = new FormControl('',[Validators.required]);
+  experimentCtrl = new FormControl('',[Validators.required]);
 
   constructor(
     private agent: AgentService,
@@ -88,7 +88,7 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
 
   controlChangesDetection() {
     this.agentCtrl.valueChanges.pipe(debounceTime(1000), distinctUntilChanged()).subscribe((search) => {
-      if (search?.length >= 2) {
+      if (search &&search?.length >= 2) {
         this.agentLoader = true;
         this.agent.search(search).subscribe(
           (result: any) => {
@@ -102,7 +102,7 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
       }
     });
     this.proxyCtrl.valueChanges.pipe(debounceTime(1000), distinctUntilChanged()).subscribe((search) => {
-      if (search?.length >= 2) {
+      if (search &&search?.length >= 2) {
         this.proxyLoader = true;
         this.proxy.search(search).subscribe(
           (result: any) => {
@@ -116,7 +116,7 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
       }
     });
     this.configCtrl.valueChanges.pipe(debounceTime(1000), distinctUntilChanged()).subscribe((search) => {
-      if (search?.length >= 2) {
+      if (search &&search?.length >= 2) {
         this.configurationLoader = true;
         this.configuration.search(search).subscribe(
           (result: any) => {
@@ -130,7 +130,7 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
       }
     });
     this.experimentCtrl.valueChanges.pipe(debounceTime(1000), distinctUntilChanged()).subscribe((search) => {
-      if (search?.length >= 2) {
+      if (search &&search?.length >= 2) {
         this.experimentLoader = true;
         this.experiment.search(search).subscribe(
           (result: any) => {
@@ -172,6 +172,18 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
       this.crawlerForm.get(controlName)?.invalid &&
       this.crawlerForm.get(controlName)?.getError(errorName)
     );
+  }
+
+  autoCompleteHasError(control: string, errorName: string) {
+    if (control === 'agentCtrl') {
+      return this.agentCtrl?.touched && this.agentCtrl?.invalid && this.agentCtrl.getError(errorName);
+    } else if (control === 'proxyCtrl') {
+      return this.proxyCtrl?.touched && this.proxyCtrl?.invalid && this.proxyCtrl.getError(errorName);
+    } else if (control === 'configCtrl') {
+      return this.configCtrl?.touched && this.configCtrl?.invalid && this.configCtrl.getError(errorName);
+    } else {
+      return this.experimentCtrl?.touched && this.experimentCtrl?.invalid && this.experimentCtrl.getError(errorName);
+    }
   }
 
   saveCrawler(): void {

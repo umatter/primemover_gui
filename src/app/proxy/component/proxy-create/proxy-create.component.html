@@ -38,6 +38,16 @@
                   <span>{{ proxy.name }}</span>
                 </mat-option>
               </mat-autocomplete>
+
+              <p
+              @fadeIn
+              *ngIf="autoCompleteHasError('required') || hasError('name', 'required')"
+              class="mt-2 text-sm text-red-600"
+              id="contact-error"
+            >
+              {{ 'common.nameRequiredError' | translate }}
+            </p>
+
               <button (click)="reset()" class="flex ml-auto mt-2">
                 <mat-icon> restore</mat-icon>
                 Reset
@@ -58,6 +68,9 @@
                 placeholder="{{ 'common.descriptionPlaceholder' | translate }}"
                 rows="3"
               ></textarea>
+              <p @fadeIn *ngIf="hasError('description', 'maxlength')" class="mt-2 text-sm text-red-600" id="contact-error">
+                {{ 'common.maxLengthExceed' | translate }}
+              </p>
             </div>
           </div>
 

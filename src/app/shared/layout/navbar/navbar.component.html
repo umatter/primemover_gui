@@ -1,4 +1,4 @@
-<nav class="bg-gray-800">
+<nav class="bg-gray-800 flex items-center justify-between">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex items-center justify-between h-16">
       <div class="flex items-center">
@@ -8,6 +8,7 @@
         <div class="hidden md:block">
           <div class="ml-10 flex items-baseline space-x-4">
             <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
+
             <a
               [ngClass]="isActiveRoute('/experiments') ? activeClassList : regularClassList"
               routerLink="experiments"
@@ -47,6 +48,11 @@
             <a *ngIf="isLoggedIn$ | async" [class]="regularClassList" routerLink="logout">
               {{ 'auth.signOut' | translate }}
             </a>
+
+            <!-- <div style="color: white">
+              English
+              <mat-slide-toggle (change)="onLanguageChange()" [(ngModel)]="selectedLanguage"></mat-slide-toggle> German
+            </div> -->
           </div>
         </div>
       </div>
@@ -187,6 +193,14 @@
       </div>
     </div>
   </div>
+
+  <mat-form-field class="navabar-select-language">
+    <mat-select [(ngModel)]="selectedLanguage" (ngModelChange)="onLanguageChange()">
+      <mat-option *ngFor="let language of availableLanguages" [value]="language.value">
+        {{ language.name }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
 
   <!-- Mobile menu, show/hide based on menu state. -->
   <div class="md:hidden" id="mobile-menu">

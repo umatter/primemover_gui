@@ -21,7 +21,7 @@ export class ConfigCreateComponent implements OnInit, OnDestroy {
   formValid$: Observable<boolean>;
   isPopup = false;
   selected = false;
-  configCtrl = new FormControl();
+  configCtrl = new FormControl('',[Validators.required]);
   configLoader: boolean = false;
   configurations: any;
 
@@ -63,7 +63,7 @@ export class ConfigCreateComponent implements OnInit, OnDestroy {
     );
 
     this.configCtrl.valueChanges.pipe(debounceTime(1000), distinctUntilChanged()).subscribe((search) => {
-      if (search.length >= 2) {
+      if (search &&search.length >= 2) {
         this.configLoader = true;
         this.config.search(search).subscribe(
           (result: any) => {
@@ -95,6 +95,10 @@ export class ConfigCreateComponent implements OnInit, OnDestroy {
       this.configurationForm.get(controlName)?.invalid &&
       this.configurationForm.get(controlName)?.getError(errorName)
     );
+  }
+
+  autoCompleteHasError(errorName: string) {
+    return this.configCtrl?.touched && this.configCtrl?.invalid && this.configCtrl.getError(errorName);
   }
 
   setControlValue(item: any) {

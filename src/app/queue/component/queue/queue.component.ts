@@ -61,4 +61,6 @@ export class QueueComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.subscriptions.unsubscribe();
   }
+
+
 }

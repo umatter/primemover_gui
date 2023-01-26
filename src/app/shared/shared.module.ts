@@ -1,11 +1,9 @@
 import { NgModule } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import {  TranslateModule } from '@ngx-translate/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import { HttpClient } from '@angular/common/http';
-import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { ButtonComponent } from './form/button/button.component';
 import { MobileMenuComponent } from './layout/mobile-menu/mobile-menu.component';
@@ -30,7 +28,6 @@ import { LinkSortableComponent } from './link/link-sortable/link-sortable.compon
 import { RemovableBadgeComponent } from './badge/removable-badge/removable-badge.component';
 import { LoadingSpinnerComponent } from './overlay/loading-spinner/loading-spinner.component';
 import { StoreModule } from '@ngrx/store';
-import { queueReducer } from '../queue/store/queue.reducer';
 import { EffectsModule } from '@ngrx/effects';
 import { SharedEffects } from './store/shared.effects';
 import { sharedReducer } from './store/shared.reducer';
@@ -43,7 +40,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MetadataComponent } from './metadata/metadata.component';
+import { ConfirmationPrimeoverDialogComponent } from './dialog/primeover-dialog/confirmation-primeover-dialog.component';
+import { euFormat } from './pipes/datepipe/date-pipe.pipe';
 
 @NgModule({
   declarations: [
@@ -69,7 +69,9 @@ import { MetadataComponent } from './metadata/metadata.component';
     LinkSortableComponent,
     RemovableBadgeComponent,
     LoadingSpinnerComponent,
-    MetadataComponent
+    MetadataComponent,
+    ConfirmationPrimeoverDialogComponent,
+    euFormat
   ],
   imports: [
     CommonModule,
@@ -77,16 +79,7 @@ import { MetadataComponent } from './metadata/metadata.component';
     StoreModule.forFeature('shared', sharedReducer),
     EffectsModule.forFeature([SharedEffects]),
 
-    TranslateModule.forRoot({
-      defaultLanguage: 'de',
-      loader: {
-        provide: TranslateLoader,
-        useFactory: (http: HttpClient) => {
-          return new TranslateHttpLoader(http, '/assets/translations/', '.json');
-        },
-        deps: [HttpClient]
-      }
-    }),
+    TranslateModule,
     FormsModule,
     ReactiveFormsModule,
     DragDropModule,
@@ -98,7 +91,8 @@ import { MetadataComponent } from './metadata/metadata.component';
     MatButtonModule,
     MatIconModule,
     MatAutocompleteModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatSlideToggleModule,
   ],
   exports: [
     TranslateModule,
@@ -127,9 +121,12 @@ import { MetadataComponent } from './metadata/metadata.component';
     MatIconModule,
     MatAutocompleteModule,
     MatProgressSpinnerModule,
-    MetadataComponent
+    MatSlideToggleModule,
+    MetadataComponent,
+    ConfirmationPrimeoverDialogComponent,
+    euFormat
   ],
 
-  providers: [DatePipe, { provide: MAT_DIALOG_DATA, useValue: {} }, { provide: MatDialogRef, useValue: {} }]
+  providers: [ { provide: MAT_DIALOG_DATA, useValue: {} }, { provide: MatDialogRef, useValue: {} }]
 })
 export class SharedModule {}

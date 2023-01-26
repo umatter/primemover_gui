@@ -1,10 +1,8 @@
-import { LOCALE_ID, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-
 import { environment } from '../environments/environment';
 import { AppConfig } from './app-config';
 import { LoginComponent } from './core/auth/login/login.component';
@@ -18,17 +16,11 @@ import { authReducer } from './store/auth/auth.reducer';
 import { AuthEffects } from './store/auth/auth.effects';
 import { TokenInterceptor } from './core/interceptors/token.interceptor';
 import { ErrorInterceptor } from './core/interceptors/error.interceptor';
-import { registerLocaleData } from '@angular/common';
-import localeDe from '@angular/common/locales/de-CH';
-import localeFr from '@angular/common/locales/fr-CH';
-import localeIt from '@angular/common/locales/it-CH';
-import { Language } from './core/language/language.enum';
 import { LogoutComponent } from './core/auth/logout/logout.component';
-// import { ConfigModule } from './config/config.module';
-
-registerLocaleData(localeDe, Language.DE);
-registerLocaleData(localeFr, Language.FR);
-registerLocaleData(localeIt, Language.IT);
+import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
+import { HttpClient } from '@angular/common/http';
+import { Language, LanguageFilePath } from 'src/app/core/language/language.enum';
 
 @NgModule({
   declarations: [AppComponent, LoginComponent, HomeComponent, LogoutComponent],
@@ -40,17 +32,24 @@ registerLocaleData(localeIt, Language.IT);
     AppStoreModule,
     SharedModule,
     StoreModule.forFeature('auth', authReducer),
-    EffectsModule.forFeature([AuthEffects])
+    EffectsModule.forFeature([AuthEffects]),
+    TranslateModule.forRoot({
+      defaultLanguage: Language.EN,
+      loader: {
+        provide: TranslateLoader,
+        useFactory: (http: HttpClient) => {
+          return new TranslateHttpLoader(http, LanguageFilePath.ASSETI18N, LanguageFilePath.EXTENSION);
+        },
+        deps: [HttpClient]
+      }
+    })
   ],
   providers: [
     {
       provide: AppConfig,
       useValue: environment.configService
     },
-    {
-      provide: LOCALE_ID,
-      useValue: Language.DE
-    },
+
     {
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,
@@ -60,10 +59,6 @@ registerLocaleData(localeIt, Language.IT);
       provide: HTTP_INTERCEPTORS,
       useClass: ErrorInterceptor,
       multi: true
-    },
-    {
-      provide: LOCALE_ID,
-      useValue: 'de'
     }
   ],
   bootstrap: [AppComponent]

@@ -29,6 +29,14 @@
                 placeholder="{{ 'common.namePlaceholder' | translate }}"
                 type="text"
               />
+              <p
+              @fadeIn
+              *ngIf="autoCompleteHasError('required') || hasError('name', 'required')"
+              class="mt-2 text-sm text-red-600"
+              id="contact-error"
+            >
+              {{ 'common.nameRequiredError' | translate }}
+            </p>
               <mat-autocomplete #auto="matAutocomplete">
                 <mat-option
                   (onSelectionChange)="setControlValue(agent)"
@@ -58,9 +66,12 @@
                 placeholder="{{ 'common.descriptionPlaceholder' | translate }}"
                 rows="3"
               ></textarea>
+            
             </div>
+            <p @fadeIn *ngIf="hasError('description', 'maxlength')" class="mt-2 text-sm text-red-600" id="contact-error">
+              {{ 'common.maxLengthExceed' | translate }}
+            </p>
           </div>
-
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
             <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="identification">
               {{ 'common.identification' | translate }}

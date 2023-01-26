@@ -20,7 +20,7 @@ export class QueueCreateComponent implements OnInit, OnDestroy {
   formValid$: Observable<boolean>;
   isPopup = false;
   queueLoader = false;
-  queueCtrl = new FormControl();
+  queueCtrl = new FormControl('',[Validators.required]);
   crawler: any;
   Queues: any;
   experiment: any;
@@ -66,7 +66,7 @@ export class QueueCreateComponent implements OnInit, OnDestroy {
 
     this.isPopup = this.data.isPopup ? this.data.isPopup : false;
     this.queueCtrl.valueChanges.pipe(debounceTime(1000), distinctUntilChanged()).subscribe((search) => {
-      if (search.length >= 2) {
+      if (search &&search.length >= 2) {
         this.queueLoader = true;
         this.CrawlerService.search(search).subscribe(
           (result: any) => {
@@ -92,6 +92,10 @@ export class QueueCreateComponent implements OnInit, OnDestroy {
       this.queueForm.get(controlName)?.invalid &&
       this.queueForm.get(controlName)?.getError(errorName)
     );
+  }
+
+  autoCompleteHasError(errorName: string) {
+    return this.queueCtrl?.touched && this.queueCtrl?.invalid && this.queueCtrl.getError(errorName);
   }
 
   setControlValue(item: any) {
@@ -121,6 +125,7 @@ export class QueueCreateComponent implements OnInit, OnDestroy {
       this.router.navigate(['queues']);
     }
   }
+
 
   ngOnDestroy() {
     this.subscriptions.unsubscribe();

@@ -58,6 +58,11 @@
                     <span>{{ experiment.name }}</span>
                   </mat-option>
                 </mat-autocomplete>
+
+                <p @fadeIn *ngIf="autoCompleteHasError('experimentCtrl', 'required')" class="mt-2 text-sm text-red-600" id="contact-error">
+                  {{ 'common.experimentRequiredError' | translate }}
+                </p>
+                
                 <button (click)="reset('experiment_id', experimentCtrl)" class="flex ml-auto mt-2">
                   <mat-icon> restore</mat-icon>
                   Reset
@@ -94,6 +99,9 @@
                       <span>{{ agent.name }}</span>
                     </mat-option>
                   </mat-autocomplete>
+                  <p @fadeIn *ngIf="autoCompleteHasError('agentCtrl', 'required')" class="mt-2 text-sm text-red-600" id="contact-error">
+                    {{ 'common.agentRequiredError' | translate }}
+                  </p>
                   <button (click)="reset('agent_id', agentCtrl)" class="flex ml-auto mt-2">
                     <mat-icon> restore</mat-icon>
                     Reset
@@ -134,6 +142,9 @@
                       <span>{{ config.name }}</span>
                     </mat-option>
                   </mat-autocomplete>
+                  <p @fadeIn *ngIf="autoCompleteHasError('configCtrl', 'required')" class="mt-2 text-sm text-red-600" id="contact-error">
+                    {{ 'common.configRequiredError' | translate }}
+                  </p>
                   <button (click)="reset('configuration_id', configCtrl)" class="flex ml-auto mt-2">
                     <mat-icon> restore</mat-icon>
                     Reset
@@ -183,6 +194,10 @@
                       <span>{{ proxy.name }}</span>
                     </mat-option>
                   </mat-autocomplete>
+
+                  <p @fadeIn *ngIf="autoCompleteHasError('proxyCtrl', 'required')" class="mt-2 text-sm text-red-600" id="contact-error">
+                    {{ 'common.proxyRequiredError' | translate }}
+                  </p>
                   <button (click)="reset('proxy_id', proxyCtrl)" class="flex ml-auto mt-2">
                     <mat-icon> restore</mat-icon>
                     Reset

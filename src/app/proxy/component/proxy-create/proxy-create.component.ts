@@ -22,7 +22,7 @@ export class ProxyCreateComponent implements OnInit, OnDestroy {
   selected = false;
   proxyLoader = false;
   proxies: any;
-  proxyCtrl = new FormControl();
+  proxyCtrl = new FormControl('',[Validators.required]);
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -82,7 +82,7 @@ export class ProxyCreateComponent implements OnInit, OnDestroy {
     );
 
     this.proxyCtrl.valueChanges.pipe(debounceTime(1000), distinctUntilChanged()).subscribe((search) => {
-      if (search.length >= 2) {
+      if (search && search.length >= 2) {
         this.proxyLoader = true;
         this.proxy.search(search).subscribe(
           (result: any) => {
@@ -108,6 +108,10 @@ export class ProxyCreateComponent implements OnInit, OnDestroy {
       this.proxyForm.get(controlName)?.invalid &&
       this.proxyForm.get(controlName)?.getError(errorName)
     );
+  }
+
+  autoCompleteHasError(errorName: string) {
+    return this.proxyCtrl?.touched && this.proxyCtrl?.invalid && this.proxyCtrl.getError(errorName);
   }
 
   saveProxy(): void {

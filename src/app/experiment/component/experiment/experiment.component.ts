@@ -16,6 +16,9 @@ import {
   selectIsLoading
 } from '../../store/experiment.selectors';
 import { Experiment } from '../../model/experiment';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationPrimeoverDialogComponent } from 'src/app/shared/dialog/primeover-dialog/confirmation-primeover-dialog.component';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-experiment',
@@ -28,7 +31,12 @@ export class ExperimentComponent implements OnInit, OnDestroy {
   experimentsData$: Observable<any>;
   isLoading$: Observable<boolean>;
 
-  constructor(private store: Store, public router: Router) {}
+  constructor(
+    private store: Store,
+    public router: Router,
+    private matDialog: MatDialog,
+    private translate: TranslateService
+  ) {}
 
   ngOnInit(): void {
     this.experimentsData$ = this.store.pipe(select(selectExperimentsListData));
@@ -56,8 +64,27 @@ export class ExperimentComponent implements OnInit, OnDestroy {
     this.router.navigate(['crawlers']).then();
   }
 
-  deleteExperiment(experimentId: number): void {
-    this.store.dispatch(experimentDeleteRequested({ experimentId }));
+  deleteExperiment(experiment: any): void {
+    const confirmationDialog = this.matDialog.open(ConfirmationPrimeoverDialogComponent, {
+      data: {
+        title: experiment.name,
+        description: this.translate.instant('confirmation-delete.experiment.experimentDeleteMSG', {
+          experimentName: experiment.name
+        }),
+        otherButtonName: this.translate.instant('confirmation-delete.experiment.otherButton'),
+        cancelButtonName: this.translate.instant('confirmation-delete.experiment.cancelButton')
+      },
+      width: '550px'
+    });
+    confirmationDialog.componentInstance.event.subscribe((eventType: string) => {
+      if (eventType === 'cancel') {
+        confirmationDialog.close();
+      } else {
+        const experimentId = experiment.id;
+        this.store.dispatch(experimentDeleteRequested({ experimentId }));
+        confirmationDialog.close();
+      }
+    });
   }
 
   ngOnDestroy(): void {
