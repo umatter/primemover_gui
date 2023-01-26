@@ -29,7 +29,12 @@
                 placeholder="{{ 'common.namePlaceholder' | translate }}"
                 class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
               />
-              <p *ngIf="hasError('name', 'required')" @fadeIn class="mt-2 text-sm text-red-600" id="name-error">
+              <p
+                @fadeIn
+                *ngIf="autoCompleteHasError('required') || hasError('name', 'required')"
+                class="mt-2 text-sm text-red-600"
+                id="contact-error"
+              >
                 {{ 'common.nameRequiredError' | translate }}
               </p>
               <mat-autocomplete #auto3="matAutocomplete">
@@ -54,6 +59,14 @@
                 class="shadow-sm block w-full focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border border-gray-300 rounded-md"
                 placeholder="{{ 'common.descriptionPlaceholder' | translate }}"
               ></textarea>
+              <p
+                @fadeIn
+                *ngIf="hasError('description', 'required')"
+                class="mt-2 text-sm text-red-600"
+                id="contact-error"
+              >
+                {{ 'common.descriptionRequiredError' | translate }}
+              </p>
             </div>
           </div>
 
@@ -71,6 +84,9 @@
                 placeholder="{{ 'type' | translate }}"
                 class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
               />
+              <p @fadeIn *ngIf="hasError('type', 'required')" class="mt-2 text-sm text-red-600" id="contact-error">
+                {{ 'common.typeRequiredError' | translate }}
+              </p>
             </div>
           </div>
         </div>

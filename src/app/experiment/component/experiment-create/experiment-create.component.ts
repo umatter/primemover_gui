@@ -20,7 +20,7 @@ export class ExperimentCreateComponent implements OnInit, OnDestroy {
   formValid$: Observable<boolean>;
   isPopup = false;
   experimentLoader = false;
-  experimentCtrl = new FormControl();
+  experimentCtrl = new FormControl('',[Validators.required]);
   experiments: any;
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -64,7 +64,7 @@ export class ExperimentCreateComponent implements OnInit, OnDestroy {
     );
 
     this.experimentCtrl.valueChanges.pipe(debounceTime(1000), distinctUntilChanged()).subscribe((search) => {
-      if (search.length >= 2) {
+      if (search && search.length >= 2) {
         this.experimentLoader = true;
         this.experiment.search(search).subscribe(
           (result: any) => {
@@ -90,6 +90,10 @@ export class ExperimentCreateComponent implements OnInit, OnDestroy {
       this.experimentForm.get(controlName)?.invalid &&
       this.experimentForm.get(controlName)?.getError(errorName)
     );
+  }
+
+  autoCompleteHasError(errorName: string) {
+    return this.experimentCtrl?.touched && this.experimentCtrl?.invalid && this.experimentCtrl.getError(errorName);
   }
 
   setControlValue(item: any) {

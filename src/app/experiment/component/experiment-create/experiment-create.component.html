@@ -17,7 +17,7 @@
             </label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
               <div class="relative width512">
-                <div *ngIf="experimentLoader" class="spinr absolute right-2 ">
+                <div *ngIf="experimentLoader" class="spinr absolute right-2">
                   <mat-spinner class="spin"></mat-spinner>
                 </div>
                 <input
@@ -40,6 +40,14 @@
                   <span>{{ experiment.name }}</span>
                 </mat-option>
               </mat-autocomplete>
+              <p
+                @fadeIn
+                *ngIf="autoCompleteHasError('required') || hasError('name', 'required')"
+                class="mt-2 text-sm text-red-600"
+                id="contact-error"
+              >
+                {{ 'common.experimentRequiredError' | translate }}
+              </p>
               <button class="flex ml-auto mt-2" (click)="reset()"><mat-icon> restore </mat-icon> Reset</button>
             </div>
           </div>
