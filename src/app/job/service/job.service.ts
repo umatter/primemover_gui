@@ -38,6 +38,10 @@ export class JobService {
     `);
   }
 
+  public deleteJob(jobId: number): Observable<any> {
+    return this.http.delete<any>(`${this.config.apiBaseUrl}/jobs/${jobId}`);
+  }
+
   getParams(): HttpParams {
     this.queryFilterParams = this.filterService.getFilterParams();
 

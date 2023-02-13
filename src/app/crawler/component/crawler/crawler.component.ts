@@ -5,11 +5,14 @@ import { PaginatePipeArgs } from 'ngx-pagination';
 import { Router } from '@angular/router';
 import { currentExperimentResetRequested } from '../../../experiment/store/experiment.actions';
 import { selectCurrentExperiment, selectExperimentsListData } from '../../../experiment/store/experiment.selectors';
-import { crawlerPageRequested, crawlerRequested } from '../../store/crawler.actions';
+import { crawlerDeleteRequested, crawlerPageRequested, crawlerRequested } from '../../store/crawler.actions';
 import { fadeIn } from '../../../shared/animation/trigger';
 import { selectCrawlersListData, selectCrawlersPagination, selectIsLoading } from '../../store/crawler.selectors';
 import { Crawler } from '../../model/crawler';
 import { Experiment } from '../../../experiment/model/experiment';
+import { ConfirmationPrimeoverDialogComponent } from 'src/app/shared/dialog/primeover-dialog/confirmation-primeover-dialog.component';
+import { TranslateService } from '@ngx-translate/core';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-crawler',
@@ -25,7 +28,8 @@ export class CrawlerComponent implements OnInit, OnDestroy {
   isLoading$: Observable<boolean>;
   experiment: any;
 
-  constructor(private store: Store, public router: Router) {}
+  constructor(private store: Store, public router: Router,private matDialog: MatDialog,
+    private translate: TranslateService) {}
 
   ngOnInit() {
     this.data$ = this.store.pipe(select(selectCrawlersListData));
@@ -52,6 +56,31 @@ export class CrawlerComponent implements OnInit, OnDestroy {
         .pipe(select(selectCrawlersPagination))
         .subscribe((paginatePipeArgs) => (this.paginationConfig = paginatePipeArgs))
     );
+  }
+
+
+  deleteCrawler(experiment: any): void {
+    const confirmationDialog = this.matDialog.open(ConfirmationPrimeoverDialogComponent, {
+      data: {
+        title: experiment.name,
+        description: this.translate.instant('confirmation-delete.experiment.experimentDeleteMSG', {
+          experimentName: experiment.name,
+          experiment:'crawler'
+        }),
+        otherButtonName: this.translate.instant('confirmation-delete.experiment.otherButton'),
+        cancelButtonName: this.translate.instant('confirmation-delete.experiment.cancelButton')
+      },
+      width: '550px'
+    });
+    confirmationDialog.componentInstance.event.subscribe((eventType: string) => {
+      if (eventType === 'cancel') {
+        confirmationDialog.close();
+      } else {
+        const crawlerId = experiment.id;
+        this.store.dispatch(crawlerDeleteRequested({ crawlerId }));
+        confirmationDialog.close();
+      }
+    });
   }
 
   resetExperimentFilter(): void {

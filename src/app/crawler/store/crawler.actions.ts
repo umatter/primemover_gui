@@ -16,12 +16,12 @@ export const crawlerRequested = createAction('[Crawler] Record requested', props
 export const currentCrawlerResetRequested = createAction('[Crawler] Reset current requested');
 export const completeCrawlerCreateRequested = createAction('[Crawler] Complete create requested');
 
-export const experimentDeleteRequested = createAction('[Crawler] Delete requested', props<{ crawlerId: number }>());
+export const crawlerDeleteRequested = createAction('[Crawler] Delete requested', props<{ crawlerId: number }>());
 export const updateCrawlerCreateValues = createAction('[Crawler] Update', props<CrawlerFormValues>());
 export const experimentCreateSuccess = createAction('[Crawler] Create success', props<any>());
-export const experimentDeleteSuccess = createAction('[Crawler] Delete success', props<any>());
+export const crawlerDeleteSuccess = createAction('[Crawler] Delete success', props<any>());
 export const experimentCreateError = createAction('[Crawler] Create error', props<{ err: HttpErrorResponse }>());
-export const experimentDeleteError = createAction('[Crawler] Delete error', props<{ err: HttpErrorResponse }>());
+export const crawlerDeleteError = createAction('[Crawler] Delete error', props<{ err: HttpErrorResponse }>());
 
 export const experimentRequest = createAction('[Experiment] Data requested');
 export const experimentsRetrieved = createAction('[Experiment] Crawlers retrieved', props<{ collection: any }>());

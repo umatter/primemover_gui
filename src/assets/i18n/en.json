@@ -117,7 +117,7 @@
 
   "confirmation-delete": {
     "experiment": {
-      "experimentDeleteMSG": "Are you sure do you want to delete experiment: {{experimentName}}?",
+      "experimentDeleteMSG": "Are you sure do you want to delete {{experiment}}: {{experimentName}}?",
       "cancelButton": "No",
       "otherButton": "Yes"
     }

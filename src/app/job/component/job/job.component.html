@@ -67,7 +67,19 @@
                   {{ item.queue.crawler_id }}
                 </td>
 
-                <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6"></td>
+                <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                  <app-button
+                    type="white"
+                    size="sm"
+                    text="{{ 'common.delete' | translate }}"
+                    (click)="deleteJobs(item)"
+                    class="text-indigo-600 hover:text-indigo-900 mr-2"
+                  >
+                  </app-button>
+                  <!-- <app-button type="secondary" size="sm" text="{{ 'common.select' | translate }}"
+                    (click)="selectJob(item)" class="text-indigo-600 hover:text-indigo-900">
+                  </app-button> -->
+                </td>
               </tr>
 
               <!-- More people... -->

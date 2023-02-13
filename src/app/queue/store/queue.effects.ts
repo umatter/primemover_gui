@@ -6,7 +6,7 @@ import { of } from 'rxjs';
 
 import { experimentPageRequested } from '../../experiment/store/experiment.actions';
 import { QueueService } from '../service/queue.service';
-import { initQueues, queuePageRequested, queuesRequested, queuesRequestFailed, queuesRetrieved } from './queue.actions';
+import { initQueues, queueDeleteError, queueDeleteRequested, queueDeleteSuccess, queuePageRequested, queuesRequested, queuesRequestFailed, queuesRetrieved } from './queue.actions';
 import { currentCrawlerResetRequested } from '../../crawler/store/crawler.actions';
 import { updateQueryFilter } from '../../shared/store/shared.actions';
 
@@ -48,6 +48,18 @@ export class QueueEffects {
     this.actions$.pipe(
       ofType(queuePageRequested),
       map(() => queuesRequested())
+    )
+  );
+
+  queueDeleteRequested$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(queueDeleteRequested),
+      switchMap((action) =>
+        this.apiService.deleteQueue(action.queueId).pipe(
+          map((response) => queueDeleteSuccess(response)),
+          catchError((err) => of(queueDeleteError(err)))
+        )
+      )
     )
   );
 

@@ -69,7 +69,8 @@ export class ExperimentComponent implements OnInit, OnDestroy {
       data: {
         title: experiment.name,
         description: this.translate.instant('confirmation-delete.experiment.experimentDeleteMSG', {
-          experimentName: experiment.name
+          experimentName: experiment.name,
+          experiment:'experiment'
         }),
         otherButtonName: this.translate.instant('confirmation-delete.experiment.otherButton'),
         cancelButtonName: this.translate.instant('confirmation-delete.experiment.cancelButton')

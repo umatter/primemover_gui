@@ -5,7 +5,7 @@ import { catchError, map, switchMap } from 'rxjs';
 import { of } from 'rxjs';
 import { experimentPageRequested } from '../../experiment/store/experiment.actions';
 import { JobService } from '../service/job.service';
-import { initJobs, jobPageRequested, jobsRequested, jobsRequestFailed, jobsRetrieved } from './job.actions';
+import { initJobs, jobDeleteError, jobDeleteRequested, jobDeleteSuccess, jobPageRequested, jobsRequested, jobsRequestFailed, jobsRetrieved } from './job.actions';
 import { currentQueueResetRequested } from '../../queue/store/queue.actions';
 import { updateQueryFilter } from '../../shared/store/shared.actions';
 
@@ -47,6 +47,18 @@ export class JobEffects {
     this.actions$.pipe(
       ofType(jobPageRequested),
       map(() => jobsRequested())
+    )
+  );
+
+  queueDeleteRequested$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(jobDeleteRequested),
+      switchMap((action) =>
+        this.apiService.deleteJob(action.jobId).pipe(
+          map((response) => jobDeleteSuccess(response)),
+          catchError((err) => of(jobDeleteError(err)))
+        )
+      )
     )
   );
 

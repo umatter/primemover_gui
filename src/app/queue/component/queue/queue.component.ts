@@ -5,12 +5,15 @@ import { PaginatePipeArgs } from 'ngx-pagination';
 import { select, Store } from '@ngrx/store';
 import { selectExperimentsListData } from '../../../experiment/store/experiment.selectors';
 import { selectIsLoading, selectQueuesListData, selectQueuesPagination } from '../../store/queue.selectors';
-import { queuePageRequested, queueRequested } from '../../store/queue.actions';
+import { queueDeleteRequested, queuePageRequested, queueRequested } from '../../store/queue.actions';
 import { Crawler } from '../../../crawler/model/crawler';
 import { selectCurrentCrawler } from '../../../crawler/store/crawler.selectors';
 import { currentCrawlerResetRequested } from '../../../crawler/store/crawler.actions';
 import { Queue } from '../../model/queue';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
+import { ConfirmationPrimeoverDialogComponent } from 'src/app/shared/dialog/primeover-dialog/confirmation-primeover-dialog.component';
 
 @Component({
   selector: 'app-queue',
@@ -25,7 +28,8 @@ export class QueueComponent implements OnInit, OnDestroy {
   currentCrawler$: Observable<Crawler | null>;
   isLoading$: Observable<boolean>;
 
-  constructor(private store: Store, public router: Router) {}
+  constructor(private store: Store, public router: Router,private matDialog: MatDialog,
+    private translate: TranslateService) {}
 
   ngOnInit() {
     this.data$ = this.store.pipe(select(selectQueuesListData));
@@ -56,6 +60,30 @@ export class QueueComponent implements OnInit, OnDestroy {
 
   resetCrawlerFilter(): void {
     this.store.dispatch(currentCrawlerResetRequested());
+  }
+
+  deleteQueue(queue: any): void {
+    const confirmationDialog = this.matDialog.open(ConfirmationPrimeoverDialogComponent, {
+      data: {
+        title: queue.name,
+        description: this.translate.instant('confirmation-delete.experiment.experimentDeleteMSG', {
+          experimentName: queue.name,
+          experiment:'queue'
+        }),
+        otherButtonName: this.translate.instant('confirmation-delete.experiment.otherButton'),
+        cancelButtonName: this.translate.instant('confirmation-delete.experiment.cancelButton')
+      },
+      width: '550px'
+    });
+    confirmationDialog.componentInstance.event.subscribe((eventType: string) => {
+      if (eventType === 'cancel') {
+        confirmationDialog.close();
+      } else {
+        const queueId = queue.id;
+        this.store.dispatch(queueDeleteRequested({ queueId }));
+        confirmationDialog.close();
+      }
+    });
   }
 
   ngOnDestroy() {

@@ -16,10 +16,14 @@ import {
   selectIsLoading
 } from '../../store/config.selectors';
 import { Configuration } from '../../model/config';
+import { MatDialog } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
+import { ConfirmationPrimeoverDialogComponent } from 'src/app/shared/dialog/primeover-dialog/confirmation-primeover-dialog.component';
 
 @Component({
   selector: 'app-config',
   templateUrl: './config.component.html',
+  styleUrls: ['./config.component.scss'],
   animations: [fadeIn]
 })
 export class ConfigComponent implements OnInit, OnDestroy {
@@ -28,7 +32,8 @@ export class ConfigComponent implements OnInit, OnDestroy {
   configurationsData$: Observable<any>;
   isLoading$: Observable<boolean>;
 
-  constructor(private store: Store, public router: Router) {}
+  constructor(private store: Store, public router: Router ,private matDialog: MatDialog,
+    private translate: TranslateService) {}
 
   ngOnInit(): void {
     this.configurationsData$ = this.store.pipe(select(selectConfigurationsListData));
@@ -56,8 +61,28 @@ export class ConfigComponent implements OnInit, OnDestroy {
     this.router.navigate(['crawlers']).then();
   }
 
-  deleteConfiguration(configurationId: number): void {
-    this.store.dispatch(configurationDeleteRequested({ configurationId }));
+  deleteConfiguration(configuration: any): void {
+    const confirmationDialog = this.matDialog.open(ConfirmationPrimeoverDialogComponent, {
+      data: {
+        title: configuration.name,
+        description: this.translate.instant('confirmation-delete.experiment.experimentDeleteMSG', {
+          experimentName: configuration.name,
+          experiment:'configuration'
+        }),
+        otherButtonName: this.translate.instant('confirmation-delete.experiment.otherButton'),
+        cancelButtonName: this.translate.instant('confirmation-delete.experiment.cancelButton')
+      },
+      width: '550px'
+    });
+    confirmationDialog.componentInstance.event.subscribe((eventType: string) => {
+      if (eventType === 'cancel') {
+        confirmationDialog.close();
+      } else {
+        const configurationId = configuration.id;
+        this.store.dispatch(configurationDeleteRequested({ configurationId }));
+        confirmationDialog.close();
+      }
+    });
   }
 
   ngOnDestroy(): void {

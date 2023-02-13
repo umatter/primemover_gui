@@ -23,9 +23,21 @@ import { selectProxyCreateFormValues } from './proxy.selectors';
 import { TypedAction } from '@ngrx/store/src/models';
 import { ProxyFormValues } from '../component/model/proxy-form-values';
 import { Router } from '@angular/router';
+import { initJobs } from 'src/app/job/store/job.actions';
+import { experimentPageRequested } from 'src/app/experiment/store/experiment.actions';
 
 @Injectable()
 export class ProxyEffects {
+///
+
+initJobs$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(initJobs),
+      map(() => experimentPageRequested({ page: 1 }))
+    )
+  );
+
+  ///
   proxiesRequested$ = createEffect(() =>
     this.actions$.pipe(
       ofType(proxiesRequested),
