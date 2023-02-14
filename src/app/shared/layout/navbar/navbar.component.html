@@ -12,36 +12,36 @@
             <a
               [ngClass]="isActiveRoute('/experiments') ? activeClassList : regularClassList"
               routerLink="experiments"
-              routerLinkActive="bg-gray-900 text-white"
+              routerLinkActive="avtive-sub-route-bg"
             >
               {{ 'experiment.label' | translate }}
             </a>
-            <a [ngClass]="isActiveRoute('/crawlers') ? activeClassList : regularClassList" routerLink="crawlers">
+            <a [ngClass]="isActiveRoute('/crawlers') ? activeClassList : regularClassList" routerLink="crawlers" routerLinkActive="avtive-sub-route-bg">
               {{ 'crawler.label' | translate }}
             </a>
-            <a [ngClass]="isActiveRoute('/queues') ? activeClassList : regularClassList" routerLink="queues">
+            <a [ngClass]="isActiveRoute('/queues') ? activeClassList : regularClassList" routerLink="queues" routerLinkActive="avtive-sub-route-bg">
               {{ 'queue.label' | translate }}
             </a>
-            <a [ngClass]="isActiveRoute('/jobs') ? activeClassList : regularClassList" routerLink="jobs">
+            <a [ngClass]="isActiveRoute('/jobs') ? activeClassList : regularClassList" routerLink="jobs" routerLinkActive="avtive-sub-route-bg">
               {{ 'job.label' | translate }}
             </a>
 
-            <a [ngClass]="isActiveRoute('/agents') ? activeClassList : regularClassList" routerLink="agents">
+            <a [ngClass]="isActiveRoute('/agents') ? activeClassList : regularClassList" routerLink="agents" routerLinkActive="avtive-sub-route-bg">
               {{ 'agent.label' | translate }}
             </a>
             <a
               [ngClass]="isActiveRoute('/configurations') ? activeClassList : regularClassList"
-              routerLink="configurations"
+              routerLink="configurations" routerLinkActive="avtive-sub-route-bg"
             >
               {{ 'config.label' | translate }}
             </a>
-            <a [ngClass]="isActiveRoute('/proxies') ? activeClassList : regularClassList" routerLink="proxies">
+            <a [ngClass]="isActiveRoute('/proxies') ? activeClassList : regularClassList" routerLink="proxies" routerLinkActive="avtive-sub-route-bg">
               {{ 'proxy.label' | translate }}
             </a>
             <a
               *ngIf="(isLoggedIn$ | async) === false"
               [ngClass]="isLoginRoute() ? activeClassList : regularClassList"
-              routerLink="login"
+              routerLink="login" routerLinkActive="avtive-sub-route-bg"
             >
               {{ 'auth.login' | translate }}
             </a>
