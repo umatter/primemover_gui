@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 
 import { QueueRoutingModule } from './queue-routing.module';
 import { QueueComponent } from './component/queue/queue.component';
@@ -26,6 +26,7 @@ import { QueueCreateComponent } from './component/queue-create/queue-craete/queu
     EffectsModule.forFeature([QueueEffects]),
     NgxPaginationModule,
     SharedModule
-  ]
+  ],
+  providers:[DatePipe]
 })
 export class QueueModule {}
