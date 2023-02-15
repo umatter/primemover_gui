@@ -34,6 +34,11 @@ export class QueueService {
     return this.http.get<DataCollection>(`${this.config.apiBaseUrl}/queues`, { params });
   }
 
+  public search(keyword: string) {
+    return this.http.get<[]>(`${this.config.apiBaseUrl}/queues?filter[name]=${keyword}
+    `);
+  }
+
   getParams(): HttpParams {
     this.queryFilterParams = this.filterService.getFilterParams();
 

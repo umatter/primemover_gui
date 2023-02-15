@@ -5,9 +5,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { select, Store } from '@ngrx/store';
 import { ExperimentCreateComponent } from 'src/app/experiment/component/experiment-create/experiment-create.component';
-import { CrawlerService } from 'src/app/crawler/service/crawler.service';
 import { selectCurrentCrawler } from 'src/app/crawler/store/crawler.selectors';
 import { Crawler } from 'src/app/crawler/model/crawler';
+import { QueueService } from 'src/app/queue/service/queue.service';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-queue-create',
@@ -32,7 +33,8 @@ export class QueueCreateComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     @Optional() private experiementDialog: MatDialogRef<ExperimentCreateComponent>,
     public router: Router,
-    public CrawlerService: CrawlerService
+    public queueService:QueueService,
+    private datePipe: DatePipe
   ) {
     this.queueForm = this.formBuilder.group({
       name: ['', [Validators.required]],
@@ -68,7 +70,7 @@ export class QueueCreateComponent implements OnInit, OnDestroy {
     this.queueCtrl.valueChanges.pipe(debounceTime(1000), distinctUntilChanged()).subscribe((search) => {
       if (search &&search.length >= 2) {
         this.queueLoader = true;
-        this.CrawlerService.search(search).subscribe(
+        this.queueService.search(search).subscribe(
           (result: any) => {
             this.Queues = result.data;
             this.queueLoader = false;
@@ -101,7 +103,7 @@ export class QueueCreateComponent implements OnInit, OnDestroy {
   setControlValue(item: any) {
     this.queueForm.controls['name'].setValue(item.name);
     this.queueForm.controls['description'].setValue(item.description);
-    this.queueForm.controls['start_at'].setValue(item.start_at);
+    this.queueForm.controls['start_at'].setValue(this.datePipe.transform(item.start_at,"yyyy-MM-dd") );
   }
 
   reset() {
