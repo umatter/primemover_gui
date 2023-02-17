@@ -34,6 +34,9 @@ export class QueueService {
     return this.http.get<DataCollection>(`${this.config.apiBaseUrl}/queues`, { params });
   }
 
+  public deleteQueue(queueId: number): Observable<any> {
+    return this.http.delete<any>(`${this.config.apiBaseUrl}/queues/${queueId}`);
+  }
   public search(keyword: string) {
     return this.http.get<[]>(`${this.config.apiBaseUrl}/queues?filter[name]=${keyword}
     `);

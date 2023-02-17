@@ -67,6 +67,10 @@ export class CrawlerService {
     `);
   }
 
+  public deleteCrawler(crawlerId: number): Observable<any> {
+    return this.http.delete<any>(`${this.config.apiBaseUrl}/crawlers/${crawlerId}`);
+  }
+
   getParams(): HttpParams {
     this.queryFilterParams = this.filterService.getFilterParams();
 

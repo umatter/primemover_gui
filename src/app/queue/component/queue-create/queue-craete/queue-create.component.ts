@@ -59,7 +59,6 @@ export class QueueCreateComponent implements OnInit, OnDestroy {
     this.currentCrawler$ = this.store.pipe(select(selectCurrentCrawler));
     this.currentCrawler$.subscribe((selectedCrawler: any) => {
       this.crawler = selectedCrawler;
-      console.log(this.crawler);
       if (this.crawler) {
         this.queueCtrl.setValue(this.crawler.name);
         this.queueForm.controls['name'].setValue(this.crawler.id);
@@ -116,7 +115,6 @@ export class QueueCreateComponent implements OnInit, OnDestroy {
     if (!this.queueForm.valid) {
       return;
     }
-    console.log('all form', this.queueForm);
     this.onClose(true);
   }
 

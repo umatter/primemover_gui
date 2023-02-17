@@ -24,7 +24,10 @@ import {
   agentRequestFailed,
   configRequest,
   configsRetrieved,
-  configRequestFailed
+  configRequestFailed,
+  crawlerDeleteRequested,
+  crawlerDeleteSuccess,
+  crawlerDeleteError,
 } from './crawler.actions';
 import { selectCrawlerCreateFormValues } from './crawler.selectors';
 import { TypedAction } from '@ngrx/store/src/models';
@@ -140,6 +143,19 @@ export class CrawlerEffects {
         tap(() => this.router.navigate(['crawlers']))
       ),
     { dispatch: false }
+  );
+
+
+  crawlerDeleteRequested$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(crawlerDeleteRequested),
+      switchMap((action) =>
+        this.apiService.deleteCrawler(action.crawlerId).pipe(
+          map((response) => crawlerDeleteSuccess(response)),
+          catchError((err) => of(crawlerDeleteError(err)))
+        )
+      )
+    )
   );
   constructor(
     private actions$: Actions,

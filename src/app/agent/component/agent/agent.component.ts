@@ -8,6 +8,9 @@ import { fadeIn } from '../../../shared/animation/trigger';
 import { agentDeleteRequested, agentPageRequested, agentRequested, getAgetList } from '../../store/agent.actions';
 import { agentsList, selectAgentsListData, selectAgentsPagination, selectIsLoading } from '../../store/agent.selectors';
 import { Agent } from '../../model/agent';
+import { MatDialog } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
+import { ConfirmationPrimeoverDialogComponent } from 'src/app/shared/dialog/primeover-dialog/confirmation-primeover-dialog.component';
 
 @Component({
   selector: 'app-agent',
@@ -22,7 +25,8 @@ export class AgentComponent implements OnInit, OnDestroy {
 
   isLoading$: Observable<boolean>;
 
-  constructor(private store: Store, public router: Router) {}
+  constructor(private store: Store, public router: Router,private matDialog: MatDialog,
+    private translate: TranslateService) {}
 
   ngOnInit(): void {
     this.agentsData$ = this.store.pipe(select(selectAgentsListData));
@@ -50,9 +54,30 @@ export class AgentComponent implements OnInit, OnDestroy {
     this.router.navigate(['crawlers']).then();
   }
 
-  deleteAgent(agentId: number): void {
-    this.store.dispatch(agentDeleteRequested({ agentId }));
+  deleteAgent(agent: any): void {
+    const confirmationDialog = this.matDialog.open(ConfirmationPrimeoverDialogComponent, {
+      data: {
+        title: agent.name,
+        description: this.translate.instant('confirmation-delete.experiment.experimentDeleteMSG', {
+          experimentName: agent.name,
+          experiment:'agent'
+        }),
+        otherButtonName: this.translate.instant('confirmation-delete.experiment.otherButton'),
+        cancelButtonName: this.translate.instant('confirmation-delete.experiment.cancelButton')
+      },
+      width: '550px'
+    });
+    confirmationDialog.componentInstance.event.subscribe((eventType: string) => {
+      if (eventType === 'cancel') {
+        confirmationDialog.close();
+      } else {
+        const agentId = agent.id;
+        this.store.dispatch(agentDeleteRequested({ agentId }));
+        confirmationDialog.close();
+      }
+    });
   }
+
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();

@@ -78,6 +78,14 @@
 
                 <td class="relative whitespace-nowrap pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                   <app-button
+                    type="white"
+                    size="sm"
+                    text="{{ 'common.delete' | translate }}"
+                    (click)="deleteQueue(item)"
+                    class="text-indigo-600 hover:text-indigo-900 mr-2"
+                  >
+                  </app-button>
+                  <app-button
                     type="primary"
                     size="sm"
                     text="{{ 'common.select' | translate }}"

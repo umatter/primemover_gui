@@ -8,10 +8,14 @@ import { fadeIn } from '../../../shared/animation/trigger';
 import { proxyDeleteRequested, proxyPageRequested, proxyRequested } from '../../store/proxy.actions';
 import { selectProxiesListData, selectProxiesPagination, selectIsLoading } from '../../store/proxy.selectors';
 import { Proxy } from '../../model/proxy';
+import { ConfirmationPrimeoverDialogComponent } from 'src/app/shared/dialog/primeover-dialog/confirmation-primeover-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-proxy',
   templateUrl: './proxy.component.html',
+  styleUrls: ['./proxy.component.scss'],
   animations: [fadeIn]
 })
 export class ProxyComponent implements OnInit, OnDestroy {
@@ -20,7 +24,8 @@ export class ProxyComponent implements OnInit, OnDestroy {
   proxiesData$: Observable<any>;
   isLoading$: Observable<boolean>;
 
-  constructor(private store: Store, public router: Router) {}
+  constructor(private store: Store, public router: Router,private matDialog: MatDialog,
+    private translate: TranslateService) {}
 
   ngOnInit(): void {
     this.proxiesData$ = this.store.pipe(select(selectProxiesListData));
@@ -48,8 +53,29 @@ export class ProxyComponent implements OnInit, OnDestroy {
     this.router.navigate(['crawlers']).then();
   }
 
-  deleteProxy(proxyId: number): void {
-    this.store.dispatch(proxyDeleteRequested({ proxyId }));
+
+  deleteProxy(proxy: any): void {
+    const confirmationDialog = this.matDialog.open(ConfirmationPrimeoverDialogComponent, {
+      data: {
+        title: proxy.name,
+        description: this.translate.instant('confirmation-delete.experiment.experimentDeleteMSG', {
+          experimentName: proxy.name,
+          experiment:'proxy'
+        }),
+        otherButtonName: this.translate.instant('confirmation-delete.experiment.otherButton'),
+        cancelButtonName: this.translate.instant('confirmation-delete.experiment.cancelButton')
+      },
+      width: '550px'
+    });
+    confirmationDialog.componentInstance.event.subscribe((eventType: string) => {
+      if (eventType === 'cancel') {
+        confirmationDialog.close();
+      } else {
+        const proxyId = proxy.id;
+        this.store.dispatch(proxyDeleteRequested({ proxyId }));
+        confirmationDialog.close();
+      }
+    });
   }
 
   ngOnDestroy(): void {

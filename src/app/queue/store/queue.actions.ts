@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { createAction, props } from '@ngrx/store';
 import { DataCollection } from '../../shared/model/data-collection';
 import { Queue } from '../model/queue';
@@ -10,3 +11,9 @@ export const queueResetRequested = createAction('[Queue] Reset state requested')
 export const queuePageRequested = createAction('[Queue] Page requested', props<{ page: number }>());
 export const queueRequested = createAction('[Queue] Record requested', props<Queue>());
 export const currentQueueResetRequested = createAction('[Queue] Reset current requested');
+export const queueDeleteRequested = createAction('[Queue] Delete requested', props<{ queueId: number }>());
+export const queueDeleteError = createAction('[Experiment] Delete error', props<{ err: HttpErrorResponse }>());
+export const queueDeleteSuccess = createAction('[Experiment] Delete success', props<any>());
+
+
+
