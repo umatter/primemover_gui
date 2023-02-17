@@ -127,11 +127,12 @@ pagination-controls {
 }
 .navabar-select-language{
 
-  .mat-select-min-line{
-    color: white;
+  .mat-select-min-line{ 
+    font-family: "system-ui";
+    color: rgb(209 213 219);
   }
   .mat-select-arrow {
-    color: white;
+    color: rgb(209 213 219);
   }
   .mat-form-field-appearance-legacy .mat-form-field-underline{
     background-color: white;

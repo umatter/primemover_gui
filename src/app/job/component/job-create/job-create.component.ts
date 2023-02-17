@@ -9,6 +9,7 @@ import { selectCurrentCrawler } from 'src/app/crawler/store/crawler.selectors';
 import { ExperimentFormValues } from 'src/app/experiment/component/model/experiment-form-values';
 import { updateExperimentCreateValues } from 'src/app/experiment/store/experiment.actions';
 import { CrawlerService } from 'src/app/crawler/service/crawler.service';
+import { JobService } from '../../service/job.service';
 
 @Component({
   selector: 'app-job-create',
@@ -32,7 +33,8 @@ export class JobCreateComponent implements OnInit, OnDestroy {
     private crawlerService: CrawlerService,
     private store: Store,
     private formBuilder: FormBuilder,
-    public router: Router
+    public router: Router,
+    public jobService:JobService
   ) {
     this.jobForm = this.formBuilder.group({
       name: [null, [Validators.required]],
@@ -68,7 +70,7 @@ export class JobCreateComponent implements OnInit, OnDestroy {
     this.jobCtrl.valueChanges.pipe(debounceTime(1000), distinctUntilChanged()).subscribe((search) => {
       if (search && search.length >= 2) {
         this.jobLoader = true;
-        this.crawlerService.search(search).subscribe(
+        this.jobService.search(search).subscribe(
           (result: any) => {
             this.jobs = result.data;
             this.jobLoader = false;
