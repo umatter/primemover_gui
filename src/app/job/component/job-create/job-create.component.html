@@ -16,7 +16,8 @@
               {{ 'common.name' | translate }}
             </label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <div *ngIf="jobLoader">
+              <div class="relative max-w-lg">
+              <div *ngIf="jobLoader" class="spinr">
                 <mat-spinner class="spin"></mat-spinner>
               </div>
               <input
@@ -37,6 +38,7 @@
               >
                 {{ 'common.nameRequiredError' | translate }}
               </p>
+              </div>
               <mat-autocomplete #auto3="matAutocomplete">
                 <mat-option *ngFor="let job of jobs" (onSelectionChange)="setControlValue(job)" [value]="job.name">
                   <span>{{ job.name }}</span>
