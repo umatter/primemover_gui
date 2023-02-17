@@ -8,7 +8,11 @@ import { Language } from 'src/app/core/language/language.enum';
 
 @Component({
   selector: 'app-navbar',
-  templateUrl: './navbar.component.html'
+  templateUrl: './navbar.component.html',
+  styles : [`.avtive-sub-route-bg{
+    background-color: #000;
+    color: white;
+}`]
 })
 export class NavbarComponent implements OnInit {
   isLoggedIn$: Observable<boolean>;
