@@ -27,8 +27,12 @@ export class JobComponent implements OnInit, OnDestroy {
   currentQueue$: Observable<Queue | null>;
   isLoading$: Observable<boolean>;
 
-  constructor(private store: Store, public router: Router ,private matDialog: MatDialog,
-    private translate: TranslateService) {}
+  constructor(
+    private store: Store,
+    public router: Router,
+    private matDialog: MatDialog,
+    private translate: TranslateService
+  ) {}
 
   ngOnInit() {
     this.data$ = this.store.pipe(distinctUntilChanged(), select(selectJobsListData));
@@ -67,7 +71,7 @@ export class JobComponent implements OnInit, OnDestroy {
         title: job.name,
         description: this.translate.instant('confirmation-delete.experiment.experimentDeleteMSG', {
           experimentName: job.name,
-          experiment:'job'
+          experiment: 'job'
         }),
         otherButtonName: this.translate.instant('confirmation-delete.experiment.otherButton'),
         cancelButtonName: this.translate.instant('confirmation-delete.experiment.cancelButton')

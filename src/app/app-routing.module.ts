@@ -1,18 +1,14 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './core/auth/login/login.component';
-import { HomeComponent } from './home/component/home.component';
 import { LogoutComponent } from './core/auth/logout/logout.component';
 import { AuthGuard } from './core/guards/auth.guard';
 
 const routes: Routes = [
   {
     path: '',
-    component: HomeComponent
-  },
-  {
-    path: 'login',
-    component: LoginComponent
+    component: LoginComponent,
+    outlet: 'noLayout'
   },
   {
     path: 'logout',
@@ -43,7 +39,8 @@ const routes: Routes = [
   { path: 'proxies', loadChildren: () => import('./proxy/proxy.module').then((m) => m.ProxyModule) },
   {
     path: '**',
-    component: HomeComponent
+    component: LoginComponent,
+    outlet: 'noLayout'
   }
 ];
 

@@ -1,8 +1,8 @@
-.config-table-wrapper{
-    tr{
-        width: 100%;
-        display: grid;
-        grid-template-columns: 10% 10%  50% 10% auto;
-        padding-top: 2px;
-       }
+.config-table-wrapper {
+  tr {
+    display: grid;
+    width: 100%;
+    padding-top: 2px;
+    grid-template-columns: 10% 10% 50% 10% auto;
+  }
 }

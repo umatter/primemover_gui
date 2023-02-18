@@ -25,8 +25,12 @@ export class AgentComponent implements OnInit, OnDestroy {
 
   isLoading$: Observable<boolean>;
 
-  constructor(private store: Store, public router: Router,private matDialog: MatDialog,
-    private translate: TranslateService) {}
+  constructor(
+    private store: Store,
+    public router: Router,
+    private matDialog: MatDialog,
+    private translate: TranslateService
+  ) {}
 
   ngOnInit(): void {
     this.agentsData$ = this.store.pipe(select(selectAgentsListData));
@@ -60,7 +64,7 @@ export class AgentComponent implements OnInit, OnDestroy {
         title: agent.name,
         description: this.translate.instant('confirmation-delete.experiment.experimentDeleteMSG', {
           experimentName: agent.name,
-          experiment:'agent'
+          experiment: 'agent'
         }),
         otherButtonName: this.translate.instant('confirmation-delete.experiment.otherButton'),
         cancelButtonName: this.translate.instant('confirmation-delete.experiment.cancelButton')
@@ -77,7 +81,6 @@ export class AgentComponent implements OnInit, OnDestroy {
       }
     });
   }
-
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();

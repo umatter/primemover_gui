@@ -28,9 +28,9 @@ import { experimentPageRequested } from 'src/app/experiment/store/experiment.act
 
 @Injectable()
 export class ProxyEffects {
-///
+  ///
 
-initJobs$ = createEffect(() =>
+  initJobs$ = createEffect(() =>
     this.actions$.pipe(
       ofType(initJobs),
       map(() => experimentPageRequested({ page: 1 }))

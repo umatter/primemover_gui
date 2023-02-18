@@ -27,7 +27,7 @@ import {
   configRequestFailed,
   crawlerDeleteRequested,
   crawlerDeleteSuccess,
-  crawlerDeleteError,
+  crawlerDeleteError
 } from './crawler.actions';
 import { selectCrawlerCreateFormValues } from './crawler.selectors';
 import { TypedAction } from '@ngrx/store/src/models';
@@ -144,7 +144,6 @@ export class CrawlerEffects {
       ),
     { dispatch: false }
   );
-
 
   crawlerDeleteRequested$ = createEffect(() =>
     this.actions$.pipe(

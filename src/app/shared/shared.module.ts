@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import {  TranslateModule } from '@ngx-translate/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { NgxPaginationModule } from 'ngx-pagination';
@@ -92,7 +92,7 @@ import { euFormat } from './pipes/datepipe/date-pipe.pipe';
     MatIconModule,
     MatAutocompleteModule,
     MatProgressSpinnerModule,
-    MatSlideToggleModule,
+    MatSlideToggleModule
   ],
   exports: [
     TranslateModule,
@@ -127,6 +127,9 @@ import { euFormat } from './pipes/datepipe/date-pipe.pipe';
     euFormat
   ],
 
-  providers: [ { provide: MAT_DIALOG_DATA, useValue: {} }, { provide: MatDialogRef, useValue: {} }]
+  providers: [
+    { provide: MAT_DIALOG_DATA, useValue: {} },
+    { provide: MatDialogRef, useValue: {} }
+  ]
 })
 export class SharedModule {}

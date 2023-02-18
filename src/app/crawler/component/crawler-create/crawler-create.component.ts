@@ -36,10 +36,10 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
   configurationLoader = false;
   agentLoader: boolean = false;
   experimentLoader: boolean = false;
-  agentCtrl = new FormControl('',[Validators.required]);
-  proxyCtrl = new FormControl('',[Validators.required]);
-  configCtrl = new FormControl('',[Validators.required]);
-  experimentCtrl = new FormControl('',[Validators.required]);
+  agentCtrl = new FormControl('', [Validators.required]);
+  proxyCtrl = new FormControl('', [Validators.required]);
+  configCtrl = new FormControl('', [Validators.required]);
+  experimentCtrl = new FormControl('', [Validators.required]);
 
   constructor(
     private agent: AgentService,
@@ -88,7 +88,7 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
 
   controlChangesDetection() {
     this.agentCtrl.valueChanges.pipe(debounceTime(1000), distinctUntilChanged()).subscribe((search) => {
-      if (search &&search?.length >= 2) {
+      if (search && search?.length >= 2) {
         this.agentLoader = true;
         this.agent.search(search).subscribe(
           (result: any) => {
@@ -102,7 +102,7 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
       }
     });
     this.proxyCtrl.valueChanges.pipe(debounceTime(1000), distinctUntilChanged()).subscribe((search) => {
-      if (search &&search?.length >= 2) {
+      if (search && search?.length >= 2) {
         this.proxyLoader = true;
         this.proxy.search(search).subscribe(
           (result: any) => {
@@ -116,7 +116,7 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
       }
     });
     this.configCtrl.valueChanges.pipe(debounceTime(1000), distinctUntilChanged()).subscribe((search) => {
-      if (search &&search?.length >= 2) {
+      if (search && search?.length >= 2) {
         this.configurationLoader = true;
         this.configuration.search(search).subscribe(
           (result: any) => {
@@ -130,7 +130,7 @@ export class CrawlerCreateComponent implements OnInit, OnDestroy {
       }
     });
     this.experimentCtrl.valueChanges.pipe(debounceTime(1000), distinctUntilChanged()).subscribe((search) => {
-      if (search &&search?.length >= 2) {
+      if (search && search?.length >= 2) {
         this.experimentLoader = true;
         this.experiment.search(search).subscribe(
           (result: any) => {

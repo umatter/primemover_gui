@@ -5,8 +5,7 @@ export enum Language {
   EN = 'en'
 }
 
-export enum LanguageFilePath{
-  ASSETI18N='/assets/i18n/',
-  EXTENSION='.json'
+export enum LanguageFilePath {
+  ASSETI18N = '/assets/i18n/',
+  EXTENSION = '.json'
 }
-

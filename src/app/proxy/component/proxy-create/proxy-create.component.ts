@@ -22,7 +22,7 @@ export class ProxyCreateComponent implements OnInit, OnDestroy {
   selected = false;
   proxyLoader = false;
   proxies: any;
-  proxyCtrl = new FormControl('',[Validators.required]);
+  proxyCtrl = new FormControl('', [Validators.required]);
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,

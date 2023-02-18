@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
 import { fadeIn } from './shared/animation/trigger';
+import { Observable } from 'rxjs';
+import { select, Store } from '@ngrx/store';
+import { selectIsSignedIn } from './store/auth/auth.selectors';
 
 @Component({
   selector: 'app-root',
@@ -9,4 +12,10 @@ import { fadeIn } from './shared/animation/trigger';
 })
 export class AppComponent {
   title = 'primemover-frontend';
+
+  isLoggedIn$: Observable<boolean>;
+
+  constructor(private store: Store) {
+    this.isLoggedIn$ = store.pipe(select(selectIsSignedIn));
+  }
 }

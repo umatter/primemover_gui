@@ -8,9 +8,8 @@ describe('PrimeoverDialogComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ConfirmationPrimeoverDialogComponent ]
-    })
-    .compileComponents();
+      declarations: [ConfirmationPrimeoverDialogComponent]
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ConfirmationPrimeoverDialogComponent);
     component = fixture.componentInstance;

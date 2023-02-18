@@ -8,8 +8,7 @@ import { selectCurrentExperiment } from 'src/app/experiment/store/experiment.sel
 
 @Component({
   selector: 'app-metadata',
-  templateUrl: './metadata.component.html',
-  styleUrls: ['./metadata.component.scss']
+  templateUrl: './metadata.component.html'
 })
 export class MetadataComponent implements OnInit {
   experiment: any;

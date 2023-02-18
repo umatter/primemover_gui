@@ -92,7 +92,17 @@ pagination-controls {
   }
 }
 
-.spinr {
+.spinnerStyle {
+  width: 40px !important;
+  height: 40px !important;
+
+  svg {
+    width: 30px !important;
+    height: 30px !important;
+  }
+}
+
+.matSpinner {
   position: absolute;
   top: 3px;
   right: 4px;
@@ -112,29 +122,21 @@ pagination-controls {
   }
 }
 
-.spinnerStyle {
-  width: 40px !important;
-  height: 40px !important;
-
-  svg {
-    width: 30px !important;
-    height: 30px !important;
-  }
-}
-
 .width512 {
   width: 512px;
 }
-.navabar-select-language{
 
-  .mat-select-min-line{ 
-    font-family: "system-ui";
+.navabar-select-language {
+  .mat-select-min-line {
     color: rgb(209 213 219);
+    font-family: system-ui;
   }
+
   .mat-select-arrow {
     color: rgb(209 213 219);
   }
-  .mat-form-field-appearance-legacy .mat-form-field-underline{
+
+  .mat-form-field-appearance-legacy .mat-form-field-underline {
     background-color: white;
   }
 }

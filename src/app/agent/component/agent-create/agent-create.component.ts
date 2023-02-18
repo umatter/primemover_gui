@@ -22,7 +22,7 @@ export class AgentCreateComponent implements OnInit, OnDestroy {
   isPopup = false;
   selected = false;
   agents: any;
-  agentCtrl = new FormControl('',[Validators.required]);
+  agentCtrl = new FormControl('', [Validators.required]);
   agentLoader: boolean = false;
 
   constructor(

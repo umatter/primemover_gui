@@ -27,6 +27,6 @@ import { QueueCreateComponent } from './component/queue-create/queue-craete/queu
     NgxPaginationModule,
     SharedModule
   ],
-  providers:[DatePipe]
+  providers: [DatePipe]
 })
 export class QueueModule {}

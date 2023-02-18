@@ -32,8 +32,12 @@ export class ConfigComponent implements OnInit, OnDestroy {
   configurationsData$: Observable<any>;
   isLoading$: Observable<boolean>;
 
-  constructor(private store: Store, public router: Router ,private matDialog: MatDialog,
-    private translate: TranslateService) {}
+  constructor(
+    private store: Store,
+    public router: Router,
+    private matDialog: MatDialog,
+    private translate: TranslateService
+  ) {}
 
   ngOnInit(): void {
     this.configurationsData$ = this.store.pipe(select(selectConfigurationsListData));
@@ -67,7 +71,7 @@ export class ConfigComponent implements OnInit, OnDestroy {
         title: configuration.name,
         description: this.translate.instant('confirmation-delete.experiment.experimentDeleteMSG', {
           experimentName: configuration.name,
-          experiment:'configuration'
+          experiment: 'configuration'
         }),
         otherButtonName: this.translate.instant('confirmation-delete.experiment.otherButton'),
         cancelButtonName: this.translate.instant('confirmation-delete.experiment.cancelButton')

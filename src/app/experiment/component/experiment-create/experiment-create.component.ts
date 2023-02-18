@@ -20,7 +20,7 @@ export class ExperimentCreateComponent implements OnInit, OnDestroy {
   formValid$: Observable<boolean>;
   isPopup = false;
   experimentLoader = false;
-  experimentCtrl = new FormControl('',[Validators.required]);
+  experimentCtrl = new FormControl('', [Validators.required]);
   experiments: any;
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,

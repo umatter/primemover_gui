@@ -21,7 +21,7 @@ export class JobCreateComponent implements OnInit, OnDestroy {
   formValid$: Observable<boolean>;
   isPopup = false;
   jobLoader = false;
-  jobCtrl = new FormControl('',[Validators.required]);
+  jobCtrl = new FormControl('', [Validators.required]);
   crawler: any;
   jobs: any;
   job: any;
@@ -34,7 +34,7 @@ export class JobCreateComponent implements OnInit, OnDestroy {
     private store: Store,
     private formBuilder: FormBuilder,
     public router: Router,
-    public jobService:JobService
+    public jobService: JobService
   ) {
     this.jobForm = this.formBuilder.group({
       name: [null, [Validators.required]],

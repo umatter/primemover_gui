@@ -24,8 +24,12 @@ export class ProxyComponent implements OnInit, OnDestroy {
   proxiesData$: Observable<any>;
   isLoading$: Observable<boolean>;
 
-  constructor(private store: Store, public router: Router,private matDialog: MatDialog,
-    private translate: TranslateService) {}
+  constructor(
+    private store: Store,
+    public router: Router,
+    private matDialog: MatDialog,
+    private translate: TranslateService
+  ) {}
 
   ngOnInit(): void {
     this.proxiesData$ = this.store.pipe(select(selectProxiesListData));
@@ -53,14 +57,13 @@ export class ProxyComponent implements OnInit, OnDestroy {
     this.router.navigate(['crawlers']).then();
   }
 
-
   deleteProxy(proxy: any): void {
     const confirmationDialog = this.matDialog.open(ConfirmationPrimeoverDialogComponent, {
       data: {
         title: proxy.name,
         description: this.translate.instant('confirmation-delete.experiment.experimentDeleteMSG', {
           experimentName: proxy.name,
-          experiment:'proxy'
+          experiment: 'proxy'
         }),
         otherButtonName: this.translate.instant('confirmation-delete.experiment.otherButton'),
         cancelButtonName: this.translate.instant('confirmation-delete.experiment.cancelButton')

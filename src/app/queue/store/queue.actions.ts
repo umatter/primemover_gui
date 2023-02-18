@@ -14,6 +14,3 @@ export const currentQueueResetRequested = createAction('[Queue] Reset current re
 export const queueDeleteRequested = createAction('[Queue] Delete requested', props<{ queueId: number }>());
 export const queueDeleteError = createAction('[Experiment] Delete error', props<{ err: HttpErrorResponse }>());
 export const queueDeleteSuccess = createAction('[Experiment] Delete success', props<any>());
-
-
-

@@ -1,5 +1,5 @@
 <div class="px-4 sm:px-6 lg:px-8">
-  <form class="space-y-8 divide-y divide-gray-200" [formGroup]="jobForm">
+  <form [formGroup]="jobForm" class="space-y-8 divide-y divide-gray-200">
     <div class="space-y-8 divide-y divide-gray-200 sm:space-y-5">
       <div class="sm:flex sm:items-center">
         <div class="sm:flex-auto">
@@ -8,64 +8,72 @@
             A list of all the jobs in your account including their name, description and contact.
           </p>
         </div>
+        <div *ngIf="jobLoader" class="spinnerStyle">
+          <mat-spinner class="spin"></mat-spinner>
+        </div>
       </div>
       <div class="space-y-6 sm:space-y-5">
         <div class="space-y-6 sm:space-y-5">
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-            <label for="name" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
+            <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="job">
               {{ 'common.name' | translate }}
             </label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <div class="relative max-w-lg">
-              <div *ngIf="jobLoader" class="spinr">
-                <mat-spinner class="spin"></mat-spinner>
-              </div>
-              <input
-                type="text"
-                name="job"
-                id="job"
-                autocomplete="job"
-                [matAutocomplete]="auto3"
-                [formControl]="jobCtrl"
-                placeholder="{{ 'common.namePlaceholder' | translate }}"
-                class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
-              />
-              <p
-                @fadeIn
-                *ngIf="autoCompleteHasError('required') || hasError('name', 'required')"
-                class="mt-2 text-sm text-red-600"
-                id="contact-error"
-              >
-                {{ 'common.nameRequiredError' | translate }}
-              </p>
+              <div class="relative">
+                <div class="flex items-center gap-1">
+                  <input
+                    [formControl]="jobCtrl"
+                    [matAutocomplete]="auto3"
+                    autocomplete="job"
+                    class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+                    id="job"
+                    name="job"
+                    placeholder="{{ 'common.namePlaceholder' | translate }}"
+                    type="text"
+                  />
+                  <app-button
+                    (click)="reset()"
+                    class="text-indigo-600 hover:text-indigo-900"
+                    size="md"
+                    text="{{ 'common.reset' | translate }}"
+                    type="white"
+                  ></app-button>
+                </div>
+                <p
+                  *ngIf="autoCompleteHasError('required') || hasError('name', 'required')"
+                  @fadeIn
+                  class="mt-2 text-sm text-red-600"
+                  id="job-error"
+                >
+                  {{ 'common.nameRequiredError' | translate }}
+                </p>
               </div>
               <mat-autocomplete #auto3="matAutocomplete">
-                <mat-option *ngFor="let job of jobs" (onSelectionChange)="setControlValue(job)" [value]="job.name">
+                <mat-option (onSelectionChange)="setControlValue(job)" *ngFor="let job of jobs" [value]="job.name">
                   <span>{{ job.name }}</span>
                 </mat-option>
               </mat-autocomplete>
-              <button class="flex ml-auto mt-2" (click)="reset()"><mat-icon> restore </mat-icon> Reset</button>
             </div>
           </div>
 
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-            <label for="description" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
+            <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="description">
               {{ 'common.description' | translate }}
             </label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
               <textarea
+                class="shadow-sm block w-full focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border border-gray-300 rounded-md"
+                formControlName="description"
                 id="description"
                 name="description"
-                rows="3"
-                formControlName="description"
-                class="shadow-sm block w-full focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border border-gray-300 rounded-md"
                 placeholder="{{ 'common.descriptionPlaceholder' | translate }}"
+                rows="3"
               ></textarea>
               <p
-                @fadeIn
                 *ngIf="hasError('description', 'required')"
+                @fadeIn
                 class="mt-2 text-sm text-red-600"
-                id="contact-error"
+                id="description-error"
               >
                 {{ 'common.descriptionRequiredError' | translate }}
               </p>
@@ -73,20 +81,20 @@
           </div>
 
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-            <label for="description" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2">
+            <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="description">
               {{ 'job.type' | translate }}
             </label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
               <input
-                type="text"
-                name="type"
-                id="type"
                 autocomplete="type"
-                formControlName="type"
-                placeholder="{{ 'type' | translate }}"
                 class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+                formControlName="type"
+                id="type"
+                name="type"
+                placeholder="{{ 'type' | translate }}"
+                type="text"
               />
-              <p @fadeIn *ngIf="hasError('type', 'required')" class="mt-2 text-sm text-red-600" id="contact-error">
+              <p *ngIf="hasError('type', 'required')" @fadeIn class="mt-2 text-sm text-red-600" id="contact-error">
                 {{ 'common.typeRequiredError' | translate }}
               </p>
             </div>
@@ -98,18 +106,18 @@
     <div class="pt-5">
       <div class="flex justify-end">
         <button
-          type="button"
           (click)="onClose(false)"
           class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          type="button"
         >
           {{ 'common.cancel' | translate }}
         </button>
         <button
-          type="button"
+          (click)="saveExperiment()"
           [disabled]="!jobForm.valid"
           [ngClass]="{ 'opacity-25 hover:bg-indigo-600 ': !jobForm.valid }"
-          (click)="saveExperiment()"
           class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          type="button"
         >
           {{ 'common.save' | translate }}
         </button>

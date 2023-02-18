@@ -28,8 +28,12 @@ export class CrawlerComponent implements OnInit, OnDestroy {
   isLoading$: Observable<boolean>;
   experiment: any;
 
-  constructor(private store: Store, public router: Router,private matDialog: MatDialog,
-    private translate: TranslateService) {}
+  constructor(
+    private store: Store,
+    public router: Router,
+    private matDialog: MatDialog,
+    private translate: TranslateService
+  ) {}
 
   ngOnInit() {
     this.data$ = this.store.pipe(select(selectCrawlersListData));
@@ -58,14 +62,13 @@ export class CrawlerComponent implements OnInit, OnDestroy {
     );
   }
 
-
   deleteCrawler(experiment: any): void {
     const confirmationDialog = this.matDialog.open(ConfirmationPrimeoverDialogComponent, {
       data: {
         title: experiment.name,
         description: this.translate.instant('confirmation-delete.experiment.experimentDeleteMSG', {
           experimentName: experiment.name,
-          experiment:'crawler'
+          experiment: 'crawler'
         }),
         otherButtonName: this.translate.instant('confirmation-delete.experiment.otherButton'),
         cancelButtonName: this.translate.instant('confirmation-delete.experiment.cancelButton')

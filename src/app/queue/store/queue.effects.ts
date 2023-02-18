@@ -6,7 +6,16 @@ import { of } from 'rxjs';
 
 import { experimentPageRequested } from '../../experiment/store/experiment.actions';
 import { QueueService } from '../service/queue.service';
-import { initQueues, queueDeleteError, queueDeleteRequested, queueDeleteSuccess, queuePageRequested, queuesRequested, queuesRequestFailed, queuesRetrieved } from './queue.actions';
+import {
+  initQueues,
+  queueDeleteError,
+  queueDeleteRequested,
+  queueDeleteSuccess,
+  queuePageRequested,
+  queuesRequested,
+  queuesRequestFailed,
+  queuesRetrieved
+} from './queue.actions';
 import { currentCrawlerResetRequested } from '../../crawler/store/crawler.actions';
 import { updateQueryFilter } from '../../shared/store/shared.actions';
 

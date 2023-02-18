@@ -1,36 +1,42 @@
-<header class="bg-white shadow-sm" *ngIf="hasFilter$ | async">
-  <div class="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
-    <app-removable-badge
-      *ngFor="let queryFilter of queryFilter$ | async"
-      [pillStyle]="true"
-      link="#"
-      label="{{ queryFilter.name }}/{{ queryFilter.value }}"
-      (clickEvent)="resetQueryFilter(queryFilter.name)"
-    >
-    </app-removable-badge>
-    <app-removable-badge
-      *ngIf="currentExperiment$ | async"
-      [pillStyle]="true"
-      link="experiments"
-      label="{{ (currentExperiment$ | async)?.name }}"
-      (clickEvent)="resetExperimentFilter($event)"
-    >
-    </app-removable-badge>
-    <app-removable-badge
-      *ngIf="currentCrawler$ | async"
-      [pillStyle]="true"
-      link="crawlers"
-      label="{{ (currentCrawler$ | async)?.name }}"
-      (clickEvent)="resetCrawlerFilter($event)"
-    >
-    </app-removable-badge>
-    <app-removable-badge
-      *ngIf="currentQueue$ | async"
-      [pillStyle]="true"
-      link="queues"
-      label="{{ (currentQueue$ | async)?.name }}"
-      (clickEvent)="resetQueueFilter($event)"
-    >
-    </app-removable-badge>
-  </div>
+<div class="px-4 pt-5 sm:px-6">
+  <h3 class="text-lg font-medium leading-6 text-gray-900">Filter</h3>
+  <p class="mt-1 max-w-2xl text-sm text-gray-500">Currently applied selections. Remove to reset.</p>
+</div>
+<header *ngIf="hasFilter$ | async" class="bg-white shadow-sm px-4 py-5 sm:px-6">
+  <app-removable-badge
+    (clickEvent)="resetQueryFilter(queryFilter.name)"
+    *ngFor="let queryFilter of queryFilter$ | async"
+    [pillStyle]="true"
+    class="inline-block pb-2"
+    label="{{ queryFilter.name }}/{{ queryFilter.value }}"
+    link="#"
+  >
+  </app-removable-badge>
+  <app-removable-badge
+    (clickEvent)="resetExperimentFilter($event)"
+    *ngIf="currentExperiment$ | async"
+    [pillStyle]="true"
+    class="inline-block pb-2"
+    label="{{ 'experiment.label' | translate }} | {{ (currentExperiment$ | async)?.name }}"
+    link="experiments"
+  >
+  </app-removable-badge>
+  <app-removable-badge
+    (clickEvent)="resetCrawlerFilter($event)"
+    *ngIf="currentCrawler$ | async"
+    [pillStyle]="true"
+    class="inline-block pb-2"
+    label="{{ 'crawler.label' | translate }} | {{ (currentCrawler$ | async)?.name }}"
+    link="crawlers"
+  >
+  </app-removable-badge>
+  <app-removable-badge
+    (clickEvent)="resetQueueFilter($event)"
+    *ngIf="currentQueue$ | async"
+    [pillStyle]="true"
+    class="inline-block pb-2"
+    label="{{ 'queue.label' | translate }} | {{ (currentQueue$ | async)?.name }}"
+    link="queues"
+  >
+  </app-removable-badge>
 </header>

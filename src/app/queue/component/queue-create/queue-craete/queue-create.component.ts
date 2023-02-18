@@ -21,7 +21,7 @@ export class QueueCreateComponent implements OnInit, OnDestroy {
   formValid$: Observable<boolean>;
   isPopup = false;
   queueLoader = false;
-  queueCtrl = new FormControl('',[Validators.required]);
+  queueCtrl = new FormControl('', [Validators.required]);
   crawler: any;
   Queues: any;
   experiment: any;
@@ -33,7 +33,7 @@ export class QueueCreateComponent implements OnInit, OnDestroy {
     private formBuilder: FormBuilder,
     @Optional() private experiementDialog: MatDialogRef<ExperimentCreateComponent>,
     public router: Router,
-    public queueService:QueueService,
+    public queueService: QueueService,
     private datePipe: DatePipe
   ) {
     this.queueForm = this.formBuilder.group({
@@ -67,7 +67,7 @@ export class QueueCreateComponent implements OnInit, OnDestroy {
 
     this.isPopup = this.data.isPopup ? this.data.isPopup : false;
     this.queueCtrl.valueChanges.pipe(debounceTime(1000), distinctUntilChanged()).subscribe((search) => {
-      if (search &&search.length >= 2) {
+      if (search && search.length >= 2) {
         this.queueLoader = true;
         this.queueService.search(search).subscribe(
           (result: any) => {
@@ -102,7 +102,7 @@ export class QueueCreateComponent implements OnInit, OnDestroy {
   setControlValue(item: any) {
     this.queueForm.controls['name'].setValue(item.name);
     this.queueForm.controls['description'].setValue(item.description);
-    this.queueForm.controls['start_at'].setValue(this.datePipe.transform(item.start_at,"yyyy-MM-dd") );
+    this.queueForm.controls['start_at'].setValue(this.datePipe.transform(item.start_at, 'yyyy-MM-dd'));
   }
 
   reset() {
@@ -125,7 +125,6 @@ export class QueueCreateComponent implements OnInit, OnDestroy {
       this.router.navigate(['queues']);
     }
   }
-
 
   ngOnDestroy() {
     this.subscriptions.unsubscribe();

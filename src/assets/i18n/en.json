@@ -21,7 +21,8 @@
     "typeRequiredError": "Type is Required",
     "startDateRequiredError": "Start Date is Required",
     "maxLengthExceed": "Maximum Length Exceed",
-    "reset": "Reset to default",
+    "reset": "Reset",
+    "clear": "Clear",
     "cancel": "Interrupt",
     "save": "Save",
     "delete": "Delete",
@@ -114,7 +115,6 @@
     "page": "Page",
     "onPage": "On the website"
   },
-
   "confirmation-delete": {
     "experiment": {
       "experimentDeleteMSG": "Are you sure do you want to delete {{experiment}}: {{experimentName}}?",

@@ -3,10 +3,22 @@
     <div class="space-y-8 divide-y divide-gray-200 sm:space-y-5">
       <div class="sm:flex sm:items-center">
         <div class="sm:flex-auto">
-          <h1 class="text-xl font-semibold text-gray-900">{{ 'crawler.label' | translate }}</h1>
+          <h1 class="text-xl font-semibold text-gray-900">{{ 'crawler.create' | translate }}</h1>
           <p class="mt-2 text-sm text-gray-700">
-            A list of all the crawlers in your account including their name, description and contact.
+            {{ 'crawler.createText' | translate }}
           </p>
+        </div>
+        <div *ngIf="experimentLoader" class="">
+          <mat-spinner class="spin"></mat-spinner>
+        </div>
+        <div *ngIf="agentLoader" class="spinnerStyle">
+          <mat-spinner class="spin"></mat-spinner>
+        </div>
+        <div *ngIf="configurationLoader" class="spinnerStyle">
+          <mat-spinner class="spin"></mat-spinner>
+        </div>
+        <div *ngIf="proxyLoader" class="spinnerStyle">
+          <mat-spinner class="spin"></mat-spinner>
         </div>
       </div>
       <div class="space-y-6 sm:space-y-5">
@@ -31,55 +43,58 @@
             </div>
           </div>
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-            <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="experiment_id">
+            <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="experiment">
               {{ 'experiment.label' | translate }}
             </label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <div class="relative width512">
-                <div *ngIf="experimentLoader" class="spinr">
-                  <mat-spinner class="spin"></mat-spinner>
-                </div>
-                <input
-                  [formControl]="experimentCtrl"
-                  [matAutocomplete]="auto3"
-                  autocomplete="experiment"
-                  class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
-                  id="experiment"
-                  name="experiment"
-                  placeholder="{{ 'common.namePlaceholder' | translate }}"
-                  type="text"
-                />
-                <mat-autocomplete #auto3="matAutocomplete">
-                  <mat-option
-                    (onSelectionChange)="setControlValue(experiment, 'experiment_id')"
-                    *ngFor="let experiment of experiments"
-                    [value]="experiment.name"
+              <div class="relative">
+                <div class="flex items-center gap-1">
+                  <input
+                    [formControl]="experimentCtrl"
+                    [matAutocomplete]="auto3"
+                    autocomplete="experiment"
+                    class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+                    id="experiment"
+                    name="experiment"
+                    placeholder="{{ 'common.namePlaceholder' | translate }}"
+                    type="text"
+                  />
+                  <mat-autocomplete #auto3="matAutocomplete">
+                    <mat-option
+                      (onSelectionChange)="setControlValue(experiment, 'experiment_id')"
+                      *ngFor="let experiment of experiments"
+                      [value]="experiment.name"
+                    >
+                      <span>{{ experiment.name }}</span>
+                    </mat-option>
+                  </mat-autocomplete>
+                  <app-button
+                    (click)="reset('experiment_id', experimentCtrl)"
+                    class="text-indigo-600 hover:text-indigo-900"
+                    size="md"
+                    text="{{ 'common.reset' | translate }}"
+                    type="white"
                   >
-                    <span>{{ experiment.name }}</span>
-                  </mat-option>
-                </mat-autocomplete>
-
-                <p @fadeIn *ngIf="autoCompleteHasError('experimentCtrl', 'required')" class="mt-2 text-sm text-red-600" id="contact-error">
+                  </app-button>
+                </div>
+                <p
+                  *ngIf="autoCompleteHasError('experimentCtrl', 'required')"
+                  @fadeIn
+                  class="mt-2 text-sm text-red-600"
+                  id="experiment-error"
+                >
                   {{ 'common.experimentRequiredError' | translate }}
                 </p>
-                
-                <button (click)="reset('experiment_id', experimentCtrl)" class="flex ml-auto mt-2">
-                  <mat-icon> restore</mat-icon>
-                  Reset
-                </button>
               </div>
             </div>
           </div>
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-            <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="agent_id">
+            <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="agent">
               {{ 'agent.label' | translate }}
             </label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <div class="flex justify-between">
-                <div class="relative width512">
-                  <div *ngIf="agentLoader" class="spinr">
-                    <mat-spinner class="spin"></mat-spinner>
-                  </div>
+              <div class="relative">
+                <div class="flex items-center gap-1">
                   <input
                     [formControl]="agentCtrl"
                     [matAutocomplete]="auto"
@@ -99,30 +114,41 @@
                       <span>{{ agent.name }}</span>
                     </mat-option>
                   </mat-autocomplete>
-                  <p @fadeIn *ngIf="autoCompleteHasError('agentCtrl', 'required')" class="mt-2 text-sm text-red-600" id="contact-error">
-                    {{ 'common.agentRequiredError' | translate }}
-                  </p>
-                  <button (click)="reset('agent_id', agentCtrl)" class="flex ml-auto mt-2">
-                    <mat-icon> restore</mat-icon>
-                    Reset
-                  </button>
+                  <app-button
+                    (click)="reset('agent_id', agentCtrl)"
+                    class="text-indigo-600 hover:text-indigo-900"
+                    size="md"
+                    text="{{ 'common.reset' | translate }}"
+                    type="white"
+                  >
+                  </app-button>
+                  <app-button
+                    (click)="agentPopup()"
+                    class="text-indigo-600 hover:text-indigo-900"
+                    size="md"
+                    text="{{ 'common.new' | translate }}"
+                    type="white"
+                  >
+                  </app-button>
                 </div>
-                <button (click)="agentPopup()" class="w-28 ml-3.5 h-fit w-fit" color="primary" mat-raised-button>
-                  New Agent
-                </button>
+                <p
+                  *ngIf="autoCompleteHasError('agentCtrl', 'required')"
+                  @fadeIn
+                  class="mt-2 text-sm text-red-600"
+                  id="agent-error"
+                >
+                  {{ 'common.agentRequiredError' | translate }}
+                </p>
               </div>
             </div>
           </div>
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-            <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="configuration_id">
+            <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="config">
               {{ 'config.label' | translate }}
             </label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <div class="flex justify-between">
-                <div class="relative width512">
-                  <div *ngIf="configurationLoader" class="spinr absolute right-2">
-                    <mat-spinner class="spin"></mat-spinner>
-                  </div>
+              <div class="relative">
+                <div class="flex items-center gap-1">
                   <input
                     [formControl]="configCtrl"
                     [matAutocomplete]="auto1"
@@ -142,39 +168,45 @@
                       <span>{{ config.name }}</span>
                     </mat-option>
                   </mat-autocomplete>
-                  <p @fadeIn *ngIf="autoCompleteHasError('configCtrl', 'required')" class="mt-2 text-sm text-red-600" id="contact-error">
-                    {{ 'common.configRequiredError' | translate }}
-                  </p>
-                  <button (click)="reset('configuration_id', configCtrl)" class="flex ml-auto mt-2">
-                    <mat-icon> restore</mat-icon>
-                    Reset
-                  </button>
+                  <app-button
+                    (click)="reset('configuration_id', configCtrl)"
+                    class="text-indigo-600 hover:text-indigo-900"
+                    size="md"
+                    text="{{ 'common.reset' | translate }}"
+                    type="white"
+                  >
+                  </app-button>
+                  <app-button
+                    (click)="configurationPopup()"
+                    class="text-indigo-600 hover:text-indigo-900"
+                    size="md"
+                    text="{{ 'common.new' | translate }}"
+                    type="white"
+                  >
+                  </app-button>
                 </div>
-                <button (click)="configurationPopup()" class="h-fit w-fit" color="primary" mat-raised-button>
-                  New Configuration
-                </button>
+                <p *ngIf="autoCompleteHasError('configCtrl', 'required')" @fadeIn class="mt-2 text-sm text-red-600">
+                  {{ 'common.configRequiredError' | translate }}
+                </p>
               </div>
               <p
                 *ngIf="hasError('configuration_id', 'required')"
                 @fadeIn
                 class="mt-2 text-sm text-red-600"
-                id="experiment-error"
+                id="config-error"
               >
                 {{ 'common.configurationRequiredError' | translate }}
               </p>
             </div>
           </div>
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-            <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="proxy_id">
+            <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="proxy">
               {{ 'proxy.label' | translate }}
             </label>
 
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <div class="flex justify-between">
-                <div class="relative width512">
-                  <div *ngIf="proxyLoader" class="spinr">
-                    <mat-spinner class="spin"></mat-spinner>
-                  </div>
+              <div class="relative">
+                <div class="flex items-center gap-1">
                   <input
                     [formControl]="proxyCtrl"
                     [matAutocomplete]="auto2"
@@ -194,23 +226,32 @@
                       <span>{{ proxy.name }}</span>
                     </mat-option>
                   </mat-autocomplete>
-
-                  <p @fadeIn *ngIf="autoCompleteHasError('proxyCtrl', 'required')" class="mt-2 text-sm text-red-600" id="contact-error">
-                    {{ 'common.proxyRequiredError' | translate }}
-                  </p>
-                  <button (click)="reset('proxy_id', proxyCtrl)" class="flex ml-auto mt-2">
-                    <mat-icon> restore</mat-icon>
-                    Reset
-                  </button>
+                  <app-button
+                    (click)="reset('proxy_id', proxyCtrl)"
+                    class="text-indigo-600 hover:text-indigo-900"
+                    size="md"
+                    text="{{ 'common.reset' | translate }}"
+                    type="white"
+                  ></app-button>
+                  <app-button
+                    (click)="proxyPopup()"
+                    class="text-indigo-600 hover:text-indigo-900"
+                    size="md"
+                    text="{{ 'common.new' | translate }}"
+                    type="white"
+                  >
+                  </app-button>
                 </div>
-                <button (click)="proxyPopup()" class="h-fit w-fit" color="primary" mat-raised-button>New Proxy</button>
+                <p
+                  *ngIf="autoCompleteHasError('proxyCtrl', 'required')"
+                  @fadeIn
+                  class="mt-2 text-sm text-red-600"
+                  id="contact-error"
+                >
+                  {{ 'common.proxyRequiredError' | translate }}
+                </p>
               </div>
-              <p
-                *ngIf="hasError('proxy_id', 'required')"
-                @fadeIn
-                class="mt-2 text-sm text-red-600"
-                id="experiment-error"
-              >
+              <p *ngIf="hasError('proxy_id', 'required')" @fadeIn class="mt-2 text-sm text-red-600" id="proxy-error">
                 {{ 'common.proxyRequiredError' | translate }}
               </p>
             </div>

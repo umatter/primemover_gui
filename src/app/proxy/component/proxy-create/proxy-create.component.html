@@ -8,6 +8,9 @@
             A list of all the proxies in your account including their name, description and contact.
           </p>
         </div>
+        <div *ngIf="proxyLoader" class="spinnerStyle">
+          <mat-spinner class="spin"></mat-spinner>
+        </div>
       </div>
       <div class="space-y-6 sm:space-y-5">
         <div class="space-y-6 sm:space-y-5">
@@ -15,43 +18,45 @@
             <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="name">
               {{ 'common.name' | translate }}
             </label>
-            <div class="mt-1 sm:mt-0 sm:col-span-2 relative">
-              <div *ngIf="proxyLoader" class="absolute top-0 right-0">
-                <mat-spinner class="spin spinnerStyle"></mat-spinner>
-              </div>
-              <input
-                [formControl]="proxyCtrl"
-                [matAutocomplete]="auto2"
-                autocomplete="proxy"
-                class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
-                id="proxy"
-                name="proxy"
-                placeholder="{{ 'common.namePlaceholder' | translate }}"
-                type="text"
-              />
-              <mat-autocomplete #auto2="matAutocomplete">
-                <mat-option
-                  (onSelectionChange)="setControlValue(proxy)"
-                  *ngFor="let proxy of proxies"
-                  [value]="proxy.name"
+            <div class="mt-1 sm:mt-0 sm:col-span-2">
+              <div class="relative">
+                <div class="flex items-center gap-1">
+                  <input
+                    [formControl]="proxyCtrl"
+                    [matAutocomplete]="auto2"
+                    autocomplete="proxy"
+                    class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+                    id="proxy"
+                    name="proxy"
+                    placeholder="{{ 'common.namePlaceholder' | translate }}"
+                    type="text"
+                  />
+                  <mat-autocomplete #auto2="matAutocomplete">
+                    <mat-option
+                      (onSelectionChange)="setControlValue(proxy)"
+                      *ngFor="let proxy of proxies"
+                      [value]="proxy.name"
+                    >
+                      <span>{{ proxy.name }}</span>
+                    </mat-option>
+                  </mat-autocomplete>
+                  <app-button
+                    (click)="reset()"
+                    class="text-indigo-600 hover:text-indigo-900"
+                    size="md"
+                    text="{{ 'common.reset' | translate }}"
+                    type="white"
+                  ></app-button>
+                </div>
+                <p
+                  *ngIf="autoCompleteHasError('required') || hasError('name', 'required')"
+                  @fadeIn
+                  class="mt-2 text-sm text-red-600"
+                  id="proxy-error"
                 >
-                  <span>{{ proxy.name }}</span>
-                </mat-option>
-              </mat-autocomplete>
-
-              <p
-              @fadeIn
-              *ngIf="autoCompleteHasError('required') || hasError('name', 'required')"
-              class="mt-2 text-sm text-red-600"
-              id="contact-error"
-            >
-              {{ 'common.nameRequiredError' | translate }}
-            </p>
-
-              <button (click)="reset()" class="flex ml-auto mt-2">
-                <mat-icon> restore</mat-icon>
-                Reset
-              </button>
+                  {{ 'common.nameRequiredError' | translate }}
+                </p>
+              </div>
             </div>
           </div>
 
@@ -68,7 +73,12 @@
                 placeholder="{{ 'common.descriptionPlaceholder' | translate }}"
                 rows="3"
               ></textarea>
-              <p @fadeIn *ngIf="hasError('description', 'maxlength')" class="mt-2 text-sm text-red-600" id="contact-error">
+              <p
+                *ngIf="hasError('description', 'maxlength')"
+                @fadeIn
+                class="mt-2 text-sm text-red-600"
+                id="contact-error"
+              >
                 {{ 'common.maxLengthExceed' | translate }}
               </p>
             </div>

@@ -3,31 +3,21 @@ import { Store } from '@ngrx/store';
 import { selectIsSignedIn } from '../../../store/auth/auth.selectors';
 import { Observable } from 'rxjs';
 import { NavigationEnd, Router } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
-import { Language } from 'src/app/core/language/language.enum';
 
 @Component({
   selector: 'app-navbar',
-  templateUrl: './navbar.component.html',
-  styles : [`.avtive-sub-route-bg{
-    background-color: #000;
-    color: white;
-}`]
+  templateUrl: './navbar.component.html'
 })
 export class NavbarComponent implements OnInit {
   isLoggedIn$: Observable<boolean>;
   currentRoute: string;
   selectedRoute = '';
-  regularClassList: string = 'text-gray-300 hover:bg-black px-3 py-2 rounded-md text-sm font-medium';
-  activeClassList: string = 'text-gray-300 px-3 py-2 rounded-md text-sm font-medium bg-black';
-  selectedLanguage: string;
+  regularClassList: string =
+    'text-indigo-100 text-sm font-medium rounded-md bg-white bg-opacity-0 px-3 py-2 hover:bg-opacity-10';
+  activeClassList: string =
+    'text-white text-sm font-medium rounded-md bg-white bg-opacity-0 px-3 py-2 hover:bg-opacity-10';
 
-  availableLanguages = [
-    { name: 'En', value: 'en' },
-    { name: 'De', value: 'de' }
-  ];
-
-  constructor(private store: Store, private router: Router, private translate: TranslateService) {
+  constructor(private store: Store, private router: Router) {
     this.currentRoute = router.url;
   }
 
@@ -39,19 +29,6 @@ export class NavbarComponent implements OnInit {
       }
       this.currentRoute = event.url;
     });
-
-    this.setDefaultLanguage();
-  }
-
-  setDefaultLanguage() {
-    const storedLanguage = localStorage.getItem('language');
-    if (storedLanguage?.length) {
-      const language = JSON.parse(storedLanguage);
-      this.translate.use(language);
-      this.selectedLanguage = language;
-    } else {
-      this.selectedLanguage = Language.EN;
-    }
   }
 
   isActiveRoute(routeName: string): boolean {
@@ -64,9 +41,5 @@ export class NavbarComponent implements OnInit {
 
   isLoginRoute(): boolean {
     return this.isActiveRoute('/login');
-  }
-  onLanguageChange() {
-    localStorage.setItem('language', JSON.stringify(this.selectedLanguage));
-    this.translate.use(this.selectedLanguage);
   }
 }

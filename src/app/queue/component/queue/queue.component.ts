@@ -28,8 +28,12 @@ export class QueueComponent implements OnInit, OnDestroy {
   currentCrawler$: Observable<Crawler | null>;
   isLoading$: Observable<boolean>;
 
-  constructor(private store: Store, public router: Router,private matDialog: MatDialog,
-    private translate: TranslateService) {}
+  constructor(
+    private store: Store,
+    public router: Router,
+    private matDialog: MatDialog,
+    private translate: TranslateService
+  ) {}
 
   ngOnInit() {
     this.data$ = this.store.pipe(select(selectQueuesListData));
@@ -68,7 +72,7 @@ export class QueueComponent implements OnInit, OnDestroy {
         title: queue.name,
         description: this.translate.instant('confirmation-delete.experiment.experimentDeleteMSG', {
           experimentName: queue.name,
-          experiment:'queue'
+          experiment: 'queue'
         }),
         otherButtonName: this.translate.instant('confirmation-delete.experiment.otherButton'),
         cancelButtonName: this.translate.instant('confirmation-delete.experiment.cancelButton')
@@ -89,6 +93,4 @@ export class QueueComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.subscriptions.unsubscribe();
   }
-
-
 }
