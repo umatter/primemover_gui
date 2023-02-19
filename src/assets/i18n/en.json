@@ -1,170 +1,177 @@
 {
-  "foo": "bar",
+  "agent": {
+    "add": "Add agent",
+    "generalInfo": "Please provide a name and contact information to create an agent.",
+    "label": "Agent",
+    "list": "List of all agents.",
+    "notSelected": "No agent selected",
+    "selected": "agent selected"
+  },
+  "auth": {
+    "password": "password",
+    "signIn": "Register",
+    "signOut": "Sign out",
+    "username": "User name"
+  },
   "common": {
-    "home": "Home",
-    "id": "Id",
-    "edit": "Edit",
-    "show": "Show",
-    "select": "Choose",
-    "label": "Choose",
-    "name": "Name",
-    "namePlaceholder": "e.g. Maria Berlusconi",
-    "nameRequiredError": "Name is required",
+    "agentRequiredError": "Agent is Required",
+    "cancel": "Interrupt",
+    "clear": "Clear",
+    "configRequiredError": "Configuration is Required",
     "contact": "Contact",
     "contactPlaceholder": "e.g. Max Mustermann, 066 555 22 44",
     "contactRequiredError": "At least one contact is required",
-    "experimentRequiredError": "Experiment is Required",
-    "agentRequiredError": "Agent is Required",
-    "configRequiredError": "Configuration is Required",
-    "proxyRequiredError": "Proxy is Required",
-    "descriptionRequiredError": "Description is Required",
-    "typeRequiredError": "Type is Required",
-    "startDateRequiredError": "Start Date is Required",
-    "maxLengthExceed": "Maximum Length Exceed",
-    "reset": "Reset",
-    "clear": "Clear",
-    "cancel": "Interrupt",
-    "save": "Save",
     "delete": "Delete",
     "description": "description",
     "descriptionPlaceholder": "e.g. It is a new experiment, ...",
+    "descriptionRequiredError": "Description is Required",
+    "edit": "Edit",
+    "experimentRequiredError": "Experiment is Required",
+    "home": "Home",
     "hostName": "Host Name",
-    "port": "Port",
-    "username": "User Name",
-    "password": "Password",
+    "id": "Id",
     "identification": "Identification",
+    "label": "Choose",
+    "location": "Location",
+    "maxLengthExceed": "Maximum Length Exceed",
     "multilogin_id": "Multi Login Id",
     "multilogin_profile": "Multi Profile",
-    "location": "Location"
+    "name": "Name",
+    "namePlaceholder": "e.g. Maria Berlusconi",
+    "nameRequiredError": "Name is required",
+    "new": "New",
+    "password": "Password",
+    "port": "Port",
+    "proxyRequiredError": "Proxy is Required",
+    "reset": "Reset",
+    "save": "Save",
+    "select": "Choose",
+    "show": "Show",
+    "startDateRequiredError": "Start Date is Required",
+    "typeRequiredError": "Type is Required",
+    "username": "User Name"
+  },
+  "config": {
+    "add": "Add configuration",
+    "generalInfo": "Please provide a name and contact information to create a configuration.",
+    "label": "Config",
+    "list": "List of all configurations.",
+    "notSelected": "No configuration selected",
+    "selected": "Configuration selected"
+  },
+  "confirmation-delete": {
+    "experiment": {
+      "cancelButton": "No",
+      "experimentDeleteMSG": "Are you sure do you want to delete {{experiment}}: {{experimentName}}?",
+      "otherButton": "Yes"
+    }
+  },
+  "crawler": {
+    "add": "Add crawlers",
+    "create": "Create crawler",
+    "createText": "Select the parent experiment. Fill out mandatory fields.",
+    "label": "Crawler",
+    "list": "List of all crawlers including the experiment to which they are assigned."
+  },
+  "experiment": {
+    "add": "Add experiment",
+    "generalInfo": "Please provide a name and contact information to create an experiment.",
+    "label": "Experiment",
+    "list": "List of all experiments.",
+    "notSelected": "No experiment selected",
+    "selected": "experiment selected"
   },
   "filter": {
     "reset": "reset filter"
   },
-  "auth": {
-    "username": "User name",
-    "password": "password",
-    "signIn": "Register",
-    "signOut": "Sign out"
-  },
-  "crawler": {
-    "label": "Crawler",
-    "list": "List of all crawlers including the experiment to which they are assigned.",
-    "add": "Add crawlers"
-  },
-  "experiment": {
-    "label": "Experiment",
-    "add": "Add experiment",
-    "list": "List of all experiments.",
-    "generalInfo": "Please provide a name and contact information to create an experiment.",
-    "selected": "experiment selected",
-    "notSelected": "No experiment selected"
-  },
-  "agent": {
-    "label": "Agent",
-    "add": "Add agent",
-    "list": "List of all agents.",
-    "generalInfo": "Please provide a name and contact information to create an agent.",
-    "selected": "agent selected",
-    "notSelected": "No agent selected"
-  },
-  "config": {
-    "label": "Config",
-    "add": "Add configuration",
-    "list": "List of all configurations.",
-    "generalInfo": "Please provide a name and contact information to create a configuration.",
-    "selected": "Configuration selected",
-    "notSelected": "No configuration selected"
-  },
-  "proxy": {
-    "label": "Proxy",
-    "add": "Add Proxy",
-    "list": "List of all proxies.",
-    "generalInfo": "Please provide a name and contact information to create a proxy.",
-    "selected": "Proxy selected",
-    "notSelected": "No proxy selected"
-  },
-  "queue": {
-    "cralwer_id": "Crawler Id",
-    "label": "Queue",
-    "add": "Add Queue",
-    "list": "List of all queues.",
-    "startAt": "Start At"
-  },
+  "foo": "bar",
   "job": {
-    "label": "Job",
     "add": "add jobs",
-    "list": "List all Jobs",
     "cralwer_id": "Crawler Id",
+    "label": "Job",
+    "list": "List all Jobs",
     "type": "Type"
   },
-  "status": {
-    "label": "Status",
-    "failed": "Failed",
-    "succeeded": "success",
-    "processed": "Completed",
-    "processing": "Running",
-    "review": "Review",
-    "code": "Code",
-    "message": "Report",
-    "type": "Type"
-  },
-  "pagination": {
-    "previousLabel": "Back",
-    "nextLabel": "Next",
-    "label": "Pagination",
-    "page": "Page",
-    "onPage": "On the website"
-  },
-  "confirmation-delete": {
-    "experiment": {
-      "experimentDeleteMSG": "Are you sure do you want to delete {{experiment}}: {{experimentName}}?",
-      "cancelButton": "No",
-      "otherButton": "Yes"
-    }
+  "loading": {
+    "text": "This may take a few seconds, please don't close this page.",
+    "title": "Loading contents ..."
   },
   "meta": {
-    "experiment": {
-      "experiment": "Experiment",
-      "experimentId": "Experiment Id",
-      "experimentName": "Experiment Name",
-      "experimentDescription": "Experiment Description",
-      "experimentContant": "Experiment Contact",
-      "exprimentCreatedAt": "Experiment Created-At",
-      "experimentUpdatedAt": "Experiment Updated-At"
+    "agent": {
+      "agentDescription": "Agent Description",
+      "agentIdentification": "Agent Identification",
+      "agentLocation": "Agent Location",
+      "agentMultiloginId": "Agent MultiloginId",
+      "agentMultiloginprofile": "Agent Multilogin-profile",
+      "agentName": "Agent Name"
+    },
+    "common": {
+      "browser": "Browser",
+      "canvas": "Canvas",
+      "geolocation": "Geolocation",
+      "name": "Name",
+      "navigator": "Navigator",
+      "network": "Network",
+      "os": "Os",
+      "storage": "Storage"
+    },
+    "configuration": {
+      "configurationName": "Configuration Name"
     },
     "crawler": {
       "crawler": "Crawler",
       "crawlerId": "Crawler Id",
       "crawlerName": "Crawler Name"
     },
-    "agent": {
-      "agentName": "Agent Name",
-      "agentDescription": "Agent Description",
-      "agentIdentification": "Agent Identification",
-      "agentMultiloginId": "Agent MultiloginId",
-      "agentMultiloginprofile": "Agent Multilogin-profile",
-      "agentLocation": "Agent Location"
+    "experiment": {
+      "experiment": "Experiment",
+      "experimentContant": "Experiment Contact",
+      "experimentDescription": "Experiment Description",
+      "experimentId": "Experiment Id",
+      "experimentName": "Experiment Name",
+      "experimentUpdatedAt": "Experiment Updated-At",
+      "exprimentCreatedAt": "Experiment Created-At"
     },
     "proxy": {
-      "proxyName": "Proxy Name",
+      "ProxyPort": "Proxy Port",
       "proxyDescription": "Proxy Description",
       "proxyHostname": "Proxy Hostname",
-      "ProxyPort": "Proxy Port",
-      "proxyUserName": "Proxy User Name",
-      "proxyPassword": "Proxy Password"
-    },
-    "configuration": {
-      "configurationName": "Configuration Name"
-    },
-    "common": {
-      "name": "Name",
-      "browser": "Browser",
-      "canvas": "Canvas",
-      "geolocation": "Geolocation",
-      "navigator": "Navigator",
-      "network": "Network",
-      "os": "Os",
-      "storage": "Storage"
+      "proxyName": "Proxy Name",
+      "proxyPassword": "Proxy Password",
+      "proxyUserName": "Proxy User Name"
     }
+  },
+  "pagination": {
+    "label": "Pagination",
+    "nextLabel": "Next",
+    "onPage": "On the website",
+    "page": "Page",
+    "previousLabel": "Back"
+  },
+  "proxy": {
+    "add": "Add Proxy",
+    "generalInfo": "Please provide a name and contact information to create a proxy.",
+    "label": "Proxy",
+    "list": "List of all proxies.",
+    "notSelected": "No proxy selected",
+    "selected": "Proxy selected"
+  },
+  "queue": {
+    "add": "Add Queue",
+    "cralwer_id": "Crawler Id",
+    "label": "Queue",
+    "list": "List of all queues.",
+    "startAt": "Start At"
+  },
+  "status": {
+    "code": "Code",
+    "failed": "Failed",
+    "label": "Status",
+    "message": "Report",
+    "processed": "Completed",
+    "processing": "Running",
+    "review": "Review",
+    "succeeded": "success",
+    "type": "Type"
   }
 }
