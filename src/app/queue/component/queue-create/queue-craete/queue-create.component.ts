@@ -18,12 +18,12 @@ import { DatePipe } from '@angular/common';
 export class QueueCreateComponent implements OnInit, OnDestroy {
   queueForm: FormGroup;
   subscriptions = new Subscription();
-  formValid$: Observable<boolean>;
   isPopup = false;
   queueLoader = false;
   queueCtrl = new FormControl('', [Validators.required]);
+  crawlerCtrl = new FormControl(null, [Validators.required]);
   crawler: any;
-  Queues: any;
+  queueList: any;
   experiment: any;
   currentCrawler$: Observable<Crawler | null>;
 
@@ -31,7 +31,7 @@ export class QueueCreateComponent implements OnInit, OnDestroy {
     @Inject(MAT_DIALOG_DATA) public data: any,
     private store: Store,
     private formBuilder: FormBuilder,
-    @Optional() private experiementDialog: MatDialogRef<ExperimentCreateComponent>,
+    @Optional() private experimentDialog: MatDialogRef<ExperimentCreateComponent>,
     public router: Router,
     public queueService: QueueService,
     private datePipe: DatePipe
@@ -39,16 +39,13 @@ export class QueueCreateComponent implements OnInit, OnDestroy {
     this.queueForm = this.formBuilder.group({
       name: ['', [Validators.required]],
       description: [null, [Validators.required]],
-      start_at: [null, [Validators.required]]
+      start_at: [null, [Validators.required]],
+      crawler_id: [null, [Validators.required]]
     });
   }
 
   get name(): string | null {
     return this.queueForm.get('name')?.value;
-  }
-
-  get contactStartAt(): string | null {
-    return this.queueForm.get('start_at')?.value;
   }
 
   get description(): string | null {
@@ -59,10 +56,7 @@ export class QueueCreateComponent implements OnInit, OnDestroy {
     this.currentCrawler$ = this.store.pipe(select(selectCurrentCrawler));
     this.currentCrawler$.subscribe((selectedCrawler: any) => {
       this.crawler = selectedCrawler;
-      if (this.crawler) {
-        this.queueCtrl.setValue(this.crawler.name);
-        this.queueForm.controls['name'].setValue(this.crawler.id);
-      }
+      this.crawlerCtrl.setValue(selectedCrawler.id ?? null);
     });
 
     this.isPopup = this.data.isPopup ? this.data.isPopup : false;
@@ -71,7 +65,7 @@ export class QueueCreateComponent implements OnInit, OnDestroy {
         this.queueLoader = true;
         this.queueService.search(search).subscribe(
           (result: any) => {
-            this.Queues = result.data;
+            this.queueList = result.data;
             this.queueLoader = false;
           },
           (error: any) => {
@@ -81,10 +75,6 @@ export class QueueCreateComponent implements OnInit, OnDestroy {
       }
       this.queueForm.controls['name'].setValue(search);
     });
-  }
-
-  hasValue(controlName: string): boolean {
-    return Boolean(this.queueForm.get(controlName)?.value);
   }
 
   hasError(controlName: string, errorName: string): boolean {
@@ -120,7 +110,7 @@ export class QueueCreateComponent implements OnInit, OnDestroy {
 
   onClose(close: boolean) {
     if (this.isPopup) {
-      this.experiementDialog.close(close);
+      this.experimentDialog.close(close);
     } else {
       this.router.navigate(['queues']);
     }

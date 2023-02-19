@@ -8,7 +8,6 @@ import { selectIsLoading, selectQueuesListData, selectQueuesPagination } from '.
 import { queueDeleteRequested, queuePageRequested, queueRequested } from '../../store/queue.actions';
 import { Crawler } from '../../../crawler/model/crawler';
 import { selectCurrentCrawler } from '../../../crawler/store/crawler.selectors';
-import { currentCrawlerResetRequested } from '../../../crawler/store/crawler.actions';
 import { Queue } from '../../model/queue';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
@@ -21,12 +20,12 @@ import { ConfirmationPrimeoverDialogComponent } from 'src/app/shared/dialog/prim
   animations: [fadeIn]
 })
 export class QueueComponent implements OnInit, OnDestroy {
-  private subscriptions = new Subscription();
   paginationConfig: PaginatePipeArgs;
   data$: Observable<any>;
   experiments$: Observable<any>;
   currentCrawler$: Observable<Crawler | null>;
   isLoading$: Observable<boolean>;
+  private subscriptions = new Subscription();
 
   constructor(
     private store: Store,
@@ -60,10 +59,6 @@ export class QueueComponent implements OnInit, OnDestroy {
   selectQueue(queue: Queue): void {
     this.store.dispatch(queueRequested(queue));
     this.router.navigate(['jobs']).then();
-  }
-
-  resetCrawlerFilter(): void {
-    this.store.dispatch(currentCrawlerResetRequested());
   }
 
   deleteQueue(queue: any): void {
