@@ -9,6 +9,7 @@ import { selectCurrentCrawler } from 'src/app/crawler/store/crawler.selectors';
 import { Crawler } from 'src/app/crawler/model/crawler';
 import { QueueService } from 'src/app/queue/service/queue.service';
 import { DatePipe } from '@angular/common';
+import { CrawlerService } from 'src/app/crawler/service/crawler.service';
 
 @Component({
   selector: 'app-queue-create',
@@ -21,10 +22,12 @@ export class QueueCreateComponent implements OnInit, OnDestroy {
   isPopup = false;
   queueLoader = false;
   queueCtrl = new FormControl('', [Validators.required]);
-  crawlerCtrl = new FormControl(null, [Validators.required]);
+
+  crawlerCtrl = new FormControl('', [Validators.required]);
   crawler: any;
   queueList: any;
   experiment: any;
+  crawlerList: any;
   currentCrawler$: Observable<Crawler | null>;
 
   constructor(
@@ -34,6 +37,7 @@ export class QueueCreateComponent implements OnInit, OnDestroy {
     @Optional() private experimentDialog: MatDialogRef<ExperimentCreateComponent>,
     public router: Router,
     public queueService: QueueService,
+    public crawlerService: CrawlerService,
     private datePipe: DatePipe
   ) {
     this.queueForm = this.formBuilder.group({
@@ -56,7 +60,7 @@ export class QueueCreateComponent implements OnInit, OnDestroy {
     this.currentCrawler$ = this.store.pipe(select(selectCurrentCrawler));
     this.currentCrawler$.subscribe((selectedCrawler: any) => {
       this.crawler = selectedCrawler;
-      this.crawlerCtrl.setValue(selectedCrawler.id ?? null);
+      this.crawlerCtrl.setValue(selectedCrawler?.id ?? null);
     });
 
     this.isPopup = this.data.isPopup ? this.data.isPopup : false;
@@ -75,6 +79,24 @@ export class QueueCreateComponent implements OnInit, OnDestroy {
       }
       this.queueForm.controls['name'].setValue(search);
     });
+
+
+    this.crawlerCtrl.valueChanges.pipe(debounceTime(1000), distinctUntilChanged()).subscribe((search) => {
+      if (search && search?.length >= 2) {
+        this.queueLoader = true;
+        this.crawlerService.search(search).subscribe(
+          (result: any) => {
+            this.crawlerList = result.data;
+            this.queueLoader = false;
+          },
+          (error: any) => {
+            this.queueLoader = false;
+          }
+        );
+      }
+      this.queueForm.controls['name'].setValue(search);
+    });
+
   }
 
   hasError(controlName: string, errorName: string): boolean {
@@ -89,16 +111,28 @@ export class QueueCreateComponent implements OnInit, OnDestroy {
     return this.queueCtrl?.touched && this.queueCtrl?.invalid && this.queueCtrl.getError(errorName);
   }
 
+  autoCompleteQueueHasError(errorName: string) {
+    return this.queueCtrl?.touched && this.queueCtrl?.invalid && this.queueCtrl.getError(errorName);
+  }
+
   setControlValue(item: any) {
     this.queueForm.controls['name'].setValue(item.name);
     this.queueForm.controls['description'].setValue(item.description);
     this.queueForm.controls['start_at'].setValue(this.datePipe.transform(item.start_at, 'yyyy-MM-dd'));
   }
 
+  setCrawlerControlValue(item: any) {
+    this.queueForm.controls['crawler_id'].setValue(item.id);
+  }
+
   reset() {
     // this.queueForm.reset();
     this.queueCtrl.setValue(null);
     this.queueForm.controls['name'].setValue(null);
+  }
+
+  resetCrawler(){
+    this.crawlerCtrl.setValue(null);
   }
 
   saveExperiment(): void {
