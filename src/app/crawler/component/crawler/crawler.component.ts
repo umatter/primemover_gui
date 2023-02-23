@@ -3,7 +3,7 @@ import { Observable, Subscription } from 'rxjs';
 import { select, Store } from '@ngrx/store';
 import { PaginatePipeArgs } from 'ngx-pagination';
 import { Router } from '@angular/router';
-import { currentExperimentResetRequested } from '../../../experiment/store/experiment.actions';
+import { currentExperimentResetRequested, experimentRequested } from '../../../experiment/store/experiment.actions';
 import { selectCurrentExperiment, selectExperimentsListData } from '../../../experiment/store/experiment.selectors';
 import { crawlerDeleteRequested, crawlerPageRequested, crawlerRequested } from '../../store/crawler.actions';
 import { fadeIn } from '../../../shared/animation/trigger';
@@ -46,11 +46,14 @@ export class CrawlerComponent implements OnInit, OnDestroy {
   }
 
   getData(page: number = 1): void {
+
     this.store.dispatch(crawlerPageRequested({ page: page }));
   }
 
   selectCrawler(crawler: Crawler): void {
+    this.store.dispatch(experimentRequested({ experiment: crawler.experiment }));
     this.store.dispatch(crawlerRequested(crawler));
+
     this.router.navigate(['queues']).then();
   }
 
@@ -94,3 +97,4 @@ export class CrawlerComponent implements OnInit, OnDestroy {
     this.subscriptions.unsubscribe();
   }
 }
+
