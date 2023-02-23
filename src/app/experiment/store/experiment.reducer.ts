@@ -35,7 +35,7 @@ const reducer = createReducer(
   initialState,
   on(experimentResetRequested, () => initialState),
   on(currentExperimentResetRequested, (state) => ({ ...state, current: null })),
-  on(experimentRequested, (state, action) => ({ ...state, current: action, isLoading: false })),
+  on(experimentRequested, (state, action) => ({ ...state, current: action.experiment, isLoading: true })),
   on(experimentPageRequested, (state, action) => ({ ...state, pageRequested: action.page, isLoading: true })),
   on(updateExperimentCreateValues, (state, action) => ({ ...state, form: action })),
   on(experimentsSimpleListRetrieved, (state, action) => ({ ...state, list: action.list })),

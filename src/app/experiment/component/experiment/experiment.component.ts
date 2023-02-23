@@ -19,7 +19,6 @@ import { Experiment } from '../../model/experiment';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationPrimeoverDialogComponent } from 'src/app/shared/dialog/primeover-dialog/confirmation-primeover-dialog.component';
 import { TranslateService } from '@ngx-translate/core';
-import { DispatcherService } from 'src/app/shared/service/dispatcher-service';
 
 @Component({
   selector: 'app-experiment',
@@ -36,9 +35,8 @@ export class ExperimentComponent implements OnInit, OnDestroy {
     private store: Store,
     public router: Router,
     private matDialog: MatDialog,
-    private translate: TranslateService,
-    private dispatcherService: DispatcherService,
-  ) { }
+    private translate: TranslateService
+  ) {}
 
   ngOnInit(): void {
     this.experimentsData$ = this.store.pipe(select(selectExperimentsListData));
@@ -61,8 +59,8 @@ export class ExperimentComponent implements OnInit, OnDestroy {
   }
 
   selectExperiment(experiment: Experiment): void {
-    this.dispatcherService.dispatchExperiment(experiment)
-    // TODO move redirect to effects  
+    this.store.dispatch(experimentRequested({ experiment: experiment }));
+    // TODO move redirect to effects
     this.router.navigate(['crawlers']).then();
   }
 
