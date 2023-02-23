@@ -23,8 +23,7 @@ import { ConfirmationPrimeoverDialogComponent } from 'src/app/shared/dialog/prim
 export class JobComponent implements OnInit, OnDestroy {
   private subscriptions = new Subscription();
   paginationConfig: PaginatePipeArgs;
-  data$: Observable<any>;
-  currentQueue$: Observable<Queue | null>;
+  jobData$: Observable<any>;
   isLoading$: Observable<boolean>;
 
   constructor(
@@ -35,8 +34,7 @@ export class JobComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.data$ = this.store.pipe(distinctUntilChanged(), select(selectJobsListData));
-    this.currentQueue$ = this.store.pipe(select(selectCurrentQueue));
+    this.jobData$ = this.store.pipe(distinctUntilChanged(), select(selectJobsListData));
     this.isLoading$ = this.store.pipe(select(selectIsLoading));
 
     this.getData();

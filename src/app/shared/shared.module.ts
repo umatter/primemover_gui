@@ -44,6 +44,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MetadataComponent } from './metadata/metadata.component';
 import { ConfirmationPrimeoverDialogComponent } from './dialog/primeover-dialog/confirmation-primeover-dialog.component';
 import { euFormat } from './pipes/datepipe/date-pipe.pipe';
+import { DispatcherService } from './service/dispatcher-service';
 
 @NgModule({
   declarations: [
@@ -128,6 +129,7 @@ import { euFormat } from './pipes/datepipe/date-pipe.pipe';
   ],
 
   providers: [
+    DispatcherService,
     { provide: MAT_DIALOG_DATA, useValue: {} },
     { provide: MatDialogRef, useValue: {} }
   ]

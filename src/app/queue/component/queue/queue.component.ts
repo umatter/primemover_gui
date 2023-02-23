@@ -21,9 +21,7 @@ import { ConfirmationPrimeoverDialogComponent } from 'src/app/shared/dialog/prim
 })
 export class QueueComponent implements OnInit, OnDestroy {
   paginationConfig: PaginatePipeArgs;
-  data$: Observable<any>;
-  experiments$: Observable<any>;
-  currentCrawler$: Observable<Crawler | null>;
+  queueData$: Observable<any>;
   isLoading$: Observable<boolean>;
   private subscriptions = new Subscription();
 
@@ -32,12 +30,10 @@ export class QueueComponent implements OnInit, OnDestroy {
     public router: Router,
     private matDialog: MatDialog,
     private translate: TranslateService
-  ) {}
+  ) { }
 
   ngOnInit() {
-    this.data$ = this.store.pipe(select(selectQueuesListData));
-    this.experiments$ = this.store.pipe(select(selectExperimentsListData));
-    this.currentCrawler$ = this.store.pipe(select(selectCurrentCrawler));
+    this.queueData$ = this.store.pipe(select(selectQueuesListData));
     this.isLoading$ = this.store.pipe(select(selectIsLoading));
 
     this.getData();

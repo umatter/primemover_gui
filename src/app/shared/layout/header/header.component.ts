@@ -9,11 +9,11 @@ import { Crawler } from '../../../crawler/model/crawler';
 import { selectCurrentCrawler } from '../../../crawler/store/crawler.selectors';
 import { currentQueueResetRequested } from '../../../queue/store/queue.actions';
 import { Queue } from '../../../queue/model/queue';
-import { selectCurrentQueue } from '../../../job/store/job.selectors';
 import { fadeIn } from '../../animation/trigger';
 import { clearQueryFilterRequested, resetQueryFilterRequested } from '../../store/shared.actions';
 import { selectQueryFilter } from '../../store/shared.selectors';
 import { QueryFilter } from '../../model/query-filter';
+import { selectCurrentQueue } from 'src/app/queue/store/queue.selectors';
 
 @Component({
   selector: 'app-header',

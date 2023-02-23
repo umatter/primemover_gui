@@ -19,7 +19,7 @@ export const experimentResetRequested = createAction('[Experiment] Reset state r
 export const currentExperimentResetRequested = createAction('[Experiment] Reset current requested');
 export const completeExperimentCreateRequested = createAction('[Experiment] Complete create requested');
 export const experimentPageRequested = createAction('[Experiment] Page requested', props<{ page: number }>());
-export const experimentRequested = createAction('[Experiment] Record requested', props<{ experiment: Experiment }>());
+export const experimentRequested = createAction('[Experiment] Record requested', props<Experiment>());
 export const experimentDeleteRequested = createAction(
   '[Experiment] Delete requested',
   props<{ experimentId: number }>()
