@@ -30,6 +30,10 @@ export class ExperimentService {
     return this.http.get<[]>(`${this.config.apiBaseUrl}/experiments-list`);
   }
 
+  public singleExperiment(experimentId:string | number): Observable<any> {
+    return this.http.get<any>(`${this.config.apiBaseUrl}/experiments/${experimentId}`);
+  }
+
   public search(keyword: string) {
     return this.http.get<[]>(`${this.config.apiBaseUrl}/experiments?filter[name]=${keyword}
     `);

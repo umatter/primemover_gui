@@ -30,7 +30,7 @@ const reducer = createReducer(
   initialState,
   on(queueResetRequested, () => initialState),
   on(currentQueueResetRequested, (state) => ({ ...state, current: null })),
-  on(queueRequested, (state, action) => ({ ...state, current: action, isLoading: true })),
+  on(queueRequested, (state, action) => ({ ...state, current: action, isLoading: false })),
   on(queuePageRequested, (state, action) => ({ ...state, pageRequested: action.page, isLoading: true })),
   on(queuesRetrieved, (state, action) => ({
     ...state,

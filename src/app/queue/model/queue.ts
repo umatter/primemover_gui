@@ -1,3 +1,5 @@
+import { Crawler } from "src/app/crawler/model/crawler";
+
 export interface Queue {
   id: number;
   name: string;
@@ -15,4 +17,5 @@ export interface Queue {
   user_id: number;
   status_code: string;
   status_message?: string;
+  crawler:Crawler
 }

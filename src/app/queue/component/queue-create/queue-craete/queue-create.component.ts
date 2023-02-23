@@ -56,7 +56,7 @@ export class QueueCreateComponent implements OnInit, OnDestroy {
     this.currentCrawler$ = this.store.pipe(select(selectCurrentCrawler));
     this.currentCrawler$.subscribe((selectedCrawler: any) => {
       this.crawler = selectedCrawler;
-      this.crawlerCtrl.setValue(selectedCrawler.id ?? null);
+      this.crawlerCtrl.setValue(selectedCrawler?.id ?? null);
     });
 
     this.isPopup = this.data.isPopup ? this.data.isPopup : false;
