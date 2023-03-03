@@ -56,6 +56,51 @@
             </div>
           </div>
 
+
+          <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+            <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="queue">
+              {{ 'queue.label' | translate }}
+            </label>
+            <div class="mt-1 sm:mt-0 sm:col-span-2">
+              <div class="relative">
+                <div class="flex items-center gap-1">
+                  <input
+                    [formControl]="queueCtrl"
+                    [matAutocomplete]="auto4"
+                    autocomplete="queue"
+                    class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+                    id="queue"
+                    name="queue"
+                    placeholder="{{ 'common.namePlaceholder' | translate }}"
+                    type="text"
+                  />
+                  <app-button
+                    (click)="resetQueue()"
+                    class="text-indigo-600 hover:text-indigo-900"
+                    size="md"
+                    text="{{ 'common.reset' | translate }}"
+                    type="white"
+                  ></app-button>
+                </div>
+                <p
+                  *ngIf="autoCompleteQueueHasError('required') || hasError('queue_id', 'required')"
+                  @fadeIn
+                  class="mt-2 text-sm text-red-600"
+                  id="queue-error"
+                >
+                  {{ 'common.queueRequiredError' | translate }}
+                </p>
+              </div>
+              <mat-autocomplete #auto4="matAutocomplete">
+                <mat-option (onSelectionChange)="setQueueControlValue(queue)" *ngFor="let queue of queues" [value]="queue.name">
+                  <span>{{ queue.name }}</span>
+                </mat-option>
+              </mat-autocomplete>
+            </div>
+          </div>
+
+
+
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
             <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="description">
               {{ 'common.description' | translate }}
@@ -113,7 +158,7 @@
           {{ 'common.cancel' | translate }}
         </button>
         <button
-          (click)="saveExperiment()"
+          (click)="saveJob()"
           [disabled]="!jobForm.valid"
           [ngClass]="{ 'opacity-25 hover:bg-indigo-600 ': !jobForm.valid }"
           class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"

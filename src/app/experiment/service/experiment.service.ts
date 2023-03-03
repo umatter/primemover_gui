@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { first, Observable, of } from 'rxjs';
+import { first, Observable, of, Subject } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { DataCollection } from '../../shared/model/data-collection';
 import { select, Store } from '@ngrx/store';
@@ -14,6 +14,7 @@ import { ExperimentFormValues } from '../component/model/experiment-form-values'
 export class ExperimentService {
   private pageRequested = 1;
   private queryFilterParams = {};
+  newCreatedExperiment = new Subject();
 
   constructor(
     private http: HttpClient,
@@ -28,6 +29,10 @@ export class ExperimentService {
 
   public simpleIndex(): Observable<[]> {
     return this.http.get<[]>(`${this.config.apiBaseUrl}/experiments-list`);
+  }
+
+  public singleExperiment(experimentId:string | number): Observable<any> {
+    return this.http.get<any>(`${this.config.apiBaseUrl}/experiments/${experimentId}`);
   }
 
   public search(keyword: string) {

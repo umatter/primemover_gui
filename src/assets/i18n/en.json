@@ -40,6 +40,7 @@
     "namePlaceholder": "e.g. Maria Berlusconi",
     "nameRequiredError": "Name is required",
     "crawlerRequiredError": "Crawler is required",
+    "queueRequiredError": "Queue is required",
     "new": "New",
     "password": "Password",
     "port": "Port",

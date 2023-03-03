@@ -8,8 +8,11 @@ import { Crawler } from 'src/app/crawler/model/crawler';
 import { selectCurrentCrawler } from 'src/app/crawler/store/crawler.selectors';
 import { ExperimentFormValues } from 'src/app/experiment/component/model/experiment-form-values';
 import { updateExperimentCreateValues } from 'src/app/experiment/store/experiment.actions';
-import { CrawlerService } from 'src/app/crawler/service/crawler.service';
 import { JobService } from '../../service/job.service';
+import { QueueService } from 'src/app/queue/service/queue.service';
+import { jobsRequested } from '../../store/job.actions';
+import { Queue } from 'src/app/queue/model/queue';
+import { selectCurrentQueue } from '../../store/job.selectors';
 
 @Component({
   selector: 'app-job-create',
@@ -22,32 +25,47 @@ export class JobCreateComponent implements OnInit, OnDestroy {
   isPopup = false;
   jobLoader = false;
   jobCtrl = new FormControl('', [Validators.required]);
+  queueCtrl = new FormControl('', [Validators.required]);
+
   crawler: any;
+  queue: any
   jobs: any;
+  queues: any;
   job: any;
   currentCrawler$: Observable<Crawler | null>;
+  currentQueue$: Observable<Queue | null>;
   experiementDialog: any;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private crawlerService: CrawlerService,
     private store: Store,
     private formBuilder: FormBuilder,
     public router: Router,
-    public jobService: JobService
+    public jobService: JobService,
+    private queueService: QueueService,
   ) {
     this.jobForm = this.formBuilder.group({
       name: [null, [Validators.required]],
       description: [null, [Validators.required]],
-      type: [null, [Validators.required]]
+      type: [null, [Validators.required]],
+      queue_id: [null, [Validators.required]]
     });
   }
 
   ngOnInit(): void {
     this.currentCrawler$ = this.store.pipe(select(selectCurrentCrawler));
+    this.currentQueue$ = this.store.pipe(select(selectCurrentQueue));
+
     this.currentCrawler$.subscribe((selectedCrawler: any) => {
       this.crawler = selectedCrawler;
     });
+    this.currentQueue$.subscribe((selectedQueue: any) => {
+      this.queue = selectedQueue;
+    });
+    if (this.queue) {
+      this.queueCtrl.setValue(this.queue.name);
+      this.jobForm.controls['queue_id'].setValue(this.queue.id);
+    }
     if (this.crawler) {
       this.jobCtrl.setValue(this.crawler.name);
       this.jobForm.controls['name'].setValue(this.crawler.id);
@@ -82,6 +100,21 @@ export class JobCreateComponent implements OnInit, OnDestroy {
       }
       this.jobForm.controls['name'].setValue(search);
     });
+
+    this.queueCtrl.valueChanges.pipe(debounceTime(1000), distinctUntilChanged()).subscribe((search) => {
+      if (search && search.length >= 2) {
+        this.jobLoader = true;
+        this.queueService.search(search).subscribe(
+          (result: any) => {
+            this.queues = result.data;
+            this.jobLoader = false;
+          },
+          (error: any) => {
+            this.jobLoader = false;
+          }
+        );
+      }
+    });
   }
 
   setControlValue(item: any) {
@@ -90,10 +123,19 @@ export class JobCreateComponent implements OnInit, OnDestroy {
     this.jobForm.controls['type'].setValue(item.type);
   }
 
+  setQueueControlValue(item: any) {
+    this.jobForm.controls['queue_id'].setValue(item.id);
+  }
+
   reset() {
     this.jobForm.reset();
     this.jobCtrl.setValue(null);
     this.jobForm.controls['name'].setValue(null);
+  }
+
+  resetQueue() {
+    this.queueCtrl.setValue(null);
+    this.jobForm.controls['queue_id'].setValue(null);
   }
 
   onClose(close: boolean) {
@@ -104,13 +146,12 @@ export class JobCreateComponent implements OnInit, OnDestroy {
     }
   }
 
-  saveExperiment(): void {
+  saveJob(): void {
     if (!this.jobForm.valid) {
       return;
     }
-    console.log('all form', this.jobForm);
     // make an end point on store
-    // this.store.dispatch(completeExperimentCreateRequested());
+    this.store.dispatch(jobsRequested());
     // this.onClose(true)
   }
 
@@ -124,6 +165,10 @@ export class JobCreateComponent implements OnInit, OnDestroy {
 
   autoCompleteHasError(errorName: string) {
     return this.jobCtrl?.touched && this.jobCtrl?.invalid && this.jobCtrl.getError(errorName);
+  }
+  
+  autoCompleteQueueHasError(errorName: string) {
+    return this.queueCtrl?.touched && this.queueCtrl?.invalid && this.queueCtrl.getError(errorName);
   }
 
   ngOnDestroy() {
