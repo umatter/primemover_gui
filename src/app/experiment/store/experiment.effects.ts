@@ -56,7 +56,10 @@ export class ExperimentEffects {
       withLatestFrom(this.store.pipe(select(selectExperimentCreateFormValues))),
       switchMap(([_, formValues]: [TypedAction<string>, any | undefined]) =>
         this.apiService.storeExperiment(formValues).pipe(
-          map((response) => experimentCreateSuccess(response)),
+          map(((response) => { 
+            this.apiService.newCreatedExperiment.next(true)
+            return experimentCreateSuccess(response)
+          })),
           catchError((err) => of(experimentCreateError(err)))
         )
       )

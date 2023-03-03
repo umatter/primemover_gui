@@ -112,7 +112,11 @@ export class ExperimentCreateComponent implements OnInit, OnDestroy {
       return;
     }
     this.store.dispatch(completeExperimentCreateRequested());
-    this.onClose(true);
+    this.experiment.newCreatedExperiment.subscribe((experimentCreated)=>{
+      if(experimentCreated){
+        this.onClose(true);
+      }
+    })
   }
 
   onClose(close: boolean) {
