@@ -13,6 +13,9 @@ import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { ConfirmationPrimeoverDialogComponent } from 'src/app/shared/dialog/primeover-dialog/confirmation-primeover-dialog.component';
+import { crawlerRequested } from 'src/app/crawler/store/crawler.actions';
+import { ExperimentService } from 'src/app/experiment/service/experiment.service';
+import { experimentRequested } from 'src/app/experiment/store/experiment.actions';
 
 @Component({
   selector: 'app-queue',
@@ -31,8 +34,9 @@ export class QueueComponent implements OnInit, OnDestroy {
     private store: Store,
     public router: Router,
     private matDialog: MatDialog,
-    private translate: TranslateService
-  ) {}
+    private translate: TranslateService,
+    private experimentService: ExperimentService,
+  ) { }
 
   ngOnInit() {
     this.data$ = this.store.pipe(select(selectQueuesListData));
@@ -57,7 +61,18 @@ export class QueueComponent implements OnInit, OnDestroy {
   }
 
   selectQueue(queue: Queue): void {
+    if (queue?.crawler?.experiment_id) {
+      const experiment_id = queue?.crawler?.experiment_id
+      this.experimentService.singleExperiment(experiment_id).subscribe(experiment => {
+        const currentExperiment = {
+          id: experiment.data.id,
+          name: experiment.data.name,
+        }
+        this.store.dispatch(experimentRequested({ experiment: currentExperiment }));
+      });
+    }
     this.store.dispatch(queueRequested(queue));
+    this.store.dispatch(crawlerRequested(queue.crawler));
     this.router.navigate(['jobs']).then();
   }
 

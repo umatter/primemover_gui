@@ -7,5 +7,5 @@ export interface Crawler {
   latest_queues_succeeded: number;
   latest_queues_failed: number;
   latest_queues_count: number;
-  experiment: Experiment;
+  experiment_id: number;
 }
