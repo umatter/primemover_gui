@@ -6,22 +6,17 @@ import { EffectsModule } from '@ngrx/effects';
 import { agentReducer } from './store/agent.reducer';
 import { AgentEffects } from './store/agent.effects';
 import { NgxPaginationModule } from 'ngx-pagination';
-import { SharedModule } from '../shared/shared.module';
-import { crawlerReducer } from '../crawler/store/crawler.reducer';
-import { queueReducer } from '../queue/store/queue.reducer';
-import { AgentComponent } from './component/agent/agent.component';
-import { AgentCreateComponent } from './component/agent-create/agent-create.component';
-import { experimentReducer } from '../experiment/store/experiment.reducer';
+import { SharedModule } from '@shared/shared.module';
+import { AgentComponent } from './index/agent.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { AgentFormComponent } from './form/agent-form.component';
 
 @NgModule({
-  declarations: [AgentComponent, AgentCreateComponent],
+  declarations: [AgentComponent, AgentFormComponent],
+  exports: [AgentFormComponent],
   imports: [
     CommonModule,
     AgentRoutingModule,
-    StoreModule.forFeature('experiment', experimentReducer),
-    StoreModule.forFeature('crawler', crawlerReducer),
-    StoreModule.forFeature('queue', queueReducer),
     StoreModule.forFeature('agent', agentReducer),
 
     EffectsModule.forFeature([AgentEffects]),

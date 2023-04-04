@@ -1,7 +1,6 @@
 import { createAction, props } from '@ngrx/store';
-import { DataCollection } from '../../shared/model/data-collection';
+import { DataCollection } from '@shared/model/data-collection';
 import { Experiment } from '../model/experiment';
-import { ExperimentFormValues } from '../component/model/experiment-form-values';
 import { HttpErrorResponse } from '@angular/common/http';
 
 export const experimentsRequested = createAction('[Experiment] Collection requested');

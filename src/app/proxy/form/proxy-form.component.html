@@ -1,0 +1,176 @@
+<div>
+  <form [formGroup]="entityForm" class="space-y-8 divide-y divide-gray-200">
+    <div class="space-y-8 divide-y divide-gray-200 sm:space-y-5">
+      <div class="sm:flex sm:items-center">
+        <div class="sm:flex-auto">
+          <h1 class="text-xl font-semibold text-gray-900">{{ 'proxy.label' | translate }}</h1>
+          <p class="mt-2 text-sm text-gray-700">
+            {{ 'proxy.createIntroText' | translate }}
+          </p>
+        </div>
+      </div>
+      <div class="space-y-6 sm:space-y-5">
+        <div class="space-y-6 sm:space-y-5">
+          <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+            <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="name">
+              {{ 'common.name' | translate }}
+            </label>
+            <div class="mt-1 sm:mt-0 sm:col-span-2">
+              <div class="relative">
+                <div class="flex items-center gap-1">
+                  <div class="w-full">
+                    <input
+                      [formControl]="name"
+                      class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+                      id="name"
+                      name="name"
+                      placeholder="{{ 'common.namePlaceholder' | translate }}"
+                      type="text"
+                    />
+                    <app-autocomplete-select
+                      (isSelectChange)="setFormValuesToSelectedEntity($event)"
+                      *ngIf="filteredProxies$"
+                      [isSelect]="showAutocompletion"
+                      [list$]="filteredProxies$"
+                    ></app-autocomplete-select>
+                  </div>
+                  <button (click)="reset()" class="text-indigo-600 hover:text-indigo-900">
+                    <app-heroicon-trash></app-heroicon-trash>
+                  </button>
+                </div>
+                <p *ngIf="hasError('name', 'required')" @fadeIn class="mt-2 text-sm text-red-600" id="proxy-error">
+                  {{ 'common.nameRequiredError' | translate }}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+            <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="description">
+              {{ 'common.description' | translate }}
+            </label>
+            <div class="mt-1 sm:mt-0 sm:col-span-2">
+              <textarea
+                class="shadow-sm block w-full focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border border-gray-300 rounded-md"
+                formControlName="description"
+                id="description"
+                name="description"
+                placeholder="{{ 'common.descriptionPlaceholder' | translate }}"
+                rows="3"
+              ></textarea>
+              <p
+                *ngIf="hasError('description', 'maxlength')"
+                @fadeIn
+                class="mt-2 text-sm text-red-600"
+                id="contact-error"
+              >
+                {{ 'common.maxLengthExceed' | translate }}
+              </p>
+            </div>
+          </div>
+
+          <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+            <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="hostname">
+              {{ 'common.hostName' | translate }}
+            </label>
+            <div class="mt-1 sm:mt-0 sm:col-span-2">
+              <input
+                autocomplete="hostname"
+                class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+                formControlName="v"
+                id="hostname"
+                name="hostname"
+                placeholder="{{ 'common.hostNamePlaceholder' | translate }}"
+                type="text"
+              />
+              <p *ngIf="hasError('hostName', 'required')" @fadeIn class="mt-2 text-sm text-red-600" id="hostName-error">
+                {{ 'common.hostNameRequiredError' | translate }}
+              </p>
+            </div>
+          </div>
+
+          <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+            <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="port">
+              {{ 'common.port' | translate }}
+            </label>
+            <div class="mt-1 sm:mt-0 sm:col-span-2">
+              <input
+                autocomplete="port"
+                class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+                formControlName="port"
+                id="port"
+                name="port"
+                placeholder="{{ 'common.portPlaceholder' | translate }}"
+                type="number"
+              />
+              <p *ngIf="hasError('port', 'required')" @fadeIn class="mt-2 text-sm text-red-600" id="port-error">
+                {{ 'common.portRequiredError' | translate }}
+              </p>
+            </div>
+          </div>
+
+          <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+            <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="username">
+              {{ 'common.username' | translate }}
+            </label>
+            <div class="mt-1 sm:mt-0 sm:col-span-2">
+              <input
+                autocomplete="username"
+                class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+                formControlName="username"
+                id="username"
+                name="username"
+                placeholder="{{ 'common.usernamePlaceholder' | translate }}"
+                type="text"
+              />
+              <p *ngIf="hasError('username', 'required')" @fadeIn class="mt-2 text-sm text-red-600" id="username-error">
+                {{ 'common.usernameRequiredError' | translate }}
+              </p>
+            </div>
+          </div>
+
+          <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+            <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="password">
+              {{ 'common.password' | translate }}
+            </label>
+            <div class="mt-1 sm:mt-0 sm:col-span-2">
+              <input
+                autocomplete="password"
+                class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+                formControlName="password"
+                id="password"
+                name="password"
+                placeholder="{{ 'common.passwordPlaceholder' | translate }}"
+                type="password"
+              />
+              <p *ngIf="hasError('password', 'required')" @fadeIn class="mt-2 text-sm text-red-600" id="password-error">
+                {{ 'common.passwordRequiredError' | translate }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="pt-5">
+    <div class="flex justify-end">
+      <button
+        (click)="onCancel()"
+        class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        type="button"
+      >
+        {{ 'common.cancel' | translate }}
+      </button>
+      <button
+        (click)="onSave()"
+        [disabled]="!entityForm.valid"
+        [ngClass]="{ 'opacity-25 hover:bg-indigo-600 ': !entityForm.valid }"
+        class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        type="button"
+      >
+        {{ 'common.save' | translate }}
+      </button>
+    </div>
+  </div>
+</div>

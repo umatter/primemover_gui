@@ -1,17 +1,16 @@
 import { Action, createReducer, on } from '@ngrx/store';
 import {
-  currentConfigurationResetRequested,
   configurationPageRequested,
   configurationRequested,
   configurationResetRequested,
   configurationsRetrieved,
   configurationsSimpleListRetrieved,
+  currentConfigurationResetRequested,
   updateConfigurationCreateValues
 } from './config.actions';
-import { DataCollection } from '../../shared/model/data-collection';
+import { DataCollection } from '@shared/model/data-collection';
 import { Configuration } from '../model/config';
 import { PaginatePipeArgs } from 'ngx-pagination';
-import { ConfigurationFormValues } from '../component/model/config-form-values';
 
 export interface ConfigurationState {
   collection: DataCollection;
@@ -19,7 +18,7 @@ export interface ConfigurationState {
   pageRequested: number;
   isLoading: boolean;
   current: Configuration | null;
-  form?: ConfigurationFormValues;
+  form?: Configuration;
   list?: [];
 }
 

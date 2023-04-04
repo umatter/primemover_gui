@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AuthGuard } from '../core/guards/auth.guard';
-import { CrawlerComponent } from './component/crawler/crawler.component';
-import { CrawlerCreateComponent } from './component/crawler-create/crawler-create.component';
+import { AuthGuard } from '@core/guards/auth.guard';
+import { CrawlerComponent } from './index/crawler.component';
+import { CrawlerCreateComponent } from './create/crawler-create.component';
 
 const routes: Routes = [
   {

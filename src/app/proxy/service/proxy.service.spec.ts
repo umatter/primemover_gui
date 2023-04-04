@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { ExperimentService } from './proxy.service';
+import { ExperimentService } from './proxy-api.service';
 
 describe('ExperimentService', () => {
   let service: ExperimentService;

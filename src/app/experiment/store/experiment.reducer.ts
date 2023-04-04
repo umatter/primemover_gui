@@ -8,10 +8,10 @@ import {
   experimentsSimpleListRetrieved,
   updateExperimentCreateValues
 } from './experiment.actions';
-import { DataCollection } from '../../shared/model/data-collection';
+import { DataCollection } from '@shared/model/data-collection';
 import { Experiment } from '../model/experiment';
 import { PaginatePipeArgs } from 'ngx-pagination';
-import { ExperimentFormValues } from '../component/model/experiment-form-values';
+import { ExperimentFormValues } from '../model/experiment-form-values';
 
 export interface ExperimentState {
   collection: DataCollection;

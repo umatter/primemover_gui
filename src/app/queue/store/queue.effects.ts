@@ -1,76 +1,7 @@
 import { Injectable } from '@angular/core';
-import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { Store } from '@ngrx/store';
-import { catchError, map, switchMap } from 'rxjs';
-import { of } from 'rxjs';
-
-import { experimentPageRequested } from '../../experiment/store/experiment.actions';
-import { QueueService } from '../service/queue.service';
-import {
-  initQueues,
-  queueDeleteError,
-  queueDeleteRequested,
-  queueDeleteSuccess,
-  queuePageRequested,
-  queuesRequested,
-  queuesRequestFailed,
-  queuesRetrieved
-} from './queue.actions';
-import { currentCrawlerResetRequested } from '../../crawler/store/crawler.actions';
-import { updateQueryFilter } from '../../shared/store/shared.actions';
+import { Actions } from '@ngrx/effects';
 
 @Injectable()
 export class QueueEffects {
-  initQueues$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(initQueues),
-      map(() => experimentPageRequested({ page: 1 }))
-    )
-  );
-  queuesRequested$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(queuesRequested),
-      switchMap(() =>
-        this.apiService.index().pipe(
-          map((response) => queuesRetrieved({ collection: response })),
-          catchError((error) => of(queuesRequestFailed(error)))
-        )
-      )
-    )
-  );
-
-  currentCrawlerResetRequested$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(currentCrawlerResetRequested),
-      map(() => queuePageRequested({ page: 1 }))
-    )
-  );
-
-  updateQueryFilter$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(updateQueryFilter),
-      map(() => queuePageRequested({ page: 1 }))
-    )
-  );
-
-  queuePageRequested$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(queuePageRequested),
-      map(() => queuesRequested())
-    )
-  );
-
-  queueDeleteRequested$ = createEffect(() =>
-    this.actions$.pipe(
-      ofType(queueDeleteRequested),
-      switchMap((action) =>
-        this.apiService.deleteQueue(action.queueId).pipe(
-          map((response) => queueDeleteSuccess(response)),
-          catchError((err) => of(queueDeleteError(err)))
-        )
-      )
-    )
-  );
-
-  constructor(private actions$: Actions, private store: Store, private apiService: QueueService) {}
+  constructor(private actions$: Actions) {}
 }

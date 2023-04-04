@@ -1,0 +1,32 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Store } from '@ngrx/store';
+import { AppConfig } from '@app/app-config';
+import { QueryFilterService } from '@shared/service/query-filter.service';
+import { QueryParams } from '@ngrx/data';
+import { QueryFilterType } from '@shared/store/shared.selectors';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class BehaviorApiService {
+  private queryFilterParams = {};
+
+  constructor(
+    private http: HttpClient,
+    private store: Store,
+    private config: AppConfig,
+    private filterService: QueryFilterService
+  ) {}
+
+  public search(keyword: string) {
+    return this.http.get<[]>(`${this.config.apiBaseUrl}/jobs?filter[name]=${keyword}
+    `);
+  }
+
+  getParams(): QueryParams {
+    this.queryFilterParams = this.filterService.getFilterParams([QueryFilterType.Job]);
+
+    return this.queryFilterParams;
+  }
+}

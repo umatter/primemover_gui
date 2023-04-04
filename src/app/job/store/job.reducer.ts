@@ -1,17 +1,14 @@
 import { Action, createReducer, on } from '@ngrx/store';
-import { DataCollection } from '../../shared/model/data-collection';
 import { PaginatePipeArgs } from 'ngx-pagination';
 import { jobPageRequested, jobResetRequested, jobsRetrieved } from './job.actions';
 
 export interface JobState {
-  collection: DataCollection;
   pagination: PaginatePipeArgs;
   isLoading: boolean;
   pageRequested: number;
 }
 
 export const initialState: JobState = {
-  collection: { data: [], links: null, meta: null },
   pagination: { id: 'jobs', itemsPerPage: 10, currentPage: 1, totalItems: 0 },
   isLoading: false,
   pageRequested: 0

@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { select, Store } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 import { selectQueryFilter } from '../store/shared.selectors';
-import { first } from 'rxjs';
+import { filter, first, Observable } from 'rxjs';
+import { QueryFilter } from '@shared/model/query-filter';
 
 @Injectable({
   providedIn: 'root'
@@ -9,12 +10,14 @@ import { first } from 'rxjs';
 export class QueryFilterService {
   filterString = 'filter[%placeholder%]';
   queryFilterParams = {};
+  queryFilter$: Observable<QueryFilter[]>;
 
   constructor(private store: Store) {}
 
-  getFilterParams(): any {
+  getFilterParams(ofType: string[] = []): object {
     this.clearFilterParams();
     this.buildFilterParams();
+    this.applyTypeFilter(ofType);
     return this.queryFilterParams;
   }
 
@@ -23,13 +26,22 @@ export class QueryFilterService {
   }
 
   buildFilterParams(): void {
-    this.store.pipe(select(selectQueryFilter), first()).subscribe((queryFilter) => {
-      if (queryFilter.length) {
-        queryFilter.forEach((entry) => {
-          const filterName = this.replaceFilterName(entry.name);
-          this.queryFilterParams = { ...this.queryFilterParams, [filterName]: entry.value };
-        });
+    this.queryFilter$ = this.store.select(selectQueryFilter).pipe(
+      first(),
+      filter((items: QueryFilter[]) => items.every((entry) => entry.name && entry.value))
+    );
+  }
+
+  applyTypeFilter(ofType: string[]): void {
+    this.queryFilter$.subscribe((queryFilter) => {
+      if (ofType.length > 0) {
+        queryFilter = queryFilter.filter((entry) => ofType.includes(entry.name));
       }
+
+      queryFilter.map((entry) => {
+        const filterName = this.replaceFilterName(entry.name);
+        this.queryFilterParams = { ...this.queryFilterParams, [filterName]: entry.value };
+      });
     });
   }
 

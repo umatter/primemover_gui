@@ -1,6 +1,7 @@
 import { Experiment } from './experiment';
 
 export interface Crawler {
+  experiment: Experiment;
   id: number;
   name: string;
   description: string;

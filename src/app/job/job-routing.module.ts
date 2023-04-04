@@ -1,8 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { JobComponent } from './component/job/job.component';
-import { AuthGuard } from '../core/guards/auth.guard';
-import { JobCreateComponent } from './component/job-create/job-create.component';
+import { JobComponent } from './index/job.component';
+import { AuthGuard } from '@core/guards/auth.guard';
+import { JobFormComponent } from './form/job-form.component';
+import { BehaviorComponent } from '@app/behavior/index/behavior.component';
 
 const routes: Routes = [
   {
@@ -13,7 +14,13 @@ const routes: Routes = [
   },
   {
     path: 'create',
-    component: JobCreateComponent,
+    component: JobFormComponent,
+    canActivate: [AuthGuard],
+    data: { requiresLogin: true }
+  },
+  {
+    path: 'behaviors/:id',
+    component: BehaviorComponent,
     canActivate: [AuthGuard],
     data: { requiresLogin: true }
   }

@@ -1,7 +1,6 @@
 import { createAction, props } from '@ngrx/store';
 import { DataCollection } from '../../shared/model/data-collection';
 import { Configuration } from '../model/config';
-import { ConfigurationFormValues } from '../component/model/config-form-values';
 import { HttpErrorResponse } from '@angular/common/http';
 
 export const configurationsRequested = createAction('[Configuration] Collection requested');
@@ -27,7 +26,7 @@ export const configurationDeleteRequested = createAction(
   '[Configuration] Delete requested',
   props<{ configurationId: number }>()
 );
-export const updateConfigurationCreateValues = createAction('[Configuration] Update', props<ConfigurationFormValues>());
+export const updateConfigurationCreateValues = createAction('[Configuration] Update', props<Configuration>());
 export const configurationCreateSuccess = createAction('[Configuration] Create success', props<any>());
 export const configurationDeleteSuccess = createAction('[Configuration] Delete success', props<any>());
 export const configurationCreateError = createAction(

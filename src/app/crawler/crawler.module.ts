@@ -6,10 +6,10 @@ import { EffectsModule } from '@ngrx/effects';
 import { crawlerReducer } from './store/crawler.reducer';
 import { CrawlerEffects } from './store/crawler.effects';
 import { NgxPaginationModule } from 'ngx-pagination';
-import { SharedModule } from '../shared/shared.module';
+import { SharedModule } from '@shared/shared.module';
 import { experimentReducer } from '../experiment/store/experiment.reducer';
-import { CrawlerComponent } from './component/crawler/crawler.component';
-import { CrawlerCreateComponent } from './component/crawler-create/crawler-create.component';
+import { CrawlerComponent } from './index/crawler.component';
+import { CrawlerCreateComponent } from './create/crawler-create.component';
 import { ExperimentEffects } from '../experiment/store/experiment.effects';
 import { ProxyEffects } from '../proxy/store/proxy.effects';
 import { AgentEffects } from '../agent/store/agent.effects';
@@ -18,6 +18,9 @@ import { proxyReducer } from '../proxy/store/proxy.reducer';
 import { agentReducer } from '../agent/store/agent.reducer';
 import { configReducer } from '../config/store/config.reducer';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { AgentModule } from '@app/agent/agent.module';
+import { ConfigurationModule } from '@app/config/config.module';
+import { ProxyModule } from '@app/proxy/proxy.module';
 
 @NgModule({
   declarations: [CrawlerComponent, CrawlerCreateComponent],
@@ -30,7 +33,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     StoreModule.forFeature('proxy', proxyReducer),
     StoreModule.forFeature('agent', agentReducer),
     StoreModule.forFeature('config', configReducer),
-
     EffectsModule.forFeature([CrawlerEffects]),
     EffectsModule.forFeature([ExperimentEffects]),
     EffectsModule.forFeature([ProxyEffects]),
@@ -38,7 +40,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
     EffectsModule.forFeature([ConfigEffects]),
     NgxPaginationModule,
     SharedModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    AgentModule,
+    ConfigurationModule,
+    ProxyModule
   ]
 })
 export class CrawlerModule {}

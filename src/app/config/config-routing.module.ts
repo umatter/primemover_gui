@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from '../core/guards/auth.guard';
-import { ConfigComponent } from './component/config/config.component';
-import { ConfigCreateComponent } from './component/config-create/config-create.component';
+import { ConfigComponent } from './index/config.component';
+import { ConfigFormComponent } from './form/config-form.component';
 
 const routes: Routes = [
   {
@@ -13,7 +13,7 @@ const routes: Routes = [
   },
   {
     path: 'create',
-    component: ConfigCreateComponent,
+    component: ConfigFormComponent,
     canActivate: [AuthGuard],
     data: { requiresLogin: true }
   }

@@ -2,32 +2,29 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { JobRoutingModule } from './job-routing.module';
-import { JobComponent } from './component/job/job.component';
-import { StoreModule } from '@ngrx/store';
-import { EffectsModule } from '@ngrx/effects';
+import { JobComponent } from './index/job.component';
 import { NgxPaginationModule } from 'ngx-pagination';
-import { SharedModule } from '../shared/shared.module';
-import { jobReducer } from './store/job.reducer';
-import { JobEffects } from './store/job.effects';
-import { experimentReducer } from '../experiment/store/experiment.reducer';
-import { crawlerReducer } from '../crawler/store/crawler.reducer';
-import { queueReducer } from '../queue/store/queue.reducer';
+import { SharedModule } from '@shared/shared.module';
 import { QueueModule } from '../queue/queue.module';
-import { JobCreateComponent } from './component/job-create/job-create.component';
+import { JobFormComponent } from './form/job-form.component';
+import { StoreModule } from '@ngrx/store';
+import { authReducer } from '@app/store/auth/auth.reducer';
+import { EffectsModule } from '@ngrx/effects';
+import { JobEffects } from '@app/job/store/job.effects';
+import { BehaviorFormComponent } from '@app/behavior/form/behavior-form.component';
+import { BehaviorComponent } from '@app/behavior/index/behavior.component';
 
 @NgModule({
-  declarations: [JobComponent, JobCreateComponent],
+  declarations: [JobComponent, JobFormComponent, BehaviorFormComponent, BehaviorComponent],
   imports: [
     CommonModule,
     JobRoutingModule,
-    StoreModule.forFeature('job', jobReducer),
-    StoreModule.forFeature('experiment', experimentReducer),
-    StoreModule.forFeature('crawler', crawlerReducer),
-    StoreModule.forFeature('queue', queueReducer),
-    EffectsModule.forFeature([JobEffects]),
     NgxPaginationModule,
     SharedModule,
-    QueueModule
-  ]
+    QueueModule,
+    StoreModule.forFeature('job', authReducer),
+    EffectsModule.forFeature([JobEffects])
+  ],
+  exports: [JobComponent, JobFormComponent, BehaviorFormComponent, BehaviorComponent]
 })
 export class JobModule {}
