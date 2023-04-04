@@ -6,7 +6,7 @@ import { AppConfig } from '@app/app-config';
 import { QueryFilterService } from '@shared/service/query-filter.service';
 import { QueryParams } from '@ngrx/data';
 import { QueryFilterType } from '@shared/store/shared.selectors';
-import { selectPageRequested } from '@app/job/store/job.selectors';
+import { selectPageRequested } from '@app/proxy/store/proxy.selectors';
 
 @Injectable({
   providedIn: 'root'

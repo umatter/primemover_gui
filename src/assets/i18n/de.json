@@ -1,12 +1,12 @@
 {
   "agent": {
     "add": "Agent hinzufügen",
+    "createIntroText": "Bitte geben Sie die erforderlichen Daten ein, um einen neuen Agenten zu erstellen.",
     "generalInfo": "Bitte einen Namen und eine Kontaktinformation angeben, um ein Agent anzulegen.",
     "label": "Agent",
     "list": "Liste aller Agent.",
     "notSelected": "Kein Agent ausgewählt",
-    "selected": "Agent ausgewählt",
-    "createIntroText": "Bitte geben Sie die erforderlichen Daten ein, um einen neuen Agenten zu erstellen."
+    "selected": "Agent ausgewählt"
   },
   "auth": {
     "password": "Kennwort",
@@ -14,11 +14,15 @@
     "signOut": "Abmelden",
     "username": "Benutzername"
   },
+  "behavior": {
+    "add": "Behavior hinzufügen",
+    "createIntroText": "Geben Sie die erforderlichen Daten ein, um einen neuen Eintrag zu erstellen.",
+    "label": "Behavior",
+    "list": "Liste aller Behaviors.",
+    "name": "Bezeichnung",
+    "value": "Wert"
+  },
   "common": {
-    "multiLoginId": "Multilogin-ID",
-    "multiLoginIdPlaceholder": "z.B. ML-123456XYZ",
-    "multiLoginProfile": "Multilogin Profil",
-    "multiLoginProfilePlaceholder": "z.B. {\"browser\":\"chrome\",\"os\":\"windows\",\"screen\":\"1920x1080\"}",
     "actionPermanentWarning": "Diese Aktion kann nicht rückgängig gemacht werden.",
     "agentRequiredError": "Agent ist erforderlich",
     "areYouSure": "Sind Sie sicher?",
@@ -29,6 +33,7 @@
     "contact": "Kontakt",
     "contactPlaceholder": "z.B. Max Mustermann, 066 555 22 44",
     "contactRequiredError": "Mindestens ein Kontakt ist erforderlich",
+    "crawlerRequiredError": "Crawler ist erforderlich",
     "delete": "Löschen",
     "description": "Beschreibung",
     "descriptionPlaceholder": "z.B. Es handelt sich um ...",
@@ -45,6 +50,10 @@
     "location": "Location",
     "locationPlaceholder": "z.B. US-OK-OKLAHOMA",
     "maxLengthExceed": "Maximale Länge überschritten",
+    "multiLoginId": "Multilogin-ID",
+    "multiLoginIdPlaceholder": "z.B. ML-123456XYZ",
+    "multiLoginProfile": "Multilogin Profil",
+    "multiLoginProfilePlaceholder": "z.B. {\"browser\":\"chrome\",\"os\":\"windows\",\"screen\":\"1920x1080\"}",
     "name": "Name",
     "namePlaceholder": "z.B. Maria Berlusconi",
     "nameRequiredError": "Name ist erforderlich",
@@ -54,6 +63,7 @@
     "port": "Port",
     "portPlaceholder": "z.B. 8080",
     "proxyRequiredError": "Proxy ist erforderlich",
+    "queueRequiredError": "Queue erforderlich",
     "reset": "Zurücksetzen",
     "save": "Speichern",
     "select": "Wählen",
@@ -61,16 +71,16 @@
     "startDateRequiredError": "Startdatum ist erforderlich",
     "typeRequiredError": "Typ ist erforderlich",
     "username": "Nutzername",
-    "usernamePlaceholder": "z.B. max.mustermann"
+    "usernamePlaceholder": "e.g. max.mustermann"
   },
   "config": {
     "add": "Konfiguration hinzufügen",
+    "createIntroText": "Bitte geben Sie die erforderlichen Daten ein, um eine neue Konfiguration zu erstellen.",
     "generalInfo": "Bitte einen Namen und eine Kontaktinformation angeben, um ein Configuration anzulegen.",
     "label": "Konfiguration",
     "list": "Liste aller Konfigurationen.",
     "notSelected": "Kein Configuration ausgewählt",
-    "selected": "Configuration ausgewählt",
-    "createIntroText": "Bitte geben Sie die erforderlichen Daten ein, um eine neue Konfiguration zu erstellen."
+    "selected": "Configuration ausgewählt"
   },
   "confirmation-delete": {
     "experiment": {
@@ -88,17 +98,17 @@
   },
   "experiment": {
     "add": "Experiment hinzufügen",
+    "createIntroText": "Geben Sie die erforderlichen Daten ein, um ein neues Experiment zu erstellen.",
     "generalInfo": "Bitte einen Namen und eine Kontaktinformation angeben, um ein Experiment anzulegen.",
     "label": "Experiment",
     "list": "Liste aller Experimente.",
     "notSelected": "Kein Experiment ausgewählt",
-    "selected": "Experiment ausgewählt",
-    "createIntroText": "Geben Sie die erforderlichen Daten ein, um ein neues Experiment zu erstellen."
+    "selected": "Experiment ausgewählt"
   },
   "filter": {
+    "bodyText": "Hier werde aktive Filter angezeigt.",
     "reset": "Filter zurücksetzen",
-    "title": "Filter",
-    "bodyText": "Hier werde aktive Filter angezeigt."
+    "title": "Filter"
   },
   "foo": "bar",
   "job": {
@@ -108,21 +118,11 @@
     "list": "Liste aller Jobs.",
     "type": "Type"
   },
-  "behavior": {
-    "createIntroText": "Geben Sie die erforderlichen Daten ein, um einen neuen Eintrag zu erstellen.",
-    "add": "Behavior hinzufügen",
-    "label": "Behavior",
-    "list": "Liste aller Behaviors.",
-    "name": "Bezeichnung",
-    "value": "Wert"
-  },
   "loading": {
     "text": "Dies könnte eine Weile dauern, bitte haben Sie etwas Geduld.",
     "title": "Inhalte werden geladen ..."
   },
   "meta": {
-    "title": "Meta Informationen",
-    "bodyText": "Hier werden die Einzelheiten zum ausgewählten Kontext gezeigt. Um mehr zu sehen, bitte mindestens ein Experiment auswählen.",
     "agent": {
       "agentDescription": "Agentenbeschreibung",
       "agentIdentification": "Agentenidentifikation",
@@ -131,6 +131,7 @@
       "agentMultiloginprofile": "Agent Multilogin-Profil",
       "agentName": "Agentenname"
     },
+    "bodyText": "Hier werden die Einzelheiten zum ausgewählten Kontext gezeigt. Um mehr zu sehen, bitte mindestens ein Experiment auswählen.",
     "common": {
       "browser": "Browser",
       "canvas": "Segeltuch",
@@ -165,7 +166,8 @@
       "proxyName": "Proxy-Name",
       "proxyPassword": "Proxy-Passwort",
       "proxyUserName": "Proxy-Benutzername"
-    }
+    },
+    "title": "Meta Informationen"
   },
   "pagination": {
     "label": "Pagination",
@@ -176,18 +178,19 @@
   },
   "proxy": {
     "add": "Proxy hinzufügen",
+    "createIntroText": "Geben Sie die erforderlichen Daten ein, um einen neuen Proxy zu erstellen.",
+    "generalInfo": "Bitte geben Sie einen Namen und Kontaktinformationen an, um einen Eintrag zu erstellen.",
     "label": "Proxy",
     "list": "Liste aller Proxy.",
     "notSelected": "Kein Proxy ausgewählt",
-    "selected": "Proxy ausgewählt",
-    "createIntroText": "Geben Sie die erforderlichen Daten ein, um einen neuen Proxy zu erstellen."
+    "selected": "Proxy ausgewählt"
   },
   "queue": {
     "add": "Queue hinzufügen",
+    "createIntroText": "Geben Sie die erforderlichen Daten ein, um eine neue Queue zu erstellen.",
     "label": "Queue",
     "list": "Liste aller Queues.",
-    "startAt": "Startzeit",
-    "createIntroText": "Geben Sie die erforderlichen Daten ein, um eine neue Queue zu erstellen."
+    "startAt": "Startzeit"
   },
   "status": {
     "code": "Code",

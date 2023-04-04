@@ -1,4 +1,5 @@
 import { DefaultDataServiceConfig, EntityMetadataMap } from '@ngrx/data';
+import { environment } from '@environments/environment';
 
 export const filterBySearchTerm = (entities: { name: string }[], search: string) => {
   return entities.filter((entity) => -1 < entity.name.indexOf(search));
@@ -84,7 +85,7 @@ export const entityConfig = {
 };
 
 export const defaultDataServiceConfig: DefaultDataServiceConfig = {
-  root: 'http://localhost/api/v1',
+  root: environment.configService.apiBaseUrl,
   timeout: 3000,
   trailingSlashEndpoints: true
 };

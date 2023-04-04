@@ -1,6 +1,7 @@
 {
   "agent": {
     "add": "Add agent",
+    "createIntroText": "Please enter the required data to create a new agent.",
     "generalInfo": "Please provide a name and contact information to create an agent.",
     "label": "Agent",
     "list": "List of all agents.",
@@ -13,6 +14,14 @@
     "signOut": "Sign out",
     "username": "User name"
   },
+  "behavior": {
+    "add": "Add behavior",
+    "createIntroText": "Enter the required data to create a new entry.",
+    "label": "Behavior",
+    "list": "Behavior list",
+    "name": "Name",
+    "value": "Value"
+  },
   "common": {
     "actionPermanentWarning": "This action cannot be undone!",
     "agentRequiredError": "Agent is Required",
@@ -20,6 +29,7 @@
     "cancel": "Interrupt",
     "clear": "Clear",
     "configRequiredError": "Configuration is Required",
+    "confirm": "Confirm",
     "contact": "Contact",
     "contactPlaceholder": "e.g. Max Mustermann, 066 555 22 44",
     "contactRequiredError": "At least one contact is required",
@@ -32,19 +42,26 @@
     "experimentRequiredError": "Experiment is Required",
     "home": "Home",
     "hostName": "Host Name",
+    "hostNamePlaceholder": "e.g. proxy.geosurf.io",
     "id": "Id",
     "identification": "Identification",
+    "identificationPlaceholder": "e.g. Browser-v10",
     "label": "Choose",
     "location": "Location",
+    "locationPlaceholder": "e.g. US-OK-OKLAHOMA",
     "maxLengthExceed": "Maximum Length Exceed",
-    "multilogin_id": "Multi Login Id",
-    "multilogin_profile": "Multi Profile",
+    "multiLoginId": "Multilogin-ID",
+    "multiLoginIdPlaceholder": "e.g. ML-123456XYZ",
+    "multiLoginProfile": "Multilogin Profil",
+    "multiLoginProfilePlaceholder": "e.g. {\"browser\":\"chrome\",\"os\":\"windows\",\"screen\":\"1920x1080\"}",
     "name": "Name",
     "namePlaceholder": "e.g. Maria Berlusconi",
     "nameRequiredError": "Name is required",
     "new": "New",
     "password": "Password",
+    "passwordPlaceholder": "e.g. a really good password",
     "port": "Port",
+    "portPlaceholder": "e.g. 8080",
     "proxyRequiredError": "Proxy is Required",
     "queueRequiredError": "Queue is required",
     "reset": "Reset",
@@ -53,10 +70,12 @@
     "show": "Show",
     "startDateRequiredError": "Start Date is Required",
     "typeRequiredError": "Type is Required",
-    "username": "User Name"
+    "username": "User Name",
+    "usernamePlaceholder": ""
   },
   "config": {
     "add": "Add configuration",
+    "createIntroText": "Please enter the required data to create a new configuration.",
     "generalInfo": "Please provide a name and contact information to create a configuration.",
     "label": "Config",
     "list": "List of all configurations.",
@@ -79,6 +98,7 @@
   },
   "experiment": {
     "add": "Add experiment",
+    "createIntroText": "Enter the required data to create a new experiment.",
     "generalInfo": "Please provide a name and contact information to create an experiment.",
     "label": "Experiment",
     "list": "List of all experiments.",
@@ -86,12 +106,14 @@
     "selected": "experiment selected"
   },
   "filter": {
-    "reset": "reset filter"
+    "bodyText": "Active filters are displayed here.",
+    "reset": "reset filter",
+    "title": "Filter"
   },
   "foo": "bar",
   "job": {
     "add": "add jobs",
-    "cralwer_id": "Crawler Id",
+    "crawlerId": "Crawler-ID",
     "label": "Job",
     "list": "List all Jobs",
     "type": "Type"
@@ -109,6 +131,7 @@
       "agentMultiloginprofile": "Agent Multilogin-profile",
       "agentName": "Agent Name"
     },
+    "bodyText": "Here the details of the selected context are shown. To see more, please select at least one experiment.",
     "common": {
       "browser": "Browser",
       "canvas": "Canvas",
@@ -143,7 +166,8 @@
       "proxyName": "Proxy Name",
       "proxyPassword": "Proxy Password",
       "proxyUserName": "Proxy User Name"
-    }
+    },
+    "title": "Meta Information"
   },
   "pagination": {
     "label": "Pagination",
@@ -154,6 +178,7 @@
   },
   "proxy": {
     "add": "Add Proxy",
+    "createIntroText": "Enter the necessary data to create a new proxy.",
     "generalInfo": "Please provide a name and contact information to create a proxy.",
     "label": "Proxy",
     "list": "List of all proxies.",
@@ -162,7 +187,7 @@
   },
   "queue": {
     "add": "Add Queue",
-    "cralwer_id": "Crawler Id",
+    "createIntroText": "Enter the required data to create a new queue.",
     "label": "Queue",
     "list": "List of all queues.",
     "startAt": "Start At"
