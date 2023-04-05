@@ -66,6 +66,7 @@ export class BehaviorComponent implements OnDestroy {
           currentPage: meta?.current_page,
           totalItems: meta?.total
         };
+        console.log(this.paginationConfig);
       })
     );
   }

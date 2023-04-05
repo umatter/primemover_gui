@@ -1,4 +1,12 @@
 <app-loading-spinner *ngIf="isLoading$ | async; else content"></app-loading-spinner>
+<app-content-modal [isModal]="behaviorModal">
+  <app-behavior-form
+    (cancelClicked)="onBehaviorModalCancel()"
+    (saveClicked)="onBehaviorModalSave($event)"
+    *ngIf="behaviorModal"
+  ></app-behavior-form>
+</app-content-modal>
+
 <ng-template #content>
   <div class="px-4">
     <div class="sm:flex mb-6">
@@ -15,7 +23,7 @@
       <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
         <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
           <div class="overflow-hidden">
-            <table *ngIf="entities$ | async" class="min-w-full divide-y divide-gray-300">
+            <table *ngIf="(entities$ | async) && paginationConfig" class="min-w-full divide-y divide-gray-300">
               <thead>
                 <tr>
                   <th class="py-3.5 pl-6 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0" scope="col">
@@ -72,11 +80,3 @@
     </div>
   </div>
 </ng-template>
-
-<app-content-modal [isModal]="behaviorModal">
-  <app-behavior-form
-    (cancelClicked)="onBehaviorModalCancel()"
-    (saveClicked)="onBehaviorModalSave($event)"
-    *ngIf="behaviorModal"
-  ></app-behavior-form>
-</app-content-modal>

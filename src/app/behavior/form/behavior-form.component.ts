@@ -71,7 +71,6 @@ export class BehaviorFormComponent implements OnDestroy {
   }
 
   initEntityAutocompletion(): void {
-    this.entityService.getAll();
     this.subscriptions.add(
       this.behaviorAutocompletion.valueChanges.pipe().subscribe((search) => {
         this.showAutocompletion = Boolean(search);
