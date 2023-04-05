@@ -1,10 +1,9 @@
 import { Component, EventEmitter, OnDestroy, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, UntypedFormControl, Validators } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, Observable, Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { Agent } from '@app/agent/model/agent';
 import { Store } from '@ngrx/store';
 import { AgentService } from '@app/entity/service';
-import { updateAgentCreateValues } from '@app/agent/store/agent.actions';
 
 @Component({
   selector: 'app-agent-form',
@@ -76,12 +75,6 @@ export class AgentFormComponent implements OnDestroy {
       location: [],
       active: [true]
     });
-
-    this.subscriptions.add(
-      this.agentForm.valueChanges.pipe(distinctUntilChanged(), debounceTime(100)).subscribe((formValue: Agent) => {
-        this.store.dispatch(updateAgentCreateValues(formValue));
-      })
-    );
   }
 
   setFormValuesToSelectedAgent(formValue: Agent): void {

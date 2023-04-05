@@ -1,10 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { ExperimentFormValues } from '../model/experiment-form-values';
 import { fadeIn } from '@shared/animation/trigger';
 import { debounceTime, distinctUntilChanged, Observable, Subscription } from 'rxjs';
-import { updateExperimentCreateValues } from '../store/experiment.actions';
 import { Router } from '@angular/router';
 import { ExperimentService } from '@app/entity/service';
 import { Experiment } from '../model/experiment';
@@ -52,18 +50,6 @@ export class ExperimentCreateComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.entityService.getAll();
-    this.subscriptions.add(
-      this.experimentForm.valueChanges.pipe(debounceTime(500)).subscribe((formValue: ExperimentFormValues) => {
-        this.store.dispatch(
-          updateExperimentCreateValues({
-            name: formValue.name,
-            active: true,
-            description: formValue.description,
-            contact: formValue.contact
-          })
-        );
-      })
-    );
 
     this.subscriptions.add(
       this.experimentAutocomplete.valueChanges.pipe(distinctUntilChanged(), debounceTime(100)).subscribe((search) => {

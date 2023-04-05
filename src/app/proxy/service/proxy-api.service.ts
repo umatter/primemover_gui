@@ -5,8 +5,7 @@ import { Store } from '@ngrx/store';
 import { AppConfig } from '@app/app-config';
 import { QueryFilterService } from '@shared/service/query-filter.service';
 import { QueryParams } from '@ngrx/data';
-import { QueryFilterType } from '@shared/store/shared.selectors';
-import { selectPageRequested } from '@app/proxy/store/proxy.selectors';
+import { QueryFilterType, selectRequestedPage } from '@shared/store/shared.selectors';
 
 @Injectable({
   providedIn: 'root'
@@ -34,7 +33,7 @@ export class ProxyApiService {
     this.queryFilterParams = this.filterService.getFilterParams([QueryFilterType.Recent, QueryFilterType.Crawler]);
 
     this.store
-      .select(selectPageRequested)
+      .select(selectRequestedPage)
       .pipe(
         first(),
         filter((page) => Boolean(page))

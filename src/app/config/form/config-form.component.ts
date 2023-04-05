@@ -2,10 +2,9 @@ import { Component, EventEmitter, OnDestroy, Output } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { FormBuilder, FormControl, FormGroup, UntypedFormControl, Validators } from '@angular/forms';
 import { fadeIn } from '@shared/animation/trigger';
-import { debounceTime, distinctUntilChanged, Observable, Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { ConfigurationService } from '@app/entity/service';
 import { Configuration } from '@app/config/model/config';
-import { updateConfigurationCreateValues } from '@app/config/store/config.actions';
 
 @Component({
   selector: 'app-config-form',
@@ -63,14 +62,6 @@ export class ConfigFormComponent implements OnDestroy {
       location: [],
       active: [true]
     });
-
-    this.subscriptions.add(
-      this.entityForm.valueChanges
-        .pipe(distinctUntilChanged(), debounceTime(100))
-        .subscribe((formValue: Configuration) => {
-          this.store.dispatch(updateConfigurationCreateValues(formValue));
-        })
-    );
   }
 
   setFormValuesToSelectedAgent(formValue: Configuration): void {
