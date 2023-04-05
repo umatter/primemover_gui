@@ -4,7 +4,8 @@ import { Store } from '@ngrx/store';
 import { AppConfig } from '@app/app-config';
 import { QueryFilterService } from '@shared/service/query-filter.service';
 import { QueryParams } from '@ngrx/data';
-import { QueryFilterType } from '@shared/store/shared.selectors';
+import { QueryFilterType, selectRequestedPage } from '@shared/store/shared.selectors';
+import { filter, first } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -26,6 +27,19 @@ export class BehaviorApiService {
 
   getParams(): QueryParams {
     this.queryFilterParams = this.filterService.getFilterParams([QueryFilterType.Job]);
+
+    this.store
+      .select(selectRequestedPage)
+      .pipe(
+        first(),
+        filter((page) => Boolean(page))
+      )
+      .subscribe((pageRequested) => {
+        this.queryFilterParams = {
+          ...this.queryFilterParams,
+          page: pageRequested || 1
+        };
+      });
 
     return this.queryFilterParams;
   }

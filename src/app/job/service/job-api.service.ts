@@ -2,12 +2,11 @@ import { Injectable } from '@angular/core';
 import { filter, first } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Store } from '@ngrx/store';
-
-import { selectPageRequested } from '../store/job.selectors';
 import { AppConfig } from '@app/app-config';
 import { QueryFilterService } from '@shared/service/query-filter.service';
 import { QueryParams } from '@ngrx/data';
-import { QueryFilterType } from '@shared/store/shared.selectors';
+import { QueryFilterType, selectRequestedPage } from '@shared/store/shared.selectors';
+import { PaginatePipeArgs } from 'ngx-pagination';
 
 @Injectable({
   providedIn: 'root'
@@ -27,11 +26,11 @@ export class JobApiService {
     `);
   }
 
-  getParams(): QueryParams {
+  getParams(paginateArgs: PaginatePipeArgs): QueryParams {
     this.queryFilterParams = this.filterService.getFilterParams([QueryFilterType.Recent, QueryFilterType.Queue]);
 
     this.store
-      .select(selectPageRequested)
+      .select(selectRequestedPage)
       .pipe(
         first(),
         filter((page) => Boolean(page))

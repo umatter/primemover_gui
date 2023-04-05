@@ -1,15 +1,16 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { PaginatePipeArgs } from 'ngx-pagination';
-import { select, Store } from '@ngrx/store';
-import { selectJobsPagination } from '../store/job.selectors';
+import { Store } from '@ngrx/store';
 import { JobService } from '@app/entity/service';
 import { Job } from '@app/job/model/Job';
 import { selectCurrentJob, selectQueryFilter } from '@shared/store/shared.selectors';
 import { QueryFilter } from '@shared/model/query-filter';
 import { JobApiService } from '@app/job/service/job-api.service';
-import { jobSelection } from '@shared/store/shared.actions';
+import { jobSelection, requestPage } from '@shared/store/shared.actions';
 import { Router } from '@angular/router';
+import { Meta } from '@shared/pagination/model';
+import { PaginationType } from '@shared/pagination/type';
 
 @Component({
   selector: 'app-job',
@@ -18,10 +19,11 @@ import { Router } from '@angular/router';
 export class JobComponent implements OnDestroy {
   isLoading$: Observable<boolean>;
   paginationConfig: PaginatePipeArgs;
-  entities$: Observable<Job[]>;
+  entities$: Observable<Job[] | any>;
   entityToDelete: Job | null = null;
   queryFilter$: Observable<QueryFilter[]>;
   currentJob$: Observable<Job>;
+  pageMeta$: Observable<Meta>;
 
   private subscriptions = new Subscription();
 
@@ -31,28 +33,36 @@ export class JobComponent implements OnDestroy {
     private apiService: JobApiService,
     private router: Router
   ) {
+    this.pageMeta$ = this.entityService.pageMeta$;
     this.entities$ = this.entityService.entities$;
     this.isLoading$ = this.entityService.loading$;
+
     this.queryFilter$ = this.store.select(selectQueryFilter);
     this.currentJob$ = this.store.select(selectCurrentJob);
     this.getData();
-    //this.initPagination();
+    this.initPagination();
   }
 
   getData(page: number = 1): void {
+    this.store.dispatch(requestPage({ page }));
     this.subscriptions.add(
       this.queryFilter$.pipe().subscribe(() => {
         this.entityService.clearCache();
-        this.entityService.getWithQuery(this.apiService.getParams());
+        this.entityService.getWithQuery(this.apiService.getParams(this.paginationConfig));
       })
     );
   }
 
   initPagination(): void {
     this.subscriptions.add(
-      this.store
-        .pipe(select(selectJobsPagination))
-        .subscribe((paginatePipeArgs) => (this.paginationConfig = paginatePipeArgs))
+      this.pageMeta$.pipe().subscribe((meta) => {
+        this.paginationConfig = {
+          id: PaginationType.JOB,
+          itemsPerPage: meta?.per_page,
+          currentPage: meta?.current_page,
+          totalItems: meta?.total
+        };
+      })
     );
   }
 

@@ -6,18 +6,24 @@ import { Behavior } from '@app/behavior/behavior';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorApiService } from '@app/behavior/service/behavior-api.service';
 import { Store } from '@ngrx/store';
-import { jobSelection } from '@shared/store/shared.actions';
-import { Job } from '@app/job/model/Job';
-import { selectCurrentJob } from '@shared/store/shared.selectors';
+import { jobSelection, requestPage } from '@shared/store/shared.actions';
+import { selectCurrentJob, selectQueryFilter } from '@shared/store/shared.selectors';
+import { Meta } from '@shared/pagination/model';
+import { PaginatePipeArgs } from 'ngx-pagination';
+import { QueryFilter } from '@shared/model/query-filter';
+import { PaginationType } from '@shared/pagination/type';
 
 @Component({
   selector: 'app-behavior',
   templateUrl: './behavior.component.html'
 })
 export class BehaviorComponent implements OnDestroy {
-  entities$: Observable<Behavior[]>;
+  paginationConfig: PaginatePipeArgs;
+  entities$: Observable<Behavior[] | any>;
   isLoading$: Observable<boolean>;
-  currentJob$: Observable<Job>;
+  pageMeta$: Observable<Meta>;
+  queryFilter$: Observable<QueryFilter[]>;
+
   subscriptions = new Subscription();
   behaviorModal: boolean;
   jobId: string | null;
@@ -32,6 +38,8 @@ export class BehaviorComponent implements OnDestroy {
   ) {
     this.entities$ = this.entityService.entities$;
     this.isLoading$ = this.entityService.loading$;
+    this.pageMeta$ = entityService.pageMeta$;
+    this.queryFilter$ = this.store.select(selectQueryFilter);
 
     this.jobId = this.route.snapshot.paramMap.get('id');
     this.subscriptions.add(
@@ -49,8 +57,29 @@ export class BehaviorComponent implements OnDestroy {
     );
   }
 
-  getData(): void {
-    this.entityService.getWithQuery(this.behaviorApiService.getParams());
+  initPagination(): void {
+    this.subscriptions.add(
+      this.pageMeta$.pipe().subscribe((meta) => {
+        this.paginationConfig = {
+          id: PaginationType.BEHAVIOR,
+          itemsPerPage: meta?.per_page,
+          currentPage: meta?.current_page,
+          totalItems: meta?.total
+        };
+      })
+    );
+  }
+
+  getData(page: number = 1): void {
+    this.store.dispatch(requestPage({ page }));
+
+    this.subscriptions.add(
+      this.queryFilter$.pipe().subscribe(() => {
+        this.entityService.clearCache();
+        this.entityService.getWithQuery(this.behaviorApiService.getParams());
+      })
+    );
+    this.initPagination();
   }
 
   deleteRequested(item: Behavior) {

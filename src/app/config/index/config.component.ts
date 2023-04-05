@@ -1,15 +1,17 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
-import { select, Store } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 
 import { PaginatePipeArgs } from 'ngx-pagination';
 import { fadeIn } from '@shared/animation/trigger';
-import { selectConfigurationsPagination } from '../store/config.selectors';
 import { Configuration } from '../model/config';
 import { ConfigurationService } from '@app/entity/service';
 import { QueryFilter } from '@shared/model/query-filter';
 import { selectQueryFilter } from '@shared/store/shared.selectors';
 import { ConfigApiService } from '@app/config/service/config-api.service';
+import { Meta } from '@shared/pagination/model';
+import { requestPage } from '@shared/store/shared.actions';
+import { PaginationType } from '@shared/pagination/type';
 
 @Component({
   selector: 'app-config',
@@ -20,22 +22,26 @@ import { ConfigApiService } from '@app/config/service/config-api.service';
 export class ConfigComponent implements OnDestroy {
   entityToDelete: Configuration | null = null;
   paginationConfig: PaginatePipeArgs;
-  entities$: Observable<any>;
+  entities$: Observable<Configuration[] | any>;
   isLoading$: Observable<boolean>;
   queryFilter$: Observable<QueryFilter[]>;
+  pageMeta$: Observable<Meta>;
 
   private subscriptions = new Subscription();
 
   constructor(private store: Store, private entityService: ConfigurationService, private apiService: ConfigApiService) {
     this.entities$ = entityService.entities$;
     this.isLoading$ = entityService.loading$;
+    this.pageMeta$ = entityService.pageMeta$;
     this.queryFilter$ = this.store.select(selectQueryFilter);
 
     this.getData();
-    //this.initPagination();
+    this.initPagination();
   }
 
   getData(page: number = 1): void {
+    this.store.dispatch(requestPage({ page }));
+
     this.subscriptions.add(
       this.queryFilter$.pipe().subscribe(() => {
         this.entityService.clearCache();
@@ -46,9 +52,14 @@ export class ConfigComponent implements OnDestroy {
 
   initPagination(): void {
     this.subscriptions.add(
-      this.store
-        .pipe(select(selectConfigurationsPagination))
-        .subscribe((paginatePipeArgs) => (this.paginationConfig = paginatePipeArgs))
+      this.pageMeta$.pipe().subscribe((meta) => {
+        this.paginationConfig = {
+          id: PaginationType.CONFIGURATION,
+          itemsPerPage: meta?.per_page,
+          currentPage: meta?.current_page,
+          totalItems: meta?.total
+        };
+      })
     );
   }
 

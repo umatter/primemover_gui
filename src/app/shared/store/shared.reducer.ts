@@ -7,6 +7,7 @@ import {
   initShared,
   jobSelection,
   queueSelection,
+  requestPage,
   updateQueryFilter
 } from './shared.actions';
 import { Experiment } from '@app/experiment/model/experiment';
@@ -21,9 +22,11 @@ export interface SharedState {
   currentCrawler?: Crawler | null;
   currentQueue?: Queue | null;
   currentJob?: Job | null;
+  pageRequested: number;
 }
 
 export const initialState: SharedState = {
+  pageRequested: 1,
   queryFilter: [
     {
       name: QueryFilterType.Recent,
@@ -37,6 +40,7 @@ const reducer = createReducer(
   on(initShared, () => initialState),
   on(clearQueryFilterRequested, (state) => ({ ...state, queryFilter: [] })),
   on(updateQueryFilter, (state, action) => ({ ...state, queryFilter: action.updatedFilter })),
+  on(requestPage, (state, action) => ({ ...state, pageRequested: action.page })),
   on(crawlerSelection, (state, action) => ({
     ...state,
     currentCrawler: action.crawler,

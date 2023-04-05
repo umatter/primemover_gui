@@ -15,6 +15,8 @@ import { Agent } from '../agent/model/agent';
 import { Configuration } from '../config/model/config';
 import { Proxy } from '../proxy/model/proxy';
 import { Behavior } from '@app/behavior/behavior';
+import { Observable } from 'rxjs';
+import { Meta } from '@shared/pagination/model';
 
 @Injectable()
 export class ExperimentDataService extends DefaultDataService<Experiment> {
@@ -25,8 +27,11 @@ export class ExperimentDataService extends DefaultDataService<Experiment> {
 
 @Injectable({ providedIn: 'root' })
 export class ExperimentService extends EntityCollectionServiceBase<Experiment> {
+  pageMeta$: Observable<Meta>;
+
   constructor(serviceElementsFactory: EntityCollectionServiceElementsFactory) {
     super('Experiment', serviceElementsFactory);
+    this.pageMeta$ = this.selectors$['pageMeta$'];
   }
 }
 
@@ -39,8 +44,11 @@ export class CrawlerDataService extends DefaultDataService<Crawler> {
 
 @Injectable({ providedIn: 'root' })
 export class CrawlerService extends EntityCollectionServiceBase<Crawler> {
+  pageMeta$: Observable<Meta>;
+
   constructor(serviceElementsFactory: EntityCollectionServiceElementsFactory) {
     super('Crawler', serviceElementsFactory);
+    this.pageMeta$ = this.selectors$['pageMeta$'];
   }
 }
 
@@ -53,8 +61,11 @@ export class QueueDataService extends DefaultDataService<Queue> {
 
 @Injectable({ providedIn: 'root' })
 export class QueueService extends EntityCollectionServiceBase<Queue> {
+  pageMeta$: Observable<Meta>;
+
   constructor(serviceElementsFactory: EntityCollectionServiceElementsFactory) {
     super('Queue', serviceElementsFactory);
+    this.pageMeta$ = this.selectors$['pageMeta$'];
   }
 }
 
@@ -67,8 +78,11 @@ export class JobDataService extends DefaultDataService<Job> {
 
 @Injectable({ providedIn: 'root' })
 export class JobService extends EntityCollectionServiceBase<Job> {
+  pageMeta$: Observable<Meta>;
+
   constructor(serviceElementsFactory: EntityCollectionServiceElementsFactory) {
     super('Job', serviceElementsFactory);
+    this.pageMeta$ = this.selectors$['pageMeta$'];
   }
 }
 
@@ -81,8 +95,11 @@ export class AgentDataService extends DefaultDataService<Agent> {
 
 @Injectable({ providedIn: 'root' })
 export class AgentService extends EntityCollectionServiceBase<Agent> {
+  pageMeta$: Observable<Meta>;
+
   constructor(serviceElementsFactory: EntityCollectionServiceElementsFactory) {
     super('Agent', serviceElementsFactory);
+    this.pageMeta$ = this.selectors$['pageMeta$'];
   }
 }
 
@@ -95,8 +112,11 @@ export class ConfigurationDataService extends DefaultDataService<Configuration> 
 
 @Injectable({ providedIn: 'root' })
 export class ConfigurationService extends EntityCollectionServiceBase<Configuration> {
+  pageMeta$: Observable<Meta>;
+
   constructor(serviceElementsFactory: EntityCollectionServiceElementsFactory) {
     super('Configuration', serviceElementsFactory);
+    this.pageMeta$ = this.selectors$['pageMeta$'];
   }
 }
 
@@ -109,8 +129,11 @@ export class ProxyDataService extends DefaultDataService<Proxy> {
 
 @Injectable({ providedIn: 'root' })
 export class ProxyService extends EntityCollectionServiceBase<Proxy> {
+  pageMeta$: Observable<Meta>;
+
   constructor(serviceElementsFactory: EntityCollectionServiceElementsFactory) {
     super('Proxy', serviceElementsFactory);
+    this.pageMeta$ = this.selectors$['pageMeta$'];
   }
 }
 
@@ -123,7 +146,10 @@ export class BehaviorDataService extends DefaultDataService<Behavior> {
 
 @Injectable({ providedIn: 'root' })
 export class BehaviorService extends EntityCollectionServiceBase<Behavior> {
+  pageMeta$: Observable<Meta>;
+
   constructor(serviceElementsFactory: EntityCollectionServiceElementsFactory) {
     super('Behavior', serviceElementsFactory);
+    this.pageMeta$ = this.selectors$['pageMeta$'];
   }
 }

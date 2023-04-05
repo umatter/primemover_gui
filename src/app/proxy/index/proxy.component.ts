@@ -1,16 +1,18 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
-import { select, Store } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 
 import { PaginatePipeArgs } from 'ngx-pagination';
 import { fadeIn } from '@shared/animation/trigger';
-import { selectProxiesPagination } from '../store/proxy.selectors';
 import { Proxy } from '../model/proxy';
 import { Configuration } from '@app/config/model/config';
 import { ProxyService } from '@app/entity/service';
 import { selectQueryFilter } from '@shared/store/shared.selectors';
 import { QueryFilter } from '@shared/model/query-filter';
 import { ProxyApiService } from '@app/proxy/service/proxy-api.service';
+import { Meta } from '@shared/pagination/model';
+import { requestPage } from '@shared/store/shared.actions';
+import { PaginationType } from '@shared/pagination/type';
 
 @Component({
   selector: 'app-proxy',
@@ -24,19 +26,22 @@ export class ProxyComponent implements OnDestroy {
   isLoading$: Observable<boolean>;
   entityToDelete: Proxy | null = null;
   queryFilter$: Observable<QueryFilter[]>;
+  pageMeta$: Observable<Meta>;
 
   private subscriptions = new Subscription();
 
   constructor(private store: Store, private entityService: ProxyService, private apiService: ProxyApiService) {
     this.entities$ = entityService.entities$;
     this.isLoading$ = entityService.loading$;
-
+    this.pageMeta$ = entityService.pageMeta$;
     this.queryFilter$ = this.store.select(selectQueryFilter);
     this.getData();
-    //this.initPagination();
+    this.initPagination();
   }
 
   getData(page: number = 1): void {
+    this.store.dispatch(requestPage({ page }));
+
     this.subscriptions.add(
       this.queryFilter$.pipe().subscribe(() => {
         this.entityService.clearCache();
@@ -47,9 +52,14 @@ export class ProxyComponent implements OnDestroy {
 
   initPagination(): void {
     this.subscriptions.add(
-      this.store
-        .pipe(select(selectProxiesPagination))
-        .subscribe((paginatePipeArgs) => (this.paginationConfig = paginatePipeArgs))
+      this.pageMeta$.pipe().subscribe((meta) => {
+        this.paginationConfig = {
+          id: PaginationType.PROXY,
+          itemsPerPage: meta?.per_page,
+          currentPage: meta?.current_page,
+          totalItems: meta?.total
+        };
+      })
     );
   }
 

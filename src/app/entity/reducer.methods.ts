@@ -16,8 +16,11 @@ export class AdditionalEntityCollectionReducerMethods<T> extends EntityCollectio
   // use if additional data comes from the server
   protected override queryManySuccess(collection: EntityCollection<T>, action: EntityAction<T[]>): EntityCollection<T> {
     const ec = super.queryManySuccess(collection, action);
-    if ((action.payload as any).additionalData) {
-      (ec as any).additionalData = (action.payload as any).additionalData;
+    if ((action.payload as any).pageMeta) {
+      (ec as any).pageMeta = (action.payload as any).pageMeta;
+    }
+    if ((action.payload as any).pageLinks) {
+      (ec as any).pageLinks = (action.payload as any).pageLinks;
     }
     return ec;
   }

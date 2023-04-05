@@ -1,12 +1,10 @@
 import { Injectable } from '@angular/core';
-import { filter, first } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Store } from '@ngrx/store';
-import { selectPageRequested } from '../store/crawler.selectors';
 import { AppConfig } from '@app/app-config';
 import { QueryFilterService } from '@shared/service/query-filter.service';
 import { QueryParams } from '@ngrx/data';
-import { QueryFilterType } from '@shared/store/shared.selectors';
+import { QueryFilterType, selectRequestedPage } from '@shared/store/shared.selectors';
 
 @Injectable({
   providedIn: 'root'
@@ -30,11 +28,8 @@ export class CrawlerApiService {
     this.queryFilterParams = this.filterService.getFilterParams([QueryFilterType.Recent, QueryFilterType.Experiment]);
 
     this.store
-      .select(selectPageRequested)
-      .pipe(
-        first(),
-        filter((page) => Boolean(page))
-      )
+      .select(selectRequestedPage)
+      .pipe()
       .subscribe((pageRequested) => {
         this.queryFilterParams = {
           ...this.queryFilterParams,

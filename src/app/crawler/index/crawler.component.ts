@@ -1,15 +1,16 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
-import { select, Store } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 import { PaginatePipeArgs } from 'ngx-pagination';
 import { fadeIn } from '@shared/animation/trigger';
-import { selectCrawlersPagination } from '../store/crawler.selectors';
 import { Crawler } from '../model/crawler';
-import { crawlerSelection } from '@shared/store/shared.actions';
+import { crawlerSelection, requestPage } from '@shared/store/shared.actions';
 import { CrawlerService } from '@app/entity/service';
 import { CrawlerApiService } from '@app/crawler/service/crawler-api.service';
 import { QueryFilter } from '@shared/model/query-filter';
 import { selectCurrentCrawler, selectQueryFilter } from '@shared/store/shared.selectors';
+import { Meta } from '@shared/pagination/model';
+import { PaginationType } from '@shared/pagination/type';
 
 @Component({
   selector: 'app-crawler',
@@ -19,22 +20,27 @@ import { selectCurrentCrawler, selectQueryFilter } from '@shared/store/shared.se
 export class CrawlerComponent implements OnDestroy {
   isLoading$: Observable<boolean>;
   paginationConfig: PaginatePipeArgs;
-  entities$: Observable<Crawler[]>;
+  entities$: Observable<Crawler[] | any>;
   entityToDelete: Crawler | null = null;
   queryFilter$: Observable<QueryFilter[]>;
   currentCrawler$: Observable<Crawler>;
+  pageMeta$: Observable<Meta>;
+
   private subscriptions = new Subscription();
 
   constructor(private store: Store, private entityService: CrawlerService, private apiService: CrawlerApiService) {
     this.entities$ = entityService.entities$;
     this.isLoading$ = this.entityService.loading$;
+    this.pageMeta$ = entityService.pageMeta$;
     this.queryFilter$ = this.store.select(selectQueryFilter);
     this.currentCrawler$ = this.store.select(selectCurrentCrawler);
     this.getData();
-    //this.initPagination();
+    this.initPagination();
   }
 
   getData(page: number = 1): void {
+    this.store.dispatch(requestPage({ page }));
+
     this.subscriptions.add(
       this.queryFilter$.pipe().subscribe(() => {
         this.entityService.clearCache();
@@ -49,9 +55,14 @@ export class CrawlerComponent implements OnDestroy {
 
   initPagination(): void {
     this.subscriptions.add(
-      this.store
-        .pipe(select(selectCrawlersPagination))
-        .subscribe((paginatePipeArgs) => (this.paginationConfig = paginatePipeArgs))
+      this.pageMeta$.pipe().subscribe((meta) => {
+        this.paginationConfig = {
+          id: PaginationType.CRAWLER,
+          itemsPerPage: meta?.per_page,
+          currentPage: meta?.current_page,
+          totalItems: meta?.total
+        };
+      })
     );
   }
 

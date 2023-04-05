@@ -5,15 +5,16 @@ import { select, Store } from '@ngrx/store';
 import { PaginatePipeArgs } from 'ngx-pagination';
 import { Router } from '@angular/router';
 import { fadeIn } from '@shared/animation/trigger';
-import { selectExperimentsPagination } from '../store/experiment.selectors';
 import { Experiment } from '../model/experiment';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { ExperimentService } from '@app/entity/service';
-import { experimentSelection } from '@shared/store/shared.actions';
+import { experimentSelection, requestPage } from '@shared/store/shared.actions';
 import { ExperimentApiService } from '@app/experiment/service/experiment-api.service';
 import { selectCurrentExperiment, selectQueryFilter } from '@shared/store/shared.selectors';
 import { QueryFilter } from '@shared/model/query-filter';
+import { Meta } from '@shared/pagination/model';
+import { PaginationType } from '@shared/pagination/type';
 
 @Component({
   selector: 'app-experiment',
@@ -23,10 +24,11 @@ import { QueryFilter } from '@shared/model/query-filter';
 export class ExperimentComponent implements OnDestroy {
   paginationConfig: PaginatePipeArgs;
   isLoading$: Observable<boolean>;
-  entities$: Observable<Experiment[]>;
+  entities$: Observable<Experiment[] | any>;
   experimentToDelete: Experiment | null = null;
   queryFilter$: Observable<QueryFilter[]>;
   currentExperiment$: Observable<Experiment>;
+  pageMeta$: Observable<Meta>;
 
   private subscriptions = new Subscription();
 
@@ -40,15 +42,17 @@ export class ExperimentComponent implements OnDestroy {
   ) {
     this.entities$ = entityService.entities$;
     this.isLoading$ = this.entityService.loading$;
+    this.pageMeta$ = entityService.pageMeta$;
     this.queryFilter$ = this.store.select(selectQueryFilter);
     this.currentExperiment$ = this.store.pipe(select(selectCurrentExperiment));
 
     this.getData();
-
-    //this.initPagination();
+    this.initPagination();
   }
 
   getData(page: number = 1): void {
+    this.store.dispatch(requestPage({ page }));
+
     this.subscriptions.add(
       this.queryFilter$.pipe().subscribe(() => {
         this.entityService.clearCache();
@@ -59,9 +63,14 @@ export class ExperimentComponent implements OnDestroy {
 
   initPagination(): void {
     this.subscriptions.add(
-      this.store
-        .pipe(select(selectExperimentsPagination))
-        .subscribe((paginatePipeArgs) => (this.paginationConfig = paginatePipeArgs))
+      this.pageMeta$.pipe().subscribe((meta) => {
+        this.paginationConfig = {
+          id: PaginationType.EXPERIMENT,
+          itemsPerPage: meta?.per_page,
+          currentPage: meta?.current_page,
+          totalItems: meta?.total
+        };
+      })
     );
   }
 

@@ -15,6 +15,10 @@ const entityMetadata: EntityMetadataMap = {
     sortComparer: sortByName,
     entityDispatcherOptions: {
       optimisticDelete: true
+    },
+    additionalCollectionState: {
+      pageMeta: null,
+      pageLinks: null
     }
   },
   Crawler: {
@@ -22,6 +26,10 @@ const entityMetadata: EntityMetadataMap = {
     sortComparer: sortByName,
     entityDispatcherOptions: {
       optimisticDelete: true
+    },
+    additionalCollectionState: {
+      pageMeta: null,
+      pageLinks: null
     }
   },
   Queue: {
@@ -29,6 +37,10 @@ const entityMetadata: EntityMetadataMap = {
     sortComparer: sortByName,
     entityDispatcherOptions: {
       optimisticDelete: true
+    },
+    additionalCollectionState: {
+      pageMeta: null,
+      pageLinks: null
     }
   },
   Job: {
@@ -36,6 +48,10 @@ const entityMetadata: EntityMetadataMap = {
     sortComparer: sortByName,
     entityDispatcherOptions: {
       optimisticDelete: true
+    },
+    additionalCollectionState: {
+      pageMeta: null,
+      pageLinks: null
     }
   },
   Agent: {
@@ -43,6 +59,10 @@ const entityMetadata: EntityMetadataMap = {
     sortComparer: sortByName,
     entityDispatcherOptions: {
       optimisticDelete: true
+    },
+    additionalCollectionState: {
+      pageMeta: null,
+      pageLinks: null
     }
   },
   Proxy: {
@@ -50,6 +70,10 @@ const entityMetadata: EntityMetadataMap = {
     sortComparer: sortByName,
     entityDispatcherOptions: {
       optimisticDelete: true
+    },
+    additionalCollectionState: {
+      pageMeta: null,
+      pageLinks: null
     }
   },
   Configuration: {
@@ -57,6 +81,10 @@ const entityMetadata: EntityMetadataMap = {
     sortComparer: sortByName,
     entityDispatcherOptions: {
       optimisticDelete: true
+    },
+    additionalCollectionState: {
+      pageMeta: null,
+      pageLinks: null
     }
   },
   Behavior: {
@@ -64,6 +92,10 @@ const entityMetadata: EntityMetadataMap = {
     sortComparer: sortByName,
     entityDispatcherOptions: {
       optimisticDelete: true
+    },
+    additionalCollectionState: {
+      pageMeta: null,
+      pageLinks: null
     }
   }
 };

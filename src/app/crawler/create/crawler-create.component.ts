@@ -3,7 +3,6 @@ import { select, Store } from '@ngrx/store';
 import { FormBuilder, FormControl, FormGroup, UntypedFormControl, Validators } from '@angular/forms';
 import { fadeIn } from '@shared/animation/trigger';
 import { debounceTime, distinctUntilChanged, Observable, Subscription } from 'rxjs';
-import { selectAgentsPagination } from '@app/agent/store/agent.selectors';
 import { PaginatePipeArgs } from 'ngx-pagination';
 import { Experiment } from '../model/experiment';
 import {
@@ -148,22 +147,10 @@ export class CrawlerCreateComponent implements OnDestroy {
     );
   }
 
-  setControlValue(item: any, control: any) {
-    this.crawlerForm.controls[control]?.setValue(item.id);
-  }
-
   reset(control: any, typeahead: FormControl) {
     this.crawlerForm.controls[control]?.setValue(null);
     typeahead.setValue(null);
     typeahead.enable();
-  }
-
-  initPagination(): void {
-    this.subscriptions.add(
-      this.store
-        .pipe(select(selectAgentsPagination))
-        .subscribe((paginatePipeArgs) => (this.paginationConfig = paginatePipeArgs))
-    );
   }
 
   hasError(controlName: string, errorName: string): boolean {

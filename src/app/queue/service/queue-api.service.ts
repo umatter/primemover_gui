@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
-import { first } from 'rxjs';
+import { filter, first } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { select, Store } from '@ngrx/store';
-import { selectPageRequested } from '../store/queue.selectors';
+import { Store } from '@ngrx/store';
 import { AppConfig } from '@app/app-config';
 import { QueryFilterService } from '@shared/service/query-filter.service';
 import { QueryParams } from '@ngrx/data';
-import { QueryFilterType } from '@shared/store/shared.selectors';
+import { QueryFilterType, selectRequestedPage } from '@shared/store/shared.selectors';
 
 @Injectable({
   providedIn: 'root'
@@ -28,15 +27,20 @@ export class QueueApiService {
   }
 
   getParams(): QueryParams {
-    this.store.pipe(select(selectPageRequested), first()).subscribe((response) => (this.pageRequested = response));
     this.queryFilterParams = this.filterService.getFilterParams([QueryFilterType.Recent, QueryFilterType.Crawler]);
 
-    if (this.pageRequested) {
-      this.queryFilterParams = {
-        ...this.queryFilterParams,
-        page: this.pageRequested
-      };
-    }
+    this.store
+      .select(selectRequestedPage)
+      .pipe(
+        first(),
+        filter((page) => Boolean(page))
+      )
+      .subscribe((pageRequested) => {
+        this.queryFilterParams = {
+          ...this.queryFilterParams,
+          page: pageRequested || 1
+        };
+      });
 
     return this.queryFilterParams;
   }

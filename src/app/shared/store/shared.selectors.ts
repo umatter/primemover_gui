@@ -11,6 +11,7 @@ export enum QueryFilterType {
 
 export const selectShared = createFeatureSelector<SharedState>('shared');
 export const selectQueryFilter = createSelector(selectShared, (state) => state.queryFilter || []);
+export const selectRequestedPage = createSelector(selectShared, (state) => state.pageRequested || 1);
 export const selectCurrentCrawler = createSelector(selectShared, (state) => {
   return (
     state.queryFilter.filter((item) => item.entity && item.name === QueryFilterType.Crawler).shift()?.entity || null

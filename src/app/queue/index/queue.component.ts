@@ -3,14 +3,15 @@ import { fadeIn } from '@shared/animation/trigger';
 import { Observable, Subscription } from 'rxjs';
 import { PaginatePipeArgs } from 'ngx-pagination';
 import { select, Store } from '@ngrx/store';
-import { selectQueuesPagination } from '../store/queue.selectors';
 import { Queue } from '../model/queue';
 import { ExperimentApiService } from '@app/experiment/service/experiment-api.service';
 import { QueueService } from '@app/entity/service';
-import { queueSelection } from '@shared/store/shared.actions';
+import { queueSelection, requestPage } from '@shared/store/shared.actions';
 import { QueueApiService } from '@app/queue/service/queue-api.service';
 import { selectCurrentQueue, selectQueryFilter } from '@shared/store/shared.selectors';
 import { QueryFilter } from '@shared/model/query-filter';
+import { Meta } from '@shared/pagination/model';
+import { PaginationType } from '@shared/pagination/type';
 
 @Component({
   selector: 'app-queue',
@@ -20,10 +21,11 @@ import { QueryFilter } from '@shared/model/query-filter';
 export class QueueComponent implements OnDestroy {
   isLoading$: Observable<boolean>;
   paginationConfig: PaginatePipeArgs;
-  entities$: Observable<Queue[]>;
+  entities$: Observable<Queue[] | any>;
   entityToDelete: Queue | null = null;
   queryFilter$: Observable<QueryFilter[]>;
   currentQueue$: Observable<Queue>;
+  pageMeta$: Observable<Meta>;
 
   private subscriptions = new Subscription();
 
@@ -35,14 +37,17 @@ export class QueueComponent implements OnDestroy {
   ) {
     this.isLoading$ = entityService.loading$;
     this.entities$ = entityService.entities$;
+    this.pageMeta$ = entityService.pageMeta$;
     this.queryFilter$ = this.store.select(selectQueryFilter);
     this.currentQueue$ = this.store.pipe(select(selectCurrentQueue));
 
     this.getData();
-    //this.initPagination();
+    this.initPagination();
   }
 
   getData(page: number = 1): void {
+    this.store.dispatch(requestPage({ page }));
+
     this.subscriptions.add(
       this.queryFilter$.pipe().subscribe(() => {
         this.entityService.clearCache();
@@ -53,9 +58,14 @@ export class QueueComponent implements OnDestroy {
 
   initPagination(): void {
     this.subscriptions.add(
-      this.store
-        .pipe(select(selectQueuesPagination))
-        .subscribe((paginatePipeArgs) => (this.paginationConfig = paginatePipeArgs))
+      this.pageMeta$.pipe().subscribe((meta) => {
+        this.paginationConfig = {
+          id: PaginationType.QUEUE,
+          itemsPerPage: meta?.per_page,
+          currentPage: meta?.current_page,
+          totalItems: meta?.total
+        };
+      })
     );
   }
 
