@@ -11,7 +11,6 @@ import { selectQueryFilter } from '@shared/store/shared.selectors';
 import { QueryFilter } from '@shared/model/query-filter';
 import { Meta } from '@shared/pagination/model';
 import { requestPage } from '@shared/store/shared.actions';
-import { PaginationType } from '@shared/pagination/type';
 
 @Component({
   selector: 'app-agent',
@@ -52,12 +51,7 @@ export class AgentComponent implements OnDestroy {
   initPagination(): void {
     this.subscriptions.add(
       this.pageMeta$.pipe().subscribe((meta) => {
-        this.paginationConfig = {
-          id: PaginationType.AGENT,
-          itemsPerPage: meta?.per_page,
-          currentPage: meta?.current_page,
-          totalItems: meta?.total
-        };
+        this.paginationConfig = this.apiService.getPaginateArgs(meta);
       })
     );
   }

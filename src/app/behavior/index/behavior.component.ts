@@ -11,7 +11,6 @@ import { selectCurrentJob, selectQueryFilter } from '@shared/store/shared.select
 import { Meta } from '@shared/pagination/model';
 import { PaginatePipeArgs } from 'ngx-pagination';
 import { QueryFilter } from '@shared/model/query-filter';
-import { PaginationType } from '@shared/pagination/type';
 
 @Component({
   selector: 'app-behavior',
@@ -60,13 +59,7 @@ export class BehaviorComponent implements OnDestroy {
   initPagination(): void {
     this.subscriptions.add(
       this.pageMeta$.pipe().subscribe((meta) => {
-        this.paginationConfig = {
-          id: PaginationType.BEHAVIOR,
-          itemsPerPage: meta?.per_page,
-          currentPage: meta?.current_page,
-          totalItems: meta?.total
-        };
-        console.log(this.paginationConfig);
+        this.paginationConfig = this.behaviorApiService.getPaginateArgs(meta);
       })
     );
   }

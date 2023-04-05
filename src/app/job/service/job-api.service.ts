@@ -7,6 +7,9 @@ import { QueryFilterService } from '@shared/service/query-filter.service';
 import { QueryParams } from '@ngrx/data';
 import { QueryFilterType, selectRequestedPage } from '@shared/store/shared.selectors';
 import { PaginatePipeArgs } from 'ngx-pagination';
+import { Meta } from '@shared/pagination/model';
+import { PaginationType } from '@shared/pagination/type';
+import { PaginationService } from '@shared/pagination/pagination.service';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +21,8 @@ export class JobApiService {
     private http: HttpClient,
     private store: Store,
     private config: AppConfig,
-    private filterService: QueryFilterService
+    private filterService: QueryFilterService,
+    private paginationService: PaginationService
   ) {}
 
   public search(keyword: string) {
@@ -26,7 +30,11 @@ export class JobApiService {
     `);
   }
 
-  getParams(paginateArgs: PaginatePipeArgs): QueryParams {
+  getPaginateArgs(meta: Meta): PaginatePipeArgs {
+    return this.paginationService.getPipeArgs(meta, PaginationType.JOB);
+  }
+
+  getParams(): QueryParams {
     this.queryFilterParams = this.filterService.getFilterParams([QueryFilterType.Recent, QueryFilterType.Queue]);
 
     this.store

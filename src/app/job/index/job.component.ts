@@ -10,7 +10,6 @@ import { JobApiService } from '@app/job/service/job-api.service';
 import { jobSelection, requestPage } from '@shared/store/shared.actions';
 import { Router } from '@angular/router';
 import { Meta } from '@shared/pagination/model';
-import { PaginationType } from '@shared/pagination/type';
 
 @Component({
   selector: 'app-job',
@@ -48,7 +47,7 @@ export class JobComponent implements OnDestroy {
     this.subscriptions.add(
       this.queryFilter$.pipe().subscribe(() => {
         this.entityService.clearCache();
-        this.entityService.getWithQuery(this.apiService.getParams(this.paginationConfig));
+        this.entityService.getWithQuery(this.apiService.getParams());
       })
     );
   }
@@ -56,12 +55,7 @@ export class JobComponent implements OnDestroy {
   initPagination(): void {
     this.subscriptions.add(
       this.pageMeta$.pipe().subscribe((meta) => {
-        this.paginationConfig = {
-          id: PaginationType.JOB,
-          itemsPerPage: meta?.per_page,
-          currentPage: meta?.current_page,
-          totalItems: meta?.total
-        };
+        this.paginationConfig = this.apiService.getPaginateArgs(meta);
       })
     );
   }

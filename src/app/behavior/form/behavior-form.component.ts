@@ -83,7 +83,7 @@ export class BehaviorFormComponent implements OnDestroy {
   initEntityForm(): void {
     this.entityForm = this.formBuilder.group({
       name: [null, [Validators.required]],
-      description: [null],
+      description: [null, [Validators.required]],
       value: [null, [Validators.required]],
       job_id: [null, [Validators.required]]
     });

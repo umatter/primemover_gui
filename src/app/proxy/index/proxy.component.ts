@@ -12,7 +12,6 @@ import { QueryFilter } from '@shared/model/query-filter';
 import { ProxyApiService } from '@app/proxy/service/proxy-api.service';
 import { Meta } from '@shared/pagination/model';
 import { requestPage } from '@shared/store/shared.actions';
-import { PaginationType } from '@shared/pagination/type';
 
 @Component({
   selector: 'app-proxy',
@@ -53,12 +52,7 @@ export class ProxyComponent implements OnDestroy {
   initPagination(): void {
     this.subscriptions.add(
       this.pageMeta$.pipe().subscribe((meta) => {
-        this.paginationConfig = {
-          id: PaginationType.PROXY,
-          itemsPerPage: meta?.per_page,
-          currentPage: meta?.current_page,
-          totalItems: meta?.total
-        };
+        this.paginationConfig = this.apiService.getPaginateArgs(meta);
       })
     );
   }

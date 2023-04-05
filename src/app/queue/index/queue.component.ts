@@ -11,7 +11,6 @@ import { QueueApiService } from '@app/queue/service/queue-api.service';
 import { selectCurrentQueue, selectQueryFilter } from '@shared/store/shared.selectors';
 import { QueryFilter } from '@shared/model/query-filter';
 import { Meta } from '@shared/pagination/model';
-import { PaginationType } from '@shared/pagination/type';
 
 @Component({
   selector: 'app-queue',
@@ -59,12 +58,7 @@ export class QueueComponent implements OnDestroy {
   initPagination(): void {
     this.subscriptions.add(
       this.pageMeta$.pipe().subscribe((meta) => {
-        this.paginationConfig = {
-          id: PaginationType.QUEUE,
-          itemsPerPage: meta?.per_page,
-          currentPage: meta?.current_page,
-          totalItems: meta?.total
-        };
+        this.paginationConfig = this.apiService.getPaginateArgs(meta);
       })
     );
   }

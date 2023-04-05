@@ -10,7 +10,6 @@ import { CrawlerApiService } from '@app/crawler/service/crawler-api.service';
 import { QueryFilter } from '@shared/model/query-filter';
 import { selectCurrentCrawler, selectQueryFilter } from '@shared/store/shared.selectors';
 import { Meta } from '@shared/pagination/model';
-import { PaginationType } from '@shared/pagination/type';
 
 @Component({
   selector: 'app-crawler',
@@ -56,12 +55,7 @@ export class CrawlerComponent implements OnDestroy {
   initPagination(): void {
     this.subscriptions.add(
       this.pageMeta$.pipe().subscribe((meta) => {
-        this.paginationConfig = {
-          id: PaginationType.CRAWLER,
-          itemsPerPage: meta?.per_page,
-          currentPage: meta?.current_page,
-          totalItems: meta?.total
-        };
+        this.paginationConfig = this.apiService.getPaginateArgs(meta);
       })
     );
   }

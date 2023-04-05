@@ -6,6 +6,10 @@ import { AppConfig } from '@app/app-config';
 import { QueryFilterService } from '@shared/service/query-filter.service';
 import { QueryParams } from '@ngrx/data';
 import { QueryFilterType, selectRequestedPage } from '@shared/store/shared.selectors';
+import { Meta } from '@shared/pagination/model';
+import { PaginatePipeArgs } from 'ngx-pagination';
+import { PaginationType } from '@shared/pagination/type';
+import { PaginationService } from '@shared/pagination/pagination.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +21,8 @@ export class ConfigApiService {
     private http: HttpClient,
     private store: Store,
     private config: AppConfig,
-    private filterService: QueryFilterService
+    private filterService: QueryFilterService,
+    private paginationService: PaginationService
   ) {}
 
   public simpleIndex(): Observable<[]> {
@@ -27,6 +32,10 @@ export class ConfigApiService {
   public search(keyword: string) {
     return this.http.get<[]>(`${this.config.apiBaseUrl}/configurations?filter[search]=${keyword}
     `);
+  }
+
+  getPaginateArgs(meta: Meta): PaginatePipeArgs {
+    return this.paginationService.getPipeArgs(meta, PaginationType.CONFIGURATION);
   }
 
   getParams(): QueryParams {

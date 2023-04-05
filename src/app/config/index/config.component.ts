@@ -11,7 +11,6 @@ import { selectQueryFilter } from '@shared/store/shared.selectors';
 import { ConfigApiService } from '@app/config/service/config-api.service';
 import { Meta } from '@shared/pagination/model';
 import { requestPage } from '@shared/store/shared.actions';
-import { PaginationType } from '@shared/pagination/type';
 
 @Component({
   selector: 'app-config',
@@ -53,12 +52,7 @@ export class ConfigComponent implements OnDestroy {
   initPagination(): void {
     this.subscriptions.add(
       this.pageMeta$.pipe().subscribe((meta) => {
-        this.paginationConfig = {
-          id: PaginationType.CONFIGURATION,
-          itemsPerPage: meta?.per_page,
-          currentPage: meta?.current_page,
-          totalItems: meta?.total
-        };
+        this.paginationConfig = this.apiService.getPaginateArgs(meta);
       })
     );
   }
