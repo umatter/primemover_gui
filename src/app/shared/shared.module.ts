@@ -49,6 +49,7 @@ import { AutocompleteSelectComponent } from '@shared/autocomplete-select/autocom
 import { HeroiconTrashComponent } from './icon/heroicon-trash/heroicon-trash.component';
 import { HeroiconPlusComponent } from './icon/heroicon-plus/heroicon-plus.component';
 import { HeroiconClipboardDocumentComponent } from './icon/heroicon-clipboard-document/heroicon-clipboard-document.component';
+import { HeroiconUploadComponent } from './icon/heroicon-upload/heroicon-upload.component';
 
 @NgModule({
   declarations: [
@@ -82,7 +83,8 @@ import { HeroiconClipboardDocumentComponent } from './icon/heroicon-clipboard-do
     AutocompleteSelectComponent,
     HeroiconTrashComponent,
     HeroiconPlusComponent,
-    HeroiconClipboardDocumentComponent
+    HeroiconClipboardDocumentComponent,
+    HeroiconUploadComponent
   ],
   imports: [
     CommonModule,
@@ -141,7 +143,8 @@ import { HeroiconClipboardDocumentComponent } from './icon/heroicon-clipboard-do
     AutocompleteSelectComponent,
     HeroiconTrashComponent,
     HeroiconPlusComponent,
-    HeroiconClipboardDocumentComponent
+    HeroiconClipboardDocumentComponent,
+    HeroiconUploadComponent
   ],
 
   providers: [

@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from '@core/guards/auth.guard';
 import { ExperimentComponent } from './index/experiment.component';
 import { ExperimentCreateComponent } from './create/experiment-create.component';
+import { ExperimentUploadComponent } from './experiment-upload/experiment-upload.component';
 
 const routes: Routes = [
   {
@@ -14,6 +15,12 @@ const routes: Routes = [
   {
     path: 'create',
     component: ExperimentCreateComponent,
+    canActivate: [AuthGuard],
+    data: { requiresLogin: true }
+  },
+  {
+    path: 'upload',
+    component: ExperimentUploadComponent,
     canActivate: [AuthGuard],
     data: { requiresLogin: true }
   }

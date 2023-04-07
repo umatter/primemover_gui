@@ -7,10 +7,14 @@ import {
   experimentSelection,
   queueSelection,
   resetQueryFilterRequested,
-  updateQueryFilter
+  updateQueryFilter,
+  uploadFile,
+  uploadFileSuccess,
+  uploadFileFailure
 } from './shared.actions';
 import { selectQueryFilter } from './shared.selectors';
 import { CrawlerService, ExperimentService } from '@app/entity/service';
+import { FileUploadService } from '../service/file-upload.service';
 
 @Injectable()
 export class SharedEffects {
@@ -56,10 +60,23 @@ export class SharedEffects {
     )
   );
 
+  experimentUpload$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(uploadFile),
+      switchMap(({ file }) => {
+        return this.fileService.uploadExperiment(file).pipe(
+          map((response) => uploadFileSuccess(response)),
+          catchError((error) => of(uploadFileFailure(error)))
+        );
+      })
+    );
+  });
+
   constructor(
     private actions$: Actions,
     private store: Store,
     private experimentService: ExperimentService,
-    private crawlerService: CrawlerService
+    private crawlerService: CrawlerService,
+    private fileService: FileUploadService
   ) {}
 }
