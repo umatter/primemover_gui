@@ -32,7 +32,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { SharedEffects } from './store/shared.effects';
 import { sharedReducer } from './store/shared.reducer';
 import { MatButtonModule } from '@angular/material/button';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
@@ -49,6 +49,8 @@ import { AutocompleteSelectComponent } from '@shared/autocomplete-select/autocom
 import { HeroiconTrashComponent } from './icon/heroicon-trash/heroicon-trash.component';
 import { HeroiconPlusComponent } from './icon/heroicon-plus/heroicon-plus.component';
 import { HeroiconClipboardDocumentComponent } from './icon/heroicon-clipboard-document/heroicon-clipboard-document.component';
+import { HeroiconUploadComponent } from './icon/heroicon-upload/heroicon-upload.component';
+import { FileUploadComponent } from './file-upload/file-upload.component';
 
 @NgModule({
   declarations: [
@@ -82,7 +84,9 @@ import { HeroiconClipboardDocumentComponent } from './icon/heroicon-clipboard-do
     AutocompleteSelectComponent,
     HeroiconTrashComponent,
     HeroiconPlusComponent,
-    HeroiconClipboardDocumentComponent
+    HeroiconClipboardDocumentComponent,
+    HeroiconUploadComponent,
+    FileUploadComponent
   ],
   imports: [
     CommonModule,
@@ -141,12 +145,9 @@ import { HeroiconClipboardDocumentComponent } from './icon/heroicon-clipboard-do
     AutocompleteSelectComponent,
     HeroiconTrashComponent,
     HeroiconPlusComponent,
-    HeroiconClipboardDocumentComponent
-  ],
-
-  providers: [
-    { provide: MAT_DIALOG_DATA, useValue: {} },
-    { provide: MatDialogRef, useValue: {} }
+    HeroiconClipboardDocumentComponent,
+    HeroiconUploadComponent,
+    FileUploadComponent
   ]
 })
 export class SharedModule {}

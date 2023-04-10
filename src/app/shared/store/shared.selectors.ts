@@ -33,3 +33,11 @@ export const selectCurrentJob = createSelector(selectShared, (state) => {
 export const selectRecentFilter = createSelector(selectShared, (state) => {
   return state.queryFilter.filter((item) => item.name === QueryFilterType.Recent).shift() || null;
 });
+
+export const selectFile = createSelector(selectShared, (state) => {
+  return { isUploading: state.isUploading, uploadError: state.uploadError };
+});
+
+export const selectIsUploading = createSelector(selectShared, (state) => state.isUploading);
+
+export const selectUploadingError = createSelector(selectShared, (state) => state.uploadError);

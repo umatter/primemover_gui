@@ -16,10 +16,6 @@
         <dt class="text-sm font-medium text-gray-500">{{ 'common.name' | translate }}</dt>
         <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{{ experiment.name }}</dd>
       </div>
-      <div *ngIf="experiment.description" class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-        <dt class="text-sm font-medium text-gray-500">{{ 'common.description' | translate }}</dt>
-        <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{{ experiment.description }}</dd>
-      </div>
       <div *ngIf="experiment.contact" class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
         <dt class="text-sm font-medium text-gray-500">{{ 'common.contact' | translate }}</dt>
         <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{{ experiment.contact }}</dd>
@@ -36,10 +32,6 @@
         <dt class="text-sm font-medium text-gray-500">{{ 'common.name' | translate }}</dt>
         <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{{ crawler.name }}</dd>
       </div>
-      <div *ngIf="crawler.description" class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-        <dt class="text-sm font-medium text-gray-500">{{ 'common.description' | translate }}</dt>
-        <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{{ crawler.description }}</dd>
-      </div>
       <div *ngIf="crawler?.agent" class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
         <dt class="text-sm font-medium text-gray-500">{{ 'agent.label' | translate }}</dt>
         <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{{ crawler?.agent?.id }}</dd>
@@ -49,7 +41,7 @@
         <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{{ crawler?.proxy?.id }}</dd>
       </div>
       <div *ngIf="crawler?.configuration" class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-        <dt class="text-sm font-medium text-gray-500">{{ 'configuration.label' | translate }}</dt>
+        <dt class="text-sm font-medium text-gray-500">{{ 'config.label' | translate }}</dt>
         <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{{ crawler?.configuration?.id }}</dd>
       </div>
     </dl>

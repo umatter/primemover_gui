@@ -4,11 +4,11 @@ import { Store } from '@ngrx/store';
 import { PaginatePipeArgs } from 'ngx-pagination';
 import { fadeIn } from '@shared/animation/trigger';
 import { Crawler } from '../model/crawler';
-import { crawlerSelection, requestPage } from '@shared/store/shared.actions';
+import { crawlerSelection, requestPage, resetQueryFilterRequested } from '@shared/store/shared.actions';
 import { CrawlerService } from '@app/entity/service';
 import { CrawlerApiService } from '@app/crawler/service/crawler-api.service';
 import { QueryFilter } from '@shared/model/query-filter';
-import { selectCurrentCrawler, selectQueryFilter } from '@shared/store/shared.selectors';
+import { QueryFilterType, selectCurrentCrawler, selectQueryFilter } from '@shared/store/shared.selectors';
 import { Meta } from '@shared/pagination/model';
 
 @Component({
@@ -66,10 +66,17 @@ export class CrawlerComponent implements OnDestroy {
 
   onModalResponse(event: boolean): void {
     if (event && this.entityToDelete) {
-      this.entityService.delete(this.entityToDelete.id);
-      this.store.dispatch(crawlerSelection({ crawler: null }));
+      this.subscriptions.add(
+        this.entityService
+          .delete(this.entityToDelete.id)
+          .pipe()
+          .subscribe(() => {
+            this.store.dispatch(crawlerSelection({ crawler: null }));
+            this.store.dispatch(resetQueryFilterRequested({ filterName: QueryFilterType.Crawler }));
+            this.entityToDelete = null;
+          })
+      );
     }
-    this.entityToDelete = null;
   }
 
   ngOnDestroy() {

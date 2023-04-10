@@ -1,16 +1,21 @@
 import { Injectable } from '@angular/core';
-import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import { select, Store } from '@ngrx/store';
-import { catchError, map, of, switchMap, withLatestFrom } from 'rxjs';
+import { catchError, map, of, switchMap, tap, withLatestFrom } from 'rxjs';
 import {
   crawlerSelection,
   experimentSelection,
   queueSelection,
   resetQueryFilterRequested,
-  updateQueryFilter
+  updateQueryFilter,
+  uploadFile,
+  uploadFileFailure,
+  uploadFileSuccess
 } from './shared.actions';
-import { selectQueryFilter } from './shared.selectors';
+import { selectCurrentExperiment, selectQueryFilter } from './shared.selectors';
 import { CrawlerService, ExperimentService } from '@app/entity/service';
+import { FileUploadService } from '../service/file-upload.service';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class SharedEffects {
@@ -56,10 +61,26 @@ export class SharedEffects {
     )
   );
 
+  experimentUpload$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(uploadFile),
+      concatLatestFrom(() => this.store.pipe(select(selectCurrentExperiment))),
+      switchMap(([action, currentExperiment]) => {
+        return this.fileService.uploadExperiment(action.file, currentExperiment).pipe(
+          map((response) => uploadFileSuccess(response)),
+          catchError((error) => of(uploadFileFailure(error)))
+        );
+      }),
+      tap(() => this.router.navigate(['/crawlers']))
+    );
+  });
+
   constructor(
     private actions$: Actions,
     private store: Store,
     private experimentService: ExperimentService,
-    private crawlerService: CrawlerService
+    private crawlerService: CrawlerService,
+    private fileService: FileUploadService,
+    private router: Router
   ) {}
 }

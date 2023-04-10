@@ -6,6 +6,7 @@ export const environment = {
   production: false,
   configService: {
     apiBaseUrl: 'http://localhost/api/v1'
+    //apiBaseUrl: 'https://primemoverswitch.primemover.example/api/v1'
   }
 };
 

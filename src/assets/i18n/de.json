@@ -70,6 +70,7 @@
     "show": "Anzeigen",
     "startDateRequiredError": "Startdatum ist erforderlich",
     "typeRequiredError": "Typ ist erforderlich",
+    "updatedAt": "Aktualisiert am",
     "username": "Nutzername",
     "usernamePlaceholder": "e.g. max.mustermann"
   },
@@ -134,16 +135,14 @@
     "bodyText": "Hier werden die Einzelheiten zum ausgewählten Kontext gezeigt. Um mehr zu sehen, bitte mindestens ein Experiment auswählen.",
     "common": {
       "browser": "Browser",
-      "canvas": "Segeltuch",
       "geolocation": "Geo-Lokalisierung",
       "name": "Name",
       "navigator": "Navigator",
-      "network": "Netzwerk",
-      "os": "Os",
-      "storage": "Lagerung"
+      "network": "Netzwerk"
     },
     "configuration": {
-      "configurationName": "Konfigurationsname"
+      "configurationName": "Name",
+      "label": "Konfiguration"
     },
     "crawler": {
       "crawler": "Crawler",
@@ -202,5 +201,17 @@
     "review": "Review",
     "succeeded": "Erfolg",
     "type": "Type"
+  },
+  "upload": {
+    "clickToUpload": "Klicken, um eine Datei auszuwählen",
+    "experimentUploadFormat": "JSON Format",
+    "fileExampleLabel": "API Dokumentation",
+    "fileExampleText": "Einzelheiten der JSON Datei.",
+    "fileUpload": "Datei hochladen",
+    "noExperimentSelected": "Kein Experiment ausgewählt",
+    "orDragAndDrop": "oder Datei hierherziehen",
+    "selectExperiment": "Experiment auswählen",
+    "uploadExperimentIntroText": "Bitte wählen Sie ein Experiment aus, um die Daten dazu hochzuladen. Die Datei muss im JSON-Format vorliegen.",
+    "uploadExperimentTitle": "Experiment hochladen"
   }
 }

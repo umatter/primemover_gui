@@ -17,3 +17,6 @@ export const crawlerSelection = createAction('[Shared] Select crawler', props<{ 
 export const queueSelection = createAction('[Shared] Select queue', props<{ queue: Queue | null }>());
 export const jobSelection = createAction('[Shared] Select job', props<{ job: Job | null }>());
 export const requestPage = createAction('[Shared] Request page', props<{ page: number }>());
+export const uploadFile = createAction('[Shared] Upload file', props<{ file: File }>());
+export const uploadFileSuccess = createAction('[Shared] Upload completed', props<{ response: any }>());
+export const uploadFileFailure = createAction('[Shared] Upload failed', props<{ error: any }>());

@@ -8,7 +8,10 @@ import {
   jobSelection,
   queueSelection,
   requestPage,
-  updateQueryFilter
+  updateQueryFilter,
+  uploadFile,
+  uploadFileFailure,
+  uploadFileSuccess
 } from './shared.actions';
 import { Experiment } from '@app/experiment/model/experiment';
 import { Crawler } from '@app/crawler/model/crawler';
@@ -23,6 +26,8 @@ export interface SharedState {
   currentQueue?: Queue | null;
   currentJob?: Job | null;
   pageRequested: number;
+  isUploading: boolean;
+  uploadError: any;
 }
 
 export const initialState: SharedState = {
@@ -32,7 +37,9 @@ export const initialState: SharedState = {
       name: QueryFilterType.Recent,
       value: 30
     }
-  ]
+  ],
+  isUploading: false,
+  uploadError: null
 };
 
 const reducer = createReducer(
@@ -96,7 +103,21 @@ const reducer = createReducer(
           }
         ]
       : state.queryFilter
-  }))
+  })),
+  on(uploadFileFailure, (state, action) => {
+    return {
+      ...state,
+      isUploading: false,
+      uploadError: action.error
+    };
+  }),
+
+  on(uploadFile, (state) => {
+    return { ...state, isUploading: true, uploadError: null };
+  }),
+  on(uploadFileSuccess, (state) => {
+    return { ...state, isUploading: false, uploadError: null };
+  })
 );
 
 export function sharedReducer(state: SharedState | undefined, action: Action): any {

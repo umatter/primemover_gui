@@ -70,6 +70,7 @@
     "show": "Show",
     "startDateRequiredError": "Start Date is Required",
     "typeRequiredError": "Type is Required",
+    "updatedAt": "Updated at",
     "username": "User Name",
     "usernamePlaceholder": ""
   },
@@ -134,16 +135,14 @@
     "bodyText": "Here the details of the selected context are shown. To see more, please select at least one experiment.",
     "common": {
       "browser": "Browser",
-      "canvas": "Canvas",
       "geolocation": "Geolocation",
       "name": "Name",
       "navigator": "Navigator",
-      "network": "Network",
-      "os": "Os",
-      "storage": "Storage"
+      "network": "Network"
     },
     "configuration": {
-      "configurationName": "Configuration Name"
+      "configurationName": "Configuration Name",
+      "label": "Configuration"
     },
     "crawler": {
       "crawler": "Crawler",
@@ -202,5 +201,17 @@
     "review": "Review",
     "succeeded": "success",
     "type": "Type"
+  },
+  "upload": {
+    "clickToUpload": "Click to upload file",
+    "experimentUploadFormat": "JSON Format",
+    "fileExampleLabel": "API documentation",
+    "fileExampleText": "Details about required JSON file.",
+    "fileUpload": "Upload file",
+    "noExperimentSelected": "No selected experiment",
+    "orDragAndDrop": "or drag and drop it here",
+    "selectExperiment": "Select experiment",
+    "uploadExperimentIntroText": "In order to upload experiment data you need to have selected the experiment first. Upload data requires a valid JSON file. See API-docs for details.",
+    "uploadExperimentTitle": "Upload experiment data"
   }
 }
