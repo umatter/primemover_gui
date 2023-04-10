@@ -135,16 +135,14 @@
     "bodyText": "Here the details of the selected context are shown. To see more, please select at least one experiment.",
     "common": {
       "browser": "Browser",
-      "canvas": "Canvas",
       "geolocation": "Geolocation",
       "name": "Name",
       "navigator": "Navigator",
-      "network": "Network",
-      "os": "Os",
-      "storage": "Storage"
+      "network": "Network"
     },
     "configuration": {
-      "configurationName": "Configuration Name"
+      "configurationName": "Configuration Name",
+      "label": "Configuration"
     },
     "crawler": {
       "crawler": "Crawler",

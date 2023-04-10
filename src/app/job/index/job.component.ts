@@ -4,10 +4,10 @@ import { PaginatePipeArgs } from 'ngx-pagination';
 import { Store } from '@ngrx/store';
 import { JobService } from '@app/entity/service';
 import { Job } from '@app/job/model/Job';
-import { selectCurrentJob, selectQueryFilter } from '@shared/store/shared.selectors';
+import { QueryFilterType, selectCurrentJob, selectQueryFilter } from '@shared/store/shared.selectors';
 import { QueryFilter } from '@shared/model/query-filter';
 import { JobApiService } from '@app/job/service/job-api.service';
-import { jobSelection, requestPage } from '@shared/store/shared.actions';
+import { jobSelection, requestPage, resetQueryFilterRequested } from '@shared/store/shared.actions';
 import { Router } from '@angular/router';
 import { Meta } from '@shared/pagination/model';
 
@@ -66,9 +66,17 @@ export class JobComponent implements OnDestroy {
 
   onModalResponse(event: boolean): void {
     if (event && this.entityToDelete) {
-      this.entityService.delete(this.entityToDelete.id);
+      this.subscriptions.add(
+        this.entityService
+          .delete(this.entityToDelete.id)
+          .pipe()
+          .subscribe(() => {
+            this.store.dispatch(jobSelection({ job: null }));
+            this.store.dispatch(resetQueryFilterRequested({ filterName: QueryFilterType.Job }));
+            this.entityToDelete = null;
+          })
+      );
     }
-    this.entityToDelete = null;
   }
 
   ngOnDestroy() {

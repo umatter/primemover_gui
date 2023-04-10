@@ -9,9 +9,9 @@ import { Experiment } from '../model/experiment';
 import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { ExperimentService } from '@app/entity/service';
-import { experimentSelection, requestPage } from '@shared/store/shared.actions';
+import { experimentSelection, requestPage, resetQueryFilterRequested } from '@shared/store/shared.actions';
 import { ExperimentApiService } from '@app/experiment/service/experiment-api.service';
-import { selectCurrentExperiment, selectQueryFilter } from '@shared/store/shared.selectors';
+import { QueryFilterType, selectCurrentExperiment, selectQueryFilter } from '@shared/store/shared.selectors';
 import { QueryFilter } from '@shared/model/query-filter';
 import { Meta } from '@shared/pagination/model';
 
@@ -74,7 +74,7 @@ export class ExperimentComponent implements OnDestroy {
 
   selectAndUploadExperiment(experiment: Experiment): void {
     this.store.dispatch(experimentSelection({ experiment: experiment }));
-    this.router.navigateByUrl('/experiments/upload');
+    this.router.navigate(['experiments', experiment.id, 'upload']).then();
   }
 
   deleteExperimentRequest(experiment: Experiment): void {
@@ -83,10 +83,17 @@ export class ExperimentComponent implements OnDestroy {
 
   onModalResponse(event: boolean): void {
     if (event && this.experimentToDelete) {
-      this.entityService.delete(this.experimentToDelete.id);
-      this.store.dispatch(experimentSelection({ experiment: null }));
+      this.subscriptions.add(
+        this.entityService
+          .delete(this.experimentToDelete.id)
+          .pipe()
+          .subscribe(() => {
+            this.store.dispatch(experimentSelection({ experiment: null }));
+            this.store.dispatch(resetQueryFilterRequested({ filterName: QueryFilterType.Experiment }));
+            this.experimentToDelete = null;
+          })
+      );
     }
-    this.experimentToDelete = null;
   }
 
   ngOnDestroy(): void {

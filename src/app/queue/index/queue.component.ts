@@ -6,9 +6,9 @@ import { select, Store } from '@ngrx/store';
 import { Queue } from '../model/queue';
 import { ExperimentApiService } from '@app/experiment/service/experiment-api.service';
 import { QueueService } from '@app/entity/service';
-import { queueSelection, requestPage } from '@shared/store/shared.actions';
+import { queueSelection, requestPage, resetQueryFilterRequested } from '@shared/store/shared.actions';
 import { QueueApiService } from '@app/queue/service/queue-api.service';
-import { selectCurrentQueue, selectQueryFilter } from '@shared/store/shared.selectors';
+import { QueryFilterType, selectCurrentQueue, selectQueryFilter } from '@shared/store/shared.selectors';
 import { QueryFilter } from '@shared/model/query-filter';
 import { Meta } from '@shared/pagination/model';
 
@@ -73,10 +73,17 @@ export class QueueComponent implements OnDestroy {
 
   onModalResponse(event: boolean): void {
     if (event && this.entityToDelete) {
-      this.entityService.delete(this.entityToDelete.id);
-      this.store.dispatch(queueSelection({ queue: null }));
+      this.subscriptions.add(
+        this.entityService
+          .delete(this.entityToDelete.id)
+          .pipe()
+          .subscribe(() => {
+            this.store.dispatch(queueSelection({ queue: null }));
+            this.store.dispatch(resetQueryFilterRequested({ filterName: QueryFilterType.Queue }));
+            this.entityToDelete = null;
+          })
+      );
     }
-    this.entityToDelete = null;
   }
 
   ngOnDestroy() {

@@ -135,16 +135,14 @@
     "bodyText": "Hier werden die Einzelheiten zum ausgewählten Kontext gezeigt. Um mehr zu sehen, bitte mindestens ein Experiment auswählen.",
     "common": {
       "browser": "Browser",
-      "canvas": "Segeltuch",
       "geolocation": "Geo-Lokalisierung",
       "name": "Name",
       "navigator": "Navigator",
-      "network": "Netzwerk",
-      "os": "Os",
-      "storage": "Lagerung"
+      "network": "Netzwerk"
     },
     "configuration": {
-      "configurationName": "Konfigurationsname"
+      "configurationName": "Name",
+      "label": "Konfiguration"
     },
     "crawler": {
       "crawler": "Crawler",

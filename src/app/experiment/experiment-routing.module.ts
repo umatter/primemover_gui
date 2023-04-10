@@ -14,7 +14,7 @@ const routes: Routes = [
     component: ExperimentCreateComponent
   },
   {
-    path: 'upload',
+    path: ':id/upload',
     component: ExperimentUploadComponent
   }
 ];

@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { combineLatest, distinctUntilChanged, first, map, Observable, Subscription } from 'rxjs';
+import { combineLatest, distinctUntilChanged, map, Observable, Subscription } from 'rxjs';
 import { select, Store } from '@ngrx/store';
 
 import { Router } from '@angular/router';
@@ -56,7 +56,7 @@ export class ExperimentUploadComponent implements OnDestroy, OnInit {
   ngOnInit(): void {
     this.subscriptions.add(
       this.currentExperiment$
-        .pipe(distinctUntilChanged(), first())
+        .pipe(distinctUntilChanged())
         .subscribe((experiment) => this.experimentSelect.setValue(experiment?.id || ''))
     );
 
