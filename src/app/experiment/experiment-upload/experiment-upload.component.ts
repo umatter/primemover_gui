@@ -1,78 +1,71 @@
-import { Component, OnDestroy } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { combineLatest, distinctUntilChanged, first, map, Observable, Subscription } from 'rxjs';
 import { select, Store } from '@ngrx/store';
 
 import { Router } from '@angular/router';
 import { fadeIn } from '@shared/animation/trigger';
 import { Experiment } from '../model/experiment';
 import { ExperimentService } from '@app/entity/service';
-import { experimentSelection, requestPage, uploadFile } from '@shared/store/shared.actions';
-import { ExperimentApiService } from '@app/experiment/service/experiment-api.service';
-import { selectCurrentExperiment, selectQueryFilter, selectFile } from '@shared/store/shared.selectors';
-import { QueryFilter } from '@shared/model/query-filter';
+import { experimentSelection, uploadFile } from '@shared/store/shared.actions';
+import { selectCurrentExperiment, selectIsUploading, selectUploadingError } from '@shared/store/shared.selectors';
+import { FormControl, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-experiment-upload',
   templateUrl: './experiment-upload.component.html',
-  styleUrls: ['./experiment-upload.component.scss'],
   animations: [fadeIn]
 })
-export class ExperimentUploadComponent {
+export class ExperimentUploadComponent implements OnDestroy, OnInit {
   isLoading$: Observable<boolean>;
-
-  queryFilter$: Observable<QueryFilter[]>;
-  selectExperimentId: Number | null = null;
+  currentExperiment$: Observable<Experiment>;
+  subscriptions = new Subscription();
+  uploadError$: Observable<any>;
   experiment: Experiment | null = null;
-  experiments: Experiment[] | any;
-  showLoader = false;
-  errroMessage = '';
-  private subscriptions = new Subscription();
+  experiments: Experiment[] = [];
+  experimentSelect: FormControl<number | any> = new FormControl([null, Validators.required]);
+  fileUpload: FormControl<any> = new FormControl();
 
-  constructor(
-    private store: Store,
-    public router: Router,
-    private entityService: ExperimentService,
-    private apiService: ExperimentApiService
-  ) {
-    entityService.entities$.subscribe((entity) => {
-      this.experiments = entity;
-    });
+  constructor(private store: Store, public router: Router, private entityService: ExperimentService) {
+    this.currentExperiment$ = this.store.pipe(select(selectCurrentExperiment));
+    this.uploadError$ = this.store.select(selectUploadingError);
+    this.entityService
+      .getAll()
+      .pipe(distinctUntilChanged())
+      .subscribe((experiments) => (this.experiments = experiments));
 
-    this.isLoading$ = this.entityService.loading$;
-    this.queryFilter$ = this.store.select(selectQueryFilter);
-
-    this.store.pipe(select(selectCurrentExperiment)).subscribe((currentExperiment) => {
-      if (currentExperiment) {
-        this.selectExperimentId = currentExperiment.id;
-      }
-    });
-
-    this.store.pipe(select(selectFile)).subscribe((state) => {
-      this.showLoader = state.isUploading;
-      this.errroMessage = state.uploadError?.message || '';
-    });
-
-    this.getData();
+    this.initLoading(entityService.loading$, this.store.pipe(select(selectIsUploading)));
   }
 
-  getData(page: number = 1): void {
-    this.store.dispatch(requestPage({ page }));
+  get uploadedFile(): File | null {
+    return this.fileUpload.value;
+  }
+
+  upload(event: any): void {
+    console.log(this.uploadedFile);
+    this.store.dispatch(uploadFile({ file: <File>event.target.files[0] }));
+    this.fileUpload.reset();
+  }
+
+  initLoading(...sources: Observable<boolean>[]): void {
+    this.isLoading$ = combineLatest(sources).pipe(map((loadings) => loadings.some((loading) => loading)));
+  }
+
+  ngOnInit(): void {
+    this.subscriptions.add(
+      this.currentExperiment$
+        .pipe(distinctUntilChanged(), first())
+        .subscribe((experiment) => this.experimentSelect.setValue(experiment?.id))
+    );
 
     this.subscriptions.add(
-      this.queryFilter$.pipe().subscribe(() => {
-        this.entityService.clearCache();
-        this.entityService.getWithQuery(this.apiService.getParams());
+      this.experimentSelect.valueChanges.pipe().subscribe((id) => {
+        const experiment = this.experiments.find((e) => e.id === Number(id));
+        this.store.dispatch(experimentSelection({ experiment: experiment || null }));
       })
     );
   }
 
-  selectExperiment(e: any): void {
-    const experiment = this.experiments.filter((exp: Experiment) => exp.id == e.target.value);
-    this.store.dispatch(experimentSelection({ experiment: experiment[0] }));
-  }
-
-  upload(event: any) {
-    this.store.dispatch(uploadFile({ file: <File>event.target.files[0] }));
-    event.target.value = null;
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
   }
 }

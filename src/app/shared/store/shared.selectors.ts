@@ -37,3 +37,7 @@ export const selectRecentFilter = createSelector(selectShared, (state) => {
 export const selectFile = createSelector(selectShared, (state) => {
   return { isUploading: state.isUploading, uploadError: state.uploadError };
 });
+
+export const selectIsUploading = createSelector(selectShared, (state) => state.isUploading);
+
+export const selectUploadingError = createSelector(selectShared, (state) => state.uploadError);

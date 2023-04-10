@@ -50,6 +50,7 @@ import { HeroiconTrashComponent } from './icon/heroicon-trash/heroicon-trash.com
 import { HeroiconPlusComponent } from './icon/heroicon-plus/heroicon-plus.component';
 import { HeroiconClipboardDocumentComponent } from './icon/heroicon-clipboard-document/heroicon-clipboard-document.component';
 import { HeroiconUploadComponent } from './icon/heroicon-upload/heroicon-upload.component';
+import { FileUploadComponent } from './file-upload/file-upload.component';
 
 @NgModule({
   declarations: [
@@ -84,7 +85,8 @@ import { HeroiconUploadComponent } from './icon/heroicon-upload/heroicon-upload.
     HeroiconTrashComponent,
     HeroiconPlusComponent,
     HeroiconClipboardDocumentComponent,
-    HeroiconUploadComponent
+    HeroiconUploadComponent,
+    FileUploadComponent
   ],
   imports: [
     CommonModule,
@@ -144,7 +146,8 @@ import { HeroiconUploadComponent } from './icon/heroicon-upload/heroicon-upload.
     HeroiconTrashComponent,
     HeroiconPlusComponent,
     HeroiconClipboardDocumentComponent,
-    HeroiconUploadComponent
+    HeroiconUploadComponent,
+    FileUploadComponent
   ],
 
   providers: [
