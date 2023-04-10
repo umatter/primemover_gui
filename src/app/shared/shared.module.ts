@@ -32,7 +32,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { SharedEffects } from './store/shared.effects';
 import { sharedReducer } from './store/shared.reducer';
 import { MatButtonModule } from '@angular/material/button';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
@@ -148,11 +148,6 @@ import { FileUploadComponent } from './file-upload/file-upload.component';
     HeroiconClipboardDocumentComponent,
     HeroiconUploadComponent,
     FileUploadComponent
-  ],
-
-  providers: [
-    { provide: MAT_DIALOG_DATA, useValue: {} },
-    { provide: MatDialogRef, useValue: {} }
   ]
 })
 export class SharedModule {}

@@ -8,7 +8,8 @@ import { Experiment } from '../model/experiment';
 import { ExperimentService } from '@app/entity/service';
 import { experimentSelection, uploadFile } from '@shared/store/shared.actions';
 import { selectCurrentExperiment, selectIsUploading, selectUploadingError } from '@shared/store/shared.selectors';
-import { FormControl, Validators } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { requiredFileType } from '@shared/file-upload/file.validator';
 
 @Component({
   selector: 'app-experiment-upload',
@@ -16,14 +17,18 @@ import { FormControl, Validators } from '@angular/forms';
   animations: [fadeIn]
 })
 export class ExperimentUploadComponent implements OnDestroy, OnInit {
+  readonly apiDocsLink: string = 'https://primemoverswitch.primemover.example/api/v1/docs';
   isLoading$: Observable<boolean>;
   currentExperiment$: Observable<Experiment>;
   subscriptions = new Subscription();
   uploadError$: Observable<any>;
   experiment: Experiment | null = null;
   experiments: Experiment[] = [];
-  experimentSelect: FormControl<number | any> = new FormControl([null, Validators.required]);
-  fileUpload: FormControl<any> = new FormControl();
+
+  uploadForm = new FormGroup({
+    experimentSelect: new FormControl(null, Validators.required),
+    fileUpload: new FormControl(null, [Validators.required, requiredFileType('json')])
+  });
 
   constructor(private store: Store, public router: Router, private entityService: ExperimentService) {
     this.currentExperiment$ = this.store.pipe(select(selectCurrentExperiment));
@@ -36,14 +41,12 @@ export class ExperimentUploadComponent implements OnDestroy, OnInit {
     this.initLoading(entityService.loading$, this.store.pipe(select(selectIsUploading)));
   }
 
-  get uploadedFile(): File | null {
-    return this.fileUpload.value;
+  get fileUpload(): FormControl {
+    return this.uploadForm.get('fileUpload') as FormControl;
   }
 
-  upload(event: any): void {
-    console.log(this.uploadedFile);
-    this.store.dispatch(uploadFile({ file: <File>event.target.files[0] }));
-    this.fileUpload.reset();
+  get experimentSelect(): FormControl {
+    return this.uploadForm.get('experimentSelect') as FormControl;
   }
 
   initLoading(...sources: Observable<boolean>[]): void {
@@ -54,13 +57,19 @@ export class ExperimentUploadComponent implements OnDestroy, OnInit {
     this.subscriptions.add(
       this.currentExperiment$
         .pipe(distinctUntilChanged(), first())
-        .subscribe((experiment) => this.experimentSelect.setValue(experiment?.id))
+        .subscribe((experiment) => this.experimentSelect.setValue(experiment?.id || ''))
     );
 
     this.subscriptions.add(
       this.experimentSelect.valueChanges.pipe().subscribe((id) => {
         const experiment = this.experiments.find((e) => e.id === Number(id));
         this.store.dispatch(experimentSelection({ experiment: experiment || null }));
+      })
+    );
+
+    this.subscriptions.add(
+      this.fileUpload.valueChanges.pipe().subscribe((file) => {
+        this.store.dispatch(uploadFile({ file: file }));
       })
     );
   }

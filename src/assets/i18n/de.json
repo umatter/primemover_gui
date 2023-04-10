@@ -70,6 +70,7 @@
     "show": "Anzeigen",
     "startDateRequiredError": "Startdatum ist erforderlich",
     "typeRequiredError": "Typ ist erforderlich",
+    "updatedAt": "Aktualisiert am",
     "username": "Nutzername",
     "usernamePlaceholder": "e.g. max.mustermann"
   },
@@ -202,5 +203,17 @@
     "review": "Review",
     "succeeded": "Erfolg",
     "type": "Type"
+  },
+  "upload": {
+    "clickToUpload": "Klicken, um eine Datei auszuwählen",
+    "experimentUploadFormat": "JSON Format",
+    "fileExampleLabel": "API Dokumentation",
+    "fileExampleText": "Einzelheiten der JSON Datei.",
+    "fileUpload": "Datei hochladen",
+    "noExperimentSelected": "Kein Experiment ausgewählt",
+    "orDragAndDrop": "oder Datei hierherziehen",
+    "selectExperiment": "Experiment auswählen",
+    "uploadExperimentIntroText": "Bitte wählen Sie ein Experiment aus, um die Daten dazu hochzuladen. Die Datei muss im JSON-Format vorliegen.",
+    "uploadExperimentTitle": "Experiment hochladen"
   }
 }

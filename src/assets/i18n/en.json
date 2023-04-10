@@ -70,6 +70,7 @@
     "show": "Show",
     "startDateRequiredError": "Start Date is Required",
     "typeRequiredError": "Type is Required",
+    "updatedAt": "Updated at",
     "username": "User Name",
     "usernamePlaceholder": ""
   },
@@ -202,5 +203,17 @@
     "review": "Review",
     "succeeded": "success",
     "type": "Type"
+  },
+  "upload": {
+    "clickToUpload": "Click to upload file",
+    "experimentUploadFormat": "JSON Format",
+    "fileExampleLabel": "API documentation",
+    "fileExampleText": "Details about required JSON file.",
+    "fileUpload": "Upload file",
+    "noExperimentSelected": "No selected experiment",
+    "orDragAndDrop": "or drag and drop it here",
+    "selectExperiment": "Select experiment",
+    "uploadExperimentIntroText": "In order to upload experiment data you need to have selected the experiment first. Upload data requires a valid JSON file. See API-docs for details.",
+    "uploadExperimentTitle": "Upload experiment data"
   }
 }
