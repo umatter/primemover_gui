@@ -24,8 +24,14 @@ export const experimentDeleteRequested = createAction(
   '[Experiment] Delete requested',
   props<{ experimentId: number }>()
 );
+export const experimentDownloadRequested = createAction(
+  '[Experiment] Download requested',
+  props<{ experimentId: number }>()
+);
 export const updateExperimentCreateValues = createAction('[Experiment] Update', props<any>());
 export const experimentCreateSuccess = createAction('[Experiment] Create success', props<any>());
 export const experimentDeleteSuccess = createAction('[Experiment] Delete success', props<any>());
+export const experimentDownloadSuccess = createAction('[Experiment] Download success', props<any>());
+export const experimentDownloadError  = createAction('[Experiment] Download error', props<any>());
 export const experimentCreateError = createAction('[Experiment] Create error', props<{ err: HttpErrorResponse }>());
 export const experimentDeleteError = createAction('[Experiment] Delete error', props<{ err: HttpErrorResponse }>());

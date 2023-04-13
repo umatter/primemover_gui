@@ -59,6 +59,10 @@ export class ExperimentService {
     return this.http.delete<any>(`${this.config.apiBaseUrl}/experiments/${experimentId}`);
   }
 
+  public downloadExperiment(experimentId: number): Observable<any> {
+    return this.http.get<any>(`${this.config.apiBaseUrl}/experiments/${experimentId}/download`);
+  }
+
   getParams(): HttpParams {
     this.queryFilterParams = this.filterService.getFilterParams();
 

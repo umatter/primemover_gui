@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { fadeIn } from '../../../shared/animation/trigger';
 import {
   experimentDeleteRequested,
+  experimentDownloadRequested,
   experimentPageRequested,
   experimentRequested
 } from '../../store/experiment.actions';
@@ -82,10 +83,15 @@ export class ExperimentComponent implements OnInit, OnDestroy {
         confirmationDialog.close();
       } else {
         const experimentId = experiment.id;
-        this.store.dispatch(experimentDeleteRequested({ experimentId }));
+        // this.store.dispatch(experimentDeleteRequested({ experimentId }));
         confirmationDialog.close();
       }
     });
+  }
+
+  downloadExperimentData(experiment:any):void|boolean{
+    const experimentId = experiment.id;
+    this.store.dispatch(experimentDownloadRequested({ experimentId }));
   }
 
   ngOnDestroy(): void {

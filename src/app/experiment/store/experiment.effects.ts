@@ -10,7 +10,10 @@ import {
   experimentCreateSuccess,
   experimentDeleteError,
   experimentDeleteRequested,
+  experimentDownloadRequested,
   experimentDeleteSuccess,
+  experimentDownloadSuccess,
+  experimentDownloadError,
   experimentPageRequested,
   experimentsRequested,
   experimentsRequestFailed,
@@ -77,6 +80,18 @@ export class ExperimentEffects {
       )
     )
   );
+  
+  experimentDownloadRequested$ = createEffect(() =>
+  this.actions$.pipe(
+    ofType(experimentDownloadRequested),
+    switchMap((action) =>
+      this.apiService.downloadExperiment(action.experimentId).pipe(
+        map((response) => experimentDeleteSuccess(response)),
+        catchError((err) => of(experimentDownloadError(err)))
+      )
+    )
+  )
+);
 
   updateQueryFilter$ = createEffect(() =>
     this.actions$.pipe(
@@ -93,6 +108,12 @@ export class ExperimentEffects {
   //     ),
   //   { dispatch: false }
   // );
+  experimentDownloadSuccess$ = createEffect(() =>
+  this.actions$.pipe(
+    ofType(experimentDownloadSuccess),
+    map(() => experimentPageRequested({ page: 1 }))
+  )
+); 
 
   experimentDeleteSuccess$ = createEffect(() =>
     this.actions$.pipe(

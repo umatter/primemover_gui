@@ -40,6 +40,15 @@
                 </td>
                 <td class="relative whitespace-nowrap text-right text-sm font-medium pr-1">
                   <app-button
+                    (click)="downloadExperimentData(item)"
+                    class="text-indigo-600 hover:text-indigo-900 mr-2"
+                    size="sm"
+                    text="Download"
+                    type="secondary"
+                  >
+                 
+                  </app-button>
+                  <app-button
                     (click)="deleteExperiment(item)"
                     class="text-indigo-600 hover:text-indigo-900 mr-2"
                     size="sm"
