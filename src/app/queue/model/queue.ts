@@ -1,4 +1,4 @@
-import { Crawler } from "src/app/crawler/model/crawler";
+import { Crawler } from '@app/crawler/model/crawler';
 
 export interface Queue {
   id: number;
@@ -17,5 +17,5 @@ export interface Queue {
   user_id: number;
   status_code: string;
   status_message?: string;
-  crawler:Crawler
+  crawler: Crawler;
 }

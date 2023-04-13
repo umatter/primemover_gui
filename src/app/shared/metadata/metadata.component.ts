@@ -2,9 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { Crawler } from 'src/app/crawler/model/crawler';
-import { selectCurrentCrawler } from 'src/app/crawler/store/crawler.selectors';
 import { Experiment } from 'src/app/experiment/model/experiment';
-import { selectCurrentExperiment } from 'src/app/experiment/store/experiment.selectors';
+import { selectCurrentCrawler, selectCurrentExperiment } from '@shared/store/shared.selectors';
 
 @Component({
   selector: 'app-metadata',

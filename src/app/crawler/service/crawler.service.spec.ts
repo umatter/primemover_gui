@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
-import { CrawlerService } from './crawler.service';
+import { CrawlerApiService } from './crawler-api.service';
 
 describe('CrawlerService', () => {
-  let service: CrawlerService;
+  let service: CrawlerApiService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(CrawlerService);
+    service = TestBed.inject(CrawlerApiService);
   });
 
   it('should be created', () => {

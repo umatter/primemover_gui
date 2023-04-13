@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -36,7 +36,6 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSelectModule } from '@angular/material/select';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -44,6 +43,15 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MetadataComponent } from './metadata/metadata.component';
 import { ConfirmationPrimeoverDialogComponent } from './dialog/primeover-dialog/confirmation-primeover-dialog.component';
 import { euFormat } from './pipes/datepipe/date-pipe.pipe';
+import { ConfirmationModalComponent } from './dialog/confirmation-modal/confirmation-modal.component';
+import { ContentModalComponent } from '@shared/dialog/content-modal/content-modal.component';
+import { AutocompleteSelectComponent } from '@shared/autocomplete-select/autocomplete-select.component';
+import { HeroiconTrashComponent } from './icon/heroicon-trash/heroicon-trash.component';
+import { HeroiconPlusComponent } from './icon/heroicon-plus/heroicon-plus.component';
+import { HeroiconClipboardDocumentComponent } from './icon/heroicon-clipboard-document/heroicon-clipboard-document.component';
+import { HeroiconUploadComponent } from './icon/heroicon-upload/heroicon-upload.component';
+import { FileUploadComponent } from './file-upload/file-upload.component';
+import { HeroiconDownloadArchiveComponent } from './icon/heroicon-download-archive/heroicon-download-archive.component';
 
 @NgModule({
   declarations: [
@@ -71,7 +79,16 @@ import { euFormat } from './pipes/datepipe/date-pipe.pipe';
     LoadingSpinnerComponent,
     MetadataComponent,
     ConfirmationPrimeoverDialogComponent,
-    euFormat
+    euFormat,
+    ConfirmationModalComponent,
+    ContentModalComponent,
+    AutocompleteSelectComponent,
+    HeroiconTrashComponent,
+    HeroiconPlusComponent,
+    HeroiconClipboardDocumentComponent,
+    HeroiconUploadComponent,
+    FileUploadComponent,
+    HeroiconDownloadArchiveComponent
   ],
   imports: [
     CommonModule,
@@ -124,12 +141,16 @@ import { euFormat } from './pipes/datepipe/date-pipe.pipe';
     MatSlideToggleModule,
     MetadataComponent,
     ConfirmationPrimeoverDialogComponent,
-    euFormat
-  ],
-
-  providers: [
-    { provide: MAT_DIALOG_DATA, useValue: {} },
-    { provide: MatDialogRef, useValue: {} }
+    euFormat,
+    ConfirmationModalComponent,
+    ContentModalComponent,
+    AutocompleteSelectComponent,
+    HeroiconTrashComponent,
+    HeroiconPlusComponent,
+    HeroiconClipboardDocumentComponent,
+    HeroiconUploadComponent,
+    FileUploadComponent,
+    HeroiconDownloadArchiveComponent
   ]
 })
 export class SharedModule {}

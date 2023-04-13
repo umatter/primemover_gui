@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
+import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from '@angular/router';
 import { catchError, map, Observable, of } from 'rxjs';
 import { select, Store } from '@ngrx/store';
 import { AuthService } from '../services/auth.service';
-import { selectAccessToken, selectCurrentUser } from '../../store/auth/auth.selectors';
+import { selectAccessToken } from '@app/store/auth/auth.selectors';
 import {
   authGuardPassed,
   redirectToLoginRequested,
@@ -13,7 +13,7 @@ import {
   useTokenFromLocalStorageRequested,
   validLocalStorageTokenFound,
   validLocalTokenFound
-} from '../../store/auth/auth.actions';
+} from '@app/store/auth/auth.actions';
 import { LocalStorageService } from '../services/local-storage.service';
 import { TokenService } from '../services/token.service';
 
@@ -40,7 +40,7 @@ export class AuthGuard implements CanActivate {
 
     if (!this.hasValidToken()) {
       this.store.dispatch(redirectToLoginRequested());
-      this.router.navigateByUrl('/login').then(() => of(null));
+      this.router.navigateByUrl('/').then(() => of(null));
       return false;
     }
 

@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from '../core/guards/auth.guard';
-import { ProxyComponent } from './component/proxy/proxy.component';
-import { ProxyCreateComponent } from './component/proxy-create/proxy-create.component';
+import { ProxyComponent } from './index/proxy.component';
+import { ProxyFormComponent } from './form/proxy-form.component';
 
 const routes: Routes = [
   {
@@ -13,7 +13,7 @@ const routes: Routes = [
   },
   {
     path: 'create',
-    component: ProxyCreateComponent,
+    component: ProxyFormComponent,
     canActivate: [AuthGuard],
     data: { requiresLogin: true }
   }

@@ -1,0 +1,251 @@
+<app-content-modal [isModal]="agentModal">
+  <app-agent-form
+    (cancelClicked)="onAgentModalCancel()"
+    (saveClicked)="onAgentModalSave($event)"
+    *ngIf="agentModal"
+  ></app-agent-form>
+</app-content-modal>
+
+<app-content-modal [isModal]="configurationModal">
+  <app-config-form
+    (cancelClicked)="onConfigurationModalCancel()"
+    (saveClicked)="onConfigurationModalSave($event)"
+    *ngIf="configurationModal"
+  ></app-config-form>
+</app-content-modal>
+
+<app-content-modal [isModal]="proxyModal">
+  <app-proxy-form
+    (cancelClicked)="onProxyModalCancel()"
+    (saveClicked)="onProxyModalSave($event)"
+    *ngIf="proxyModal"
+  ></app-proxy-form>
+</app-content-modal>
+
+<div class="px-4 sm:px-6 lg:px-8">
+  <form [formGroup]="crawlerForm" class="space-y-8 divide-y divide-gray-200">
+    <div class="space-y-8 divide-y divide-gray-200 sm:space-y-5">
+      <div class="sm:flex sm:items-center">
+        <div class="sm:flex-auto">
+          <h1 class="text-xl font-semibold text-gray-900">{{ 'crawler.create' | translate }}</h1>
+          <p class="mt-2 text-sm text-gray-700">
+            {{ 'crawler.createText' | translate }}
+          </p>
+        </div>
+      </div>
+      <div class="space-y-6 sm:space-y-5">
+        <div class="space-y-6 sm:space-y-5">
+          <!-- Name -->
+          <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+            <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="name">
+              {{ 'common.name' | translate }}
+            </label>
+            <div class="mt-1 sm:mt-0 sm:col-span-2">
+              <input
+                autocomplete="name"
+                class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+                formControlName="name"
+                id="name"
+                name="name"
+                placeholder="{{ 'common.namePlaceholder' | translate }}"
+                type="text"
+              />
+              <p *ngIf="hasError('name', 'required')" @fadeIn class="mt-2 text-sm text-red-600" id="name-error">
+                {{ 'common.nameRequiredError' | translate }}
+              </p>
+            </div>
+          </div>
+          <!-- Experiment select -->
+          <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+            <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="experiment">
+              {{ 'experiment.label' | translate }}
+            </label>
+            <div class="mt-1 sm:mt-0 sm:col-span-2">
+              <div class="relative">
+                <div class="flex items-center gap-1">
+                  <div class="w-full">
+                    <input
+                      [formControl]="experimentAutocompletion"
+                      class="disabled:opacity-50 max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+                      id="experiment"
+                      name="experiment"
+                      placeholder="{{ 'common.namePlaceholder' | translate }}"
+                      type="text"
+                    />
+                    <app-autocomplete-select
+                      (isSelectChange)="setExperiment($event)"
+                      *ngIf="(filteredExperiments$ | async)?.length"
+                      [isSelect]="showExperimentAutocompletion"
+                      [list$]="filteredExperiments$"
+                    ></app-autocomplete-select>
+                  </div>
+                  <button
+                    (click)="reset('experiment_id', experimentAutocompletion)"
+                    class="text-gray-400 hover:text-indigo-900"
+                  >
+                    <app-heroicon-trash></app-heroicon-trash>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Agent -->
+          <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+            <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="agent">
+              {{ 'agent.label' | translate }}
+            </label>
+            <div class="mt-1 sm:mt-0 sm:col-span-2">
+              <div class="relative">
+                <div class="flex items-center gap-1">
+                  <div class="w-full">
+                    <input
+                      [formControl]="agentAutocompletion"
+                      autocomplete="agent"
+                      class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+                      id="agent"
+                      name="agent"
+                      placeholder="{{ 'common.namePlaceholder' | translate }}"
+                      type="text"
+                    />
+
+                    <app-autocomplete-select
+                      (isSelectChange)="setAgent($event)"
+                      *ngIf="(filteredAgents$ | async)?.length"
+                      [isSelect]="showAgentAutocompletion"
+                      [list$]="filteredAgents$"
+                    ></app-autocomplete-select>
+                  </div>
+                  <button (click)="reset('agent_id', agentAutocompletion)" class="text-gray-400 hover:text-indigo-900">
+                    <app-heroicon-trash></app-heroicon-trash>
+                  </button>
+                  <button (click)="agentModal = true" class="text-gray-400 hover:text-indigo-900">
+                    <app-heroicon-plus></app-heroicon-plus>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+            <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="config">
+              {{ 'config.label' | translate }}
+            </label>
+            <div class="mt-1 sm:mt-0 sm:col-span-2">
+              <div class="relative">
+                <div class="flex items-center gap-1">
+                  <div class="w-full">
+                    <input
+                      [formControl]="configAutocompletion"
+                      autocomplete="config"
+                      class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+                      id="config"
+                      name="config"
+                      placeholder="{{ 'common.namePlaceholder' | translate }}"
+                      type="text"
+                    />
+                    <app-autocomplete-select
+                      (isSelectChange)="setConfiguration($event)"
+                      *ngIf="(filteredConfigurations$ | async)?.length"
+                      [isSelect]="showConfigAutocompletion"
+                      [list$]="filteredConfigurations$"
+                    ></app-autocomplete-select>
+                  </div>
+                  <button
+                    (click)="reset('configuration_id', configAutocompletion)"
+                    class="text-gray-400 hover:text-indigo-900"
+                  >
+                    <app-heroicon-trash></app-heroicon-trash>
+                  </button>
+                  <button (click)="configurationModal = true" class="text-gray-400 hover:text-indigo-900">
+                    <app-heroicon-plus></app-heroicon-plus>
+                  </button>
+                </div>
+              </div>
+              <p
+                *ngIf="hasError('configuration_id', 'required')"
+                @fadeIn
+                class="mt-2 text-sm text-red-600"
+                id="config-error"
+              >
+                {{ 'common.configurationRequiredError' | translate }}
+              </p>
+            </div>
+          </div>
+          <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+            <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="proxy">
+              {{ 'proxy.label' | translate }}
+            </label>
+
+            <div class="mt-1 sm:mt-0 sm:col-span-2">
+              <div class="relative">
+                <div class="flex items-center gap-1">
+                  <div class="w-full">
+                    <input
+                      [formControl]="proxyAutocompletion"
+                      autocomplete="proxy"
+                      class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+                      id="proxy"
+                      name="proxy"
+                      placeholder="{{ 'common.namePlaceholder' | translate }}"
+                      type="text"
+                    />
+                    <app-autocomplete-select
+                      (isSelectChange)="setProxy($event)"
+                      *ngIf="(filteredProxies$ | async)?.length"
+                      [isSelect]="showProxyAutocompletion"
+                      [list$]="filteredProxies$"
+                    ></app-autocomplete-select>
+                  </div>
+                  <button (click)="reset('proxy_id', proxyAutocompletion)" class="text-gray-400 hover:text-indigo-900">
+                    <app-heroicon-trash></app-heroicon-trash>
+                  </button>
+                  <button (click)="proxyModal = true" class="text-gray-400 hover:text-indigo-900">
+                    <app-heroicon-plus></app-heroicon-plus>
+                  </button>
+                </div>
+              </div>
+              <p *ngIf="hasError('proxy_id', 'required')" @fadeIn class="mt-2 text-sm text-red-600" id="proxy-error">
+                {{ 'common.proxyRequiredError' | translate }}
+              </p>
+            </div>
+          </div>
+          <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+            <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="description">
+              {{ 'common.description' | translate }}
+            </label>
+            <div class="mt-1 sm:mt-0 sm:col-span-2">
+              <textarea
+                class="shadow-sm block w-full focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border border-gray-300 rounded-md"
+                formControlName="description"
+                id="description"
+                name="description"
+                placeholder="{{ 'common.descriptionPlaceholder' | translate }}"
+                rows="3"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pt-5">
+      <div class="flex justify-end">
+        <button
+          [routerLink]="['crawlers']"
+          class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          type="button"
+        >
+          {{ 'common.cancel' | translate }}
+        </button>
+        <button
+          (click)="onSave()"
+          [disabled]="!crawlerForm.valid"
+          [ngClass]="{ 'opacity-25 hover:bg-indigo-600 ': !crawlerForm.valid }"
+          class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          type="button"
+        >
+          {{ 'common.save' | translate }}
+        </button>
+      </div>
+    </div>
+  </form>
+</div>

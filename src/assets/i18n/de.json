@@ -1,6 +1,7 @@
 {
   "agent": {
-    "add": "Agent anlegen",
+    "add": "Agent hinzufügen",
+    "createIntroText": "Bitte geben Sie die erforderlichen Daten ein, um einen neuen Agenten zu erstellen.",
     "generalInfo": "Bitte einen Namen und eine Kontaktinformation angeben, um ein Agent anzulegen.",
     "label": "Agent",
     "list": "Liste aller Agent.",
@@ -13,46 +14,69 @@
     "signOut": "Abmelden",
     "username": "Benutzername"
   },
+  "behavior": {
+    "add": "Behavior hinzufügen",
+    "createIntroText": "Geben Sie die erforderlichen Daten ein, um einen neuen Eintrag zu erstellen.",
+    "label": "Behavior",
+    "list": "Liste aller Behaviors.",
+    "name": "Bezeichnung",
+    "value": "Wert"
+  },
   "common": {
+    "actionPermanentWarning": "Diese Aktion kann nicht rückgängig gemacht werden.",
     "agentRequiredError": "Agent ist erforderlich",
+    "areYouSure": "Sind Sie sicher?",
     "cancel": "Abbrechen",
     "clear": "Aufräumen",
     "configRequiredError": "Konfiguration ist erforderlich",
+    "confirm": "Bestätigen",
     "contact": "Kontakt",
     "contactPlaceholder": "z.B. Max Mustermann, 066 555 22 44",
     "contactRequiredError": "Mindestens ein Kontakt ist erforderlich",
+    "crawlerRequiredError": "Crawler ist erforderlich",
     "delete": "Löschen",
     "description": "Beschreibung",
-    "descriptionPlaceholder": "z.B. Es handelt sich um ein neuartiges Experiment, ...",
+    "descriptionPlaceholder": "z.B. Es handelt sich um ...",
     "descriptionRequiredError": "Beschreibung ist erforderlich",
     "edit": "Bearbeiten",
     "experimentRequiredError": "Experiment ist erforderlich",
     "home": "Home",
-    "hostName": "Host Name",
-    "id": "Id",
-    "identification": "Identification",
+    "hostName": "Hostname",
+    "hostNamePlaceholder": "z.B. proxy.geosurf.io",
+    "id": "ID",
+    "identification": "Identifikation",
+    "identificationPlaceholder": "z.B. Browser-v10",
     "label": "Allgemein",
     "location": "Location",
+    "locationPlaceholder": "z.B. US-OK-OKLAHOMA",
     "maxLengthExceed": "Maximale Länge überschritten",
-    "multilogin_id": "Multi Login Id",
-    "multilogin_profile": "Multi Profile",
+    "multiLoginId": "Multilogin-ID",
+    "multiLoginIdPlaceholder": "z.B. ML-123456XYZ",
+    "multiLoginProfile": "Multilogin Profil",
+    "multiLoginProfilePlaceholder": "z.B. {\"browser\":\"chrome\",\"os\":\"windows\",\"screen\":\"1920x1080\"}",
     "name": "Name",
     "namePlaceholder": "z.B. Maria Berlusconi",
     "nameRequiredError": "Name ist erforderlich",
     "new": "Neu",
     "password": "Password",
+    "passwordPlaceholder": "z.B. Ein super Passwort",
     "port": "Port",
+    "portPlaceholder": "z.B. 8080",
     "proxyRequiredError": "Proxy ist erforderlich",
+    "queueRequiredError": "Queue erforderlich",
     "reset": "Zurücksetzen",
     "save": "Speichern",
     "select": "Wählen",
     "show": "Anzeigen",
     "startDateRequiredError": "Startdatum ist erforderlich",
     "typeRequiredError": "Typ ist erforderlich",
-    "username": "User Name"
+    "updatedAt": "Aktualisiert am",
+    "username": "Nutzername",
+    "usernamePlaceholder": "e.g. max.mustermann"
   },
   "config": {
-    "add": "Konfiguration anlegen",
+    "add": "Konfiguration hinzufügen",
+    "createIntroText": "Bitte geben Sie die erforderlichen Daten ein, um eine neue Konfiguration zu erstellen.",
     "generalInfo": "Bitte einen Namen und eine Kontaktinformation angeben, um ein Configuration anzulegen.",
     "label": "Konfiguration",
     "list": "Liste aller Konfigurationen.",
@@ -67,14 +91,15 @@
     }
   },
   "crawler": {
-    "add": "Crawler anlegen",
+    "add": "Crawler hinzufügen",
     "create": "Crawler erstellen",
     "createText": "Wählen Sie das Experiment aus. Geben Sie erforderliche Daten ein.",
     "label": "Crawler",
     "list": "Liste aller Crawler einschliesslich der Angabe, welchem Experiment diese zugeordnet sind."
   },
   "experiment": {
-    "add": "Experiment anlegen",
+    "add": "Experiment hinzufügen",
+    "createIntroText": "Geben Sie die erforderlichen Daten ein, um ein neues Experiment zu erstellen.",
     "generalInfo": "Bitte einen Namen und eine Kontaktinformation angeben, um ein Experiment anzulegen.",
     "label": "Experiment",
     "list": "Liste aller Experimente.",
@@ -82,12 +107,14 @@
     "selected": "Experiment ausgewählt"
   },
   "filter": {
-    "reset": "Filter zurücksetzen"
+    "bodyText": "Hier werde aktive Filter angezeigt.",
+    "reset": "Filter zurücksetzen",
+    "title": "Filter"
   },
   "foo": "bar",
   "job": {
     "add": "Job hinzufügen",
-    "cralwer_id": "Crawler Id",
+    "crawlerId": "Crawler-ID",
     "label": "Job",
     "list": "Liste aller Jobs.",
     "type": "Type"
@@ -105,18 +132,17 @@
       "agentMultiloginprofile": "Agent Multilogin-Profil",
       "agentName": "Agentenname"
     },
+    "bodyText": "Hier werden die Einzelheiten zum ausgewählten Kontext gezeigt. Um mehr zu sehen, bitte mindestens ein Experiment auswählen.",
     "common": {
       "browser": "Browser",
-      "canvas": "Segeltuch",
       "geolocation": "Geo-Lokalisierung",
       "name": "Name",
       "navigator": "Navigator",
-      "network": "Netzwerk",
-      "os": "Os",
-      "storage": "Lagerung"
+      "network": "Netzwerk"
     },
     "configuration": {
-      "configurationName": "Konfigurationsname"
+      "configurationName": "Name",
+      "label": "Konfiguration"
     },
     "crawler": {
       "crawler": "Crawler",
@@ -139,7 +165,8 @@
       "proxyName": "Proxy-Name",
       "proxyPassword": "Proxy-Passwort",
       "proxyUserName": "Proxy-Benutzername"
-    }
+    },
+    "title": "Meta Informationen"
   },
   "pagination": {
     "label": "Pagination",
@@ -149,8 +176,9 @@
     "previousLabel": "Zurück"
   },
   "proxy": {
-    "add": "Proxy anlegen",
-    "generalInfo": "Bitte einen Namen und eine Kontaktinformation angeben, um ein Proxy anzulegen.",
+    "add": "Proxy hinzufügen",
+    "createIntroText": "Geben Sie die erforderlichen Daten ein, um einen neuen Proxy zu erstellen.",
+    "generalInfo": "Bitte geben Sie einen Namen und Kontaktinformationen an, um einen Eintrag zu erstellen.",
     "label": "Proxy",
     "list": "Liste aller Proxy.",
     "notSelected": "Kein Proxy ausgewählt",
@@ -158,10 +186,10 @@
   },
   "queue": {
     "add": "Queue hinzufügen",
-    "cralwer_id": "Crawler Id",
+    "createIntroText": "Geben Sie die erforderlichen Daten ein, um eine neue Queue zu erstellen.",
     "label": "Queue",
     "list": "Liste aller Queues.",
-    "startAt": "Start At"
+    "startAt": "Startzeit"
   },
   "status": {
     "code": "Code",
@@ -173,5 +201,17 @@
     "review": "Review",
     "succeeded": "Erfolg",
     "type": "Type"
+  },
+  "upload": {
+    "clickToUpload": "Klicken, um eine Datei auszuwählen",
+    "experimentUploadFormat": "JSON Format",
+    "fileExampleLabel": "API Dokumentation",
+    "fileExampleText": "Einzelheiten der JSON Datei.",
+    "fileUpload": "Datei hochladen",
+    "noExperimentSelected": "Kein Experiment ausgewählt",
+    "orDragAndDrop": "oder Datei hierherziehen",
+    "selectExperiment": "Experiment auswählen",
+    "uploadExperimentIntroText": "Bitte wählen Sie ein Experiment aus, um die Daten dazu hochzuladen. Die Datei muss im JSON-Format vorliegen.",
+    "uploadExperimentTitle": "Experiment hochladen"
   }
 }

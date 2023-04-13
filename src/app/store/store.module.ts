@@ -3,7 +3,7 @@ import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
 import { metaReducer, reducer } from './state';
 import { StoreRouterConnectingModule } from '@ngrx/router-store';
-import { environment } from '../../environments/environment';
+import { environment } from '@environments/environment';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 
 @NgModule({

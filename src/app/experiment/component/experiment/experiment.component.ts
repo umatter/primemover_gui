@@ -89,10 +89,7 @@ export class ExperimentComponent implements OnInit, OnDestroy {
     });
   }
 
-  downloadExperimentData(experiment:any):void|boolean{
-    const experimentId = experiment.id;
-    this.store.dispatch(experimentDownloadRequested({ experimentId }));
-  }
+ 
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();

@@ -1,9 +1,9 @@
 <div>
   <div class="px-4 py-5 sm:px-6">
-    <h3 class="text-lg font-medium leading-6 text-gray-900">Meta Information</h3>
+    <h3 class="text-lg font-medium leading-6 text-gray-900">{{ 'meta.title' | translate }}</h3>
 
     <p class="mt-1 max-w-2xl text-sm text-gray-500">
-      Here you will get details with context of selected entity. To see more, please select at least an experiment.
+      {{ 'meta.bodyText' | translate }}
     </p>
   </div>
   <div *ngIf="experiment" class="border-t border-gray-200 px-4 py-5 sm:p-0">
@@ -15,10 +15,6 @@
       <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
         <dt class="text-sm font-medium text-gray-500">{{ 'common.name' | translate }}</dt>
         <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{{ experiment.name }}</dd>
-      </div>
-      <div *ngIf="experiment.description" class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-        <dt class="text-sm font-medium text-gray-500">{{ 'common.description' | translate }}</dt>
-        <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{{ experiment.description }}</dd>
       </div>
       <div *ngIf="experiment.contact" class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
         <dt class="text-sm font-medium text-gray-500">{{ 'common.contact' | translate }}</dt>
@@ -36,10 +32,6 @@
         <dt class="text-sm font-medium text-gray-500">{{ 'common.name' | translate }}</dt>
         <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{{ crawler.name }}</dd>
       </div>
-      <div *ngIf="crawler.description" class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-        <dt class="text-sm font-medium text-gray-500">{{ 'common.description' | translate }}</dt>
-        <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{{ crawler.description }}</dd>
-      </div>
       <div *ngIf="crawler?.agent" class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
         <dt class="text-sm font-medium text-gray-500">{{ 'agent.label' | translate }}</dt>
         <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{{ crawler?.agent?.id }}</dd>
@@ -49,7 +41,7 @@
         <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{{ crawler?.proxy?.id }}</dd>
       </div>
       <div *ngIf="crawler?.configuration" class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-        <dt class="text-sm font-medium text-gray-500">{{ 'configuration.label' | translate }}</dt>
+        <dt class="text-sm font-medium text-gray-500">{{ 'config.label' | translate }}</dt>
         <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{{ crawler?.configuration?.id }}</dd>
       </div>
     </dl>

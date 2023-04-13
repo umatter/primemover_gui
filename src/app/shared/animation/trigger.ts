@@ -1,4 +1,4 @@
-import { style, animate, trigger, transition } from '@angular/animations';
+import { animate, style, transition, trigger } from '@angular/animations';
 
 export const fadeSlideInOut = trigger('fadeSlideInOut', [
   transition(':enter', [
@@ -36,10 +36,10 @@ export const modalAnimated = trigger('modalAnimated', [
 ]);
 
 /**
-  Entering: "ease-out duration-300"
-    From: "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-    To: "opacity-100 translate-y-0 sm:scale-100"
-  Leaving: "ease-in duration-200"
-    From: "opacity-100 translate-y-0 sm:scale-100"
-    To: "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-*/
+ Entering: "ease-out duration-300"
+ From: "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+ To: "opacity-100 translate-y-0 sm:scale-100"
+ Leaving: "ease-in duration-200"
+ From: "opacity-100 translate-y-0 sm:scale-100"
+ To: "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+ */

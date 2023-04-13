@@ -14,6 +14,6 @@ export class LogoutComponent implements OnInit {
   ngOnInit(): void {
     this.store.dispatch(logoutRequested());
     this.localStorageService.remove('accessToken');
-    this.router.navigateByUrl('login').then(() => this.store.dispatch(logoutCompleted()));
+    this.router.navigateByUrl('/').then(() => this.store.dispatch(logoutCompleted()));
   }
 }
