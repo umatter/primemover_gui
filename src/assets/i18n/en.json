@@ -13,7 +13,15 @@
     "settings": "Settings",
     "signIn": "Register",
     "signOut": "Sign out",
-    "username": "User name"
+    "username": "User name",
+    "email": "Email",
+    "newPassword": "New Password",
+    "confirmPassword": "Confirm Password",
+    "resetPassword": "Reset Password",
+    "passwordRequiredError": "Password is Required",
+    "passwordMinCharsError": "Password minimun 8 character",
+    "passwordConfirmError": "The password confirmation does not match.",
+    "passwordPatternError": "At least one capital letter, at least one number, at least one special char"
   },
   "behavior": {
     "add": "Add behavior",

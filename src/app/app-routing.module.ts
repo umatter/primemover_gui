@@ -3,13 +3,14 @@ import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from '@core/auth/login/login.component';
 import { LogoutComponent } from '@core/auth/logout/logout.component';
 import { AuthGuard } from '@core/guards/auth.guard';
-import { UserSettingComponent } from './shared/layout/user-setting/user-setting.component';
+import { ForgotPasswordComponent } from "@core/auth/forgot-password/forgot-password.component";
+import { ResetPasswordComponent } from "@core/auth/reset-password/reset-password.component";
+import { UserSettingComponent } from "@shared/layout/user-setting/user-setting.component";
 
 const routes: Routes = [
   {
     path: '',
     component: LoginComponent,
-    outlet: 'noLayout'
   },
   {
     path: 'logout',
@@ -20,6 +21,14 @@ const routes: Routes = [
     path: 'user/settings',
     component: UserSettingComponent,
     canActivate: [AuthGuard]
+  },
+  {
+    path: 'forgot-password',
+    component: ForgotPasswordComponent
+  },
+  {
+    path: 'password/reset/:token',
+    component: ResetPasswordComponent
   },
   {
     path: 'crawlers',
