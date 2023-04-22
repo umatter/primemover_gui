@@ -3,9 +3,10 @@ import { ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot } from
 import { catchError, map, Observable, of } from 'rxjs';
 import { select, Store } from '@ngrx/store';
 import { AuthService } from '../services/auth.service';
-import { selectAccessToken } from '@app/store/auth/auth.selectors';
+import { selectAccessToken, selectUser } from '@app/store/auth/auth.selectors';
 import {
   authGuardPassed,
+  fetchUserDataSuccess,
   redirectToLoginRequested,
   updateLocalStorageTokenRequested,
   updateUserRequested,
@@ -23,6 +24,7 @@ import { TokenService } from '../services/token.service';
 export class AuthGuard implements CanActivate {
   accessToken$: Observable<any>;
   accessToken: any;
+  user$: Observable<any>;
 
   constructor(
     private router: Router,
@@ -37,6 +39,7 @@ export class AuthGuard implements CanActivate {
     if (!requiresLogin) {
     }
     this.accessToken$ = this.store.select(selectAccessToken);
+    this.user$ = this.store.select(selectUser);
 
     if (!this.hasValidToken()) {
       this.store.dispatch(redirectToLoginRequested());
@@ -89,9 +92,12 @@ export class AuthGuard implements CanActivate {
 
   isLocalStorageTokenValid(): boolean {
     const jwtToken = this.getLocalStorageToken();
+    const user = JSON.parse(this.localStorageService.get('user') || '{}');
+
     if (this.tokenService.isTokenValid(jwtToken)) {
       this.store.dispatch(validLocalStorageTokenFound());
       this.store.dispatch(useTokenFromLocalStorageRequested({ token: jwtToken }));
+      this.store.dispatch(fetchUserDataSuccess({user: user}));
       return true;
     }
     return false;
