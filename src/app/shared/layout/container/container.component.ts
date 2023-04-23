@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { select, Store } from '@ngrx/store';
 import { selectIsSignedIn } from '../../../store/auth/auth.selectors';
 import { TranslateService } from '@ngx-translate/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-container',
@@ -16,13 +17,20 @@ export class ContainerComponent implements OnInit {
     { name: 'DE', value: 'de' }
   ];
   menuOpen: boolean;
+  showUserMenu: boolean = false;
+  classUserMenuBtn: string = "transition ease-out duration-100";
+  confirmModal: boolean = false;
 
-  constructor(private store: Store, private translate: TranslateService) {
+  constructor(private store: Store, private translate: TranslateService, private router: Router) {
     this.isLoggedIn$ = store.pipe(select(selectIsSignedIn));
   }
 
   ngOnInit() {
     this.setDefaultLanguage();
+  }
+  
+  toggleUserMenu() {
+    this.showUserMenu = !this.showUserMenu;
   }
 
   setDefaultLanguage() {
@@ -41,5 +49,16 @@ export class ContainerComponent implements OnInit {
   onMenuOpen(open?: boolean): void {
     this.menuOpen = open ?? !this.menuOpen;
     console.log(this.menuOpen);
+  }
+
+  signOutRequested(): void {
+    this.confirmModal = true;
+  }
+
+  onModalResponse(event: boolean): void {
+    if(event && this.confirmModal) {
+      this.router.navigateByUrl('/logout')
+    }
+    this.confirmModal = false;
   }
 }

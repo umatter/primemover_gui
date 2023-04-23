@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from '@core/auth/login/login.component';
 import { LogoutComponent } from '@core/auth/logout/logout.component';
 import { AuthGuard } from '@core/guards/auth.guard';
+import { UserSettingComponent } from './shared/layout/user-setting/user-setting.component';
 
 const routes: Routes = [
   {
@@ -13,6 +14,11 @@ const routes: Routes = [
   {
     path: 'logout',
     component: LogoutComponent,
+    canActivate: [AuthGuard]
+  },
+  {
+    path: 'user/settings',
+    component: UserSettingComponent,
     canActivate: [AuthGuard]
   },
   {

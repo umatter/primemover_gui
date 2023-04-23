@@ -12,7 +12,8 @@
     "password": "password",
     "signIn": "Register",
     "signOut": "Sign out",
-    "username": "User name"
+    "username": "User name",
+    "settings": "Settings"
   },
   "behavior": {
     "add": "Add behavior",
