@@ -51,6 +51,7 @@ import { HeroiconPlusComponent } from './icon/heroicon-plus/heroicon-plus.compon
 import { HeroiconClipboardDocumentComponent } from './icon/heroicon-clipboard-document/heroicon-clipboard-document.component';
 import { HeroiconUploadComponent } from './icon/heroicon-upload/heroicon-upload.component';
 import { FileUploadComponent } from './file-upload/file-upload.component';
+import { HeroiconPencilSquareComponent } from './icon/heroicon-pencil-square/heroicon-pencil-square.component';
 
 @NgModule({
   declarations: [
@@ -86,7 +87,8 @@ import { FileUploadComponent } from './file-upload/file-upload.component';
     HeroiconPlusComponent,
     HeroiconClipboardDocumentComponent,
     HeroiconUploadComponent,
-    FileUploadComponent
+    FileUploadComponent,
+    HeroiconPencilSquareComponent
   ],
   imports: [
     CommonModule,
@@ -147,7 +149,8 @@ import { FileUploadComponent } from './file-upload/file-upload.component';
     HeroiconPlusComponent,
     HeroiconClipboardDocumentComponent,
     HeroiconUploadComponent,
-    FileUploadComponent
+    FileUploadComponent,
+    HeroiconPencilSquareComponent
   ]
 })
 export class SharedModule {}

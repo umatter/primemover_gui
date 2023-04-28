@@ -11,6 +11,7 @@ import { selectQueryFilter } from '@shared/store/shared.selectors';
 import { QueryFilter } from '@shared/model/query-filter';
 import { Meta } from '@shared/pagination/model';
 import { requestPage } from '@shared/store/shared.actions';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-agent',
@@ -27,7 +28,12 @@ export class AgentComponent implements OnDestroy {
 
   private subscriptions = new Subscription();
 
-  constructor(private store: Store, public entityService: AgentService, private apiService: AgentApiService) {
+  constructor(
+    private store: Store,
+    public entityService: AgentService,
+    private apiService: AgentApiService,
+    private router: Router
+  ) {
     this.entities$ = entityService.entities$;
     this.isLoading$ = entityService.loading$;
     this.pageMeta$ = entityService.pageMeta$;
@@ -69,5 +75,10 @@ export class AgentComponent implements OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
+  }
+
+  editRequested(item: Agent) {
+    console.log(item);
+    this.router.navigate(['/agents', item.id, 'edit']).then();
   }
 }

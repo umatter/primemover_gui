@@ -1,189 +1,180 @@
 <form [formGroup]="agentForm" class="space-y-8 divide-y divide-gray-200">
-  <div class="space-y-8 divide-y divide-gray-200 sm:space-y-5">
-    <div class="sm:flex sm:items-center">
-      <div class="sm:flex-auto">
-        <h1 class="text-xl font-semibold text-gray-900">{{ 'agent.label' | translate }}</h1>
-        <p class="mt-2 text-sm text-gray-700">
-          {{ 'agent.createIntroText' | translate }}
-        </p>
-      </div>
-    </div>
-    <div class="space-y-6 sm:space-y-5">
-      <div class="space-y-6 sm:space-y-5">
-        <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-          <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="name">
-            {{ 'common.name' | translate }}
-          </label>
-          <div class="mt-1 sm:mt-0 sm:col-span-2">
-            <div class="relative">
-              <div class="flex items-center gap-1">
-                <div class="w-full">
-                  <input
-                    [formControl]="name"
-                    autocomplete="name"
-                    class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
-                    id="name"
-                    name="name"
-                    placeholder="{{ 'common.namePlaceholder' | translate }}"
-                    type="text"
-                  />
-                  <app-autocomplete-select
-                    (isSelectChange)="setFormValuesToSelectedAgent($event)"
-                    *ngIf="filteredAgents$"
-                    [isSelect]="showAutocompletion"
-                    [list$]="filteredAgents$"
-                  ></app-autocomplete-select>
+    <div class="space-y-8 divide-y divide-gray-200 sm:space-y-5">
+        <div class="sm:flex sm:items-center">
+            <div class="sm:flex-auto">
+                <h1 class="text-xl font-semibold text-gray-900">
+                    {{ 'agent.label' | translate }}
+                    <span *ngIf="agent$ | async; let agent" class="text-indigo-400">{{ agent.name }}</span>
+                </h1>
+                <p class="mt-2 text-sm text-gray-700">
+                    {{ 'agent.createIntroText' | translate }}
+                </p>
+            </div>
+        </div>
+        <div class="space-y-6 sm:space-y-5">
+            <div class="space-y-6 sm:space-y-5">
+                <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+                    <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="name">
+                        {{ 'common.name' | translate }}
+                    </label>
+                    <div class="mt-1 sm:mt-0 sm:col-span-2">
+                        <div class="relative">
+                            <div class="flex items-center gap-1">
+                                <div class="w-full">
+                                    <input
+                                            [formControl]="name"
+                                            class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+                                            id="name"
+                                            name="name"
+                                            placeholder="{{ 'common.namePlaceholder' | translate }}"
+                                            type="text"
+                                    />
+                                </div>
+                            </div>
+
+                            <p *ngIf="hasError('name', 'required')" @fadeIn class="mt-2 text-sm text-red-600"
+                               id="agent-error">
+                                {{ 'common.nameRequiredError' | translate }}
+                            </p>
+                        </div>
+                    </div>
                 </div>
 
-                <app-button
-                  (click)="reset()"
-                  class="text-indigo-600 hover:text-indigo-900"
-                  size="md"
-                  text="{{ 'common.reset' | translate }}"
-                  type="white"
-                ></app-button>
-              </div>
-
-              <p *ngIf="hasError('name', 'required')" @fadeIn class="mt-2 text-sm text-red-600" id="agent-error">
-                {{ 'common.nameRequiredError' | translate }}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-          <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="description">
-            {{ 'common.description' | translate }}
-          </label>
-          <div class="mt-1 sm:mt-0 sm:col-span-2">
+                <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+                    <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="description">
+                        {{ 'common.description' | translate }}
+                    </label>
+                    <div class="mt-1 sm:mt-0 sm:col-span-2">
             <textarea
-              class="shadow-sm block w-full focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border border-gray-300 rounded-md"
-              formControlName="description"
-              id="description"
-              name="description"
-              placeholder="{{ 'common.descriptionPlaceholder' | translate }}"
-              rows="3"
+                    class="shadow-sm block w-full focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border border-gray-300 rounded-md"
+                    formControlName="description"
+                    id="description"
+                    name="description"
+                    placeholder="{{ 'common.descriptionPlaceholder' | translate }}"
+                    rows="3"
             ></textarea>
-          </div>
-          <p *ngIf="hasError('description', 'maxlength')" @fadeIn class="mt-2 text-sm text-red-600" id="contact-error">
-            {{ 'common.maxLengthExceed' | translate }}
-          </p>
-        </div>
-        <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-          <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="identification">
-            {{ 'common.identification' | translate }}
-          </label>
-          <div class="mt-1 sm:mt-0 sm:col-span-2">
-            <input
-              autocomplete="identification"
-              class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
-              formControlName="identification"
-              id="identification"
-              name="identification"
-              placeholder="{{ 'common.identificationPlaceholder' | translate }}"
-              type="text"
-            />
-            <p
-              *ngIf="hasError('identification', 'required')"
-              @fadeIn
-              class="mt-2 text-sm text-red-600"
-              id="identification-error"
-            >
-              {{ 'common.identificationRequiredError' | translate }}
-            </p>
-          </div>
-        </div>
-        <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-          <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="multiLoginId">
-            {{ 'common.multiLoginId' | translate }}
-          </label>
-          <div class="mt-1 sm:mt-0 sm:col-span-2">
-            <input
-              autocomplete="multiLoginId"
-              class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
-              formControlName="multiLoginId"
-              id="multiLoginId"
-              name="multiLoginId"
-              placeholder="{{ 'common.multiLoginIdPlaceholder' | translate }}"
-              type="text"
-            />
-            <p
-              *ngIf="hasError('multiLoginId', 'required')"
-              @fadeIn
-              class="mt-2 text-sm text-red-600"
-              id="multiLoginId-error"
-            >
-              {{ 'common.multiLoginIdRequiredError' | translate }}
-            </p>
-          </div>
-        </div>
+                    </div>
+                    <p *ngIf="hasError('description', 'maxlength')" @fadeIn class="mt-2 text-sm text-red-600"
+                       id="contact-error">
+                        {{ 'common.maxLengthExceed' | translate }}
+                    </p>
+                </div>
+                <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+                    <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="identification">
+                        {{ 'common.identification' | translate }}
+                    </label>
+                    <div class="mt-1 sm:mt-0 sm:col-span-2">
+                        <input
+                                autocomplete="identification"
+                                class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+                                formControlName="identification"
+                                id="identification"
+                                name="identification"
+                                placeholder="{{ 'common.identificationPlaceholder' | translate }}"
+                                type="text"
+                        />
+                        <p
+                                *ngIf="hasError('identification', 'required')"
+                                @fadeIn
+                                class="mt-2 text-sm text-red-600"
+                                id="identification-error"
+                        >
+                            {{ 'common.identificationRequiredError' | translate }}
+                        </p>
+                    </div>
+                </div>
+                <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+                    <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="multilogin_id">
+                        {{ 'common.multiLoginId' | translate }}
+                    </label>
+                    <div class="mt-1 sm:mt-0 sm:col-span-2">
+                        <input
+                                autocomplete="multilogin_id"
+                                class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+                                formControlName="multilogin_id"
+                                id="multilogin_id"
+                                name="multilogin_id"
+                                placeholder="{{ 'common.multiLoginIdPlaceholder' | translate }}"
+                                type="text"
+                        />
+                        <p
+                                *ngIf="hasError('multilogin_id', 'required')"
+                                @fadeIn
+                                class="mt-2 text-sm text-red-600"
+                                id="multilogin_id-error"
+                        >
+                            {{ 'common.multiLoginIdRequiredError' | translate }}
+                        </p>
+                    </div>
+                </div>
 
-        <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-          <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="multiLoginProfile">
-            {{ 'common.multiLoginProfile' | translate }}
-          </label>
-          <div class="mt-1 sm:mt-0 sm:col-span-2">
-            <input
-              autocomplete="multiLoginProfile"
-              class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
-              formControlName="multiLoginProfile"
-              id="multiLoginProfile"
-              name="multiLoginProfile"
-              placeholder="{{ 'common.multiLoginProfilePlaceholder' | translate }}"
-              type="text"
-            />
-            <p
-              *ngIf="hasError('multiLoginProfile', 'required')"
-              @fadeIn
-              class="mt-2 text-sm text-red-600"
-              id="multiLoginProfile-error"
-            >
-              {{ 'common.multiLoginProfileRequiredError' | translate }}
-            </p>
-          </div>
-        </div>
+                <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+                    <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="multilogin_profile">
+                        {{ 'common.multiLoginProfile' | translate }}
+                    </label>
+                    <div class="mt-1 sm:mt-0 sm:col-span-2">
+                        <input
+                                autocomplete="multilogin_profile"
+                                class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+                                formControlName="multilogin_profile"
+                                id="multilogin_profile"
+                                name="multilogin_profile"
+                                placeholder="{{ 'common.multiLoginProfilePlaceholder' | translate }}"
+                                type="text"
+                        />
+                        <p
+                                *ngIf="hasError('multilogin_profile', 'required')"
+                                @fadeIn
+                                class="mt-2 text-sm text-red-600"
+                                id="multilogin_profile-error"
+                        >
+                            {{ 'common.multiLoginProfileRequiredError' | translate }}
+                        </p>
+                    </div>
+                </div>
 
-        <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-          <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="location">
-            {{ 'common.location' | translate }}
-          </label>
-          <div class="mt-1 sm:mt-0 sm:col-span-2">
-            <input
-              autocomplete="location"
-              class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
-              formControlName="location"
-              id="location"
-              name="location"
-              placeholder="{{ 'common.locationPlaceholder' | translate }}"
-              type="text"
-            />
-            <p *ngIf="hasError('location', 'required')" @fadeIn class="mt-2 text-sm text-red-600" id="location-error">
-              {{ 'common.locationRequiredError' | translate }}
-            </p>
-          </div>
+                <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+                    <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="location">
+                        {{ 'common.location' | translate }}
+                    </label>
+                    <div class="mt-1 sm:mt-0 sm:col-span-2">
+                        <input
+                                autocomplete="location"
+                                class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+                                formControlName="location"
+                                id="location"
+                                name="location"
+                                placeholder="{{ 'common.locationPlaceholder' | translate }}"
+                                type="text"
+                        />
+                        <p *ngIf="hasError('location', 'required')" @fadeIn class="mt-2 text-sm text-red-600"
+                           id="location-error">
+                            {{ 'common.locationRequiredError' | translate }}
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
 
-  <div class="pt-5">
-    <div class="flex justify-end">
-      <button
-        (click)="onCancel()"
-        class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        type="button"
-      >
-        {{ 'common.cancel' | translate }}
-      </button>
-      <button
-        (click)="onSave()"
-        [disabled]="!agentForm.valid"
-        [ngClass]="{ 'opacity-25 hover:bg-indigo-600 ': !agentForm.valid }"
-        class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-        type="button"
-      >
-        {{ 'common.save' | translate }}
-      </button>
+    <div class="pt-5">
+        <div class="flex justify-end">
+            <button
+                    (click)="onCancel()"
+                    class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    type="button"
+            >
+                {{ 'common.cancel' | translate }}
+            </button>
+            <button
+                    (click)="onSave()"
+                    [disabled]="!agentForm.valid"
+                    [ngClass]="{ 'opacity-25 hover:bg-indigo-600 ': !agentForm.valid }"
+                    class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                    type="button"
+            >
+                {{ 'common.save' | translate }}
+            </button>
+        </div>
     </div>
-  </div>
 </form>

@@ -6,9 +6,10 @@ import { SharedModule } from '@shared/shared.module';
 import { AgentComponent } from './index/agent.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AgentFormComponent } from './form/agent-form.component';
+import { AgentEditComponent } from '@app/agent/edit/agent-edit.component';
 
 @NgModule({
-  declarations: [AgentComponent, AgentFormComponent],
+  declarations: [AgentComponent, AgentFormComponent, AgentEditComponent],
   exports: [AgentFormComponent],
   imports: [CommonModule, AgentRoutingModule, NgxPaginationModule, SharedModule, MatProgressSpinnerModule]
 })
