@@ -12,7 +12,8 @@
     "password": "Kennwort",
     "signIn": "Anmelden",
     "signOut": "Abmelden",
-    "username": "Benutzername"
+    "username": "Benutzername",
+    "settings": "Einstellungen"
   },
   "behavior": {
     "add": "Behavior hinzufügen",
