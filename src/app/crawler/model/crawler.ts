@@ -1,4 +1,7 @@
 import { Experiment } from './experiment';
+import { Agent } from '@app/agent/model/agent';
+import { Proxy } from '@app/proxy/model/proxy';
+import { Configuration } from '@app/config/model/config';
 
 export interface Crawler {
   experiment: Experiment;
@@ -9,4 +12,7 @@ export interface Crawler {
   latest_queues_failed: number;
   latest_queues_count: number;
   experiment_id: number;
+  agent?: Agent;
+  proxy?: Proxy;
+  configuration?: Configuration;
 }

@@ -10,10 +10,10 @@
   },
   "auth": {
     "password": "password",
+    "settings": "Settings",
     "signIn": "Register",
     "signOut": "Sign out",
-    "username": "User name",
-    "settings": "Settings"
+    "username": "User name"
   },
   "behavior": {
     "add": "Add behavior",
@@ -188,9 +188,11 @@
   "queue": {
     "add": "Add Queue",
     "createIntroText": "Enter the required data to create a new queue.",
+    "finishedAt": "Done",
     "label": "Queue",
     "list": "List of all queues.",
-    "startAt": "Start At"
+    "startAt": "Start At",
+    "startedAt": "Started"
   },
   "status": {
     "code": "Code",

@@ -8,9 +8,8 @@ describe('HeroiconPencilSquareComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ HeroiconPencilSquareComponent ]
-    })
-    .compileComponents();
+      declarations: [HeroiconPencilSquareComponent]
+    }).compileComponents();
 
     fixture = TestBed.createComponent(HeroiconPencilSquareComponent);
     component = fixture.componentInstance;

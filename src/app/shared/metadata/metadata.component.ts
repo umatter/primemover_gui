@@ -1,34 +1,27 @@
 import { Component, OnInit } from '@angular/core';
-import { select, Store } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { Crawler } from 'src/app/crawler/model/crawler';
 import { Experiment } from 'src/app/experiment/model/experiment';
-import { selectCurrentCrawler, selectCurrentExperiment } from '@shared/store/shared.selectors';
+import { selectCurrentCrawler, selectCurrentExperiment, selectCurrentQueue } from '@shared/store/shared.selectors';
+import { Queue } from '@app/queue/model/queue';
 
 @Component({
   selector: 'app-metadata',
   templateUrl: './metadata.component.html'
 })
 export class MetadataComponent implements OnInit {
-  experiment: any;
-  currentExperiment$: Observable<Experiment | null>;
-  currentCrawler$: Observable<Crawler | null>;
-  crawler: any;
+  currentExperiment$: Observable<Experiment>;
+  currentCrawler$: Observable<Crawler>;
+  currentQueue$: Observable<Queue>;
   multilogin: any;
 
   constructor(private store: Store) {}
 
   ngOnInit(): void {
-    this.currentExperiment$ = this.store.pipe(select(selectCurrentExperiment));
-    this.currentCrawler$ = this.store.pipe(select(selectCurrentCrawler));
-
-    this.currentExperiment$.subscribe((currentExperiment) => {
-      this.experiment = currentExperiment;
-    });
-
-    this.currentCrawler$.subscribe((selectedCrawler: any) => {
-      this.crawler = selectedCrawler;
-    });
+    this.currentExperiment$ = this.store.select(selectCurrentExperiment);
+    this.currentCrawler$ = this.store.select(selectCurrentCrawler);
+    this.currentQueue$ = this.store.select(selectCurrentQueue);
   }
 
   multiLoginProfile(data: any): void {

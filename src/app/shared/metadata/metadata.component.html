@@ -6,7 +6,7 @@
       {{ 'meta.bodyText' | translate }}
     </p>
   </div>
-  <div *ngIf="experiment" class="border-t border-gray-200 px-4 py-5 sm:p-0">
+  <div *ngIf="currentExperiment$ | async; let experiment" class="border-t border-gray-200 px-4 py-5 sm:p-0">
     <dl class="sm:divide-y sm:divide-gray-200">
       <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
         <dt class="text-sm font-medium text-gray-500">{{ 'experiment.label' | translate }}</dt>
@@ -22,7 +22,7 @@
       </div>
     </dl>
   </div>
-  <div *ngIf="crawler" class="border-t border-gray-200 px-4 py-5 sm:p-0">
+  <div *ngIf="currentCrawler$ | async; let crawler" class="border-t border-gray-200 px-4 py-5 sm:p-0">
     <dl class="sm:divide-y sm:divide-gray-200">
       <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
         <dt class="text-sm font-medium text-gray-500">{{ 'crawler.label' | translate }}</dt>
@@ -45,5 +45,25 @@
         <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{{ crawler?.configuration?.id }}</dd>
       </div>
     </dl>
+  </div>
+  <div *ngIf="currentQueue$ | async; let queue" class="border-t border-gray-200 px-4 py-5 sm:p-0">
+    <div *ngIf="queue?.start_at" class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+      <dt class="text-sm font-medium text-gray-500">{{ 'queue.startAt' | translate }}</dt>
+      <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+        {{ queue?.start_at | date : 'dd.MM.yyyy hh:ss' }}
+      </dd>
+    </div>
+    <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+      <dt class="text-sm font-medium text-gray-500">{{ 'queue.startedAt' | translate }}</dt>
+      <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+        {{ queue?.started_at | date : 'dd.MM.yyyy hh:ss' }}
+      </dd>
+    </div>
+    <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+      <dt class="text-sm font-medium text-gray-500">{{ 'queue.finishedAt' | translate }}</dt>
+      <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+        {{ queue?.finished_at | date : 'dd.MM.yyyy hh:ss' }}
+      </dd>
+    </div>
   </div>
 </div>

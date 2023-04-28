@@ -11,7 +11,7 @@ import { Store } from '@ngrx/store';
 })
 export class AgentEditComponent implements OnDestroy {
   agent$: Observable<Agent>;
-  agent: Agent;
+  agent: Agent | undefined;
   subscriptions = new Subscription();
 
   constructor(
@@ -21,25 +21,13 @@ export class AgentEditComponent implements OnDestroy {
     private router: Router
   ) {
     agentService.getAll();
-    let fetchFormData$ = combineLatest([this.route.paramMap, this.agentService.entities$]).subscribe(
-      ([params, agents]) => {
-        const id = Number(params.get('id'));
+    this.findAgent();
+  }
 
-        const agent = agents.find((agent) => agent.id === id);
-        if (agent) {
-          this.agent = agent;
-        }
-      }
-    );
-    // this.route.params.subscribe((params) => {
-    //   this.agent$ = agentService.getByKey(params['id']);
-    // });
-    //
-    // this.subscriptions.add(
-    //   this.agent$.subscribe((agent) => {
-    //     this.store.dispatch(crawlerSelection({ crawler: agent.crawler }));
-    //   })
-    // );
+  findAgent(): void {
+    combineLatest([this.route.paramMap, this.agentService.entities$]).subscribe(([params, agents]) => {
+      this.agent = agents.find((agent) => agent.id === Number(params.get('id'))) ?? undefined;
+    });
   }
 
   ngOnDestroy(): void {
@@ -47,9 +35,7 @@ export class AgentEditComponent implements OnDestroy {
   }
 
   onSave(agent: Agent) {
-    console.log(agent);
-    this.agentService.update(this.agent).subscribe((agent) => {
-      //this.router.navigate(['/agents']);
-    });
+    this.agentService.update(agent);
+    this.router.navigate(['/agents']).then();
   }
 }

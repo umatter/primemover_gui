@@ -9,10 +9,22 @@ export class AdditionalPersistenceResultHandler extends DefaultPersistenceResult
     return (data: any) => {
       const action = actionHandler.call(this, data);
       if (action && data) {
-        console.log('data', data.data);
-        (action as any).payload.data = data.data;
-        (action as any).payload.pageMeta = data.meta ?? null;
-        (action as any).payload.pageLinks = data.links ?? null;
+        const payload = (action as any).payload;
+
+        if (payload && data?.data) {
+          (action as any).payload.data = data.data;
+        }
+        if (payload && data?.changes) {
+          (action as any).payload.changes = data.changes;
+        }
+
+        if (payload && data?.meta) {
+          (action as any).payload.pageMeta = data.meta;
+        }
+
+        if (payload && data?.links) {
+          (action as any).payload.pageLinks = data.links;
+        }
       }
       return action;
     };
