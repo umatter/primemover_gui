@@ -18,7 +18,7 @@ export class ContainerComponent implements OnInit {
   ];
   menuOpen: boolean;
   showUserMenu: boolean = false;
-  classUserMenuBtn: string = "transition ease-out duration-100";
+  classUserMenuBtn: string = 'transition ease-out duration-100';
   confirmModal: boolean = false;
 
   constructor(private store: Store, private translate: TranslateService, private router: Router) {
@@ -28,7 +28,7 @@ export class ContainerComponent implements OnInit {
   ngOnInit() {
     this.setDefaultLanguage();
   }
-  
+
   toggleUserMenu() {
     this.showUserMenu = !this.showUserMenu;
   }
@@ -56,8 +56,8 @@ export class ContainerComponent implements OnInit {
   }
 
   onModalResponse(event: boolean): void {
-    if(event && this.confirmModal) {
-      this.router.navigateByUrl('/logout')
+    if (event && this.confirmModal) {
+      this.router.navigateByUrl('/logout');
     }
     this.confirmModal = false;
   }
