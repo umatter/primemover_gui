@@ -78,7 +78,6 @@ export class AgentComponent implements OnDestroy {
   }
 
   editRequested(item: Agent) {
-    console.log(item);
     this.router.navigate(['/agents', item.id, 'edit']).then();
   }
 }
