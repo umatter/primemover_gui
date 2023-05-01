@@ -12,6 +12,8 @@ import { QueryFilter } from '@shared/model/query-filter';
 import { ProxyApiService } from '@app/proxy/service/proxy-api.service';
 import { Meta } from '@shared/pagination/model';
 import { requestPage } from '@shared/store/shared.actions';
+import { Agent } from '@app/agent/model/agent';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-proxy',
@@ -29,7 +31,12 @@ export class ProxyComponent implements OnDestroy {
 
   private subscriptions = new Subscription();
 
-  constructor(private store: Store, private entityService: ProxyService, private apiService: ProxyApiService) {
+  constructor(
+    private store: Store,
+    private entityService: ProxyService,
+    private apiService: ProxyApiService,
+    private router: Router
+  ) {
     this.entities$ = entityService.entities$;
     this.isLoading$ = entityService.loading$;
     this.pageMeta$ = entityService.pageMeta$;
@@ -70,5 +77,9 @@ export class ProxyComponent implements OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
+  }
+
+  editRequested(item: Agent) {
+    this.router.navigate(['/proxies', item.id, 'edit']).then();
   }
 }

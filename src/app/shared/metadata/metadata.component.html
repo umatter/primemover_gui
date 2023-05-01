@@ -33,8 +33,9 @@
         <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{{ crawler?.proxy?.name }}</dd>
       </div>
       <div *ngIf="crawler?.configuration" class="py-4 sm:grid sm:grid-cols-3 sm:gap-1 sm:px-6">
-        <dt
-          class="text-sm font-medium text-gray-500">{{ 'config.label' | translate }} {{ crawler?.configuration?.id }}</dt>
+        <dt class="text-sm font-medium text-gray-500">
+          {{ 'config.label' | translate }} {{ crawler?.configuration?.id }}
+        </dt>
         <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{{ crawler?.configuration?.name }}</dd>
       </div>
     </dl>

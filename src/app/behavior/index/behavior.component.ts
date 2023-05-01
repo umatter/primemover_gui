@@ -22,7 +22,7 @@ export class BehaviorComponent implements OnDestroy {
   isLoading$: Observable<boolean>;
   pageMeta$: Observable<Meta>;
   queryFilter$: Observable<QueryFilter[]>;
-
+  entityToDelete: Behavior | null = null;
   subscriptions = new Subscription();
   behaviorModal: boolean;
   jobId: string | null;
@@ -76,9 +76,9 @@ export class BehaviorComponent implements OnDestroy {
     this.initPagination();
   }
 
-  deleteRequested(item: Behavior) {
-    this.entityService.delete(item.id);
-  }
+  // deleteRequested(item: Behavior) {
+  //   this.entityService.delete(item.id);
+  // }
 
   onBehaviorModalSave(behavior: Behavior) {
     this.entityService.clearCache();
@@ -92,6 +92,17 @@ export class BehaviorComponent implements OnDestroy {
 
   onBehaviorModalCancel() {
     this.behaviorModal = false;
+  }
+
+  deleteRequested(behavior: Behavior): void {
+    this.entityToDelete = behavior;
+  }
+
+  onModalResponse(event: boolean): void {
+    if (event && this.entityToDelete?.id) {
+      this.entityService.delete(this.entityToDelete.id);
+    }
+    this.entityToDelete = null;
   }
 
   ngOnDestroy(): void {

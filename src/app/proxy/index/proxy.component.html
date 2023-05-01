@@ -4,7 +4,7 @@
 <div *ngIf="false === (isLoading$ | async)" class="px-4">
   <div class="sm:flex mb-6">
     <button
-      [routerLink]="['proxies/create']"
+      [routerLink]="['create']"
       class="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto"
       type="button"
     >
@@ -43,6 +43,9 @@
                   {{ item.contact }}
                 </td>
                 <td class="relative whitespace-nowrap text-right text-sm font-medium sm:pr-0">
+                  <button (click)="editRequested(item)" class="text-gray-400 hover:text-indigo-900 mr-2">
+                    <app-heroicon-pencil-square></app-heroicon-pencil-square>
+                  </button>
                   <button (click)="deleteRequested(item)" class="text-gray-400 hover:text-indigo-900">
                     <app-heroicon-trash></app-heroicon-trash>
                   </button>

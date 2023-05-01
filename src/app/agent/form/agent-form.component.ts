@@ -3,7 +3,7 @@ import { FormBuilder, FormControl, FormGroup, UntypedFormControl, Validators } f
 import { Observable, Subscription } from 'rxjs';
 import { Agent } from '@app/agent/model/agent';
 import { Store } from '@ngrx/store';
-import { AgentService } from '@app/entity/service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-agent-form',
@@ -17,7 +17,7 @@ export class AgentFormComponent implements OnDestroy, OnInit {
   agentForm: FormGroup;
   subscriptions = new Subscription();
 
-  constructor(private store: Store, private formBuilder: FormBuilder, private agentService: AgentService) {
+  constructor(private store: Store, private formBuilder: FormBuilder, private router: Router) {
     this.initAgentForm();
   }
 
@@ -73,6 +73,7 @@ export class AgentFormComponent implements OnDestroy, OnInit {
   onCancel(): void {
     this.cancelClicked.emit();
     this.agentForm.reset();
+    this.router.navigate(['/agents']).then();
   }
 
   onSave(): void {
@@ -84,11 +85,7 @@ export class AgentFormComponent implements OnDestroy, OnInit {
     this.subscriptions.unsubscribe();
   }
 
-  private initAgentEdit(): void {
-    // this.subscriptions.add(
-    //   this.agent$.pipe(filter((agent) => Boolean(agent))).subscribe((agent) => {
+  initAgentEdit(): void {
     this.agentForm.patchValue(this.agent);
-    //   })
-    // );
   }
 }
