@@ -4,7 +4,7 @@ import { AgentRoutingModule } from './agent-routing.module';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { SharedModule } from '@shared/shared.module';
 import { AgentComponent } from './index/agent.component';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner';
 import { AgentFormComponent } from './form/agent-form.component';
 import { AgentEditComponent } from '@app/agent/edit/agent-edit.component';
 
