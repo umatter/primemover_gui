@@ -4,12 +4,13 @@ import { Store } from '@ngrx/store';
 import { AppConfig } from '@app/app-config';
 import { QueryFilterService } from '@shared/service/query-filter.service';
 import { QueryParams } from '@ngrx/data';
-import { QueryFilterType, selectRequestedPage } from '@shared/store/shared.selectors';
+import { QueryFilterType } from '@shared/store/shared.selectors';
 import { filter, first } from 'rxjs';
 import { Meta } from '@shared/pagination/model';
 import { PaginatePipeArgs } from 'ngx-pagination';
 import { PaginationService } from '@shared/pagination/pagination.service';
 import { PaginationType } from '@shared/pagination/type';
+import { selectPageRequested } from '@shared/store/shared.reducer';
 
 @Injectable({
   providedIn: 'root'
@@ -38,7 +39,7 @@ export class BehaviorApiService {
     this.queryFilterParams = this.filterService.getFilterParams([QueryFilterType.Job]);
 
     this.store
-      .select(selectRequestedPage)
+      .select(selectPageRequested)
       .pipe(
         first(),
         filter((page) => Boolean(page))

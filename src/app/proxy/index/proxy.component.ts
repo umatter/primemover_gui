@@ -7,13 +7,13 @@ import { fadeIn } from '@shared/animation/trigger';
 import { Proxy } from '../model/proxy';
 import { Configuration } from '@app/config/model/config';
 import { ProxyService } from '@app/entity/service';
-import { selectQueryFilter } from '@shared/store/shared.selectors';
 import { QueryFilter } from '@shared/model/query-filter';
 import { ProxyApiService } from '@app/proxy/service/proxy-api.service';
 import { Meta } from '@shared/pagination/model';
-import { requestPage } from '@shared/store/shared.actions';
 import { Agent } from '@app/agent/model/agent';
 import { Router } from '@angular/router';
+import { SharedActions } from '@shared/store/shared.actions';
+import { selectQueryFilter } from '@shared/store/shared.reducer';
 
 @Component({
   selector: 'app-proxy',
@@ -46,7 +46,7 @@ export class ProxyComponent implements OnDestroy {
   }
 
   getData(page: number = 1): void {
-    this.store.dispatch(requestPage({ page }));
+    this.store.dispatch(SharedActions.requestPage({ page }));
 
     this.subscriptions.add(
       this.queryFilter$.pipe().subscribe(() => {

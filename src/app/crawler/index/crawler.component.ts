@@ -4,12 +4,13 @@ import { Store } from '@ngrx/store';
 import { PaginatePipeArgs } from 'ngx-pagination';
 import { fadeIn } from '@shared/animation/trigger';
 import { Crawler } from '../model/crawler';
-import { crawlerSelection, requestPage, resetQueryFilterRequested } from '@shared/store/shared.actions';
 import { CrawlerService } from '@app/entity/service';
 import { CrawlerApiService } from '@app/crawler/service/crawler-api.service';
 import { QueryFilter } from '@shared/model/query-filter';
-import { QueryFilterType, selectCurrentCrawler, selectQueryFilter } from '@shared/store/shared.selectors';
+import { QueryFilterType, selectCurrentCrawler } from '@shared/store/shared.selectors';
 import { Meta } from '@shared/pagination/model';
+import { SharedActions } from '@shared/store/shared.actions';
+import { selectQueryFilter } from '@shared/store/shared.reducer';
 
 @Component({
   selector: 'app-crawler',
@@ -38,7 +39,7 @@ export class CrawlerComponent implements OnDestroy {
   }
 
   getData(page: number = 1): void {
-    this.store.dispatch(requestPage({ page }));
+    this.store.dispatch(SharedActions.requestPage({ page }));
 
     this.subscriptions.add(
       this.queryFilter$.pipe().subscribe(() => {
@@ -49,7 +50,7 @@ export class CrawlerComponent implements OnDestroy {
   }
 
   selectCrawler(crawler: Crawler): void {
-    this.store.dispatch(crawlerSelection({ crawler }));
+    this.store.dispatch(SharedActions.crawlerSelection({ crawler }));
   }
 
   initPagination(): void {
@@ -71,8 +72,8 @@ export class CrawlerComponent implements OnDestroy {
           .delete(this.entityToDelete.id)
           .pipe()
           .subscribe(() => {
-            this.store.dispatch(crawlerSelection({ crawler: null }));
-            this.store.dispatch(resetQueryFilterRequested({ filterName: QueryFilterType.Crawler }));
+            this.store.dispatch(SharedActions.crawlerSelection({ crawler: null }));
+            this.store.dispatch(SharedActions.resetQueryFilterRequested({ filterName: QueryFilterType.Crawler }));
             this.entityToDelete = null;
           })
       );

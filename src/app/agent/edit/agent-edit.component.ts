@@ -4,6 +4,7 @@ import { AgentService } from '@app/entity/service';
 import { combineLatest, Observable, Subscription } from 'rxjs';
 import { Agent } from '@app/agent/model/agent';
 import { Store } from '@ngrx/store';
+import { EntityErrorService } from '@app/entity/entity-error.service';
 
 @Component({
   selector: 'app-agent-edit',
@@ -18,7 +19,8 @@ export class AgentEditComponent implements OnDestroy {
     private route: ActivatedRoute,
     private agentService: AgentService,
     private store: Store,
-    private router: Router
+    private router: Router,
+    private errorService: EntityErrorService
   ) {
     agentService.getAll();
     this.findAgent();
@@ -35,7 +37,13 @@ export class AgentEditComponent implements OnDestroy {
   }
 
   onSave(agent: Agent) {
-    this.agentService.update(agent);
-    this.router.navigate(['/agents']).then();
+    this.agentService
+      .update(agent)
+      .pipe()
+      .subscribe((agentResponse) => {
+        if (agentResponse) {
+          this.router.navigate(['/agents']).then();
+        }
+      });
   }
 }

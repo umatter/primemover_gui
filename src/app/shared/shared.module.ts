@@ -30,16 +30,7 @@ import { LoadingSpinnerComponent } from './overlay/loading-spinner/loading-spinn
 import { StoreModule } from '@ngrx/store';
 import { EffectsModule } from '@ngrx/effects';
 import { SharedEffects } from './store/shared.effects';
-import { sharedReducer } from './store/shared.reducer';
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
-import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog';
-import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input';
-import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox';
-import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select';
 import { MatIconModule } from '@angular/material/icon';
-import { MatLegacyAutocompleteModule as MatAutocompleteModule } from '@angular/material/legacy-autocomplete';
-import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner';
-import { MatLegacySlideToggleModule as MatSlideToggleModule } from '@angular/material/legacy-slide-toggle';
 import { MetadataComponent } from './metadata/metadata.component';
 import { ConfirmationPrimeoverDialogComponent } from './dialog/primeover-dialog/confirmation-primeover-dialog.component';
 import { euFormat } from './pipes/datepipe/date-pipe.pipe';
@@ -52,6 +43,15 @@ import { HeroiconClipboardDocumentComponent } from './icon/heroicon-clipboard-do
 import { HeroiconUploadComponent } from './icon/heroicon-upload/heroicon-upload.component';
 import { FileUploadComponent } from './file-upload/file-upload.component';
 import { HeroiconPencilSquareComponent } from './icon/heroicon-pencil-square/heroicon-pencil-square.component';
+import { sharedFeature } from '@shared/store/shared.reducer';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatInputModule } from '@angular/material/input';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @NgModule({
   declarations: [
@@ -93,19 +93,18 @@ import { HeroiconPencilSquareComponent } from './icon/heroicon-pencil-square/her
   imports: [
     CommonModule,
     RouterModule,
-    StoreModule.forFeature('shared', sharedReducer),
+    StoreModule.forFeature(sharedFeature),
     EffectsModule.forFeature([SharedEffects]),
-
     TranslateModule,
     FormsModule,
     ReactiveFormsModule,
     DragDropModule,
     NgxPaginationModule,
+    MatButtonModule,
     MatDialogModule,
     MatInputModule,
     MatCheckboxModule,
     MatSelectModule,
-    MatButtonModule,
     MatIconModule,
     MatAutocompleteModule,
     MatProgressSpinnerModule,
@@ -130,15 +129,7 @@ import { HeroiconPencilSquareComponent } from './icon/heroicon-pencil-square/her
     LinkSortableComponent,
     RemovableBadgeComponent,
     LoadingSpinnerComponent,
-    MatDialogModule,
-    MatInputModule,
-    MatCheckboxModule,
-    MatSelectModule,
-    MatButtonModule,
     MatIconModule,
-    MatAutocompleteModule,
-    MatProgressSpinnerModule,
-    MatSlideToggleModule,
     MetadataComponent,
     ConfirmationPrimeoverDialogComponent,
     euFormat,
@@ -150,7 +141,16 @@ import { HeroiconPencilSquareComponent } from './icon/heroicon-pencil-square/her
     HeroiconClipboardDocumentComponent,
     HeroiconUploadComponent,
     FileUploadComponent,
-    HeroiconPencilSquareComponent
+    HeroiconPencilSquareComponent,
+    MatButtonModule,
+    MatDialogModule,
+    MatInputModule,
+    MatCheckboxModule,
+    MatSelectModule,
+    MatIconModule,
+    MatAutocompleteModule,
+    MatProgressSpinnerModule,
+    MatSlideToggleModule
   ]
 })
 export class SharedModule {}

@@ -5,11 +5,12 @@ import { Store } from '@ngrx/store';
 import { AppConfig } from '@app/app-config';
 import { QueryFilterService } from '@shared/service/query-filter.service';
 import { QueryParams } from '@ngrx/data';
-import { QueryFilterType, selectRequestedPage } from '@shared/store/shared.selectors';
+import { QueryFilterType } from '@shared/store/shared.selectors';
 import { PaginatePipeArgs } from 'ngx-pagination';
 import { Meta } from '@shared/pagination/model';
 import { PaginationType } from '@shared/pagination/type';
 import { PaginationService } from '@shared/pagination/pagination.service';
+import { selectPageRequested } from '@shared/store/shared.reducer';
 
 @Injectable({
   providedIn: 'root'
@@ -38,7 +39,7 @@ export class JobApiService {
     this.queryFilterParams = this.filterService.getFilterParams([QueryFilterType.Recent, QueryFilterType.Queue]);
 
     this.store
-      .select(selectRequestedPage)
+      .select(selectPageRequested)
       .pipe(
         first(),
         filter((page) => Boolean(page))

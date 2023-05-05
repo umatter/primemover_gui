@@ -78,7 +78,6 @@ export class AgentFormComponent implements OnDestroy, OnInit {
 
   onSave(): void {
     this.saveClicked.emit(this.agentForm.value);
-    this.agentForm.reset();
   }
 
   ngOnDestroy(): void {
