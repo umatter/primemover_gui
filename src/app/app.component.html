@@ -1,3 +1,5 @@
-<app-container *ngIf="isLoggedIn$ | async;"></app-container>
+<app-container *ngIf="isLoggedIn$ | async; else noLayout"></app-container>
 
-<router-outlet></router-outlet>
+<ng-template #noLayout>
+    <router-outlet></router-outlet>
+</ng-template>
