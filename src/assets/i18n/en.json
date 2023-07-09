@@ -215,6 +215,10 @@
     "orDragAndDrop": "or drag and drop it here",
     "selectExperiment": "Select experiment",
     "uploadExperimentIntroText": "In order to upload experiment data you need to have selected the experiment first. Upload data requires a valid JSON file. See API-docs for details.",
-    "uploadExperimentTitle": "Upload experiment data"
+    "uploadExperimentTitle": "Upload experiment data",
+    "uploadCrawlerTitle": "Upload crawler data",
+    "selectCrawler": "Select crawler",
+    "noCrawlerSelected": "No selected crawler",
+    "uploadCrawlerIntroText": "In order to upload crawler data you need to have selected the crawler first. Upload data requires a valid JSON file. See API-docs for details."
   }
 }
