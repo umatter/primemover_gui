@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import { select, Store } from '@ngrx/store';
 import { catchError, map, of, switchMap, tap, withLatestFrom } from 'rxjs';
-import { selectCurrentExperiment } from './shared.selectors';
+import { selectCurrentCrawler, selectCurrentExperiment } from './shared.selectors';
 import { CrawlerService, ExperimentService } from '@app/entity/service';
 import { FileUploadService } from '../service/file-upload.service';
 import { Router } from '@angular/router';
@@ -64,6 +64,20 @@ export class SharedEffects {
         );
       }),
       tap(() => this.router.navigate(['/crawlers']))
+    );
+  });
+
+  crawlerUpload$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(SharedActions.uploadFileCrawler),
+      concatLatestFrom(() => this.store.pipe(select(selectCurrentCrawler))),
+      switchMap(([action, currentCrawler]) => {
+        return this.fileService.uploadCrawler(action.file, currentCrawler).pipe(
+          map((response) => SharedActions.uploadFileCrawlerSuccess(response)),
+          catchError((error) => of(SharedActions.uploadFileCrawlerFailure(error)))
+        );
+      }),
+      tap(() => this.router.navigate(['/queues']))
     );
   });
 

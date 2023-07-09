@@ -11,6 +11,7 @@ import { QueryFilterType, selectCurrentCrawler } from '@shared/store/shared.sele
 import { Meta } from '@shared/pagination/model';
 import { SharedActions } from '@shared/store/shared.actions';
 import { selectQueryFilter } from '@shared/store/shared.reducer';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-crawler',
@@ -28,7 +29,7 @@ export class CrawlerComponent implements OnDestroy {
 
   private subscriptions = new Subscription();
 
-  constructor(private store: Store, private entityService: CrawlerService, private apiService: CrawlerApiService) {
+  constructor(private store: Store, public router: Router, private entityService: CrawlerService, private apiService: CrawlerApiService) {
     this.entities$ = entityService.entities$;
     this.isLoading$ = this.entityService.loading$;
     this.pageMeta$ = entityService.pageMeta$;
@@ -51,6 +52,11 @@ export class CrawlerComponent implements OnDestroy {
 
   selectCrawler(crawler: Crawler): void {
     this.store.dispatch(SharedActions.crawlerSelection({ crawler }));
+  }
+
+  selectAndUploadCrawler(crawler: Crawler): void {
+    this.store.dispatch(SharedActions.crawlerSelection({ crawler }));
+    this.router.navigate(['crawlers', crawler.id, 'upload']).then();
   }
 
   initPagination(): void {
