@@ -22,6 +22,6 @@ export class FileUploadService {
     const formData = new FormData();
     formData.append('json', file, file.name);
 
-    return this.http.post(`${this.config.apiBaseUrl}/crawler/${crawler.id}/upload`, formData);
+    return this.http.post(`${this.config.apiBaseUrl}/crawlers/${crawler.id}/upload`, formData);
   }
 }

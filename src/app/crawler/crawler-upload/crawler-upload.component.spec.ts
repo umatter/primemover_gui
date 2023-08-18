@@ -8,9 +8,8 @@ describe('CrawlerUploadComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ CrawlerUploadComponent ]
-    })
-    .compileComponents();
+      declarations: [CrawlerUploadComponent]
+    }).compileComponents();
 
     fixture = TestBed.createComponent(CrawlerUploadComponent);
     component = fixture.componentInstance;

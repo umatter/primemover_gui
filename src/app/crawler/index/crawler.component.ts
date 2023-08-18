@@ -29,7 +29,12 @@ export class CrawlerComponent implements OnDestroy {
 
   private subscriptions = new Subscription();
 
-  constructor(private store: Store, public router: Router, private entityService: CrawlerService, private apiService: CrawlerApiService) {
+  constructor(
+    private store: Store,
+    public router: Router,
+    private entityService: CrawlerService,
+    private apiService: CrawlerApiService
+  ) {
     this.entities$ = entityService.entities$;
     this.isLoading$ = this.entityService.loading$;
     this.pageMeta$ = entityService.pageMeta$;

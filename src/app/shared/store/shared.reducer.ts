@@ -120,7 +120,7 @@ export const sharedFeature = createFeature({
       return { ...state, isUploading: true, uploadError: null };
     }),
     on(SharedActions.uploadFileCrawlerSuccess, (state) => {
-      return { ...state, isUploading: false, uploadError: null};
+      return { ...state, isUploading: false, uploadError: null };
     }),
     on(SharedActions.uploadFileCrawlerFailure, (state, action) => {
       return {

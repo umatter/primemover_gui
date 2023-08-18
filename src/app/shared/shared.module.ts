@@ -52,6 +52,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { JobStatusComponent } from './job-status/job-status.component';
 
 @NgModule({
   declarations: [
@@ -88,7 +89,8 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
     HeroiconClipboardDocumentComponent,
     HeroiconUploadComponent,
     FileUploadComponent,
-    HeroiconPencilSquareComponent
+    HeroiconPencilSquareComponent,
+    JobStatusComponent
   ],
   imports: [
     CommonModule,

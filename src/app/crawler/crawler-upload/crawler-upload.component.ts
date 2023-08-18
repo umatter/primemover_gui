@@ -20,7 +20,7 @@ export class CrawlerUploadComponent implements OnInit {
   readonly apiDocsLink: string = 'https://primemoverswitch.primemover.example/api/v1/docs';
   isLoading$: Observable<boolean>;
   currentCrawler$: Observable<Crawler>;
-  subscription =  new Subscription();
+  subscription = new Subscription();
   uploadError$: Observable<any>;
   crawler: Crawler | null = null;
   crawlers: Crawler[] = [];
@@ -28,19 +28,15 @@ export class CrawlerUploadComponent implements OnInit {
   uploadForm = new FormGroup({
     crawlerSelect: new FormControl(null, Validators.required),
     fileUpload: new FormControl(null, [Validators.required, requiredFileType('json')])
-  })
+  });
 
-  constructor(
-    private store: Store,
-    public router: Router,
-    private entityService: CrawlerService
-  ) { 
+  constructor(private store: Store, public router: Router, private entityService: CrawlerService) {
     this.currentCrawler$ = this.store.pipe(select(selectCurrentCrawler));
     this.uploadError$ = this.store.select(selectUploadError);
     this.entityService
-        .getAll()
-        .pipe(distinctUntilChanged())
-        .subscribe((crawlers) => (this.crawlers = crawlers));
+      .getAll()
+      .pipe(distinctUntilChanged())
+      .subscribe((crawlers) => (this.crawlers = crawlers));
 
     this.initLoading(entityService.loading$, this.store.pipe(select(selectIsUploading)));
   }
@@ -81,5 +77,4 @@ export class CrawlerUploadComponent implements OnInit {
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
   }
-
 }
