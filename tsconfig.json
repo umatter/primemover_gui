@@ -19,32 +19,15 @@
     "importHelpers": true,
     "target": "ES2022",
     "module": "es2020",
-    "lib": [
-      "es2020",
-      "dom"
-    ],
+    "lib": ["es2020", "dom"],
     "paths": {
-      "@app/*": [
-        "src/app/*"
-      ],
-      "@assets/*": [
-        "src/assets/*"
-      ],
-      "@environments/*": [
-        "src/environments/*"
-      ],
-      "@shared/*": [
-        "src/app/shared/*"
-      ],
-      "@core/*": [
-        "src/app/core/*"
-      ],
-      "@modules/*": [
-        "src/app/modules/*"
-      ],
-      "@services/*": [
-        "src/app/services/*"
-      ]
+      "@app/*": ["src/app/*"],
+      "@assets/*": ["src/assets/*"],
+      "@environments/*": ["src/environments/*"],
+      "@shared/*": ["src/app/shared/*"],
+      "@core/*": ["src/app/core/*"],
+      "@modules/*": ["src/app/modules/*"],
+      "@services/*": ["src/app/services/*"]
     },
     "useDefineForClassFields": false
   },

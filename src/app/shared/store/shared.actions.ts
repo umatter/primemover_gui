@@ -21,6 +21,9 @@ export const SharedActions = createActionGroup({
     'Request Page': props<{ page: number }>(),
     'Upload File': props<{ file: File }>(),
     'Upload File Success': props<{ response: any }>(),
-    'Upload File Failure': props<{ error: any }>()
+    'Upload File Failure': props<{ error: any }>(),
+    'Upload File Crawler': props<{ file: File }>(),
+    'Upload File Crawler Success': props<{ response: any }>(),
+    'Upload File Crawler Failure': props<{ error: any }>()
   }
 });

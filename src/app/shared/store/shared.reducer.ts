@@ -114,6 +114,20 @@ export const sharedFeature = createFeature({
     }),
     on(SharedActions.uploadFileSuccess, (state) => {
       return { ...state, isUploading: false, uploadError: null };
+    }),
+
+    on(SharedActions.uploadFileCrawler, (state) => {
+      return { ...state, isUploading: true, uploadError: null };
+    }),
+    on(SharedActions.uploadFileCrawlerSuccess, (state) => {
+      return { ...state, isUploading: false, uploadError: null };
+    }),
+    on(SharedActions.uploadFileCrawlerFailure, (state, action) => {
+      return {
+        ...state,
+        isUploading: false,
+        uploadError: action.error
+      };
     })
   )
 });
