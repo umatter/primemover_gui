@@ -6,5 +6,6 @@ export const selectAccessToken = createSelector(selectAuth, (state) => state.tok
 export const selectIsSignedIn = createSelector(selectAuth, (state) => {
   return Boolean(state.token);
 });
+export const selectUser = createSelector(selectAuth, (state) => state.user);
 export const selectCurrentUser = createSelector(selectAuth, (state) => state.user);
 export const selectErrorResponse = createSelector(selectAuth, (state) => state.response || null);
