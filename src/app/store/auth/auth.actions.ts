@@ -46,5 +46,5 @@ export const signInFailed = createAction('[Auth] Sign in failed', props<{ error:
 export const missingCredentialsUsername = createAction('[Auth] Sign in username missing');
 export const missingCredentialsPassword = createAction('[Auth] Sign in password missing');
 
-export const fetchUserDataSuccess = createAction('[Auth] Fetch User Data Success', props<{user: any}>())
-export const fetchUserDataFailed = createAction('[Auth] Fetch User Data Failed', props<{error: any}>())
+export const fetchUserDataSuccess = createAction('[Auth] Fetch User Data Success', props<{ user: any }>());
+export const fetchUserDataFailed = createAction('[Auth] Fetch User Data Failed', props<{ error: any }>());

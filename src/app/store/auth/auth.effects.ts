@@ -33,7 +33,7 @@ export class AuthEffects {
           tap((response) => this.localStorageService.set('accessToken', response.access_token)),
           map((response) => signInCompleted({ token: response.access_token })),
           catchError((error) => of(signInFailed(error)))
-        )
+        );
       })
     )
   );

@@ -33,7 +33,7 @@ const reducer = createReducer(
   on(logoutRequested, (state) => ({ ...state, token: null, user: null })),
   on(signInFailed, (state, action) => ({ ...state, response: action.error })),
   on(fetchUserDataSuccess, (state, action) => ({ ...state, user: action.user })),
-  on(fetchUserDataFailed, (state, action) => ({  ...state, response: action.error}))
+  on(fetchUserDataFailed, (state, action) => ({ ...state, response: action.error }))
 );
 
 export function authReducer(state: AuthState | undefined, action: Action): any {

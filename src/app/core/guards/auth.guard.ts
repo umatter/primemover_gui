@@ -97,7 +97,7 @@ export class AuthGuard implements CanActivate {
     if (this.tokenService.isTokenValid(jwtToken)) {
       this.store.dispatch(validLocalStorageTokenFound());
       this.store.dispatch(useTokenFromLocalStorageRequested({ token: jwtToken }));
-      this.store.dispatch(fetchUserDataSuccess({user: user}));
+      this.store.dispatch(fetchUserDataSuccess({ user: user }));
       return true;
     }
     return false;
