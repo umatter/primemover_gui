@@ -51,6 +51,9 @@
                   {{ item.updated_at | date : 'dd.MM.yyyy HH:mm' }}
                 </td>
                 <td class="relative whitespace-nowrap text-right text-sm font-medium pr-1">
+                  <button (click)="downloadExperimentData(item)" class="text-gray-400 hover:text-indigo-900 mr-2">
+                    <app-heroicon-download-archive></app-heroicon-download-archive>
+                  </button>
                   <button (click)="deleteExperimentRequest(item)" class="text-gray-400 hover:text-indigo-900 mr-2">
                     <app-heroicon-trash></app-heroicon-trash>
                   </button>

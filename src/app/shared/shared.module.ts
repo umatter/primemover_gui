@@ -42,6 +42,7 @@ import { HeroiconPlusComponent } from './icon/heroicon-plus/heroicon-plus.compon
 import { HeroiconClipboardDocumentComponent } from './icon/heroicon-clipboard-document/heroicon-clipboard-document.component';
 import { HeroiconUploadComponent } from './icon/heroicon-upload/heroicon-upload.component';
 import { FileUploadComponent } from './file-upload/file-upload.component';
+import { HeroiconDownloadArchiveComponent } from './icon/heroicon-download-archive/heroicon-download-archive.component';
 import { HeroiconPencilSquareComponent } from './icon/heroicon-pencil-square/heroicon-pencil-square.component';
 import { sharedFeature } from '@shared/store/shared.reducer';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -89,6 +90,7 @@ import { JobStatusComponent } from './job-status/job-status.component';
     HeroiconClipboardDocumentComponent,
     HeroiconUploadComponent,
     FileUploadComponent,
+    HeroiconDownloadArchiveComponent,
     HeroiconPencilSquareComponent,
     JobStatusComponent
   ],
@@ -142,6 +144,7 @@ import { JobStatusComponent } from './job-status/job-status.component';
     HeroiconPlusComponent,
     HeroiconClipboardDocumentComponent,
     HeroiconUploadComponent,
+    HeroiconDownloadArchiveComponent,
     FileUploadComponent,
     HeroiconPencilSquareComponent,
     MatButtonModule,
@@ -149,7 +152,6 @@ import { JobStatusComponent } from './job-status/job-status.component';
     MatInputModule,
     MatCheckboxModule,
     MatSelectModule,
-    MatIconModule,
     MatAutocompleteModule,
     MatProgressSpinnerModule,
     MatSlideToggleModule

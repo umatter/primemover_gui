@@ -6,14 +6,14 @@ import { PaginatePipeArgs } from 'ngx-pagination';
 import { Router } from '@angular/router';
 import { fadeIn } from '@shared/animation/trigger';
 import { Experiment } from '../model/experiment';
-import { TranslateService } from '@ngx-translate/core';
 import { ExperimentService } from '@app/entity/service';
 import { ExperimentApiService } from '@app/experiment/service/experiment-api.service';
 import { QueryFilterType, selectCurrentExperiment } from '@shared/store/shared.selectors';
 import { QueryFilter } from '@shared/model/query-filter';
 import { Meta } from '@shared/pagination/model';
-import { SharedActions } from '@shared/store/shared.actions';
+import { saveAs } from 'file-saver';
 import { selectQueryFilter } from '@shared/store/shared.reducer';
+import { SharedActions } from '@shared/store/shared.actions';
 
 @Component({
   selector: 'app-experiment',
@@ -34,7 +34,6 @@ export class ExperimentComponent implements OnDestroy {
   constructor(
     private store: Store,
     public router: Router,
-    private translate: TranslateService,
     private entityService: ExperimentService,
     private apiService: ExperimentApiService
   ) {
@@ -78,6 +77,12 @@ export class ExperimentComponent implements OnDestroy {
 
   deleteExperimentRequest(experiment: Experiment): void {
     this.experimentToDelete = experiment;
+  }
+
+  downloadExperimentData(experiment: any): void | Boolean {
+    this.apiService.download(experiment?.id).subscribe((response: any) => {
+      saveAs(response, `${experiment.name}.zip`);
+    });
   }
 
   onModalResponse(event: boolean): void {
