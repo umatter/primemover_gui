@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CrawlerService } from '@app/entity/service';
@@ -8,7 +8,7 @@ import { selectCurrentCrawler, selectIsUploading, selectUploadError } from '@app
 import { select, Store } from '@ngrx/store';
 
 import { fadeIn } from '@shared/animation/trigger';
-import { combineLatest, distinct, distinctUntilChanged, map, Observable, Subscription } from 'rxjs';
+import { combineLatest, distinctUntilChanged, map, Observable, Subscription } from 'rxjs';
 import { Crawler } from '../model/crawler';
 
 @Component({
@@ -17,7 +17,7 @@ import { Crawler } from '../model/crawler';
   animations: [fadeIn]
 })
 export class CrawlerUploadComponent implements OnInit {
-  readonly apiDocsLink: string = 'https://primemoverswitch.primemover.example/api/v1/docs';
+  readonly apiDocsLink: string = 'https://pm-api.test.primemover.example/api/v1/docs';
   isLoading$: Observable<boolean>;
   currentCrawler$: Observable<Crawler>;
   subscription = new Subscription();

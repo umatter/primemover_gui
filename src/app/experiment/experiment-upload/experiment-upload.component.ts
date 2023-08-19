@@ -18,7 +18,7 @@ import { selectIsUploading, selectUploadError } from '@shared/store/shared.reduc
   animations: [fadeIn]
 })
 export class ExperimentUploadComponent implements OnDestroy, OnInit {
-  readonly apiDocsLink: string = 'https://primemoverswitch.primemover.example/api/v1/docs';
+  readonly apiDocsLink: string = 'https://pm-api.test.primemover.example/api/v1/docs';
   isLoading$: Observable<boolean>;
   currentExperiment$: Observable<Experiment>;
   subscriptions = new Subscription();
