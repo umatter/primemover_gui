@@ -2,7 +2,10 @@
   <div class="space-y-8 divide-y divide-gray-200 sm:space-y-5">
     <div class="sm:flex sm:items-center">
       <div class="sm:flex-auto">
-        <h1 class="text-xl font-semibold text-gray-900">{{ 'agent.label' | translate }}</h1>
+        <h1 class="text-xl font-semibold text-gray-900">
+          {{ 'agent.label' | translate }}
+          <span *ngIf="agent$ | async; let agent" class="text-indigo-400">{{ agent.name }}</span>
+        </h1>
         <p class="mt-2 text-sm text-gray-700">
           {{ 'agent.createIntroText' | translate }}
         </p>
@@ -20,28 +23,13 @@
                 <div class="w-full">
                   <input
                     [formControl]="name"
-                    autocomplete="name"
                     class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
                     id="name"
                     name="name"
                     placeholder="{{ 'common.namePlaceholder' | translate }}"
                     type="text"
                   />
-                  <app-autocomplete-select
-                    (isSelectChange)="setFormValuesToSelectedAgent($event)"
-                    *ngIf="filteredAgents$"
-                    [isSelect]="showAutocompletion"
-                    [list$]="filteredAgents$"
-                  ></app-autocomplete-select>
                 </div>
-
-                <app-button
-                  (click)="reset()"
-                  class="text-indigo-600 hover:text-indigo-900"
-                  size="md"
-                  text="{{ 'common.reset' | translate }}"
-                  type="white"
-                ></app-button>
               </div>
 
               <p *ngIf="hasError('name', 'required')" @fadeIn class="mt-2 text-sm text-red-600" id="agent-error">
@@ -94,24 +82,24 @@
           </div>
         </div>
         <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-          <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="multiLoginId">
+          <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="multilogin_id">
             {{ 'common.multiLoginId' | translate }}
           </label>
           <div class="mt-1 sm:mt-0 sm:col-span-2">
             <input
-              autocomplete="multiLoginId"
+              autocomplete="multilogin_id"
               class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
-              formControlName="multiLoginId"
-              id="multiLoginId"
-              name="multiLoginId"
+              formControlName="multilogin_id"
+              id="multilogin_id"
+              name="multilogin_id"
               placeholder="{{ 'common.multiLoginIdPlaceholder' | translate }}"
               type="text"
             />
             <p
-              *ngIf="hasError('multiLoginId', 'required')"
+              *ngIf="hasError('multilogin_id', 'required')"
               @fadeIn
               class="mt-2 text-sm text-red-600"
-              id="multiLoginId-error"
+              id="multilogin_id-error"
             >
               {{ 'common.multiLoginIdRequiredError' | translate }}
             </p>
@@ -119,24 +107,23 @@
         </div>
 
         <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-          <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="multiLoginProfile">
+          <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="multilogin_profile">
             {{ 'common.multiLoginProfile' | translate }}
           </label>
           <div class="mt-1 sm:mt-0 sm:col-span-2">
-            <input
-              autocomplete="multiLoginProfile"
-              class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
-              formControlName="multiLoginProfile"
-              id="multiLoginProfile"
-              name="multiLoginProfile"
+            <textarea
+              class="shadow-sm block w-full focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border border-gray-300 rounded-md"
+              formControlName="multilogin_profile"
+              id="multilogin_profile"
+              name="multilogin_profile"
               placeholder="{{ 'common.multiLoginProfilePlaceholder' | translate }}"
-              type="text"
-            />
+              rows="10"
+            ></textarea>
             <p
-              *ngIf="hasError('multiLoginProfile', 'required')"
+              *ngIf="hasError('multilogin_profile', 'required')"
               @fadeIn
               class="mt-2 text-sm text-red-600"
-              id="multiLoginProfile-error"
+              id="multilogin_profile-error"
             >
               {{ 'common.multiLoginProfileRequiredError' | translate }}
             </p>

@@ -18,6 +18,14 @@ export class StatusComponent {
     return this.statusCode === 'success';
   }
 
+  isSkipped(): boolean {
+    return this.statusCode === 'skipped';
+  }
+
+  isRunning(): boolean {
+    return this.statusCode === 'running';
+  }
+
   isUnknown(): boolean {
     return !this.statusCode;
   }

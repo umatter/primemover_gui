@@ -6,11 +6,12 @@ import { select, Store } from '@ngrx/store';
 import { Queue } from '../model/queue';
 import { ExperimentApiService } from '@app/experiment/service/experiment-api.service';
 import { QueueService } from '@app/entity/service';
-import { queueSelection, requestPage, resetQueryFilterRequested } from '@shared/store/shared.actions';
 import { QueueApiService } from '@app/queue/service/queue-api.service';
-import { QueryFilterType, selectCurrentQueue, selectQueryFilter } from '@shared/store/shared.selectors';
+import { QueryFilterType, selectCurrentQueue } from '@shared/store/shared.selectors';
 import { QueryFilter } from '@shared/model/query-filter';
 import { Meta } from '@shared/pagination/model';
+import { SharedActions } from '@shared/store/shared.actions';
+import { selectQueryFilter } from '@shared/store/shared.reducer';
 
 @Component({
   selector: 'app-queue',
@@ -45,7 +46,7 @@ export class QueueComponent implements OnDestroy {
   }
 
   getData(page: number = 1): void {
-    this.store.dispatch(requestPage({ page }));
+    this.store.dispatch(SharedActions.requestPage({ page }));
 
     this.subscriptions.add(
       this.queryFilter$.pipe().subscribe(() => {
@@ -64,7 +65,7 @@ export class QueueComponent implements OnDestroy {
   }
 
   selectQueue(queue: Queue): void {
-    this.store.dispatch(queueSelection({ queue }));
+    this.store.dispatch(SharedActions.queueSelection({ queue }));
   }
 
   deleteRequested(queue: Queue): void {
@@ -78,8 +79,8 @@ export class QueueComponent implements OnDestroy {
           .delete(this.entityToDelete.id)
           .pipe()
           .subscribe(() => {
-            this.store.dispatch(queueSelection({ queue: null }));
-            this.store.dispatch(resetQueryFilterRequested({ filterName: QueryFilterType.Queue }));
+            this.store.dispatch(SharedActions.queueSelection({ queue: null }));
+            this.store.dispatch(SharedActions.resetQueryFilterRequested({ filterName: QueryFilterType.Queue }));
             this.entityToDelete = null;
           })
       );

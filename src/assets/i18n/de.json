@@ -10,6 +10,7 @@
   },
   "auth": {
     "password": "Kennwort",
+    "settings": "Einstellungen",
     "signIn": "Anmelden",
     "signOut": "Abmelden",
     "username": "Benutzername"
@@ -187,9 +188,11 @@
   "queue": {
     "add": "Queue hinzufügen",
     "createIntroText": "Geben Sie die erforderlichen Daten ein, um eine neue Queue zu erstellen.",
+    "finishedAt": "Beendet",
     "label": "Queue",
     "list": "Liste aller Queues.",
-    "startAt": "Startzeit"
+    "startAt": "Startzeit",
+    "startedAt": "Gestartet"
   },
   "status": {
     "code": "Code",

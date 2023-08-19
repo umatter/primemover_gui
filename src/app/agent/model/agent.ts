@@ -1,3 +1,5 @@
+import { Crawler } from '@app/crawler/model/crawler';
+
 export interface Agent {
   id: number | null;
   name: string;
@@ -6,4 +8,6 @@ export interface Agent {
   multilogin_id: string;
   multilogin_profile: string;
   location: string;
+  crawler: Crawler | null;
+  preferences: any[] | null;
 }

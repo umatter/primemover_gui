@@ -1,17 +1,20 @@
-import { Component, EventEmitter, OnDestroy, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { FormBuilder, FormControl, FormGroup, UntypedFormControl, Validators } from '@angular/forms';
 import { fadeIn } from '@shared/animation/trigger';
 import { Observable, Subscription } from 'rxjs';
 import { Proxy } from '@app/proxy/model/proxy';
 import { ProxyService } from '@app/entity/service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-proxy-form',
   templateUrl: './proxy-form.component.html',
   animations: [fadeIn]
 })
-export class ProxyFormComponent implements OnDestroy {
+export class ProxyFormComponent implements OnDestroy, OnInit {
+  @Input() proxy$: Observable<Proxy>;
+  @Input() proxy: Proxy;
   @Output() saveClicked = new EventEmitter<Proxy>();
   @Output() cancelClicked = new EventEmitter<void>();
   entityForm: FormGroup;
@@ -19,7 +22,12 @@ export class ProxyFormComponent implements OnDestroy {
   filteredProxies$: Observable<Proxy[]>;
   showAutocompletion: boolean;
 
-  constructor(private store: Store, private formBuilder: FormBuilder, private entityService: ProxyService) {
+  constructor(
+    private store: Store,
+    private formBuilder: FormBuilder,
+    private entityService: ProxyService,
+    private router: Router
+  ) {
     this.filteredProxies$ = entityService.filteredEntities$;
     this.initEntityForm();
     this.initEntityAutocompletion();
@@ -69,12 +77,13 @@ export class ProxyFormComponent implements OnDestroy {
 
   initEntityForm(): void {
     this.entityForm = this.formBuilder.group({
+      id: [null],
       name: [null, [Validators.required, Validators.maxLength(255)]],
       description: [null, [Validators.maxLength(1024)]],
-      hostname: ['', [Validators.required]],
-      port: ['', [Validators.required]],
-      username: ['', [Validators.required]],
-      password: ['', [Validators.required]]
+      hostname: [null, [Validators.required]],
+      port: [null, [Validators.required]],
+      username: [null],
+      password: [null]
     });
   }
 
@@ -97,6 +106,16 @@ export class ProxyFormComponent implements OnDestroy {
     this.entityForm.reset();
     this.name.setValue(null);
     this.showAutocompletion = false;
+    this.router.navigate(['/proxies']).then();
+  }
+
+  initProxyEdit(): void {
+    this.entityForm.patchValue(this.proxy);
+    this.showAutocompletion = false;
+  }
+
+  ngOnInit(): void {
+    this.initProxyEdit();
   }
 
   ngOnDestroy() {

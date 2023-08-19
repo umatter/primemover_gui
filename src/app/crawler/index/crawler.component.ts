@@ -4,12 +4,14 @@ import { Store } from '@ngrx/store';
 import { PaginatePipeArgs } from 'ngx-pagination';
 import { fadeIn } from '@shared/animation/trigger';
 import { Crawler } from '../model/crawler';
-import { crawlerSelection, requestPage, resetQueryFilterRequested } from '@shared/store/shared.actions';
 import { CrawlerService } from '@app/entity/service';
 import { CrawlerApiService } from '@app/crawler/service/crawler-api.service';
 import { QueryFilter } from '@shared/model/query-filter';
-import { QueryFilterType, selectCurrentCrawler, selectQueryFilter } from '@shared/store/shared.selectors';
+import { QueryFilterType, selectCurrentCrawler } from '@shared/store/shared.selectors';
 import { Meta } from '@shared/pagination/model';
+import { SharedActions } from '@shared/store/shared.actions';
+import { selectQueryFilter } from '@shared/store/shared.reducer';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-crawler',
@@ -27,7 +29,12 @@ export class CrawlerComponent implements OnDestroy {
 
   private subscriptions = new Subscription();
 
-  constructor(private store: Store, private entityService: CrawlerService, private apiService: CrawlerApiService) {
+  constructor(
+    private store: Store,
+    public router: Router,
+    private entityService: CrawlerService,
+    private apiService: CrawlerApiService
+  ) {
     this.entities$ = entityService.entities$;
     this.isLoading$ = this.entityService.loading$;
     this.pageMeta$ = entityService.pageMeta$;
@@ -38,7 +45,7 @@ export class CrawlerComponent implements OnDestroy {
   }
 
   getData(page: number = 1): void {
-    this.store.dispatch(requestPage({ page }));
+    this.store.dispatch(SharedActions.requestPage({ page }));
 
     this.subscriptions.add(
       this.queryFilter$.pipe().subscribe(() => {
@@ -49,7 +56,12 @@ export class CrawlerComponent implements OnDestroy {
   }
 
   selectCrawler(crawler: Crawler): void {
-    this.store.dispatch(crawlerSelection({ crawler }));
+    this.store.dispatch(SharedActions.crawlerSelection({ crawler }));
+  }
+
+  selectAndUploadCrawler(crawler: Crawler): void {
+    this.store.dispatch(SharedActions.crawlerSelection({ crawler }));
+    this.router.navigate(['crawlers', crawler.id, 'upload']).then();
   }
 
   initPagination(): void {
@@ -71,8 +83,8 @@ export class CrawlerComponent implements OnDestroy {
           .delete(this.entityToDelete.id)
           .pipe()
           .subscribe(() => {
-            this.store.dispatch(crawlerSelection({ crawler: null }));
-            this.store.dispatch(resetQueryFilterRequested({ filterName: QueryFilterType.Crawler }));
+            this.store.dispatch(SharedActions.crawlerSelection({ crawler: null }));
+            this.store.dispatch(SharedActions.resetQueryFilterRequested({ filterName: QueryFilterType.Crawler }));
             this.entityToDelete = null;
           })
       );

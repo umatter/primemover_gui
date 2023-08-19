@@ -57,8 +57,8 @@ export class ConfigFormComponent implements OnDestroy {
       name: [null, [Validators.required]],
       description: [null, [Validators.maxLength(1024)]],
       identification: [],
-      multiLoginId: [],
-      multiLoginProfile: [],
+      multilogin_id: [],
+      multilogin_profile: [],
       location: [],
       active: [true]
     });

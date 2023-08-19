@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { selectQueryFilter } from '../store/shared.selectors';
 import { filter, first, Observable } from 'rxjs';
 import { QueryFilter } from '@shared/model/query-filter';
+import { selectQueryFilter } from '@shared/store/shared.reducer';
 
 @Injectable({
   providedIn: 'root'

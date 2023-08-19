@@ -1,78 +1,76 @@
 <app-notification
-        *ngIf="uploadError$ | async; let errorMessage"
-        [bodyText]="errorMessage.message"
-        [typeError]="true"
-        titleText="Failure"
+  *ngIf="uploadError$ | async; let errorMessage"
+  [bodyText]="errorMessage.message"
+  [typeError]="true"
+  titleText="Failure"
 >
 </app-notification>
 <app-loading-spinner *ngIf="isLoading$ | async"></app-loading-spinner>
 <form [formGroup]="uploadForm">
-    <div class="space-y-4">
-        <div class="pb-4">
-            <h2 class="text-base font-semibold leading-7 text-gray-900">
-                {{ 'upload.uploadExperimentTitle' | translate }}
-            </h2>
-            <p class="mt-1 text-sm leading-6 text-gray-600">
-                {{ 'upload.uploadExperimentIntroText' | translate }}
-            </p>
+  <div class="space-y-4">
+    <div class="pb-4">
+      <h2 class="text-base font-semibold leading-7 text-gray-900">
+        {{ 'upload.uploadExperimentTitle' | translate }}
+      </h2>
+      <p class="mt-1 text-sm leading-6 text-gray-600">
+        {{ 'upload.uploadExperimentIntroText' | translate }}
+      </p>
 
-            <div class="mt-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                <div class="col-span-full">
-                    <label class="block text-sm font-medium leading-6 text-gray-900" for="experiments">
-                        {{ 'upload.selectExperiment' | translate }}
-                    </label>
-                    <select
-                            [formControl]="experimentSelect"
-                            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mt-2"
-                            id="experiments"
-                    >
-                        <option disabled value="">
-                            {{ 'upload.noExperimentSelected' | translate }}
-                        </option>
-                        <option *ngFor="let item of experiments" [selected]="experiment?.id === item?.id"
-                                [value]="item.id">
-                            {{ item.name }}
-                        </option>
-                    </select>
-                </div>
-                <div *ngIf="currentExperiment$ | async" class="col-span-full">
-                    <label class="block text-sm font-medium leading-6 text-gray-900" for="file-upload">
-                        {{ 'upload.fileUpload' | translate }}
-                    </label>
-                    <app-file-upload formControlName="fileUpload" id="file-upload"></app-file-upload>
-                </div>
-                <div class="col-span-full">
-                    <div class="rounded-md bg-blue-50 p-4">
-                        <div class="flex">
-                            <div class="flex-shrink-0">
-                                <svg aria-hidden="true" class="h-5 w-5 text-blue-400" fill="currentColor"
-                                     viewBox="0 0 20 20">
-                                    <path
-                                            clip-rule="evenodd"
-                                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z"
-                                            fill-rule="evenodd"
-                                    />
-                                </svg>
-                            </div>
-                            <div class="ml-3 flex-1 md:flex md:justify-between">
-                                <p class="text-sm text-blue-700">
-                                    {{ 'upload.fileExampleText' | translate }}
-                                </p>
-                                <p class="mt-3 text-sm md:ml-6 md:mt-0">
-                                    <a
-                                            [href]="apiDocsLink"
-                                            class="whitespace-nowrap font-medium text-blue-700 hover:text-blue-600"
-                                            target="_blank"
-                                    >
-                                        {{ 'upload.fileExampleLabel' | translate }}
-                                        <span aria-hidden="true"> &rarr;</span>
-                                    </a>
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+      <div class="mt-4 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+        <div class="col-span-full">
+          <label class="block text-sm font-medium leading-6 text-gray-900" for="experiments">
+            {{ 'upload.selectExperiment' | translate }}
+          </label>
+          <select
+            [formControl]="experimentSelect"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mt-2"
+            id="experiments"
+          >
+            <option disabled value="">
+              {{ 'upload.noExperimentSelected' | translate }}
+            </option>
+            <option *ngFor="let item of experiments" [selected]="experiment?.id === item?.id" [value]="item.id">
+              {{ item.name }}
+            </option>
+          </select>
         </div>
+        <div *ngIf="currentExperiment$ | async" class="col-span-full">
+          <label class="block text-sm font-medium leading-6 text-gray-900" for="file-upload">
+            {{ 'upload.fileUpload' | translate }}
+          </label>
+          <app-file-upload formControlName="fileUpload" id="file-upload"></app-file-upload>
+        </div>
+        <div class="col-span-full">
+          <div class="rounded-md bg-blue-50 p-4">
+            <div class="flex">
+              <div class="flex-shrink-0">
+                <svg aria-hidden="true" class="h-5 w-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    clip-rule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a.75.75 0 000 1.5h.253a.25.25 0 01.244.304l-.459 2.066A1.75 1.75 0 0010.747 15H11a.75.75 0 000-1.5h-.253a.25.25 0 01-.244-.304l.459-2.066A1.75 1.75 0 009.253 9H9z"
+                    fill-rule="evenodd"
+                  />
+                </svg>
+              </div>
+              <div class="ml-3 flex-1 md:flex md:justify-between">
+                <p class="text-sm text-blue-700">
+                  {{ 'upload.fileExampleText' | translate }}
+                </p>
+                <p class="mt-3 text-sm md:ml-6 md:mt-0">
+                  <a
+                    [href]="apiDocsLink"
+                    class="whitespace-nowrap font-medium text-blue-700 hover:text-blue-600"
+                    target="_blank"
+                  >
+                    {{ 'upload.fileExampleLabel' | translate }}
+                    <span aria-hidden="true"> &rarr;</span>
+                  </a>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 </form>

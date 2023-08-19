@@ -6,15 +6,15 @@ import { PaginatePipeArgs } from 'ngx-pagination';
 import { Router } from '@angular/router';
 import { fadeIn } from '@shared/animation/trigger';
 import { Experiment } from '../model/experiment';
-import { MatDialog } from '@angular/material/dialog';
 import { TranslateService } from '@ngx-translate/core';
 import { ExperimentService } from '@app/entity/service';
-import { experimentSelection, requestPage, resetQueryFilterRequested } from '@shared/store/shared.actions';
 import { ExperimentApiService } from '@app/experiment/service/experiment-api.service';
-import { QueryFilterType, selectCurrentExperiment, selectQueryFilter } from '@shared/store/shared.selectors';
+import { QueryFilterType, selectCurrentExperiment, selectQueryFilter } from "@shared/store/shared.selectors";
 import { QueryFilter } from '@shared/model/query-filter';
 import { Meta } from '@shared/pagination/model';
 import { saveAs } from 'file-saver';
+import { SharedActions } from '@shared/store/shared.actions';
+
 @Component({
   selector: 'app-experiment',
   templateUrl: './experiment.component.html',
@@ -34,7 +34,6 @@ export class ExperimentComponent implements OnDestroy {
   constructor(
     private store: Store,
     public router: Router,
-    private matDialog: MatDialog,
     private translate: TranslateService,
     private entityService: ExperimentService,
     private apiService: ExperimentApiService
@@ -50,7 +49,7 @@ export class ExperimentComponent implements OnDestroy {
   }
 
   getData(page: number = 1): void {
-    this.store.dispatch(requestPage({ page }));
+    this.store.dispatch(SharedActions.requestPage({ page }));
 
     this.subscriptions.add(
       this.queryFilter$.pipe().subscribe(() => {
@@ -69,11 +68,11 @@ export class ExperimentComponent implements OnDestroy {
   }
 
   selectExperiment(experiment: Experiment): void {
-    this.store.dispatch(experimentSelection({ experiment: experiment }));
+    this.store.dispatch(SharedActions.experimentSelection({ experiment: experiment }));
   }
 
   selectAndUploadExperiment(experiment: Experiment): void {
-    this.store.dispatch(experimentSelection({ experiment: experiment }));
+    this.store.dispatch(SharedActions.experimentSelection({ experiment: experiment }));
     this.router.navigate(['experiments', experiment.id, 'upload']).then();
   }
 
@@ -92,13 +91,12 @@ export class ExperimentComponent implements OnDestroy {
           .delete(this.experimentToDelete.id)
           .pipe()
           .subscribe(() => {
-            this.store.dispatch(experimentSelection({ experiment: null }));
-            this.store.dispatch(resetQueryFilterRequested({ filterName: QueryFilterType.Experiment }));
+            this.store.dispatch(SharedActions.experimentSelection({ experiment: null }));
+            this.store.dispatch(SharedActions.resetQueryFilterRequested({ filterName: QueryFilterType.Experiment }));
             this.experimentToDelete = null;
           })
       );
     }
-  
   }
 
   ngOnDestroy(): void {

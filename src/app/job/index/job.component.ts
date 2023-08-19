@@ -4,12 +4,13 @@ import { PaginatePipeArgs } from 'ngx-pagination';
 import { Store } from '@ngrx/store';
 import { JobService } from '@app/entity/service';
 import { Job } from '@app/job/model/Job';
-import { QueryFilterType, selectCurrentJob, selectQueryFilter } from '@shared/store/shared.selectors';
+import { QueryFilterType, selectCurrentJob } from '@shared/store/shared.selectors';
 import { QueryFilter } from '@shared/model/query-filter';
 import { JobApiService } from '@app/job/service/job-api.service';
-import { jobSelection, requestPage, resetQueryFilterRequested } from '@shared/store/shared.actions';
 import { Router } from '@angular/router';
 import { Meta } from '@shared/pagination/model';
+import { SharedActions } from '@shared/store/shared.actions';
+import { selectQueryFilter } from '@shared/store/shared.reducer';
 
 @Component({
   selector: 'app-job',
@@ -43,7 +44,7 @@ export class JobComponent implements OnDestroy {
   }
 
   getData(page: number = 1): void {
-    this.store.dispatch(requestPage({ page }));
+    this.store.dispatch(SharedActions.requestPage({ page }));
     this.subscriptions.add(
       this.queryFilter$.pipe().subscribe(() => {
         this.entityService.clearCache();
@@ -71,8 +72,8 @@ export class JobComponent implements OnDestroy {
           .delete(this.entityToDelete.id)
           .pipe()
           .subscribe(() => {
-            this.store.dispatch(jobSelection({ job: null }));
-            this.store.dispatch(resetQueryFilterRequested({ filterName: QueryFilterType.Job }));
+            this.store.dispatch(SharedActions.jobSelection({ job: null }));
+            this.store.dispatch(SharedActions.resetQueryFilterRequested({ filterName: QueryFilterType.Job }));
             this.entityToDelete = null;
           })
       );
@@ -84,7 +85,7 @@ export class JobComponent implements OnDestroy {
   }
 
   selectJob(item: Job) {
-    this.store.dispatch(jobSelection({ job: item }));
+    this.store.dispatch(SharedActions.jobSelection({ job: item }));
     this.router.navigate(['/jobs', 'behaviors', item.id]).then();
   }
 }

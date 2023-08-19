@@ -7,10 +7,10 @@ import { fadeIn } from '@shared/animation/trigger';
 import { Configuration } from '../model/config';
 import { ConfigurationService } from '@app/entity/service';
 import { QueryFilter } from '@shared/model/query-filter';
-import { selectQueryFilter } from '@shared/store/shared.selectors';
 import { ConfigApiService } from '@app/config/service/config-api.service';
 import { Meta } from '@shared/pagination/model';
-import { requestPage } from '@shared/store/shared.actions';
+import { SharedActions } from '@shared/store/shared.actions';
+import { selectQueryFilter } from '@shared/store/shared.reducer';
 
 @Component({
   selector: 'app-config',
@@ -39,7 +39,7 @@ export class ConfigComponent implements OnDestroy {
   }
 
   getData(page: number = 1): void {
-    this.store.dispatch(requestPage({ page }));
+    this.store.dispatch(SharedActions.requestPage({ page }));
 
     this.subscriptions.add(
       this.queryFilter$.pipe().subscribe(() => {

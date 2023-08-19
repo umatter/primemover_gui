@@ -6,6 +6,7 @@
     *ngIf="behaviorModal"
   ></app-behavior-form>
 </app-content-modal>
+<app-confirmation-modal (modalResponse)="onModalResponse($event)" [isModal]="!!entityToDelete"></app-confirmation-modal>
 
 <ng-template #content>
   <div class="px-4">

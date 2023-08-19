@@ -1,26 +1,24 @@
-import { Component, EventEmitter, OnDestroy, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, UntypedFormControl, Validators } from '@angular/forms';
 import { Observable, Subscription } from 'rxjs';
 import { Agent } from '@app/agent/model/agent';
 import { Store } from '@ngrx/store';
-import { AgentService } from '@app/entity/service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-agent-form',
   templateUrl: './agent-form.component.html'
 })
-export class AgentFormComponent implements OnDestroy {
+export class AgentFormComponent implements OnDestroy, OnInit {
+  @Input() agent$: Observable<Agent>;
+  @Input() agent: Agent;
   @Output() saveClicked = new EventEmitter<Agent>();
   @Output() cancelClicked = new EventEmitter<void>();
   agentForm: FormGroup;
-  filteredAgents$: Observable<Agent[]>;
-  showAutocompletion: boolean;
   subscriptions = new Subscription();
 
-  constructor(private store: Store, private formBuilder: FormBuilder, private agentService: AgentService) {
-    this.filteredAgents$ = agentService.filteredEntities$;
+  constructor(private store: Store, private formBuilder: FormBuilder, private router: Router) {
     this.initAgentForm();
-    this.initAgentAutocompletion();
   }
 
   get name(): UntypedFormControl {
@@ -47,6 +45,10 @@ export class AgentFormComponent implements OnDestroy {
     return this.agentForm.get('location') as FormControl;
   }
 
+  ngOnInit(): void {
+    this.initAgentEdit();
+  }
+
   hasError(controlName: string, errorName: string): boolean {
     return (
       this.agentForm.get(controlName)?.touched &&
@@ -55,57 +57,34 @@ export class AgentFormComponent implements OnDestroy {
     );
   }
 
-  initAgentAutocompletion(): void {
-    this.agentService.getAll();
-    this.subscriptions.add(
-      this.name.valueChanges.pipe().subscribe((search) => {
-        this.showAutocompletion = true;
-        this.agentService.setFilter(search);
-      })
-    );
-  }
-
   initAgentForm(): void {
     this.agentForm = this.formBuilder.group({
+      id: [null],
       name: [null, [Validators.required]],
       description: [null, [Validators.maxLength(1024)]],
       identification: [],
-      multiLoginId: [],
-      multiLoginProfile: [],
+      multilogin_id: [],
+      multilogin_profile: [],
       location: [],
       active: [true]
     });
   }
 
-  setFormValuesToSelectedAgent(formValue: Agent): void {
-    const agentFormValues = {
-      ...formValue,
-      multiLoginProfile: formValue.multilogin_profile,
-      multiLoginId: formValue.multilogin_id,
-      active: true
-    };
-
-    this.showAutocompletion = false;
-    this.agentForm.patchValue(agentFormValues);
-  }
-
   onCancel(): void {
     this.cancelClicked.emit();
-    this.reset();
+    this.agentForm.reset();
+    this.router.navigate(['/agents']).then();
   }
 
   onSave(): void {
     this.saveClicked.emit(this.agentForm.value);
-    this.reset();
-  }
-
-  reset() {
-    this.agentForm.reset();
-    this.name.setValue(null);
-    this.showAutocompletion = false;
   }
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
+  }
+
+  initAgentEdit(): void {
+    this.agentForm.patchValue(this.agent);
   }
 }

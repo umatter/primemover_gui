@@ -6,11 +6,12 @@ import { Behavior } from '@app/behavior/behavior';
 import { ActivatedRoute } from '@angular/router';
 import { BehaviorApiService } from '@app/behavior/service/behavior-api.service';
 import { Store } from '@ngrx/store';
-import { jobSelection, requestPage } from '@shared/store/shared.actions';
-import { selectCurrentJob, selectQueryFilter } from '@shared/store/shared.selectors';
+import { selectCurrentJob } from '@shared/store/shared.selectors';
 import { Meta } from '@shared/pagination/model';
 import { PaginatePipeArgs } from 'ngx-pagination';
 import { QueryFilter } from '@shared/model/query-filter';
+import { SharedActions } from '@shared/store/shared.actions';
+import { selectQueryFilter } from '@shared/store/shared.reducer';
 
 @Component({
   selector: 'app-behavior',
@@ -22,7 +23,7 @@ export class BehaviorComponent implements OnDestroy {
   isLoading$: Observable<boolean>;
   pageMeta$: Observable<Meta>;
   queryFilter$: Observable<QueryFilter[]>;
-
+  entityToDelete: Behavior | null = null;
   subscriptions = new Subscription();
   behaviorModal: boolean;
   jobId: string | null;
@@ -45,7 +46,7 @@ export class BehaviorComponent implements OnDestroy {
       this.jobService
         .getByKey(this.jobId)
         .pipe()
-        .subscribe((job) => (job ? this.store.dispatch(jobSelection({ job })) : null))
+        .subscribe((job) => (job ? this.store.dispatch(SharedActions.jobSelection({ job })) : null))
     );
 
     this.subscriptions.add(
@@ -65,7 +66,7 @@ export class BehaviorComponent implements OnDestroy {
   }
 
   getData(page: number = 1): void {
-    this.store.dispatch(requestPage({ page }));
+    this.store.dispatch(SharedActions.requestPage({ page }));
 
     this.subscriptions.add(
       this.queryFilter$.pipe().subscribe(() => {
@@ -76,9 +77,9 @@ export class BehaviorComponent implements OnDestroy {
     this.initPagination();
   }
 
-  deleteRequested(item: Behavior) {
-    this.entityService.delete(item.id);
-  }
+  // deleteRequested(item: Behavior) {
+  //   this.entityService.delete(item.id);
+  // }
 
   onBehaviorModalSave(behavior: Behavior) {
     this.entityService.clearCache();
@@ -92,6 +93,17 @@ export class BehaviorComponent implements OnDestroy {
 
   onBehaviorModalCancel() {
     this.behaviorModal = false;
+  }
+
+  deleteRequested(behavior: Behavior): void {
+    this.entityToDelete = behavior;
+  }
+
+  onModalResponse(event: boolean): void {
+    if (event && this.entityToDelete?.id) {
+      this.entityService.delete(this.entityToDelete.id);
+    }
+    this.entityToDelete = null;
   }
 
   ngOnDestroy(): void {

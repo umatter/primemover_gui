@@ -38,6 +38,9 @@
                   {{ item.contact }}
                 </td>
                 <td class="relative whitespace-nowrap text-right text-sm font-medium sm:pr-0">
+                  <button (click)="editRequested(item)" class="text-gray-400 hover:text-indigo-900 mr-2">
+                    <app-heroicon-pencil-square></app-heroicon-pencil-square>
+                  </button>
                   <button (click)="deleteRequested(item)" class="text-gray-400 hover:text-indigo-900">
                     <app-heroicon-trash></app-heroicon-trash>
                   </button>

@@ -7,10 +7,12 @@ import { fadeIn } from '@shared/animation/trigger';
 import { AgentService } from '@app/entity/service';
 import { Agent } from '@app/agent/model/agent';
 import { AgentApiService } from '@app/agent/service/agent-api.service';
-import { selectQueryFilter } from '@shared/store/shared.selectors';
 import { QueryFilter } from '@shared/model/query-filter';
 import { Meta } from '@shared/pagination/model';
-import { requestPage } from '@shared/store/shared.actions';
+import { Router } from '@angular/router';
+import { EntityErrorService } from '@app/entity/entity-error.service';
+import { SharedActions } from '@shared/store/shared.actions';
+import { selectQueryFilter } from '@shared/store/shared.reducer';
 
 @Component({
   selector: 'app-agent',
@@ -27,7 +29,13 @@ export class AgentComponent implements OnDestroy {
 
   private subscriptions = new Subscription();
 
-  constructor(private store: Store, public entityService: AgentService, private apiService: AgentApiService) {
+  constructor(
+    private store: Store,
+    public entityService: AgentService,
+    private apiService: AgentApiService,
+    private router: Router,
+    private errorService: EntityErrorService
+  ) {
     this.entities$ = entityService.entities$;
     this.isLoading$ = entityService.loading$;
     this.pageMeta$ = entityService.pageMeta$;
@@ -38,7 +46,7 @@ export class AgentComponent implements OnDestroy {
   }
 
   getData(page: number = 1): void {
-    this.store.dispatch(requestPage({ page }));
+    this.store.dispatch(SharedActions.requestPage({ page }));
 
     this.subscriptions.add(
       this.queryFilter$.pipe().subscribe(() => {
@@ -69,5 +77,9 @@ export class AgentComponent implements OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
+  }
+
+  editRequested(item: Agent) {
+    this.router.navigate(['/agents', item.id, 'edit']).then();
   }
 }

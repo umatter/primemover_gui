@@ -5,6 +5,7 @@ import { Job } from '@app/job/model/Job';
 import { Store } from '@ngrx/store';
 import { BehaviorService } from '@app/entity/service';
 import { Behavior } from '@app/behavior/behavior';
+import { selectCurrentJob } from '@shared/store/shared.selectors';
 
 @Component({
   selector: 'app-behavior-form',
@@ -87,6 +88,16 @@ export class BehaviorFormComponent implements OnDestroy {
       value: [null, [Validators.required]],
       job_id: [null, [Validators.required]]
     });
+
+    this.subscriptions.add(
+      this.store
+        .select(selectCurrentJob)
+        .pipe()
+        .subscribe((job) => {
+          this.jobId.setValue(job?.id);
+          this.showAutocompletion = false;
+        })
+    );
   }
 
   ngOnDestroy() {

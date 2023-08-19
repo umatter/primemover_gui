@@ -6,10 +6,11 @@ import { Router } from '@angular/router';
 import { fadeIn } from '@shared/animation/trigger';
 import { Experiment } from '../model/experiment';
 import { ExperimentService } from '@app/entity/service';
-import { experimentSelection, uploadFile } from '@shared/store/shared.actions';
-import { selectCurrentExperiment, selectIsUploading, selectUploadingError } from '@shared/store/shared.selectors';
+import { selectCurrentExperiment } from '@shared/store/shared.selectors';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { requiredFileType } from '@shared/file-upload/file.validator';
+import { SharedActions } from '@shared/store/shared.actions';
+import { selectIsUploading, selectUploadError } from '@shared/store/shared.reducer';
 
 @Component({
   selector: 'app-experiment-upload',
@@ -17,7 +18,7 @@ import { requiredFileType } from '@shared/file-upload/file.validator';
   animations: [fadeIn]
 })
 export class ExperimentUploadComponent implements OnDestroy, OnInit {
-  readonly apiDocsLink: string = 'https://primemoverswitch.primemover.example/api/v1/docs';
+  readonly apiDocsLink: string = 'https://pm-api.test.primemover.example/api/v1/docs';
   isLoading$: Observable<boolean>;
   currentExperiment$: Observable<Experiment>;
   subscriptions = new Subscription();
@@ -32,7 +33,7 @@ export class ExperimentUploadComponent implements OnDestroy, OnInit {
 
   constructor(private store: Store, public router: Router, private entityService: ExperimentService) {
     this.currentExperiment$ = this.store.pipe(select(selectCurrentExperiment));
-    this.uploadError$ = this.store.select(selectUploadingError);
+    this.uploadError$ = this.store.select(selectUploadError);
     this.entityService
       .getAll()
       .pipe(distinctUntilChanged())
@@ -63,13 +64,13 @@ export class ExperimentUploadComponent implements OnDestroy, OnInit {
     this.subscriptions.add(
       this.experimentSelect.valueChanges.pipe().subscribe((id) => {
         const experiment = this.experiments.find((e) => e.id === Number(id));
-        this.store.dispatch(experimentSelection({ experiment: experiment || null }));
+        this.store.dispatch(SharedActions.experimentSelection({ experiment: experiment || null }));
       })
     );
 
     this.subscriptions.add(
       this.fileUpload.valueChanges.pipe().subscribe((file) => {
-        this.store.dispatch(uploadFile({ file: file }));
+        this.store.dispatch(SharedActions.uploadFile({ file: file }));
       })
     );
   }

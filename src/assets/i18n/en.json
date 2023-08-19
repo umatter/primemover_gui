@@ -10,6 +10,7 @@
   },
   "auth": {
     "password": "password",
+    "settings": "Settings",
     "signIn": "Register",
     "signOut": "Sign out",
     "username": "User name"
@@ -26,7 +27,7 @@
     "actionPermanentWarning": "This action cannot be undone!",
     "agentRequiredError": "Agent is Required",
     "areYouSure": "Are you sure?",
-    "cancel": "Interrupt",
+    "cancel": "Cancel",
     "clear": "Clear",
     "configRequiredError": "Configuration is Required",
     "confirm": "Confirm",
@@ -187,9 +188,11 @@
   "queue": {
     "add": "Add Queue",
     "createIntroText": "Enter the required data to create a new queue.",
+    "finishedAt": "Done",
     "label": "Queue",
     "list": "List of all queues.",
-    "startAt": "Start At"
+    "startAt": "Start At",
+    "startedAt": "Started"
   },
   "status": {
     "code": "Code",
@@ -212,6 +215,10 @@
     "orDragAndDrop": "or drag and drop it here",
     "selectExperiment": "Select experiment",
     "uploadExperimentIntroText": "In order to upload experiment data you need to have selected the experiment first. Upload data requires a valid JSON file. See API-docs for details.",
-    "uploadExperimentTitle": "Upload experiment data"
+    "uploadExperimentTitle": "Upload experiment data",
+    "uploadCrawlerTitle": "Upload crawler data",
+    "selectCrawler": "Select crawler",
+    "noCrawlerSelected": "No selected crawler",
+    "uploadCrawlerIntroText": "In order to upload crawler data you need to have selected the crawler first. Upload data requires a valid JSON file. See API-docs for details."
   }
 }

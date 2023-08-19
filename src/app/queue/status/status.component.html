@@ -1,5 +1,7 @@
 <div [title]="statusMessage">
   <div *ngIf="isFailed()" class="text-red-600">Failed</div>
   <div *ngIf="isSuccess()" class="text-green-600">Success</div>
+  <div *ngIf="isSkipped()" class="text-blue-600">Skipped</div>
+  <div *ngIf="isRunning()" class="text-orange-700">Running</div>
   <div *ngIf="isUnknown()" class="text-yellow-600">Unknown</div>
 </div>

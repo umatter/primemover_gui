@@ -106,5 +106,13 @@
   "cli": {
     "schematicCollections": ["@angular-eslint/schematics"],
     "analytics": "acec3e8c-6134-4398-8260-3daf9b6c0c98"
+  },
+  "schematics": {
+    "@angular-eslint/schematics:application": {
+      "setParserOptionsProject": true
+    },
+    "@angular-eslint/schematics:library": {
+      "setParserOptionsProject": true
+    }
   }
 }

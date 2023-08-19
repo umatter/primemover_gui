@@ -3,13 +3,15 @@ import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { AuthService } from '../../core/services/auth.service';
 import {
+  fetchUserDataFailed,
+  fetchUserDataSuccess,
   missingCredentialsPassword,
   missingCredentialsUsername,
   signInCompleted,
   signInFailed,
   signInRequested
 } from './auth.actions';
-import { catchError, map, switchMap, tap } from 'rxjs';
+import { catchError, exhaustMap, map, switchMap, tap } from 'rxjs';
 import { of } from 'rxjs';
 import { Router } from '@angular/router';
 import { LocalStorageService } from '../../core/services/local-storage.service';
@@ -33,6 +35,19 @@ export class AuthEffects {
           catchError((error) => of(signInFailed(error)))
         );
       })
+    )
+  );
+
+  signInCompleted$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(signInCompleted),
+      switchMap(() =>
+        this.authService.user().pipe(
+          tap((user) => this.localStorageService.set('user', JSON.stringify(user))),
+          map((user) => fetchUserDataSuccess({ user })),
+          catchError((error) => of(fetchUserDataFailed({ error })))
+        )
+      )
     )
   );
 
