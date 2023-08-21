@@ -118,7 +118,8 @@
     "crawlerId": "Crawler-ID",
     "label": "Job",
     "list": "Liste aller Jobs.",
-    "type": "Type"
+    "type": "Type",
+    "selectType": "Selecteer type"
   },
   "loading": {
     "text": "Dies könnte eine Weile dauern, bitte haben Sie etwas Geduld.",

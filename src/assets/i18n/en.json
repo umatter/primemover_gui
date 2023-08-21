@@ -126,7 +126,8 @@
     "crawlerId": "Crawler-ID",
     "label": "Job",
     "list": "List all Jobs",
-    "type": "Type"
+    "type": "Type",
+    "selectType": "Select Type"
   },
   "loading": {
     "text": "This may take a few seconds, please don't close this page.",
