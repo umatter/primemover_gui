@@ -115,11 +115,28 @@
   "foo": "bar",
   "job": {
     "add": "Job hinzufügen",
+    "createIntroText": "Geben Sie die erforderlichen Daten ein, um einen neuen Job zu erstellen.",
     "crawlerId": "Crawler-ID",
     "label": "Job",
-    "list": "Liste aller Jobs.",
-    "type": "Type",
-    "selectType": "Selecteer type"
+    "list": "Liste aller Jobs",
+    "type": {
+      "label": "Typ",
+      "visitjob": "Visit",
+      "waitjob": "Wait",
+      "tryentertextfieldjob": "Try enter text field",
+      "entertextfieldjob": "Enter text field",
+      "singleselecturljob": "Single select URL",
+      "singleselectjob": "Single select",
+      "tryswitchjob": "Try switch",
+      "switchjob": "Switch",
+      "tryclickjob": "Try click",
+      "clickjob": "Click",
+      "scrollbydurationjob": "Scroll by duration",
+      "scrollbylengthjob": "Scroll by length",
+      "handlealertjob": "Handle alert",
+      "tryhandlealertjob": "Try handle alert"
+    },
+    "selectType": "Typ auswählen"
   },
   "loading": {
     "text": "Dies könnte eine Weile dauern, bitte haben Sie etwas Geduld.",

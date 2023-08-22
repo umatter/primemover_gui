@@ -55,7 +55,7 @@
                 <div class="flex items-center gap-1">
                   <div class="w-full">
                     <input
-                      [formControl]="queueId"
+                      [formControl]="queueAutocompletion"
                       autocomplete="queue"
                       class="disabled:opacity-50 max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
                       id="queue"
@@ -104,10 +104,10 @@
 
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
             <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="description">
-              {{ 'job.type' | translate }}
+              {{ 'job.type.label' | translate }}
             </label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-            
+
               <select
                 autocomplete="off"
                 class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
@@ -115,9 +115,10 @@
                 id="type"
                 name="type"
               >
-                <option value="null" disabled selected>{{ 'job.selectType' | translate}}</option>
-                <option *ngFor="let jobType of jobTypes" [value]="jobType">{{jobType}}</option>
-                
+                <option disabled selected value="null">{{ 'job.selectType' | translate}}</option>
+                <option *ngFor="let jobType of jobTypes"
+                        [value]="jobType">{{ 'job.type.' + jobType | translate }}
+                </option>
               </select>
               <p *ngIf="hasError('type', 'required')" @fadeIn class="mt-2 text-sm text-red-600" id="contact-error">
                 {{ 'common.typeRequiredError' | translate }}
