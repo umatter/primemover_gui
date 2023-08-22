@@ -7,6 +7,7 @@ import { Queue } from '@app/queue/model/queue';
 import { Job } from '@app/job/model/Job';
 import { JobService, QueueService } from '@app/entity/service';
 import { selectCurrentQueue } from '@shared/store/shared.selectors';
+import { JobType } from '@app/enum/JobType.enum';
 
 @Component({
   selector: 'app-job-form',
@@ -21,9 +22,9 @@ export class JobFormComponent implements OnDestroy {
   filteredJobs$: Observable<Job[]>;
   showQueueAutocompletion: boolean;
   showJobAutocompletion: boolean;
+  jobTypes = Object.values(JobType);
   jobAutocompletion = new FormControl('', [Validators.required]);
   queueAutocompletion = new FormControl('', [Validators.required]);
-  behaviorModal: boolean;
 
   constructor(
     private store: Store,

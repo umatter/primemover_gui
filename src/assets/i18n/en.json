@@ -44,7 +44,7 @@
     "contactRequiredError": "At least one contact is required",
     "crawlerRequiredError": "Crawler is required",
     "delete": "Delete",
-    "description": "description",
+    "description": "Description",
     "descriptionPlaceholder": "e.g. It is a new experiment, ...",
     "descriptionRequiredError": "Description is Required",
     "edit": "Edit",
@@ -123,10 +123,28 @@
   "foo": "bar",
   "job": {
     "add": "add jobs",
+    "createIntroText": "Geben Sie die erforderlichen Daten ein, um einen neuen Job zu erstellen.",
     "crawlerId": "Crawler-ID",
     "label": "Job",
     "list": "List all Jobs",
-    "type": "Type"
+    "type": {
+      "label": "Type",
+      "visitjob": "Visit",
+      "waitjob": "Wait",
+      "tryentertextfieldjob": "Try enter text field",
+      "entertextfieldjob": "Enter text field",
+      "singleselecturljob": "Single select URL",
+      "singleselectjob": "Single select",
+      "tryswitchjob": "Try switch",
+      "switchjob": "Switch",
+      "tryclickjob": "Try click",
+      "clickjob": "Click",
+      "scrollbydurationjob": "Scroll by duration",
+      "scrollbylengthjob": "Scroll by length",
+      "handlealertjob": "Handle alert",
+      "tryhandlealertjob": "Try handle alert"
+    },
+    "selectType": "Select Type"
   },
   "loading": {
     "text": "This may take a few seconds, please don't close this page.",
