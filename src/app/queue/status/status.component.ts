@@ -14,6 +14,10 @@ export class StatusComponent {
     return this.statusCode === 'failed';
   }
 
+  isFailure(): boolean {
+    return this.statusCode === 'failure';
+  }
+
   isSuccess(): boolean {
     return this.statusCode === 'success';
   }
