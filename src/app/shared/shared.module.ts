@@ -53,6 +53,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { HeroiconDownloadComponent } from './icon/heroicon-download/heroicon-download.component';
 import { JobStatusComponent } from './job-status/job-status.component';
 
 @NgModule({
@@ -90,6 +91,8 @@ import { JobStatusComponent } from './job-status/job-status.component';
     HeroiconClipboardDocumentComponent,
     HeroiconUploadComponent,
     FileUploadComponent,
+    HeroiconPencilSquareComponent,
+    HeroiconDownloadComponent,
     HeroiconDownloadArchiveComponent,
     HeroiconPencilSquareComponent,
     JobStatusComponent
@@ -154,7 +157,8 @@ import { JobStatusComponent } from './job-status/job-status.component';
     MatSelectModule,
     MatAutocompleteModule,
     MatProgressSpinnerModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    HeroiconDownloadComponent
   ]
 })
 export class SharedModule {}

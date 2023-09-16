@@ -1,5 +1,5 @@
 import { Component, OnDestroy } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { PaginatePipeArgs } from 'ngx-pagination';
 import { Store } from '@ngrx/store';
 import { JobService } from '@app/entity/service';
@@ -63,6 +63,23 @@ export class JobComponent implements OnDestroy {
 
   deleteRequested(job: Job): void {
     this.entityToDelete = job;
+  }
+
+  downloadReport(job: Job): void {
+    const loadingSubject = new BehaviorSubject<boolean>(true);
+    this.isLoading$ = loadingSubject.asObservable();
+
+    this.apiService.downloadReport(job.id).subscribe((data: Blob) => {
+      const blob = new Blob([data], { type: 'application/zip' });
+      const url = window.URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = 'report-' + job.id; 
+      document.body.appendChild(anchor);
+      anchor.click();
+      window.URL.revokeObjectURL(url);
+      loadingSubject.next(false);
+    })
   }
 
   onModalResponse(event: boolean): void {

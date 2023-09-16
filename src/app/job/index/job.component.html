@@ -61,6 +61,9 @@
                 </td>
 
                 <td class="relative whitespace-nowrap text-right text-sm font-medium pr-1">
+                  <button *ngIf="item.reports.length > 0" (click)="downloadReport(item)" class="text-gray-400 hover:text-indigo-900 ml-2">
+                    <app-heroicon-download></app-heroicon-download>
+                  </button>
                   <button (click)="deleteRequested(item)" class="text-gray-400 hover:text-indigo-900 mr-2">
                     <app-heroicon-trash></app-heroicon-trash>
                   </button>

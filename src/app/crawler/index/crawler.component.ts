@@ -10,7 +10,7 @@ import { QueryFilter } from '@shared/model/query-filter';
 import { QueryFilterType, selectCurrentCrawler } from '@shared/store/shared.selectors';
 import { Meta } from '@shared/pagination/model';
 import { SharedActions } from '@shared/store/shared.actions';
-import { selectQueryFilter } from '@shared/store/shared.reducer';
+import { selectQueryFilter, selectUploadError } from '@shared/store/shared.reducer';
 import { Router } from '@angular/router';
 
 @Component({
@@ -26,6 +26,8 @@ export class CrawlerComponent implements OnDestroy {
   queryFilter$: Observable<QueryFilter[]>;
   currentCrawler$: Observable<Crawler>;
   pageMeta$: Observable<Meta>;
+  uploadError$: Observable<any>;
+
 
   private subscriptions = new Subscription();
 
@@ -40,6 +42,7 @@ export class CrawlerComponent implements OnDestroy {
     this.pageMeta$ = entityService.pageMeta$;
     this.queryFilter$ = this.store.select(selectQueryFilter);
     this.currentCrawler$ = this.store.select(selectCurrentCrawler);
+    this.uploadError$ = this.store.select(selectUploadError);
     this.getData();
     this.initPagination();
   }
