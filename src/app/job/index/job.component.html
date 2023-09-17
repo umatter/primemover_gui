@@ -1,3 +1,17 @@
+<app-notification
+  *ngIf="downloadError$ | async; let errorMessage"
+  [bodyText]="errorMessage"
+  [typeError]="true"
+  titleText="Failure"
+>
+</app-notification>
+<app-notification
+  *ngIf="downloadSuccess$ | async; let successMessage"
+  [bodyText]="successMessage"
+  [typeSuccess]="true"
+  titleText="Success"
+>
+</app-notification>
 <app-loading-spinner *ngIf="isLoading$ | async"></app-loading-spinner>
 <app-confirmation-modal (modalResponse)="onModalResponse($event)" [isModal]="!!entityToDelete"></app-confirmation-modal>
 <div *ngIf="false === (isLoading$ | async)" class="px-4">

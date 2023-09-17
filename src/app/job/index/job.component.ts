@@ -10,7 +10,7 @@ import { JobApiService } from '@app/job/service/job-api.service';
 import { Router } from '@angular/router';
 import { Meta } from '@shared/pagination/model';
 import { SharedActions } from '@shared/store/shared.actions';
-import { selectQueryFilter } from '@shared/store/shared.reducer';
+import { selectQueryFilter, selectIsDownloading, selectDownloadError, selectDownloadSuccess } from '@shared/store/shared.reducer';
 
 @Component({
   selector: 'app-job',
@@ -24,6 +24,8 @@ export class JobComponent implements OnDestroy {
   queryFilter$: Observable<QueryFilter[]>;
   currentJob$: Observable<Job>;
   pageMeta$: Observable<Meta>;
+  downloadError$: Observable<any>;
+  downloadSuccess$: Observable<any>;
 
   private subscriptions = new Subscription();
 
@@ -36,6 +38,8 @@ export class JobComponent implements OnDestroy {
     this.pageMeta$ = this.entityService.pageMeta$;
     this.entities$ = this.entityService.entities$;
     this.isLoading$ = this.entityService.loading$;
+    this.downloadError$ = this.store.select(selectDownloadError);
+    this.downloadSuccess$ = this.store.select(selectDownloadSuccess);
 
     this.queryFilter$ = this.store.select(selectQueryFilter);
     this.currentJob$ = this.store.select(selectCurrentJob);
@@ -66,20 +70,8 @@ export class JobComponent implements OnDestroy {
   }
 
   downloadReport(job: Job): void {
-    const loadingSubject = new BehaviorSubject<boolean>(true);
-    this.isLoading$ = loadingSubject.asObservable();
-
-    this.apiService.downloadReport(job.id).subscribe((data: Blob) => {
-      const blob = new Blob([data], { type: 'application/zip' });
-      const url = window.URL.createObjectURL(blob);
-      const anchor = document.createElement('a');
-      anchor.href = url;
-      anchor.download = 'report-' + job.id; 
-      document.body.appendChild(anchor);
-      anchor.click();
-      window.URL.revokeObjectURL(url);
-      loadingSubject.next(false);
-    })
+    this.isLoading$ = this.store.select(selectIsDownloading) 
+    this.store.dispatch(SharedActions.downloadFile({job: job}))
   }
 
   onModalResponse(event: boolean): void {
