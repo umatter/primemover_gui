@@ -91,7 +91,7 @@ export class SharedEffects {
             const url = window.URL.createObjectURL(blob);
             const anchor = document.createElement('a');
             anchor.href = url;
-            anchor.download = 'report-' + action.job.id;
+            anchor.download = 'job-' + action.job.id;
             document.body.appendChild(anchor);
             anchor.click();
             window.URL.revokeObjectURL(url);
