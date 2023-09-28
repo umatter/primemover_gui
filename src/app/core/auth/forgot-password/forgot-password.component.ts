@@ -8,10 +8,9 @@ import { catchError, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-forgot-password',
-  templateUrl: './forgot-password.component.html',
+  templateUrl: './forgot-password.component.html'
 })
 export class ForgotPasswordComponent implements OnInit {
-
   form: UntypedFormGroup;
   hasError: boolean;
   message: string;
@@ -19,13 +18,9 @@ export class ForgotPasswordComponent implements OnInit {
   isLoading: Boolean;
   typeSuccess: boolean;
 
-  constructor(
-    private fb: UntypedFormBuilder,
-    private store: Store,
-    private service: AuthService,
-  ) {
+  constructor(private fb: UntypedFormBuilder, private store: Store, private service: AuthService) {
     this.form = this.fb.group({
-      email: [null, [Validators.required]],
+      email: [null, [Validators.required]]
     });
   }
 
@@ -34,20 +29,21 @@ export class ForgotPasswordComponent implements OnInit {
 
     this.errorResponse$.subscribe((response) => {
       if (Boolean(response?.error)) {
-        this.hasError = true;                  
+        this.hasError = true;
         this.message = response?.message;
       }
     });
   }
 
-  onSubmit(){
+  onSubmit() {
     const email = this.form.get('email')?.value;
 
     this.isLoading = true;
-    this.service.forgotPassword(email)
+    this.service
+      .forgotPassword(email)
       .pipe(
         catchError((error: HttpErrorResponse) => {
-          this.hasError = true;                  
+          this.hasError = true;
           this.message = error.error.message;
           this.isLoading = false;
           this.form.reset();
@@ -56,11 +52,9 @@ export class ForgotPasswordComponent implements OnInit {
       )
       .subscribe((response) => {
         this.typeSuccess = true;
-        this.message = response.message
+        this.message = response.message;
         this.isLoading = false;
         this.form.reset();
-      })
-
+      });
   }
-
 }

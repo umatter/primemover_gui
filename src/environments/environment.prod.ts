@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
   configService: {
-    apiBaseUrl: 'https://pm-api.test.primemover.example/api/v1'
+    apiBaseUrl: 'https://primemoverswitch.primemover.example/api/v1'
   }
 };

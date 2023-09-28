@@ -6,6 +6,7 @@ import { Observable, Subscription } from 'rxjs';
 import { Proxy } from '@app/proxy/model/proxy';
 import { ProxyService } from '@app/entity/service';
 import { Router } from '@angular/router';
+import { ProxyType } from '@app/enum/proxy-type.enum';
 
 @Component({
   selector: 'app-proxy-form',
@@ -21,6 +22,8 @@ export class ProxyFormComponent implements OnDestroy, OnInit {
   subscriptions = new Subscription();
   filteredProxies$: Observable<Proxy[]>;
   showAutocompletion: boolean;
+  proxyTypes = Object.values(ProxyType);
+  protected readonly ProxyType = ProxyType;
 
   constructor(
     private store: Store,
@@ -35,6 +38,10 @@ export class ProxyFormComponent implements OnDestroy, OnInit {
 
   get name(): UntypedFormControl {
     return this.entityForm.get('name') as FormControl;
+  }
+
+  get type(): UntypedFormControl {
+    return this.entityForm.get('type') as FormControl;
   }
 
   get description(): UntypedFormControl {
@@ -79,6 +86,7 @@ export class ProxyFormComponent implements OnDestroy, OnInit {
     this.entityForm = this.formBuilder.group({
       id: [null],
       name: [null, [Validators.required, Validators.maxLength(255)]],
+      type: [null, [Validators.required]],
       description: [null, [Validators.maxLength(1024)]],
       hostname: [null, [Validators.required]],
       port: [null, [Validators.required]],
@@ -98,8 +106,28 @@ export class ProxyFormComponent implements OnDestroy, OnInit {
   }
 
   onSave(): void {
-    this.saveClicked.emit(this.entityForm.value);
+    if (this.entityForm.get('id').value) {
+      this.entityService.update(this.entityForm.value);
+    } else {
+      this.entityService.add(this.entityForm.value);
+    }
+
     this.reset();
+  }
+
+  onChangeProxyType(): void {
+    this.username.setValue(null);
+    this.password.setValue(null);
+    this.username?.clearValidators();
+    this.password?.clearValidators();
+
+    if (this.type.value == ProxyType.GEOSURF) {
+      this.username?.setValidators([Validators.required]);
+      this.password?.setValidators([Validators.required]);
+    }
+
+    this.username?.updateValueAndValidity();
+    this.password?.updateValueAndValidity();
   }
 
   reset() {

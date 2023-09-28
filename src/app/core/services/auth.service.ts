@@ -30,13 +30,18 @@ export class AuthService {
     });
   }
 
-  public resetPassword(token: string | null, email: string, password: string, password_confirmation: string): Observable<any> {
+  public resetPassword(
+    token: string | null,
+    email: string,
+    password: string,
+    password_confirmation: string
+  ): Observable<any> {
     return this.http.post(`${this.config.apiBaseUrl}/reset-password`, {
       token,
       email,
       password,
       password_confirmation
-    })
+    });
   }
 
   public user(): Observable<User> {
