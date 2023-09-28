@@ -12,7 +12,6 @@ import { Queue } from '@app/queue/model/queue';
 @Component({
   selector: 'app-queue-create',
   templateUrl: './queue-create.component.html',
-  styleUrls: ['./queue-create.component.scss'],
   animations: [fadeIn]
 })
 export class QueueCreateComponent implements OnInit, OnDestroy {

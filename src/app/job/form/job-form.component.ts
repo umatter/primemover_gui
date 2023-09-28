@@ -7,7 +7,7 @@ import { Queue } from '@app/queue/model/queue';
 import { Job } from '@app/job/model/Job';
 import { JobService, QueueService } from '@app/entity/service';
 import { selectCurrentQueue } from '@shared/store/shared.selectors';
-import { JobType } from '@app/enum/JobType.enum';
+import { JobType } from '@app/enum/job-type.enum';
 
 @Component({
   selector: 'app-job-form',

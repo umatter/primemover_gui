@@ -1,6 +1,6 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+@import url("tailwindcss/base");
+@import url("tailwindcss/components");
+@import url("tailwindcss/utilities");
 
 pagination-controls {
   & ul.ngx-pagination {
@@ -89,36 +89,6 @@ pagination-controls {
 
   &.yellow {
     background-color: #eab308;
-  }
-}
-
-.spinnerStyle {
-  width: 40px !important;
-  height: 40px !important;
-
-  svg {
-    width: 30px !important;
-    height: 30px !important;
-  }
-}
-
-.matSpinner {
-  position: absolute;
-  top: 3px;
-  right: 4px;
-  display: flex;
-  width: 32px;
-  height: 32px;
-  justify-content: flex-end;
-
-  .spin {
-    width: 32px !important;
-    height: 32px !important;
-
-    svg {
-      width: 32px !important;
-      height: 32px !important;
-    }
   }
 }
 

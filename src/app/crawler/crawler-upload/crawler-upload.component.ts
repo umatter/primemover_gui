@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CrawlerService } from '@app/entity/service';
@@ -16,7 +16,7 @@ import { Crawler } from '../model/crawler';
   templateUrl: './crawler-upload.component.html',
   animations: [fadeIn]
 })
-export class CrawlerUploadComponent implements OnInit {
+export class CrawlerUploadComponent implements OnInit, OnDestroy {
   readonly apiDocsLink: string = 'https://pm-api.test.primemover.example/api/v1/docs';
   isLoading$: Observable<boolean>;
   currentCrawler$: Observable<Crawler>;

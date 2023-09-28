@@ -25,7 +25,10 @@
   },
   "common": {
     "actionPermanentWarning": "Diese Aktion kann nicht rückgängig gemacht werden.",
+    "passwordRequiredError": "Kennwort ist erforderlich",
     "agentRequiredError": "Agent ist erforderlich",
+    "portRequiredError": "Port ist erforderlich",
+    "usernameRequiredError": "Nutzername ist erforderlich",
     "areYouSure": "Sind Sie sicher?",
     "cancel": "Abbrechen",
     "clear": "Aufräumen",

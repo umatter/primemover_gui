@@ -36,8 +36,11 @@ export class ExperimentApiService {
   }
 
   public download(keyword: any): Observable<Blob> {
-    return this.http.get(`${this.config.apiBaseUrl}/experiments/${keyword}/download
-    `,{ responseType: 'blob' });
+    return this.http.get(
+      `${this.config.apiBaseUrl}/experiments/${keyword}/download
+    `,
+      { responseType: 'blob' }
+    );
   }
 
   getPaginateArgs(meta: Meta): PaginatePipeArgs {

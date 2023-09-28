@@ -32,12 +32,20 @@ import { defaultDataServiceConfig, entityConfig } from './entity/metadata';
 import { CustomHttpUrlGenerator } from './entity/custom-http-url.generator';
 import { AdditionalPersistenceResultHandler } from './entity/persistence.handler';
 import { AdditionalEntityCollectionReducerMethodsFactory } from './entity/reducer.methods';
-import { UserSettingComponent } from "@shared/layout/user-setting/user-setting.component";
+import { UserSettingComponent } from '@shared/layout/user-setting/user-setting.component';
 import { ResetPasswordComponent } from '@core/auth/reset-password/reset-password.component';
 import { ForgotPasswordComponent } from '@core/auth/forgot-password/forgot-password.component';
 
 @NgModule({
-  declarations: [AppComponent, LoginComponent, HomeComponent, LogoutComponent, UserSettingComponent, ResetPasswordComponent, ForgotPasswordComponent],
+  declarations: [
+    AppComponent,
+    LoginComponent,
+    HomeComponent,
+    LogoutComponent,
+    UserSettingComponent,
+    ResetPasswordComponent,
+    ForgotPasswordComponent
+  ],
   imports: [
     BrowserModule,
     AppRoutingModule,
