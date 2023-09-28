@@ -1,16 +1,32 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { fadeIn } from '@shared/animation/trigger';
 import { debounceTime, distinctUntilChanged, Observable, Subscription } from 'rxjs';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { ExperimentService } from '@app/entity/service';
 import { Experiment } from '../model/experiment';
+import { TranslateModule } from '@ngx-translate/core';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { ButtonComponent } from '@shared/form/button/button.component';
+import { AsyncPipe, NgClass, NgForOf, NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-experiment-create',
   templateUrl: './experiment-create.component.html',
-  animations: [fadeIn]
+  animations: [fadeIn],
+  imports: [
+    ReactiveFormsModule,
+    TranslateModule,
+    MatAutocompleteModule,
+    ButtonComponent,
+    NgForOf,
+    AsyncPipe,
+    NgIf,
+    NgClass,
+    RouterLink
+  ],
+  standalone: true
 })
 export class ExperimentCreateComponent implements OnInit, OnDestroy {
   experimentForm: FormGroup;

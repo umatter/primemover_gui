@@ -53,4 +53,8 @@ export class JobApiService {
 
     return this.queryFilterParams;
   }
+
+  downloadReport(id: number) {
+    return this.http.get<any>(`${this.config.apiBaseUrl}/download/report/${id}`, { responseType: 'blob' as 'json' });
+  }
 }

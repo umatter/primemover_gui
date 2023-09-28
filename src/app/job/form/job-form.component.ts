@@ -1,5 +1,12 @@
 import { Component, EventEmitter, OnDestroy, Output } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, UntypedFormControl, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  UntypedFormControl,
+  Validators
+} from '@angular/forms';
 import { select, Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
 import { Proxy } from '@app/proxy/model/proxy';
@@ -8,10 +15,26 @@ import { Job } from '@app/job/model/Job';
 import { JobService, QueueService } from '@app/entity/service';
 import { selectCurrentQueue } from '@shared/store/shared.selectors';
 import { JobType } from '@app/enum/job-type.enum';
+import { TranslateModule } from '@ngx-translate/core';
+import { AutocompleteSelectComponent } from '@shared/autocomplete-select/autocomplete-select.component';
+import { HeroiconTrashComponent } from '@shared/icon/heroicon-trash/heroicon-trash.component';
+import { NgClass, NgForOf, NgIf } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-job-form',
-  templateUrl: './job-form.component.html'
+  templateUrl: './job-form.component.html',
+  imports: [
+    ReactiveFormsModule,
+    TranslateModule,
+    AutocompleteSelectComponent,
+    HeroiconTrashComponent,
+    NgIf,
+    NgClass,
+    RouterLink,
+    NgForOf
+  ],
+  standalone: true
 })
 export class JobFormComponent implements OnDestroy {
   @Output() saveClicked = new EventEmitter<Proxy>();

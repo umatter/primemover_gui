@@ -5,7 +5,7 @@ import { AuthGuard } from '@core/guards/auth.guard';
 import { JobFormComponent } from './form/job-form.component';
 import { BehaviorComponent } from '@app/behavior/index/behavior.component';
 
-const routes: Routes = [
+export const jobRoutes: Routes = [
   {
     path: '',
     component: JobComponent,
@@ -27,7 +27,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
+  imports: [RouterModule.forChild(jobRoutes)],
   exports: [RouterModule]
 })
 export class JobRoutingModule {}

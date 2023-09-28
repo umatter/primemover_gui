@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { AuthGuard } from '../core/guards/auth.guard';
+import { AuthGuard } from '@core/guards/auth.guard';
 import { ConfigComponent } from './index/config.component';
 import { ConfigFormComponent } from './form/config-form.component';
 
-const routes: Routes = [
+export const configRoutes: Routes = [
   {
     path: '',
     component: ConfigComponent,
@@ -20,7 +20,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
+  imports: [RouterModule.forChild(configRoutes)],
   exports: [RouterModule]
 })
 export class ConfigurationRoutingModule {}

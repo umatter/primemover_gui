@@ -5,9 +5,14 @@ import { combineLatest, Observable, Subscription } from 'rxjs';
 import { Agent } from '@app/agent/model/agent';
 import { Store } from '@ngrx/store';
 import { EntityErrorService } from '@app/entity/entity-error.service';
+import { AgentModule } from '@app/agent/agent.module';
+import { NgIf } from '@angular/common';
+import { AgentFormComponent } from '@app/agent/form/agent-form.component';
 
 @Component({
   selector: 'app-agent-edit',
+  standalone: true,
+  imports: [AgentModule, NgIf, AgentFormComponent],
   templateUrl: './agent-edit.component.html'
 })
 export class AgentEditComponent implements OnDestroy {

@@ -2,7 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { Store } from '@ngrx/store';
 
-import { PaginatePipeArgs } from 'ngx-pagination';
+import { NgxPaginationModule, PaginatePipeArgs } from 'ngx-pagination';
 import { fadeIn } from '@shared/animation/trigger';
 import { Proxy } from '../model/proxy';
 import { Configuration } from '@app/config/model/config';
@@ -11,15 +11,39 @@ import { QueryFilter } from '@shared/model/query-filter';
 import { ProxyApiService } from '@app/proxy/service/proxy-api.service';
 import { Meta } from '@shared/pagination/model';
 import { Agent } from '@app/agent/model/agent';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { SharedActions } from '@shared/store/shared.actions';
 import { selectQueryFilter } from '@shared/store/shared.reducer';
+import { HeroiconTrashComponent } from '@shared/icon/heroicon-trash/heroicon-trash.component';
+import { ConfirmationModalComponent } from '@shared/dialog/confirmation-modal/confirmation-modal.component';
+import { LinkSortableComponent } from '@shared/link/link-sortable/link-sortable.component';
+import { HeroiconPencilSquareComponent } from '@shared/icon/heroicon-pencil-square/heroicon-pencil-square.component';
+import { ControlsComponent } from '@shared/pagination/controls/controls.component';
+import { LoadingSpinnerComponent } from '@shared/overlay/loading-spinner/loading-spinner.component';
+import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-proxy',
   templateUrl: './proxy.component.html',
   styleUrls: ['./proxy.component.scss'],
-  animations: [fadeIn]
+  animations: [fadeIn],
+  imports: [
+    HeroiconTrashComponent,
+    ConfirmationModalComponent,
+    LinkSortableComponent,
+    LinkSortableComponent,
+    HeroiconPencilSquareComponent,
+    ControlsComponent,
+    LoadingSpinnerComponent,
+    RouterLink,
+    NgIf,
+    AsyncPipe,
+    TranslateModule,
+    NgForOf,
+    NgxPaginationModule
+  ],
+  standalone: true
 })
 export class ProxyComponent implements OnDestroy {
   paginationConfig: PaginatePipeArgs;

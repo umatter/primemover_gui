@@ -2,9 +2,9 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { QueueComponent } from './index/queue.component';
 import { QueueCreateComponent } from './create/queue-create.component';
-import { AuthGuard } from '../core/guards/auth.guard';
+import { AuthGuard } from '@core/guards/auth.guard';
 
-const routes: Routes = [
+export const queueRoutes: Routes = [
   {
     path: '',
     component: QueueComponent,
@@ -20,7 +20,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
+  imports: [RouterModule.forChild(queueRoutes)],
   exports: [RouterModule]
 })
 export class QueueRoutingModule {}

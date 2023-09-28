@@ -7,15 +7,31 @@ import { fadeIn } from '@shared/animation/trigger';
 import { Experiment } from '../model/experiment';
 import { ExperimentService } from '@app/entity/service';
 import { selectCurrentExperiment } from '@shared/store/shared.selectors';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { requiredFileType } from '@shared/file-upload/file.validator';
 import { SharedActions } from '@shared/store/shared.actions';
 import { selectIsUploading, selectUploadError } from '@shared/store/shared.reducer';
+import { NotificationComponent } from '@shared/overlay/notification/notification.component';
+import { LoadingSpinnerComponent } from '@shared/overlay/loading-spinner/loading-spinner.component';
+import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
+import { FileUploadComponent } from '@shared/file-upload/file-upload.component';
 
 @Component({
   selector: 'app-experiment-upload',
   templateUrl: './experiment-upload.component.html',
-  animations: [fadeIn]
+  animations: [fadeIn],
+  imports: [
+    NotificationComponent,
+    LoadingSpinnerComponent,
+    NgIf,
+    AsyncPipe,
+    TranslateModule,
+    NgForOf,
+    ReactiveFormsModule,
+    FileUploadComponent
+  ],
+  standalone: true
 })
 export class ExperimentUploadComponent implements OnDestroy, OnInit {
   readonly apiDocsLink: string = 'https://pm-api.test.primemover.example/api/v1/docs';

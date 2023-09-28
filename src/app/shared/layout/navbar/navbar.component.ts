@@ -1,12 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { selectIsSignedIn } from '../../../store/auth/auth.selectors';
+import { selectIsSignedIn } from '@app/store/auth/auth.selectors';
 import { Observable } from 'rxjs';
-import { NavigationEnd, Router } from '@angular/router';
+import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { NgClass } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-navbar',
-  templateUrl: './navbar.component.html'
+  templateUrl: './navbar.component.html',
+  imports: [NgClass, RouterLink, RouterLinkActive, TranslateModule],
+  standalone: true
 })
 export class NavbarComponent implements OnInit {
   isLoggedIn$: Observable<boolean>;

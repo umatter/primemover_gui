@@ -5,10 +5,14 @@ import { Crawler } from 'src/app/crawler/model/crawler';
 import { Experiment } from 'src/app/experiment/model/experiment';
 import { selectCurrentCrawler, selectCurrentExperiment, selectCurrentQueue } from '@shared/store/shared.selectors';
 import { Queue } from '@app/queue/model/queue';
+import { TranslateModule } from '@ngx-translate/core';
+import { AsyncPipe, DatePipe, NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-metadata',
-  templateUrl: './metadata.component.html'
+  templateUrl: './metadata.component.html',
+  imports: [TranslateModule, AsyncPipe, NgIf, DatePipe],
+  standalone: true
 })
 export class MetadataComponent implements OnInit {
   currentExperiment$: Observable<Experiment>;

@@ -12,4 +12,5 @@ export interface Job {
   queue_id: number;
   captcha_found: any;
   captcha_solved: any;
+  reports: any;
 }

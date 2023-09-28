@@ -1,18 +1,39 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, UntypedFormControl, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  UntypedFormControl,
+  Validators
+} from '@angular/forms';
 import { Observable, Subscription } from 'rxjs';
 import { select, Store } from '@ngrx/store';
 import { Crawler } from '@app/crawler/model/crawler';
-import { DatePipe } from '@angular/common';
+import { DatePipe, NgClass, NgIf } from '@angular/common';
 import { selectCurrentCrawler } from '@shared/store/shared.selectors';
 import { fadeIn } from '@shared/animation/trigger';
 import { CrawlerService, QueueService } from '@app/entity/service';
 import { Queue } from '@app/queue/model/queue';
+import { TranslateModule } from '@ngx-translate/core';
+import { AutocompleteSelectComponent } from '@shared/autocomplete-select/autocomplete-select.component';
+import { HeroiconTrashComponent } from '@shared/icon/heroicon-trash/heroicon-trash.component';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-queue-create',
   templateUrl: './queue-create.component.html',
-  animations: [fadeIn]
+  animations: [fadeIn],
+  imports: [
+    ReactiveFormsModule,
+    TranslateModule,
+    AutocompleteSelectComponent,
+    HeroiconTrashComponent,
+    NgIf,
+    NgClass,
+    RouterLink
+  ],
+  standalone: true
 })
 export class QueueCreateComponent implements OnInit, OnDestroy {
   entityForm: FormGroup;

@@ -1,16 +1,19 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Crawler } from '../../../crawler/model/crawler';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { AsyncPipe, NgForOf } from '@angular/common';
 
 @Component({
   selector: 'app-select-native',
-  templateUrl: './select-native.component.html'
+  templateUrl: './select-native.component.html',
+  imports: [ReactiveFormsModule, NgForOf, AsyncPipe],
+  standalone: true
 })
 export class SelectNativeComponent implements OnInit {
   @Input() options$: Observable<any>;
   @Input() selected$: Observable<any>;
   form: UntypedFormGroup;
+
   // dataCollection: Crawler[] = [];
 
   constructor(private fb: UntypedFormBuilder) {}

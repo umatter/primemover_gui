@@ -1,7 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { Store } from '@ngrx/store';
-import { PaginatePipeArgs } from 'ngx-pagination';
+import { NgxPaginationModule, PaginatePipeArgs } from 'ngx-pagination';
 import { fadeIn } from '@shared/animation/trigger';
 import { Crawler } from '../model/crawler';
 import { CrawlerService } from '@app/entity/service';
@@ -10,12 +10,42 @@ import { QueryFilter } from '@shared/model/query-filter';
 import { QueryFilterType, selectCurrentCrawler } from '@shared/store/shared.selectors';
 import { Meta } from '@shared/pagination/model';
 import { SharedActions } from '@shared/store/shared.actions';
-import { selectQueryFilter } from '@shared/store/shared.reducer';
-import { Router } from '@angular/router';
+import { selectQueryFilter, selectUploadError } from '@shared/store/shared.reducer';
+import { Router, RouterLink } from '@angular/router';
+import { NotificationComponent } from '@shared/overlay/notification/notification.component';
+import { LoadingSpinnerComponent } from '@shared/overlay/loading-spinner/loading-spinner.component';
+import { AsyncPipe, NgClass, NgForOf, NgIf } from '@angular/common';
+import { ConfirmationModalComponent } from '@shared/dialog/confirmation-modal/confirmation-modal.component';
+import { TranslateModule } from '@ngx-translate/core';
+import { LinkSortableComponent } from '@shared/link/link-sortable/link-sortable.component';
+import { HeroiconTrashComponent } from '@shared/icon/heroicon-trash/heroicon-trash.component';
+import { HeroiconClipboardDocumentComponent } from '@shared/icon/heroicon-clipboard-document/heroicon-clipboard-document.component';
+import { SharedModule } from '@shared/shared.module';
+import { ControlsComponent } from '@shared/pagination/controls/controls.component';
+import { HeroiconUploadComponent } from '@shared/icon/heroicon-upload/heroicon-upload.component';
 
 @Component({
   selector: 'app-crawler',
   templateUrl: './crawler.component.html',
+  standalone: true,
+  imports: [
+    NotificationComponent,
+    LoadingSpinnerComponent,
+    AsyncPipe,
+    NgIf,
+    ConfirmationModalComponent,
+    RouterLink,
+    TranslateModule,
+    LinkSortableComponent,
+    NgxPaginationModule,
+    NgClass,
+    HeroiconTrashComponent,
+    HeroiconClipboardDocumentComponent,
+    SharedModule,
+    ControlsComponent,
+    HeroiconUploadComponent,
+    NgForOf
+  ],
   animations: [fadeIn]
 })
 export class CrawlerComponent implements OnDestroy {
@@ -26,6 +56,7 @@ export class CrawlerComponent implements OnDestroy {
   queryFilter$: Observable<QueryFilter[]>;
   currentCrawler$: Observable<Crawler>;
   pageMeta$: Observable<Meta>;
+  uploadError$: Observable<any>;
 
   private subscriptions = new Subscription();
 
@@ -40,6 +71,7 @@ export class CrawlerComponent implements OnDestroy {
     this.pageMeta$ = entityService.pageMeta$;
     this.queryFilter$ = this.store.select(selectQueryFilter);
     this.currentCrawler$ = this.store.select(selectCurrentCrawler);
+    this.uploadError$ = this.store.select(selectUploadError);
     this.getData();
     this.initPagination();
   }

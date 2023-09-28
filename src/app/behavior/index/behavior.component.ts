@@ -8,14 +8,41 @@ import { BehaviorApiService } from '@app/behavior/service/behavior-api.service';
 import { Store } from '@ngrx/store';
 import { selectCurrentJob } from '@shared/store/shared.selectors';
 import { Meta } from '@shared/pagination/model';
-import { PaginatePipeArgs } from 'ngx-pagination';
+import { NgxPaginationModule, PaginatePipeArgs } from 'ngx-pagination';
 import { QueryFilter } from '@shared/model/query-filter';
 import { SharedActions } from '@shared/store/shared.actions';
 import { selectQueryFilter } from '@shared/store/shared.reducer';
+import { BehaviorFormComponent } from '@app/behavior/form/behavior-form.component';
+import { LinkSortableComponent } from '@shared/link/link-sortable/link-sortable.component';
+import { ConfirmationModalComponent } from '@shared/dialog/confirmation-modal/confirmation-modal.component';
+import { LoadingSpinnerComponent } from '@shared/overlay/loading-spinner/loading-spinner.component';
+import { ControlsComponent } from '@shared/pagination/controls/controls.component';
+import { HeroiconTrashComponent } from '@shared/icon/heroicon-trash/heroicon-trash.component';
+import { TranslateModule } from '@ngx-translate/core';
+import { ContentModalComponent } from '@shared/dialog/content-modal/content-modal.component';
+import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-behavior',
-  templateUrl: './behavior.component.html'
+  templateUrl: './behavior.component.html',
+  imports: [
+    BehaviorFormComponent,
+    LinkSortableComponent,
+    LinkSortableComponent,
+    ConfirmationModalComponent,
+    LinkSortableComponent,
+    LinkSortableComponent,
+    LoadingSpinnerComponent,
+    ControlsComponent,
+    HeroiconTrashComponent,
+    TranslateModule,
+    ContentModalComponent,
+    NgIf,
+    AsyncPipe,
+    NgxPaginationModule,
+    NgForOf
+  ],
+  standalone: true
 })
 export class BehaviorComponent implements OnDestroy {
   paginationConfig: PaginatePipeArgs;

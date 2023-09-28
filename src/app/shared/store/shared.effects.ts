@@ -8,7 +8,7 @@ import { FileUploadService } from '../service/file-upload.service';
 import { Router } from '@angular/router';
 import { SharedActions } from '@shared/store/shared.actions';
 import { selectQueryFilter } from '@shared/store/shared.reducer';
-
+import { JobApiService } from '@app/job/service/job-api.service';
 @Injectable()
 export class SharedEffects {
   resetQueryFilterRequested$ = createEffect(() =>
@@ -69,17 +69,39 @@ export class SharedEffects {
 
   crawlerUpload$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(SharedActions.uploadFileCrawler),
+      ofType(SharedActions.uploadFile),
       concatLatestFrom(() => this.store.pipe(select(selectCurrentCrawler))),
       switchMap(([action, currentCrawler]) => {
         return this.fileService.uploadCrawler(action.file, currentCrawler).pipe(
-          map((response) => SharedActions.uploadFileCrawlerSuccess(response)),
-          catchError((error) => of(SharedActions.uploadFileCrawlerFailure(error)))
+          map((response) => SharedActions.uploadFileSuccess(response)),
+          catchError((error) => of(SharedActions.uploadFileFailure(error)))
         );
       }),
       tap(() => this.router.navigate(['/queues']))
     );
   });
+
+  downloadReport$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(SharedActions.downloadFile),
+      switchMap((action) => {
+        return this.jobApiService.downloadReport(action.job.id).pipe(
+          map((data: Blob) => {
+            const blob = new Blob([data], { type: 'application/zip' });
+            const url = window.URL.createObjectURL(blob);
+            const anchor = document.createElement('a');
+            anchor.href = url;
+            anchor.download = 'job-' + action.job.id;
+            document.body.appendChild(anchor);
+            anchor.click();
+            window.URL.revokeObjectURL(url);
+            return SharedActions.downloadFileSuccess({response : "download report"});
+          }),
+          catchError((error) => of(SharedActions.downloadFileFailure({error: "download report"})))
+        )
+      })
+    )
+  })
 
   constructor(
     private actions$: Actions,
@@ -87,6 +109,7 @@ export class SharedEffects {
     private experimentService: ExperimentService,
     private crawlerService: CrawlerService,
     private fileService: FileUploadService,
-    private router: Router
+    private router: Router,
+    private jobApiService: JobApiService
   ) {}
 }

@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Observable } from 'rxjs';
+import { AsyncPipe, NgClass, NgForOf, NgIf } from '@angular/common';
 
 interface ListItem {
   id: string;
@@ -10,6 +11,8 @@ interface ListItem {
 @Component({
   selector: 'app-autocomplete-select',
   templateUrl: './autocomplete-select.component.html',
+  standalone: true,
+  imports: [NgIf, NgClass, NgForOf, AsyncPipe],
   animations: [
     trigger('opacityLeave', [
       transition(':leave', [style({ opacity: 1 }), animate('100ms ease-in', style({ opacity: 0 }))])

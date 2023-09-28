@@ -17,6 +17,9 @@ export interface SharedState {
   isUploading: boolean;
   uploadError: any;
   error: object;
+  isDownloading: boolean;
+  downloadError: any;
+  downloadSuccess: any;
 }
 
 export const initialState: SharedState = {
@@ -33,7 +36,10 @@ export const initialState: SharedState = {
     }
   ],
   isUploading: false,
-  uploadError: null
+  uploadError: null,
+  isDownloading: false,
+  downloadError: null,
+  downloadSuccess: null
 };
 export const sharedFeature = createFeature({
   name: 'shared',
@@ -115,20 +121,17 @@ export const sharedFeature = createFeature({
     on(SharedActions.uploadFileSuccess, (state) => {
       return { ...state, isUploading: false, uploadError: null };
     }),
-
-    on(SharedActions.uploadFileCrawler, (state) => {
-      return { ...state, isUploading: true, uploadError: null };
-    }),
-    on(SharedActions.uploadFileCrawlerSuccess, (state) => {
-      return { ...state, isUploading: false, uploadError: null };
-    }),
-    on(SharedActions.uploadFileCrawlerFailure, (state, action) => {
-      return {
-        ...state,
-        isUploading: false,
-        uploadError: action.error
-      };
-    })
+    on(SharedActions.downloadFile, (state) => ({ ...state, isDownloading: true })),
+    on(SharedActions.downloadFileSuccess, (state, action) => ({
+      ...state,
+      isDownloading: false,
+      downloadSuccess: action.response
+    })),
+    on(SharedActions.downloadFileFailure, (state, action) => ({
+      ...state,
+      isDownloading: false,
+      downloadError: action.error
+    }))
   )
 });
 
@@ -143,5 +146,8 @@ export const {
   selectCurrentJob,
   selectPageRequested,
   selectIsUploading,
-  selectUploadError
+  selectUploadError,
+  selectIsDownloading,
+  selectDownloadError,
+  selectDownloadSuccess
 } = sharedFeature;

@@ -1,3 +1,17 @@
+<app-notification
+  *ngIf="downloadError$ | async; let errorMessage"
+  [bodyText]="errorMessage"
+  [typeError]="true"
+  titleText="Failure"
+>
+</app-notification>
+<app-notification
+  *ngIf="downloadSuccess$ | async; let successMessage"
+  [bodyText]="successMessage"
+  [typeSuccess]="true"
+  titleText="Success"
+>
+</app-notification>
 <app-loading-spinner *ngIf="isLoading$ | async"></app-loading-spinner>
 <app-confirmation-modal (modalResponse)="onModalResponse($event)" [isModal]="!!entityToDelete"></app-confirmation-modal>
 <div *ngIf="false === (isLoading$ | async)" class="px-4">
@@ -16,75 +30,79 @@
         <div class="overflow-hidden">
           <table *ngIf="entities$ | async" class="min-w-full divide-y divide-gray-300">
             <thead>
-              <tr>
-                <th class="py-3.5 pl-6 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0" scope="col">
-                  <app-link-sortable href="/jobs" label="{{ 'common.id' | translate }}"></app-link-sortable>
-                </th>
-                <th class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900" scope="col">
-                  <app-link-sortable href="/jobs" label="{{ 'job.label' | translate }}"></app-link-sortable>
-                </th>
-                <th class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900" scope="col">
-                  <app-link-sortable href="/jobs" label="{{ 'status.type' | translate }}"></app-link-sortable>
-                </th>
+            <tr>
+              <th class="py-3.5 pl-6 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0" scope="col">
+                <app-link-sortable href="/jobs" label="{{ 'common.id' | translate }}"></app-link-sortable>
+              </th>
+              <th class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900" scope="col">
+                <app-link-sortable href="/jobs" label="{{ 'job.label' | translate }}"></app-link-sortable>
+              </th>
+              <th class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900" scope="col">
+                <app-link-sortable href="/jobs" label="{{ 'status.type' | translate }}"></app-link-sortable>
+              </th>
 
-                <th class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900" scope="col">
-                  <app-link-sortable href="/jobs" label="{{ 'status.label' | translate }}"></app-link-sortable>
-                </th>
-                <th class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900" scope="col">
-                  <app-link-sortable href="/jobs" label="{{ 'queue.label' | translate }}"></app-link-sortable>
-                </th>
-                <th class="relative py-3.5 pl-3 pr-6 sm:pr-0" scope="col">
-                  <span class="sr-only"></span>
-                </th>
-              </tr>
+              <th class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900" scope="col">
+                <app-link-sortable href="/jobs" label="{{ 'status.label' | translate }}"></app-link-sortable>
+              </th>
+              <th class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900" scope="col">
+                <app-link-sortable href="/jobs" label="{{ 'queue.label' | translate }}"></app-link-sortable>
+              </th>
+              <th class="relative py-3.5 pl-3 pr-6 sm:pr-0" scope="col">
+                <span class="sr-only"></span>
+              </th>
+            </tr>
             </thead>
             <tbody class="divide-y divide-gray-200 bg-white">
-              <tr *ngFor="let item of entities$ | async | paginate : paginationConfig">
-                <td class="whitespace-nowrap py-4 pl-6 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
-                  {{ item.id }}
-                </td>
-                <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
-                  {{ item.name }}
-                </td>
-                <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
-                  {{ item.type }}
-                </td>
+            <tr *ngFor="let item of entities$ | async | paginate : paginationConfig">
+              <td class="whitespace-nowrap py-4 pl-6 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
+                {{ item.id }}
+              </td>
+              <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
+                {{ item.name }}
+              </td>
+              <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
+                {{ item.type }}
+              </td>
 
-                <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
-                  <app-status
-                    statusCode="{{ item.status_code }}"
-                    statusMessage="{{ item.status_message }}"
-                  ></app-status>
-                </td>
-                <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
-                  {{ item.queue_id }}
-                </td>
+              <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
+                <app-status
+                  statusCode="{{ item.status_code }}"
+                  statusMessage="{{ item.status_message }}"
+                ></app-status>
+              </td>
+              <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
+                {{ item.queue_id }}
+              </td>
 
-                <td class="relative whitespace-nowrap text-right text-sm font-medium pr-1">
-                  <button (click)="deleteRequested(item)" class="text-gray-400 hover:text-indigo-900 mr-2">
-                    <app-heroicon-trash></app-heroicon-trash>
-                  </button>
-                  <button
-                    (click)="selectJob(item)"
-                    [ngClass]="{
+              <td class="relative whitespace-nowrap text-right text-sm font-medium pr-1">
+                <button (click)="downloadReport(item)" *ngIf="item.reports.length > 0"
+                        class="text-gray-400 hover:text-indigo-900 ml-2">
+                  <app-heroicon-download></app-heroicon-download>
+                </button>
+                <button (click)="deleteRequested(item)" class="text-gray-400 hover:text-indigo-900 mr-2">
+                  <app-heroicon-trash></app-heroicon-trash>
+                </button>
+                <button
+                  (click)="selectJob(item)"
+                  [ngClass]="{
                       'text-gray-400': (currentJob$ | async)?.id !== item.id,
                       'hover:text-indigo-900': (currentJob$ | async)?.id !== item.id,
                       'text-indigo-900': (currentJob$ | async)?.id === item.id
                     }"
-                  >
-                    <app-heroicon-clipboard-document></app-heroicon-clipboard-document>
-                  </button>
-                </td>
-              </tr>
+                >
+                  <app-heroicon-clipboard-document></app-heroicon-clipboard-document>
+                </button>
+              </td>
+            </tr>
 
-              <!-- More people... -->
+            <!-- More people... -->
             </tbody>
             <tfoot>
-              <tr>
-                <th class="whitespace-nowrap px-3 py-4 text-sm text-gray-500" colspan="30">
-                  <app-pagination-controls (pageChange)="getData($event)" id="jobs"></app-pagination-controls>
-                </th>
-              </tr>
+            <tr>
+              <th class="whitespace-nowrap px-3 py-4 text-sm text-gray-500" colspan="30">
+                <app-pagination-controls (pageChange)="getData($event)" id="jobs"></app-pagination-controls>
+              </th>
+            </tr>
             </tfoot>
           </table>
         </div>

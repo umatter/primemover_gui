@@ -5,7 +5,7 @@ import { CrawlerComponent } from './index/crawler.component';
 import { CrawlerCreateComponent } from './create/crawler-create.component';
 import { CrawlerUploadComponent } from './crawler-upload/crawler-upload.component';
 
-const routes: Routes = [
+export const crawlerRoutes: Routes = [
   {
     path: '',
     component: CrawlerComponent,
@@ -27,7 +27,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
+  imports: [RouterModule.forChild(crawlerRoutes)],
   exports: [RouterModule]
 })
 export class CrawlerRoutingModule {}

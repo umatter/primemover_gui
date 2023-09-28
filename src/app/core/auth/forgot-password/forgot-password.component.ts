@@ -1,13 +1,26 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { AuthService } from '@app/core/services/auth.service';
 import { selectErrorResponse } from '@app/store/auth/auth.selectors';
 import { Store } from '@ngrx/store';
 import { catchError, Observable } from 'rxjs';
+import { NotificationComponent } from '@shared/overlay/notification/notification.component';
+import { LoadingSpinnerComponent } from '@shared/overlay/loading-spinner/loading-spinner.component';
+import { TranslateModule } from '@ngx-translate/core';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-forgot-password',
+  standalone: true,
+  imports: [
+    NotificationComponent,
+    NotificationComponent,
+    LoadingSpinnerComponent,
+    ReactiveFormsModule,
+    TranslateModule,
+    NgIf
+  ],
   templateUrl: './forgot-password.component.html'
 })
 export class ForgotPasswordComponent implements OnInit {

@@ -4,7 +4,7 @@ import { ExperimentComponent } from './index/experiment.component';
 import { ExperimentCreateComponent } from './create/experiment-create.component';
 import { ExperimentUploadComponent } from './experiment-upload/experiment-upload.component';
 
-const routes: Routes = [
+export const experimentRroutes: Routes = [
   {
     path: '',
     component: ExperimentComponent
@@ -20,7 +20,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
+  imports: [RouterModule.forChild(experimentRroutes)],
   exports: [RouterModule]
 })
 export class ExperimentRoutingModule {}
