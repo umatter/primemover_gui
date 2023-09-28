@@ -1,11 +1,13 @@
-import { Component, EventEmitter, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { fadeIn } from '../../animation/trigger';
-import { Output } from '@angular/core';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-removable-badge',
   templateUrl: './removable-badge.component.html',
-  animations: [fadeIn]
+  animations: [fadeIn],
+  imports: [NgIf],
+  standalone: true
 })
 export class RemovableBadgeComponent {
   @Input() sizeSmall: boolean;

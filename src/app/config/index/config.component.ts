@@ -2,7 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { Store } from '@ngrx/store';
 
-import { PaginatePipeArgs } from 'ngx-pagination';
+import { NgxPaginationModule, PaginatePipeArgs } from 'ngx-pagination';
 import { fadeIn } from '@shared/animation/trigger';
 import { Configuration } from '../model/config';
 import { ConfigurationService } from '@app/entity/service';
@@ -11,11 +11,32 @@ import { ConfigApiService } from '@app/config/service/config-api.service';
 import { Meta } from '@shared/pagination/model';
 import { SharedActions } from '@shared/store/shared.actions';
 import { selectQueryFilter } from '@shared/store/shared.reducer';
+import { ConfirmationModalComponent } from '@shared/dialog/confirmation-modal/confirmation-modal.component';
+import { LinkSortableComponent } from '@shared/link/link-sortable/link-sortable.component';
+import { LoadingSpinnerComponent } from '@shared/overlay/loading-spinner/loading-spinner.component';
+import { ControlsComponent } from '@shared/pagination/controls/controls.component';
+import { HeroiconTrashComponent } from '@shared/icon/heroicon-trash/heroicon-trash.component';
+import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-config',
   templateUrl: './config.component.html',
+  standalone: true,
   styleUrls: ['./config.component.scss'],
+  imports: [
+    ConfirmationModalComponent,
+    LinkSortableComponent,
+    LoadingSpinnerComponent,
+    ControlsComponent,
+    HeroiconTrashComponent,
+    LinkSortableComponent,
+    AsyncPipe,
+    TranslateModule,
+    NgxPaginationModule,
+    NgIf,
+    NgForOf
+  ],
   animations: [fadeIn]
 })
 export class ConfigComponent implements OnDestroy {

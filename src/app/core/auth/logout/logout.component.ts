@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { LocalStorageService } from '../../services/local-storage.service';
 import { Store } from '@ngrx/store';
-import { logoutCompleted, logoutRequested } from '../../../store/auth/auth.actions';
+import { logoutCompleted, logoutRequested } from '@app/store/auth/auth.actions';
 import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-logout',
+  standalone: true,
   templateUrl: './logout.component.html'
 })
 export class LogoutComponent implements OnInit {

@@ -1,17 +1,38 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { FormBuilder, FormControl, FormGroup, UntypedFormControl, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  UntypedFormControl,
+  Validators
+} from '@angular/forms';
 import { fadeIn } from '@shared/animation/trigger';
 import { Observable, Subscription } from 'rxjs';
 import { Proxy } from '@app/proxy/model/proxy';
 import { ProxyService } from '@app/entity/service';
 import { Router } from '@angular/router';
 import { ProxyType } from '@app/enum/proxy-type.enum';
+import { TranslateModule } from '@ngx-translate/core';
+import { AutocompleteSelectComponent } from '@shared/autocomplete-select/autocomplete-select.component';
+import { HeroiconTrashComponent } from '@shared/icon/heroicon-trash/heroicon-trash.component';
+import { NgClass, NgForOf, NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-proxy-form',
   templateUrl: './proxy-form.component.html',
-  animations: [fadeIn]
+  animations: [fadeIn],
+  imports: [
+    ReactiveFormsModule,
+    TranslateModule,
+    AutocompleteSelectComponent,
+    HeroiconTrashComponent,
+    NgIf,
+    NgForOf,
+    NgClass
+  ],
+  standalone: true
 })
 export class ProxyFormComponent implements OnDestroy, OnInit {
   @Input() proxy$: Observable<Proxy>;

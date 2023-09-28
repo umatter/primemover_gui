@@ -1,15 +1,28 @@
 import { Component, EventEmitter, OnDestroy, Output } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, UntypedFormControl, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  UntypedFormControl,
+  Validators
+} from '@angular/forms';
 import { Observable, Subscription } from 'rxjs';
 import { Job } from '@app/job/model/Job';
 import { Store } from '@ngrx/store';
 import { BehaviorService } from '@app/entity/service';
 import { Behavior } from '@app/behavior/behavior';
 import { selectCurrentJob } from '@shared/store/shared.selectors';
+import { TranslateModule } from '@ngx-translate/core';
+import { AutocompleteSelectComponent } from '@shared/autocomplete-select/autocomplete-select.component';
+import { HeroiconTrashComponent } from '@shared/icon/heroicon-trash/heroicon-trash.component';
+import { NgClass, NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-behavior-form',
-  templateUrl: './behavior-form.component.html'
+  templateUrl: './behavior-form.component.html',
+  imports: [ReactiveFormsModule, TranslateModule, AutocompleteSelectComponent, HeroiconTrashComponent, NgIf, NgClass],
+  standalone: true
 })
 export class BehaviorFormComponent implements OnDestroy {
   @Output() saveClicked = new EventEmitter<Behavior>();

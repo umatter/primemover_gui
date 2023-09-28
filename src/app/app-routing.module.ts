@@ -32,27 +32,27 @@ const routes: Routes = [
   },
   {
     path: 'crawlers',
-    loadChildren: () => import('./crawler/crawler.module').then((m) => m.CrawlerModule)
+    loadChildren: () => import('./crawler/crawler-routing.module').then((m) => m.crawlerRoutes)
   },
   {
     path: 'experiments',
-    loadChildren: () => import('./experiment/experiment.module').then((m) => m.ExperimentModule),
+    loadChildren: () => import('./experiment/experiment-routing.module').then((mod) => mod.experimentRroutes),
     canActivate: [AuthGuard],
     data: { requiresLogin: true }
   },
   {
     path: 'queues',
-    loadChildren: () => import('./queue/queue.module').then((m) => m.QueueModule)
+    loadChildren: () => import('./queue/queue-routing.module').then((m) => m.queueRoutes)
   },
   {
     path: 'jobs',
-    loadChildren: () => import('./job/job.module').then((m) => m.JobModule)
+    loadChildren: () => import('./job/job-routing.module').then((m) => m.jobRoutes)
   },
   {
     path: 'agents',
-    loadChildren: () => import('./agent/agent.module').then((m) => m.AgentModule)
+    loadChildren: () => import('./agent/agent-routing.module').then((m) => m.agentRoutes)
   },
-  { path: 'configurations', loadChildren: () => import('./config/config.module').then((m) => m.ConfigurationModule) },
+  { path: 'configurations', loadChildren: () => import('./config/config-routing.module').then((m) => m.configRoutes) },
   { path: 'proxies', loadChildren: () => import('./proxy/proxy.module').then((m) => m.ProxyModule) },
   {
     path: '**',

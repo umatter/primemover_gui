@@ -1,9 +1,12 @@
 import { Component, Input } from '@angular/core';
 import { fadeSlideInOut } from '../../animation/trigger';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-notification',
   templateUrl: './notification.component.html',
+  standalone: true,
+  imports: [NgIf],
   animations: [fadeSlideInOut]
 })
 export class NotificationComponent {

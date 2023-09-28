@@ -1,9 +1,12 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { animate, style, transition, trigger } from '@angular/animations';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-content-modal',
   templateUrl: './content-modal.component.html',
+  standalone: true,
+  imports: [NgIf],
   animations: [
     trigger('opacity', [
       transition(':enter', [style({ opacity: 0 }), animate('300ms ease-out', style({ opacity: 1 }))]),

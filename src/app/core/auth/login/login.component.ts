@@ -1,23 +1,28 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import {
-  useTokenFromLocalStorageRequested,
   invalidLocalStorageTokenFound,
   noLocalStorageTokenFound,
+  redirectToHomeRequested,
   signInRequested,
-  redirectToHomeRequested
+  useTokenFromLocalStorageRequested
 } from '../../../store/auth/auth.actions';
 import { LocalStorageService } from '../../services/local-storage.service';
 import { TokenService } from '../../services/token.service';
 import { selectAccessToken, selectErrorResponse } from '../../../store/auth/auth.selectors';
 import { Observable } from 'rxjs';
+import { NotificationComponent } from '@shared/overlay/notification/notification.component';
+import { TranslateModule } from '@ngx-translate/core';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
+  standalone: true,
+  imports: [NotificationComponent, ReactiveFormsModule, TranslateModule, AsyncPipe],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoginComponent implements OnInit {

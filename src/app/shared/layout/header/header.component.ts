@@ -6,10 +6,15 @@ import { QueryFilterType } from '../../store/shared.selectors';
 import { QueryFilter } from '../../model/query-filter';
 import { SharedActions } from '@shared/store/shared.actions';
 import { selectQueryFilter } from '@shared/store/shared.reducer';
+import { AsyncPipe, NgForOf, NgIf, TitleCasePipe } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
+import { RemovableBadgeComponent } from '@shared/badge/removable-badge/removable-badge.component';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
+  standalone: true,
+  imports: [AsyncPipe, TranslateModule, RemovableBadgeComponent, TitleCasePipe, NgForOf, NgIf],
   animations: [fadeIn]
 })
 export class HeaderComponent {

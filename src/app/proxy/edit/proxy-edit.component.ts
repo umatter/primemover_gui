@@ -4,10 +4,14 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Proxy } from '@app/proxy/model/proxy';
 import { ProxyService } from '@app/entity/service';
+import { NgIf } from '@angular/common';
+import { ProxyFormComponent } from '@app/proxy/form/proxy-form.component';
 
 @Component({
   selector: 'app-edit',
-  templateUrl: './proxy-edit.component.html'
+  templateUrl: './proxy-edit.component.html',
+  imports: [NgIf, ProxyFormComponent],
+  standalone: true
 })
 export class ProxyEditComponent implements OnDestroy, OnInit {
   proxy$: Observable<Proxy>;

@@ -2,7 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { select, Store } from '@ngrx/store';
 
-import { PaginatePipeArgs } from 'ngx-pagination';
+import { NgxPaginationModule, PaginatePipeArgs } from 'ngx-pagination';
 import { Router } from '@angular/router';
 import { fadeIn } from '@shared/animation/trigger';
 import { Experiment } from '../model/experiment';
@@ -14,10 +14,38 @@ import { Meta } from '@shared/pagination/model';
 import { saveAs } from 'file-saver';
 import { selectQueryFilter } from '@shared/store/shared.reducer';
 import { SharedActions } from '@shared/store/shared.actions';
+import { LoadingSpinnerComponent } from '@shared/overlay/loading-spinner/loading-spinner.component';
+import { AsyncPipe, DatePipe, NgClass, NgForOf, NgIf } from '@angular/common';
+import { TranslateModule } from '@ngx-translate/core';
+import { LinkSortableComponent } from '@shared/link/link-sortable/link-sortable.component';
+import { ConfirmationModalComponent } from '@shared/dialog/confirmation-modal/confirmation-modal.component';
+import { HeroiconTrashComponent } from '@shared/icon/heroicon-trash/heroicon-trash.component';
+import { HeroiconClipboardDocumentComponent } from '@shared/icon/heroicon-clipboard-document/heroicon-clipboard-document.component';
+import { HeroiconUploadComponent } from '@shared/icon/heroicon-upload/heroicon-upload.component';
+import { ControlsComponent } from '@shared/pagination/controls/controls.component';
+import { HeroiconDownloadArchiveComponent } from '@shared/icon/heroicon-download-archive/heroicon-download-archive.component';
 
 @Component({
   selector: 'app-experiment',
   templateUrl: './experiment.component.html',
+  standalone: true,
+  imports: [
+    LoadingSpinnerComponent,
+    AsyncPipe,
+    TranslateModule,
+    LinkSortableComponent,
+    NgIf,
+    ConfirmationModalComponent,
+    DatePipe,
+    HeroiconTrashComponent,
+    NgClass,
+    HeroiconClipboardDocumentComponent,
+    HeroiconUploadComponent,
+    ControlsComponent,
+    NgForOf,
+    NgxPaginationModule,
+    HeroiconDownloadArchiveComponent
+  ],
   animations: [fadeIn]
 })
 export class ExperimentComponent implements OnDestroy {

@@ -1,16 +1,8 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { AgentRoutingModule } from './agent-routing.module';
-import { NgxPaginationModule } from 'ngx-pagination';
-import { SharedModule } from '@shared/shared.module';
-import { AgentComponent } from './index/agent.component';
-import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner';
-import { AgentFormComponent } from './form/agent-form.component';
-import { AgentEditComponent } from '@app/agent/edit/agent-edit.component';
 
 @NgModule({
-  declarations: [AgentComponent, AgentFormComponent, AgentEditComponent],
-  exports: [AgentFormComponent],
-  imports: [CommonModule, AgentRoutingModule, NgxPaginationModule, SharedModule, MatProgressSpinnerModule]
+  declarations: [],
+  exports: [],
+  imports: []
 })
 export class AgentModule {}

@@ -5,8 +5,6 @@ import { AppComponent } from './app.component';
 import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common/http';
 import { environment } from '@environments/environment';
 import { AppConfig } from './app-config';
-import { LoginComponent } from '@core/auth/login/login.component';
-import { HomeComponent } from './home/component/home.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppStoreModule } from './store/store.module';
 import { SharedModule } from '@shared/shared.module';
@@ -16,7 +14,6 @@ import { authReducer } from './store/auth/auth.reducer';
 import { AuthEffects } from './store/auth/auth.effects';
 import { TokenInterceptor } from '@core/interceptors/token.interceptor';
 import { ErrorInterceptor } from '@core/interceptors/error.interceptor';
-import { LogoutComponent } from '@core/auth/logout/logout.component';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { Language, LanguageFilePath } from 'src/app/core/language/language.enum';
@@ -32,20 +29,12 @@ import { defaultDataServiceConfig, entityConfig } from './entity/metadata';
 import { CustomHttpUrlGenerator } from './entity/custom-http-url.generator';
 import { AdditionalPersistenceResultHandler } from './entity/persistence.handler';
 import { AdditionalEntityCollectionReducerMethodsFactory } from './entity/reducer.methods';
-import { UserSettingComponent } from '@shared/layout/user-setting/user-setting.component';
-import { ResetPasswordComponent } from '@core/auth/reset-password/reset-password.component';
-import { ForgotPasswordComponent } from '@core/auth/forgot-password/forgot-password.component';
+import { ContainerComponent } from '@shared/layout/container/container.component';
+import { AsyncPipe, NgIf } from '@angular/common';
+import { RouterOutlet } from '@angular/router';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    LoginComponent,
-    HomeComponent,
-    LogoutComponent,
-    UserSettingComponent,
-    ResetPasswordComponent,
-    ForgotPasswordComponent
-  ],
+  declarations: [AppComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,
@@ -53,6 +42,10 @@ import { ForgotPasswordComponent } from '@core/auth/forgot-password/forgot-passw
     BrowserAnimationsModule,
     AppStoreModule,
     SharedModule,
+    ContainerComponent,
+    AsyncPipe,
+    NgIf,
+    RouterOutlet,
     StoreModule.forFeature('auth', authReducer),
     EffectsModule.forFeature([AuthEffects]),
     TranslateModule.forRoot({

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { fadeIn } from './shared/animation/trigger';
+import { fadeIn } from '@shared/animation/trigger';
 import { Observable } from 'rxjs';
 import { select, Store } from '@ngrx/store';
 import { selectIsSignedIn } from './store/auth/auth.selectors';
@@ -16,6 +16,6 @@ export class AppComponent {
   isLoggedIn$: Observable<boolean>;
 
   constructor(private store: Store) {
-    this.isLoggedIn$ = store.pipe(select(selectIsSignedIn));
+    this.isLoggedIn$ = this.store.pipe(select(selectIsSignedIn));
   }
 }

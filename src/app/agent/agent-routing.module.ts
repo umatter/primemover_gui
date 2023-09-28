@@ -4,7 +4,7 @@ import { AuthGuard } from '@core/guards/auth.guard';
 import { AgentComponent } from './index/agent.component';
 import { AgentEditComponent } from '@app/agent/edit/agent-edit.component';
 
-const routes: Routes = [
+export const agentRoutes: Routes = [
   {
     path: '',
     canActivate: [AuthGuard],
@@ -24,7 +24,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
+  imports: [RouterModule.forChild(agentRoutes)],
   exports: [RouterModule]
 })
 export class AgentRoutingModule {}

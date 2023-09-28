@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CrawlerService } from '@app/entity/service';
 import { requiredFileType } from '@app/shared/file-upload/file.validator';
@@ -10,10 +10,26 @@ import { select, Store } from '@ngrx/store';
 import { fadeIn } from '@shared/animation/trigger';
 import { combineLatest, distinctUntilChanged, map, Observable, Subscription } from 'rxjs';
 import { Crawler } from '../model/crawler';
+import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
+import { NotificationComponent } from '@shared/overlay/notification/notification.component';
+import { TranslateModule } from '@ngx-translate/core';
+import { FileUploadComponent } from '@shared/file-upload/file-upload.component';
+import { LoadingSpinnerComponent } from '@shared/overlay/loading-spinner/loading-spinner.component';
 
 @Component({
   selector: 'app-crawler-upload',
   templateUrl: './crawler-upload.component.html',
+  standalone: true,
+  imports: [
+    NgIf,
+    NotificationComponent,
+    AsyncPipe,
+    TranslateModule,
+    ReactiveFormsModule,
+    FileUploadComponent,
+    LoadingSpinnerComponent,
+    NgForOf
+  ],
   animations: [fadeIn]
 })
 export class CrawlerUploadComponent implements OnInit, OnDestroy {
@@ -69,7 +85,7 @@ export class CrawlerUploadComponent implements OnInit, OnDestroy {
 
     this.subscription.add(
       this.fileUpload.valueChanges.pipe().subscribe((file) => {
-        this.store.dispatch(SharedActions.uploadFileCrawler({ file: file }));
+        this.store.dispatch(SharedActions.uploadFile({ file: file }));
       })
     );
   }

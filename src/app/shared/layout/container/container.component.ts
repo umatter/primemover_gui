@@ -1,12 +1,28 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { select, Store } from '@ngrx/store';
-import { selectIsSignedIn } from '../../../store/auth/auth.selectors';
-import { TranslateService } from '@ngx-translate/core';
-import { Router } from '@angular/router';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { selectIsSignedIn } from '@app/store/auth/auth.selectors';
+import { ConfirmationModalComponent } from '@shared/dialog/confirmation-modal/confirmation-modal.component';
+import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
+import { MainWrapperComponent } from '@shared/layout/main-wrapper/main-wrapper.component';
+import { NavbarComponent } from '@shared/layout/navbar/navbar.component';
 
 @Component({
   selector: 'app-container',
+  standalone: true,
+  imports: [
+    ConfirmationModalComponent,
+    RouterLink,
+    NgIf,
+    TranslateModule,
+    AsyncPipe,
+    NgForOf,
+    RouterLinkActive,
+    MainWrapperComponent,
+    NavbarComponent
+  ],
   templateUrl: './container.component.html'
 })
 export class ContainerComponent implements OnInit {

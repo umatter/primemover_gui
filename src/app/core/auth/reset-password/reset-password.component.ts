@@ -1,14 +1,20 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { FormControl, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { fadeIn } from '@shared/animation/trigger';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '@app/core/services/auth.service';
 import { catchError, Observable } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
+import { NotificationComponent } from '@shared/overlay/notification/notification.component';
+import { LoadingSpinnerComponent } from '@shared/overlay/loading-spinner/loading-spinner.component';
+import { TranslateModule } from '@ngx-translate/core';
+import { NgClass, NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-reset-password',
   templateUrl: './reset-password.component.html',
+  standalone: true,
+  imports: [NotificationComponent, LoadingSpinnerComponent, ReactiveFormsModule, TranslateModule, NgIf, NgClass],
   animations: [fadeIn]
 })
 export class ResetPasswordComponent implements OnInit {

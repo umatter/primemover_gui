@@ -1,6 +1,13 @@
 import { Component, OnDestroy } from '@angular/core';
 import { select, Store } from '@ngrx/store';
-import { FormBuilder, FormControl, FormGroup, UntypedFormControl, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  UntypedFormControl,
+  Validators
+} from '@angular/forms';
 import { fadeIn } from '@shared/animation/trigger';
 import { debounceTime, distinctUntilChanged, Observable, Subscription } from 'rxjs';
 import { PaginatePipeArgs } from 'ngx-pagination';
@@ -16,10 +23,42 @@ import { Agent } from '@app/agent/model/agent';
 import { Configuration } from '@app/config/model/config';
 import { Proxy } from '@app/proxy/model/proxy';
 import { selectCurrentExperiment } from '@shared/store/shared.selectors';
+import { HeroiconTrashComponent } from '@shared/icon/heroicon-trash/heroicon-trash.component';
+import { ConfigurationModule } from '@app/config/config.module';
+import { AgentModule } from '@app/agent/agent.module';
+import { AsyncPipe, NgClass, NgIf } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { ProxyModule } from '@app/proxy/proxy.module';
+import { AutocompleteSelectComponent } from '@shared/autocomplete-select/autocomplete-select.component';
+import { ContentModalComponent } from '@shared/dialog/content-modal/content-modal.component';
+import { ConfigFormComponent } from '@app/config/form/config-form.component';
+import { AgentFormComponent } from '@app/agent/form/agent-form.component';
+import { TranslateModule } from '@ngx-translate/core';
+import { HeroiconPlusComponent } from '@shared/icon/heroicon-plus/heroicon-plus.component';
+import { ProxyFormComponent } from '@app/proxy/form/proxy-form.component';
 
 @Component({
   selector: 'app-crawler-create',
   templateUrl: './crawler-create.component.html',
+  standalone: true,
+  imports: [
+    ConfigurationModule,
+    AgentModule,
+    HeroiconTrashComponent,
+    NgIf,
+    AsyncPipe,
+    NgClass,
+    RouterLink,
+    ProxyModule,
+    AutocompleteSelectComponent,
+    ConfigFormComponent,
+    ContentModalComponent,
+    AgentFormComponent,
+    ReactiveFormsModule,
+    TranslateModule,
+    HeroiconPlusComponent,
+    ProxyFormComponent
+  ],
   animations: [fadeIn]
 })
 export class CrawlerCreateComponent implements OnDestroy {

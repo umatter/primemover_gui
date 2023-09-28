@@ -25,72 +25,72 @@
         <div class="overflow-hidden">
           <table class="min-w-full divide-y divide-gray-300">
             <thead>
-              <tr>
-                <th class="py-3.5 pl-6 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0" scope="col">
-                  <app-link-sortable href="/crawlers" label="{{ 'common.name' | translate }}"></app-link-sortable>
-                </th>
-                <th class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900" scope="col">
-                  <app-link-sortable href="/crawlers" label="{{ 'experiment.label' | translate }}"></app-link-sortable>
-                </th>
-                <th class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900" scope="col">
-                  <app-link-sortable href="/crawlers" label="{{ 'queue.label' | translate }}"></app-link-sortable>
-                </th>
-                <th class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900" scope="col">
-                  <app-link-sortable href="/crawlers" label="{{ 'status.failed' | translate }}"></app-link-sortable>
-                </th>
-                <th class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900" scope="col">
-                  <app-link-sortable href="/crawlers" label="{{ 'status.succeeded' | translate }}"></app-link-sortable>
-                </th>
-                <th class="relative py-3.5 pl-3 pr-6 sm:pr-0" scope="col">
-                  <span class="sr-only"></span>
-                </th>
-              </tr>
+            <tr>
+              <th class="py-3.5 pl-6 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0" scope="col">
+                <app-link-sortable href="/crawlers" label="{{ 'common.name' | translate }}"></app-link-sortable>
+              </th>
+              <th class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900" scope="col">
+                <app-link-sortable href="/crawlers" label="{{ 'experiment.label' | translate }}"></app-link-sortable>
+              </th>
+              <th class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900" scope="col">
+                <app-link-sortable href="/crawlers" label="{{ 'queue.label' | translate }}"></app-link-sortable>
+              </th>
+              <th class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900" scope="col">
+                <app-link-sortable href="/crawlers" label="{{ 'status.failed' | translate }}"></app-link-sortable>
+              </th>
+              <th class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900" scope="col">
+                <app-link-sortable href="/crawlers" label="{{ 'status.success' | translate }}"></app-link-sortable>
+              </th>
+              <th class="relative py-3.5 pl-3 pr-6 sm:pr-0" scope="col">
+                <span class="sr-only"></span>
+              </th>
+            </tr>
             </thead>
             <tbody class="divide-y divide-gray-200 bg-white">
-              <tr *ngFor="let item of entities$ | async | paginate : paginationConfig">
-                <td class="whitespace-nowrap py-4 pl-6 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
-                  {{ item.name }}
-                </td>
-                <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
-                  {{ item.experiment.id }}
-                </td>
-                <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
-                  {{ item.latest_queues_count }}
-                </td>
-                <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
-                  {{ item.latest_queues_failed }}
-                </td>
-                <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
-                  {{ item.latest_queues_succeeded }}
-                </td>
-                <td class="relative whitespace-nowrap text-right text-sm font-medium pr-1">
-                  <button (click)="deleteRequest(item)" class="text-gray-400 hover:text-indigo-900 mr-2">
-                    <app-heroicon-trash></app-heroicon-trash>
-                  </button>
-                  <button
-                    (click)="selectCrawler(item)"
-                    [ngClass]="{
+            <tr *ngFor="let item of entities$ | async | paginate : paginationConfig">
+              <td class="whitespace-nowrap py-4 pl-6 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
+                {{ item.name }}
+              </td>
+              <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
+                {{ item.experiment.id }}
+              </td>
+              <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
+                {{ item.latest_queues_count }}
+              </td>
+              <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
+                {{ item.latest_queues_failed }}
+              </td>
+              <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
+                {{ item.latest_queues_succeeded }}
+              </td>
+              <td class="relative whitespace-nowrap text-right text-sm font-medium pr-1">
+                <button (click)="deleteRequest(item)" class="text-gray-400 hover:text-indigo-900 mr-2">
+                  <app-heroicon-trash></app-heroicon-trash>
+                </button>
+                <button
+                  (click)="selectCrawler(item)"
+                  [ngClass]="{
                       'text-gray-400': (currentCrawler$ | async)?.id !== item.id,
                       'hover:text-indigo-900': (currentCrawler$ | async)?.id !== item.id,
                       'text-indigo-900': (currentCrawler$ | async)?.id === item.id
                     }"
-                  >
-                    <app-heroicon-clipboard-document></app-heroicon-clipboard-document>
-                  </button>
-                  <button (click)="selectAndUploadCrawler(item)" class="text-gray-400 hover:text-indigo-900 ml-2">
-                    <app-heroicon-upload></app-heroicon-upload>
-                  </button>
-                </td>
-              </tr>
+                >
+                  <app-heroicon-clipboard-document></app-heroicon-clipboard-document>
+                </button>
+                <button (click)="selectAndUploadCrawler(item)" class="text-gray-400 hover:text-indigo-900 ml-2">
+                  <app-heroicon-upload></app-heroicon-upload>
+                </button>
+              </td>
+            </tr>
 
-              <!-- More people... -->
+            <!-- More people... -->
             </tbody>
             <tfoot>
-              <tr>
-                <th class="whitespace-nowrap px-3 py-4 text-sm text-gray-500" colspan="30">
-                  <app-pagination-controls (pageChange)="getData($event)" id="crawlers"></app-pagination-controls>
-                </th>
-              </tr>
+            <tr>
+              <th class="whitespace-nowrap px-3 py-4 text-sm text-gray-500" colspan="30">
+                <app-pagination-controls (pageChange)="getData($event)" id="crawlers"></app-pagination-controls>
+              </th>
+            </tr>
             </tfoot>
           </table>
         </div>

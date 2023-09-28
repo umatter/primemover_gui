@@ -1,13 +1,24 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, UntypedFormControl, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  UntypedFormControl,
+  Validators
+} from '@angular/forms';
 import { Observable, Subscription } from 'rxjs';
 import { Agent } from '@app/agent/model/agent';
 import { Store } from '@ngrx/store';
 import { Router } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
+import { AsyncPipe, NgClass, NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-agent-form',
-  templateUrl: './agent-form.component.html'
+  templateUrl: './agent-form.component.html',
+  imports: [ReactiveFormsModule, TranslateModule, AsyncPipe, NgClass, NgIf],
+  standalone: true
 })
 export class AgentFormComponent implements OnDestroy, OnInit {
   @Input() agent$: Observable<Agent>;

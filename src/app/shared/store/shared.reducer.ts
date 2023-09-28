@@ -39,7 +39,7 @@ export const initialState: SharedState = {
   uploadError: null,
   isDownloading: false,
   downloadError: null,
-  downloadSuccess: null,
+  downloadSuccess: null
 };
 export const sharedFeature = createFeature({
   name: 'shared',
@@ -121,9 +121,17 @@ export const sharedFeature = createFeature({
     on(SharedActions.uploadFileSuccess, (state) => {
       return { ...state, isUploading: false, uploadError: null };
     }),
-    on(SharedActions.downloadFile, (state) => ({...state, isDownloading: true})),
-    on(SharedActions.downloadFileSuccess, (state, action) => ({...state, isDownloading: false, downloadSuccess: action.response})),
-    on(SharedActions.downloadFileFailure, (state, action) => ({...state, isDownloading: false, downloadError: action.error}))
+    on(SharedActions.downloadFile, (state) => ({ ...state, isDownloading: true })),
+    on(SharedActions.downloadFileSuccess, (state, action) => ({
+      ...state,
+      isDownloading: false,
+      downloadSuccess: action.response
+    })),
+    on(SharedActions.downloadFileFailure, (state, action) => ({
+      ...state,
+      isDownloading: false,
+      downloadError: action.error
+    }))
   )
 });
 

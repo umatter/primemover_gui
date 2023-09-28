@@ -1,9 +1,12 @@
 import { Component, ElementRef, HostListener, Input } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-file-upload',
   templateUrl: './file-upload.component.html',
+  standalone: true,
+  imports: [TranslateModule],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,

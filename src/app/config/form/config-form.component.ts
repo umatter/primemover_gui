@@ -1,14 +1,27 @@
 import { Component, EventEmitter, OnDestroy, Output } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { FormBuilder, FormControl, FormGroup, UntypedFormControl, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  UntypedFormControl,
+  Validators
+} from '@angular/forms';
 import { fadeIn } from '@shared/animation/trigger';
 import { Observable, Subscription } from 'rxjs';
 import { ConfigurationService } from '@app/entity/service';
 import { Configuration } from '@app/config/model/config';
+import { TranslateModule } from '@ngx-translate/core';
+import { AutocompleteSelectComponent } from '@shared/autocomplete-select/autocomplete-select.component';
+import { NgClass, NgIf } from '@angular/common';
+import { ButtonComponent } from '@shared/form/button/button.component';
 
 @Component({
   selector: 'app-config-form',
   templateUrl: './config-form.component.html',
+  standalone: true,
+  imports: [ReactiveFormsModule, TranslateModule, AutocompleteSelectComponent, NgIf, ButtonComponent, NgClass],
   animations: [fadeIn]
 })
 export class ConfigFormComponent implements OnDestroy {
