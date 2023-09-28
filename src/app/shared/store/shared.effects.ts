@@ -95,13 +95,13 @@ export class SharedEffects {
             document.body.appendChild(anchor);
             anchor.click();
             window.URL.revokeObjectURL(url);
-            return SharedActions.downloadFileSuccess({response : "download report"});
+            return SharedActions.downloadFileSuccess({ response: 'download report' });
           }),
-          catchError((error) => of(SharedActions.downloadFileFailure({error: "download report"})))
-        )
+          catchError((error) => of(SharedActions.downloadFileFailure({ error: 'download report' })))
+        );
       })
-    )
-  })
+    );
+  });
 
   constructor(
     private actions$: Actions,

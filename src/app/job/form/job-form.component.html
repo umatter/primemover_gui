@@ -45,7 +45,6 @@
               </div>
             </div>
           </div>
-
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
             <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="queue">
               {{ 'queue.label' | translate }}
@@ -77,7 +76,38 @@
               </div>
             </div>
           </div>
-
+          <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
+            <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="previous-job">
+              {{ 'job.previousJob' | translate }}
+            </label>
+            <div class="mt-1 sm:mt-0 sm:col-span-2">
+              <div class="relative">
+                <div class="flex items-center gap-1">
+                  <div class="w-full">
+                    <select
+                      [formControl]="previousJob"
+                      class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
+                      id="previous-job"
+                      name="previous-job"
+                    >
+                      <option disabled selected value="null">{{ 'job.selectPreviousJob' | translate }}</option>
+                      <option *ngFor="let job of filteredJobs$ | async" [value]="job.id">
+                        {{ job.id }} - {{ job.name }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <p
+                  *ngIf="hasError('previous_job_id', 'required')"
+                  @fadeIn
+                  class="mt-2 text-sm text-red-600"
+                  id="previous-job-error"
+                >
+                  {{ 'common.previousJobRequiredError' | translate }}
+                </p>
+              </div>
+            </div>
+          </div>
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
             <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="description">
               {{ 'common.description' | translate }}

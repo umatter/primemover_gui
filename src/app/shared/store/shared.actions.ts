@@ -23,7 +23,7 @@ export const SharedActions = createActionGroup({
     'Upload File Success': props<{ response: any }>(),
     'Upload File Failure': props<{ error: any }>(),
     'Download File': props<{ job: Job | null }>(),
-    'Download File Success': props<{response: any}>(),
-    'Download File Failure': props<{error: any}>(),
+    'Download File Success': props<{ response: any }>(),
+    'Download File Failure': props<{ error: any }>()
   }
 });

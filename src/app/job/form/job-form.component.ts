@@ -18,7 +18,7 @@ import { JobType } from '@app/enum/job-type.enum';
 import { TranslateModule } from '@ngx-translate/core';
 import { AutocompleteSelectComponent } from '@shared/autocomplete-select/autocomplete-select.component';
 import { HeroiconTrashComponent } from '@shared/icon/heroicon-trash/heroicon-trash.component';
-import { NgClass, NgForOf, NgIf } from '@angular/common';
+import { AsyncPipe, NgClass, NgForOf, NgIf } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -32,7 +32,8 @@ import { RouterLink } from '@angular/router';
     NgIf,
     NgClass,
     RouterLink,
-    NgForOf
+    NgForOf,
+    AsyncPipe
   ],
   standalone: true
 })
@@ -75,6 +76,10 @@ export class JobFormComponent implements OnDestroy {
 
   get queueId(): UntypedFormControl {
     return this.entityForm.get('queue_id') as FormControl;
+  }
+
+  get previousJob(): UntypedFormControl {
+    return this.entityForm.get('previous_job_id') as FormControl;
   }
 
   hasError(controlName: string, errorName: string): boolean {
@@ -146,7 +151,8 @@ export class JobFormComponent implements OnDestroy {
       name: [null, [Validators.required]],
       description: [null],
       type: [null, [Validators.required]],
-      queue_id: [null, [Validators.required]]
+      queue_id: [null, [Validators.required]],
+      previous_job_id: [null, [Validators.required]]
     });
 
     this.subscriptions.add(

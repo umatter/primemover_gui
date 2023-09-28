@@ -8,9 +8,8 @@ describe('HeroiconDownloadComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ HeroiconDownloadComponent ]
-    })
-    .compileComponents();
+      declarations: [HeroiconDownloadComponent]
+    }).compileComponents();
 
     fixture = TestBed.createComponent(HeroiconDownloadComponent);
     component = fixture.componentInstance;

@@ -21,7 +21,7 @@ import { TokenService } from '../services/token.service';
 @Injectable({
   providedIn: 'root'
 })
-export class AuthGuard  {
+export class AuthGuard {
   accessToken$: Observable<any>;
   accessToken: any;
   user$: Observable<any>;

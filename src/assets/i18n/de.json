@@ -73,6 +73,7 @@
     "port": "Port",
     "portPlaceholder": "z.B. 8080",
     "portRequiredError": "Port ist erforderlich",
+    "previousJobRequiredError": "Vorheriger Job ist erforderlich",
     "proxyRequiredError": "Proxy ist erforderlich",
     "queueRequiredError": "Queue erforderlich",
     "reset": "Zurücksetzen",
@@ -130,6 +131,8 @@
     "createIntroText": "Geben Sie die erforderlichen Daten ein, um einen neuen Job zu erstellen.",
     "label": "Job",
     "list": "Liste aller Jobs",
+    "previousJob": "Vorherigen Job auswählen",
+    "selectPreviousJob": "Job auswählen",
     "selectType": "Typ auswählen",
     "type": {
       "clickjob": "Click",
