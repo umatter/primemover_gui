@@ -53,7 +53,7 @@ const routes: Routes = [
     loadChildren: () => import('./agent/agent-routing.module').then((m) => m.agentRoutes)
   },
   { path: 'configurations', loadChildren: () => import('./config/config-routing.module').then((m) => m.configRoutes) },
-  { path: 'proxies', loadChildren: () => import('./proxy/proxy.module').then((m) => m.ProxyModule) },
+  { path: 'proxies', loadChildren: () => import('./proxy/proxy-routing.module').then((m) => m.proxyRoutes) },
   {
     path: '**',
     component: LoginComponent,
