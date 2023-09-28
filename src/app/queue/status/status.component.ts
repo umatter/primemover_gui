@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { QueueStatusEnum } from '@app/queue/status/status.enum';
 
 @Component({
   selector: 'app-status',
@@ -7,30 +8,7 @@ import { Component, Input } from '@angular/core';
 export class StatusComponent {
   @Input() statusCode: string | number;
   @Input() statusMessage?: string = '-';
+  protected readonly QueueStatusEnum = QueueStatusEnum;
 
   constructor() {}
-
-  isFailed(): boolean {
-    return this.statusCode === 'failed';
-  }
-
-  isFailure(): boolean {
-    return this.statusCode === 'failure';
-  }
-
-  isSuccess(): boolean {
-    return this.statusCode === 'success';
-  }
-
-  isSkipped(): boolean {
-    return this.statusCode === 'skipped';
-  }
-
-  isRunning(): boolean {
-    return this.statusCode === 'running';
-  }
-
-  isUnknown(): boolean {
-    return !this.statusCode;
-  }
 }

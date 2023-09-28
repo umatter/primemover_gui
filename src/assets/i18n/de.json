@@ -9,7 +9,15 @@
     "selected": "Agent ausgewählt"
   },
   "auth": {
+    "confirmPassword": "Kennwort bestätigen",
+    "email": "Email",
+    "newPassword": "Neues Kennwort",
     "password": "Kennwort",
+    "passwordConfirmError": "Passwörter stimmen nicht überein.",
+    "passwordMinCharsError": "Es sind min. 8 Zeichen erforderlich.",
+    "passwordPatternError": "Es ist mindestens ein Grossbuchstabe, eine Zahl und ein Sonderzeichen erforderlich.",
+    "passwordRequiredError": "Kennwortangabe ist erforderlich.",
+    "resetPassword": "Kennwort zurücksetzen",
     "settings": "Einstellungen",
     "signIn": "Anmelden",
     "signOut": "Abmelden",
@@ -25,10 +33,7 @@
   },
   "common": {
     "actionPermanentWarning": "Diese Aktion kann nicht rückgängig gemacht werden.",
-    "passwordRequiredError": "Kennwort ist erforderlich",
     "agentRequiredError": "Agent ist erforderlich",
-    "portRequiredError": "Port ist erforderlich",
-    "usernameRequiredError": "Nutzername ist erforderlich",
     "areYouSure": "Sind Sie sicher?",
     "cancel": "Abbrechen",
     "clear": "Aufräumen",
@@ -64,8 +69,10 @@
     "new": "Neu",
     "password": "Password",
     "passwordPlaceholder": "z.B. Ein super Passwort",
+    "passwordRequiredError": "Kennwort ist erforderlich",
     "port": "Port",
     "portPlaceholder": "z.B. 8080",
+    "portRequiredError": "Port ist erforderlich",
     "proxyRequiredError": "Proxy ist erforderlich",
     "queueRequiredError": "Queue erforderlich",
     "reset": "Zurücksetzen",
@@ -76,7 +83,8 @@
     "typeRequiredError": "Typ ist erforderlich",
     "updatedAt": "Aktualisiert am",
     "username": "Nutzername",
-    "usernamePlaceholder": "e.g. max.mustermann"
+    "usernamePlaceholder": "e.g. max.mustermann",
+    "usernameRequiredError": "Nutzername ist erforderlich"
   },
   "config": {
     "add": "Konfiguration hinzufügen",
@@ -118,28 +126,28 @@
   "foo": "bar",
   "job": {
     "add": "Job hinzufügen",
-    "createIntroText": "Geben Sie die erforderlichen Daten ein, um einen neuen Job zu erstellen.",
     "crawlerId": "Crawler-ID",
+    "createIntroText": "Geben Sie die erforderlichen Daten ein, um einen neuen Job zu erstellen.",
     "label": "Job",
     "list": "Liste aller Jobs",
+    "selectType": "Typ auswählen",
     "type": {
-      "label": "Typ",
-      "visitjob": "Visit",
-      "waitjob": "Wait",
-      "tryentertextfieldjob": "Try enter text field",
-      "entertextfieldjob": "Enter text field",
-      "singleselecturljob": "Single select URL",
-      "singleselectjob": "Single select",
-      "tryswitchjob": "Try switch",
-      "switchjob": "Switch",
-      "tryclickjob": "Try click",
       "clickjob": "Click",
+      "entertextfieldjob": "Enter text field",
+      "handlealertjob": "Handle alert",
+      "label": "Typ",
       "scrollbydurationjob": "Scroll by duration",
       "scrollbylengthjob": "Scroll by length",
-      "handlealertjob": "Handle alert",
-      "tryhandlealertjob": "Try handle alert"
-    },
-    "selectType": "Typ auswählen"
+      "singleselectjob": "Single select",
+      "singleselecturljob": "Single select URL",
+      "switchjob": "Switch",
+      "tryclickjob": "Try click",
+      "tryentertextfieldjob": "Try enter text field",
+      "tryhandlealertjob": "Try handle alert",
+      "tryswitchjob": "Try switch",
+      "visitjob": "Visit",
+      "waitjob": "Wait"
+    }
   },
   "loading": {
     "text": "Dies könnte eine Weile dauern, bitte haben Sie etwas Geduld.",
@@ -218,13 +226,17 @@
   "status": {
     "code": "Code",
     "failed": "Fehler",
+    "failure": "Fehler",
     "label": "Status",
     "message": "Meldung",
     "processed": "Erledigt",
-    "processing": "Läuft",
+    "processing": "Läuft..",
     "review": "Review",
-    "succeeded": "Erfolg",
-    "type": "Type"
+    "running": "Läuft..",
+    "sipped": "Übersprungen",
+    "success": "Erfolg",
+    "type": "Type",
+    "unknown": "Unbekannt"
   },
   "upload": {
     "clickToUpload": "Klicken, um eine Datei auszuwählen",
@@ -232,9 +244,13 @@
     "fileExampleLabel": "API Dokumentation",
     "fileExampleText": "Einzelheiten der JSON Datei.",
     "fileUpload": "Datei hochladen",
+    "noCrawlerSelected": "Crawler nicht ausgewählt",
     "noExperimentSelected": "Kein Experiment ausgewählt",
     "orDragAndDrop": "oder Datei hierherziehen",
+    "selectCrawler": "Crawler wählen",
     "selectExperiment": "Experiment auswählen",
+    "uploadCrawlerIntroText": "Vor dem Upload ist das Auswählen eines Crawlers notwendig, damit die neuen Daten diesem zugeordnet werden. Es ist ein valides JSON erforderlich. Für mehr Einzelheiten bitte die API Dokumentation konsultieren. ",
+    "uploadCrawlerTitle": "Crawler JSON Upload",
     "uploadExperimentIntroText": "Bitte wählen Sie ein Experiment aus, um die Daten dazu hochzuladen. Die Datei muss im JSON-Format vorliegen.",
     "uploadExperimentTitle": "Experiment hochladen"
   }

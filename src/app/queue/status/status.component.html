@@ -1,8 +1,9 @@
 <div [title]="statusMessage">
-  <div *ngIf="isFailed()" class="text-red-600">Failed</div>
-  <div *ngIf="isFailure()" class="text-red-600">Failure</div>
-  <div *ngIf="isSuccess()" class="text-green-600">Success</div>
-  <div *ngIf="isSkipped()" class="text-blue-600">Skipped</div>
-  <div *ngIf="isRunning()" class="text-orange-700">Running</div>
-  <div *ngIf="isUnknown()" class="text-yellow-600">Unknown</div>
+  <div [ngSwitch]="statusCode">
+    <div *ngSwitchCase="QueueStatusEnum.FAILURE" class="text-red-600">{{ 'status.failure' | translate }}</div>
+    <div *ngSwitchCase="QueueStatusEnum.SUCCESS" class="text-green-600">{{ 'status.success' | translate }}</div>
+    <div *ngSwitchCase="QueueStatusEnum.SKIPPED" class="text-blue-600">{{ 'status.skipped' | translate }}</div>
+    <div *ngSwitchCase="QueueStatusEnum.RUNNING" class="text-orange-700">{{ 'status.running' | translate }}</div>
+    <div *ngSwitchDefault class="text-yellow-600">{{ 'status.unknown' | translate }}</div>
+  </div>
 </div>

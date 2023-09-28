@@ -9,19 +9,19 @@
     "selected": "agent selected"
   },
   "auth": {
+    "confirmPassword": "Confirm Password",
+    "email": "Email",
+    "newPassword": "New Password",
     "password": "password",
+    "passwordConfirmError": "The password confirmation does not match.",
+    "passwordMinCharsError": "Password minimun 8 character",
+    "passwordPatternError": "At least one capital letter, at least one number, at least one special char",
+    "passwordRequiredError": "Password is required",
+    "resetPassword": "Reset password",
     "settings": "Settings",
     "signIn": "Register",
     "signOut": "Sign out",
-    "username": "User name",
-    "email": "Email",
-    "newPassword": "New Password",
-    "confirmPassword": "Confirm Password",
-    "resetPassword": "Reset Password",
-    "passwordRequiredError": "Password is Required",
-    "passwordMinCharsError": "Password minimun 8 character",
-    "passwordConfirmError": "The password confirmation does not match.",
-    "passwordPatternError": "At least one capital letter, at least one number, at least one special char"
+    "username": "User name"
   },
   "behavior": {
     "add": "Add behavior",
@@ -69,8 +69,10 @@
     "new": "New",
     "password": "Password",
     "passwordPlaceholder": "e.g. a really good password",
+    "passwordRequiredError": "Password is required",
     "port": "Port",
     "portPlaceholder": "e.g. 8080",
+    "portRequiredError": "Port is required",
     "proxyRequiredError": "Proxy is Required",
     "queueRequiredError": "Queue is required",
     "reset": "Reset",
@@ -81,7 +83,8 @@
     "typeRequiredError": "Type is Required",
     "updatedAt": "Updated at",
     "username": "User Name",
-    "usernamePlaceholder": ""
+    "usernamePlaceholder": "",
+    "usernameRequiredError": "Username is required"
   },
   "config": {
     "add": "Add configuration",
@@ -123,28 +126,28 @@
   "foo": "bar",
   "job": {
     "add": "add jobs",
-    "createIntroText": "Geben Sie die erforderlichen Daten ein, um einen neuen Job zu erstellen.",
     "crawlerId": "Crawler-ID",
+    "createIntroText": "Geben Sie die erforderlichen Daten ein, um einen neuen Job zu erstellen.",
     "label": "Job",
     "list": "List all Jobs",
+    "selectType": "Select Type",
     "type": {
-      "label": "Type",
-      "visitjob": "Visit",
-      "waitjob": "Wait",
-      "tryentertextfieldjob": "Try enter text field",
-      "entertextfieldjob": "Enter text field",
-      "singleselecturljob": "Single select URL",
-      "singleselectjob": "Single select",
-      "tryswitchjob": "Try switch",
-      "switchjob": "Switch",
-      "tryclickjob": "Try click",
       "clickjob": "Click",
+      "entertextfieldjob": "Enter text field",
+      "handlealertjob": "Handle alert",
+      "label": "Type",
       "scrollbydurationjob": "Scroll by duration",
       "scrollbylengthjob": "Scroll by length",
-      "handlealertjob": "Handle alert",
-      "tryhandlealertjob": "Try handle alert"
-    },
-    "selectType": "Select Type"
+      "singleselectjob": "Single select",
+      "singleselecturljob": "Single select URL",
+      "switchjob": "Switch",
+      "tryclickjob": "Try click",
+      "tryentertextfieldjob": "Try enter text field",
+      "tryhandlealertjob": "Try handle alert",
+      "tryswitchjob": "Try switch",
+      "visitjob": "Visit",
+      "waitjob": "Wait"
+    }
   },
   "loading": {
     "text": "This may take a few seconds, please don't close this page.",
@@ -223,13 +226,17 @@
   "status": {
     "code": "Code",
     "failed": "Failed",
+    "failure": "Failed",
     "label": "Status",
     "message": "Report",
     "processed": "Completed",
     "processing": "Running",
     "review": "Review",
-    "succeeded": "success",
-    "type": "Type"
+    "running": "Running",
+    "sipped": "Skipped",
+    "success": "Success",
+    "type": "Type",
+    "unknown": "Unknown"
   },
   "upload": {
     "clickToUpload": "Click to upload file",
@@ -237,14 +244,14 @@
     "fileExampleLabel": "API documentation",
     "fileExampleText": "Details about required JSON file.",
     "fileUpload": "Upload file",
+    "noCrawlerSelected": "No selected crawler",
     "noExperimentSelected": "No selected experiment",
     "orDragAndDrop": "or drag and drop it here",
-    "selectExperiment": "Select experiment",
-    "uploadExperimentIntroText": "In order to upload experiment data you need to have selected the experiment first. Upload data requires a valid JSON file. See API-docs for details.",
-    "uploadExperimentTitle": "Upload experiment data",
-    "uploadCrawlerTitle": "Upload crawler data",
     "selectCrawler": "Select crawler",
-    "noCrawlerSelected": "No selected crawler",
-    "uploadCrawlerIntroText": "In order to upload crawler data you need to have selected the crawler first. Upload data requires a valid JSON file. See API-docs for details."
+    "selectExperiment": "Select experiment",
+    "uploadCrawlerIntroText": "In order to upload crawler data you need to have selected the crawler first. Upload data requires a valid JSON file. See API-docs for details.",
+    "uploadCrawlerTitle": "Upload crawler data",
+    "uploadExperimentIntroText": "In order to upload experiment data you need to have selected the experiment first. Upload data requires a valid JSON file. See API-docs for details.",
+    "uploadExperimentTitle": "Upload experiment data"
   }
 }
