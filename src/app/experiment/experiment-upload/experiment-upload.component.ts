@@ -86,7 +86,7 @@ export class ExperimentUploadComponent implements OnDestroy, OnInit {
 
     this.subscriptions.add(
       this.fileUpload.valueChanges.pipe().subscribe((file) => {
-        this.store.dispatch(SharedActions.uploadFile({ file: file }));
+        this.store.dispatch(SharedActions.uploadExperimentRequested({ file: file }));
       })
     );
   }

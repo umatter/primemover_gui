@@ -1,5 +1,4 @@
 import { createAction, props } from '@ngrx/store';
-import { OAuthResource } from '../../core/services/auth.service';
 
 export interface User {
   id: number | null;

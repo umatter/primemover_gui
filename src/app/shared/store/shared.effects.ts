@@ -9,6 +9,8 @@ import { Router } from '@angular/router';
 import { SharedActions } from '@shared/store/shared.actions';
 import { selectQueryFilter } from '@shared/store/shared.reducer';
 import { JobApiService } from '@app/job/service/job-api.service';
+import { TimezoneService } from '@shared/service/timezone.service';
+
 @Injectable()
 export class SharedEffects {
   resetQueryFilterRequested$ = createEffect(() =>
@@ -53,28 +55,28 @@ export class SharedEffects {
     )
   );
 
-  experimentUpload$ = createEffect(() => {
+  uploadExperimentRequested$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(SharedActions.uploadFile),
+      ofType(SharedActions.uploadExperimentRequested),
       concatLatestFrom(() => this.store.pipe(select(selectCurrentExperiment))),
       switchMap(([action, currentExperiment]) => {
-        return this.fileService.uploadExperiment(action.file, currentExperiment).pipe(
-          map((response) => SharedActions.uploadFileSuccess(response)),
-          catchError((error) => of(SharedActions.uploadFileFailure(error)))
+        return this.fileService.uploadExperiment(action.file, currentExperiment.id).pipe(
+          map((response) => SharedActions.uploadExperimentSuccess(response)),
+          catchError((error) => of(SharedActions.uploadExperimentFailure(error)))
         );
       }),
       tap(() => this.router.navigate(['/crawlers']))
     );
   });
 
-  crawlerUpload$ = createEffect(() => {
+  uploadCrawlerRequested$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType(SharedActions.uploadFile),
+      ofType(SharedActions.uploadCrawlerRequested),
       concatLatestFrom(() => this.store.pipe(select(selectCurrentCrawler))),
       switchMap(([action, currentCrawler]) => {
-        return this.fileService.uploadCrawler(action.file, currentCrawler).pipe(
-          map((response) => SharedActions.uploadFileSuccess(response)),
-          catchError((error) => of(SharedActions.uploadFileFailure(error)))
+        return this.fileService.uploadCrawler(action.file, currentCrawler.id).pipe(
+          map((response) => SharedActions.uploadCrawlerSuccess(response)),
+          catchError((error) => of(SharedActions.uploadCrawlerFailure(error)))
         );
       }),
       tap(() => this.router.navigate(['/queues']))
@@ -103,6 +105,30 @@ export class SharedEffects {
     );
   });
 
+  timezoneListRequested$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(SharedActions.timezoneListRequested),
+      switchMap(() => {
+        return this.timezoneService.getList().pipe(
+          map((response) => SharedActions.timezoneListSuccess({ response })),
+          catchError((error) => of(SharedActions.timezoneListError(error)))
+        );
+      })
+    )
+  );
+
+  timezoneDetailRequested$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(SharedActions.timezoneDetailRequested),
+      switchMap((action) => {
+        return this.timezoneService.getDetail(action.timezone).pipe(
+          map((detail) => SharedActions.timezoneDetailSuccess({ detail })),
+          catchError((error) => of(SharedActions.timezoneDetailError(error)))
+        );
+      })
+    )
+  );
+
   constructor(
     private actions$: Actions,
     private store: Store,
@@ -110,6 +136,7 @@ export class SharedEffects {
     private crawlerService: CrawlerService,
     private fileService: FileUploadService,
     private router: Router,
-    private jobApiService: JobApiService
+    private jobApiService: JobApiService,
+    private timezoneService: TimezoneService
   ) {}
 }

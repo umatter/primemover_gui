@@ -224,7 +224,9 @@
     "label": "Queue",
     "list": "Liste aller Queues.",
     "startAt": "Startzeit",
-    "startedAt": "Gestartet"
+    "startedAt": "Gestartet",
+    "timezone": "Zeitzone",
+    "timezoneOffset": "UTC Verschiebung"
   },
   "status": {
     "code": "Code",

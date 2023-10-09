@@ -7,6 +7,8 @@ import { selectCurrentCrawler, selectCurrentExperiment, selectCurrentQueue } fro
 import { Queue } from '@app/queue/model/queue';
 import { TranslateModule } from '@ngx-translate/core';
 import { AsyncPipe, DatePipe, NgIf } from '@angular/common';
+import { TimezoneDetail } from '@shared/service/timezone.service';
+import { selectTimezoneDetail } from '@shared/store/shared.reducer';
 
 @Component({
   selector: 'app-metadata',
@@ -15,6 +17,7 @@ import { AsyncPipe, DatePipe, NgIf } from '@angular/common';
   standalone: true
 })
 export class MetadataComponent implements OnInit {
+  timezoneDetail$: Observable<TimezoneDetail> = this.store.select(selectTimezoneDetail);
   currentExperiment$: Observable<Experiment>;
   currentCrawler$: Observable<Crawler>;
   currentQueue$: Observable<Queue>;

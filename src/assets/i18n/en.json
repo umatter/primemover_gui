@@ -223,8 +223,10 @@
     "finishedAt": "Done",
     "label": "Queue",
     "list": "List of all queues.",
-    "startAt": "Start At",
-    "startedAt": "Started"
+    "startAt": "Start date/time",
+    "startedAt": "Started",
+    "timezone": "Timezone",
+    "timezoneOffset": "UTC offset"
   },
   "status": {
     "code": "Code",

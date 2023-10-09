@@ -54,7 +54,7 @@ import { StatusComponent } from '@app/queue/status/status.component';
   standalone: true
 })
 export class QueueComponent implements OnDestroy {
-  isLoading$: Observable<boolean>;
+  isLoading$ = this.entityService.loading$;
   paginationConfig: PaginatePipeArgs;
   entities$: Observable<Queue[] | any>;
   entityToDelete: Queue | null = null;

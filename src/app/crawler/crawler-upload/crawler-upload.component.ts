@@ -85,7 +85,7 @@ export class CrawlerUploadComponent implements OnInit, OnDestroy {
 
     this.subscription.add(
       this.fileUpload.valueChanges.pipe().subscribe((file) => {
-        this.store.dispatch(SharedActions.uploadFile({ file: file }));
+        this.store.dispatch(SharedActions.uploadCrawlerRequested({ file: file }));
       })
     );
   }

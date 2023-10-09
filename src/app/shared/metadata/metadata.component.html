@@ -8,57 +8,68 @@
   </div>
   <div *ngIf="currentExperiment$ | async; let experiment" class="border-t border-gray-200 px-4 py-5 sm:p-0">
     <dl class="sm:divide-y sm:divide-gray-200">
-      <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-1 sm:px-6">
+      <div class="py-4 sm:grid sm:grid-cols-2 sm:gap-1 sm:px-6">
         <dt class="text-sm font-medium text-gray-500">{{ 'experiment.label' | translate }} {{ experiment.id }}</dt>
-        <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{{ experiment.name }}</dd>
+        <dd class="mt-1 text-sm text-gray-900 sm:mt-0">{{ experiment.name }}</dd>
       </div>
-      <div *ngIf="experiment.contact" class="py-4 sm:grid sm:grid-cols-3 sm:gap-1 sm:px-6">
+      <div *ngIf="experiment.contact" class="py-4 sm:grid sm:grid-cols-2 sm:gap-1 sm:px-6">
         <dt class="text-sm font-medium text-gray-500">{{ 'common.contact' | translate }}</dt>
-        <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{{ experiment.contact }}</dd>
+        <dd class="mt-1 text-sm text-gray-900 sm:mt-0">{{ experiment.contact }}</dd>
       </div>
     </dl>
   </div>
   <div *ngIf="currentCrawler$ | async; let crawler" class="border-t border-gray-200 px-4 py-5 sm:p-0">
     <dl class="sm:divide-y sm:divide-gray-200">
-      <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-1 sm:px-6">
+      <div class="py-4 sm:grid sm:grid-cols-2 sm:gap-1 sm:px-6">
         <dt class="text-sm font-medium text-gray-500">{{ 'crawler.label' | translate }} {{ crawler.id }}</dt>
-        <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{{ crawler.name }}</dd>
+        <dd class="mt-1 text-sm text-gray-900 sm:mt-0">{{ crawler.name }}</dd>
       </div>
-      <div *ngIf="crawler?.agent" class="py-4 sm:grid sm:grid-cols-3 sm:gap-1 sm:px-6">
+      <div *ngIf="crawler?.agent" class="py-4 sm:grid sm:grid-cols-2 sm:gap-1 sm:px-6">
         <dt class="text-sm font-medium text-gray-500">{{ 'agent.label' | translate }} {{ crawler?.agent?.id }}</dt>
-        <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{{ crawler?.agent?.name }}</dd>
+        <dd class="mt-1 text-sm text-gray-900 sm:mt-0">{{ crawler?.agent?.name }}</dd>
       </div>
-      <div *ngIf="crawler?.proxy" class="py-4 sm:grid sm:grid-cols-3 sm:gap-1 sm:px-6">
+      <div *ngIf="crawler?.proxy" class="py-4 sm:grid sm:grid-cols-2 sm:gap-1 sm:px-6">
         <dt class="text-sm font-medium text-gray-500">{{ 'proxy.label' | translate }} {{ crawler?.proxy?.id }}</dt>
-        <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{{ crawler?.proxy?.name }}</dd>
+        <dd class="mt-1 text-sm text-gray-900 sm:mt-0">{{ crawler?.proxy?.name }}</dd>
       </div>
-      <div *ngIf="crawler?.configuration" class="py-4 sm:grid sm:grid-cols-3 sm:gap-1 sm:px-6">
+      <div *ngIf="crawler?.configuration" class="py-4 sm:grid sm:grid-cols-2 sm:gap-1 sm:px-6">
         <dt class="text-sm font-medium text-gray-500">
           {{ 'config.label' | translate }} {{ crawler?.configuration?.id }}
         </dt>
-        <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{{ crawler?.configuration?.name }}</dd>
+        <dd class="mt-1 text-sm text-gray-900 sm:mt-0">{{ crawler?.configuration?.name }}</dd>
       </div>
     </dl>
   </div>
   <div *ngIf="currentQueue$ | async; let queue" class="border-t border-gray-200 px-4 py-5 sm:p-0">
     <dl class="sm:divide-y sm:divide-gray-200">
-      <div *ngIf="queue?.start_at" class="py-4 sm:grid sm:grid-cols-3 sm:gap-1 sm:px-6">
+      <div *ngIf="queue?.start_at" class="py-4 sm:grid sm:grid-cols-2 sm:gap-1 sm:px-6">
         <dt class="text-sm font-medium text-gray-500">{{ 'queue.startAt' | translate }}</dt>
-        <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+        <dd class="mt-1 text-sm text-gray-900 sm:mt-0">
           {{ queue?.start_at | date : 'dd.MM.yyyy hh:ss' }}
         </dd>
       </div>
-      <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-1 sm:px-6">
+      <div class="py-4 sm:grid sm:grid-cols-2 sm:gap-1 sm:px-6">
         <dt class="text-sm font-medium text-gray-500">{{ 'queue.startedAt' | translate }}</dt>
-        <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+        <dd class="mt-1 text-sm text-gray-900 sm:mt-0">
           {{ queue?.started_at | date : 'dd.MM.yyyy hh:ss' }}
         </dd>
       </div>
-      <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-1 sm:px-6">
+      <div class="py-4 sm:grid sm:grid-cols-2 sm:gap-1 sm:px-6">
         <dt class="text-sm font-medium text-gray-500">{{ 'queue.finishedAt' | translate }}</dt>
-        <dd class="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
+        <dd class="mt-1 text-sm text-gray-900 sm:mt-0">
           {{ queue?.finished_at | date : 'dd.MM.yyyy hh:ss' }}
         </dd>
+      </div>
+    </dl>
+  </div>
+
+  <div *ngIf="timezoneDetail$ | async; let timezone" class="border-t border-gray-200 px-4 py-5 sm:p-0">
+    <dl class="sm:divide-y sm:divide-gray-200">
+      <div class="py-4 sm:grid sm:grid-cols-1 sm:gap-1 sm:px-6">
+        <dt class="text-sm font-medium text-gray-500">{{ timezone.timezone }} {{ timezone.abbreviation }}</dt>
+      </div>
+      <div class="py-4 sm:grid sm:grid-cols-1 sm:gap-1 sm:px-6">
+        <dt class="text-sm font-medium text-gray-500">{{ timezone.utc_offset }}</dt>
       </div>
     </dl>
   </div>

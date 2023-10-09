@@ -6,6 +6,7 @@ import { Queue } from '@app/queue/model/queue';
 import { QueryFilterType } from '@shared/store/shared.selectors';
 import { Job } from '@app/job/model/Job';
 import { SharedActions } from '@shared/store/shared.actions';
+import { TimezoneDetail } from '@shared/service/timezone.service';
 
 export interface SharedState {
   queryFilter: QueryFilter[];
@@ -20,6 +21,9 @@ export interface SharedState {
   isDownloading: boolean;
   downloadError: any;
   downloadSuccess: any;
+  timezoneList: string[];
+  timezoneLoading: boolean;
+  timezoneDetail: TimezoneDetail;
 }
 
 export const initialState: SharedState = {
@@ -39,7 +43,10 @@ export const initialState: SharedState = {
   uploadError: null,
   isDownloading: false,
   downloadError: null,
-  downloadSuccess: null
+  downloadSuccess: null,
+  timezoneList: [],
+  timezoneLoading: false,
+  timezoneDetail: null
 };
 export const sharedFeature = createFeature({
   name: 'shared',
@@ -107,7 +114,7 @@ export const sharedFeature = createFeature({
           ]
         : state.queryFilter
     })),
-    on(SharedActions.uploadFileFailure, (state, action) => {
+    on(SharedActions.uploadExperimentFailure, (state, action) => {
       return {
         ...state,
         isUploading: false,
@@ -115,10 +122,24 @@ export const sharedFeature = createFeature({
       };
     }),
 
-    on(SharedActions.uploadFile, (state) => {
+    on(SharedActions.uploadExperimentRequested, (state) => {
       return { ...state, isUploading: true, uploadError: null };
     }),
-    on(SharedActions.uploadFileSuccess, (state) => {
+    on(SharedActions.uploadExperimentSuccess, (state) => {
+      return { ...state, isUploading: false, uploadError: null };
+    }),
+    on(SharedActions.uploadCrawlerFailure, (state, action) => {
+      return {
+        ...state,
+        isUploading: false,
+        uploadError: action.error
+      };
+    }),
+
+    on(SharedActions.uploadCrawlerRequested, (state) => {
+      return { ...state, isUploading: true, uploadError: null };
+    }),
+    on(SharedActions.uploadCrawlerSuccess, (state) => {
       return { ...state, isUploading: false, uploadError: null };
     }),
     on(SharedActions.downloadFile, (state) => ({ ...state, isDownloading: true })),
@@ -131,6 +152,40 @@ export const sharedFeature = createFeature({
       ...state,
       isDownloading: false,
       downloadError: action.error
+    })),
+    on(SharedActions.timezoneListRequested, (state) => ({
+      ...state,
+      timezoneLoading: true
+    })),
+    on(SharedActions.timezoneListSuccess, (state, action) => ({
+      ...state,
+      timezoneLoading: false,
+      timezoneList: action.response
+    })),
+    on(SharedActions.timezoneListError, (state) => ({
+      ...state,
+      timezoneList: [],
+      timezoneLoading: false
+    })),
+    on(SharedActions.timezoneDetailRequested, (state) => ({
+      ...state,
+      timezoneLoading: true
+    })),
+    on(SharedActions.timezoneDetailSuccess, (state, action) => ({
+      ...state,
+      timezoneLoading: false,
+      timezoneDetail: action.detail
+    })),
+    on(SharedActions.timezoneDetailError, (state) => ({
+      ...state,
+      timezoneLoading: false,
+      timezoneDetail: null
+    })),
+    on(SharedActions.timezoneResetRequested, (state) => ({
+      ...state,
+      timezoneLoading: false,
+      timezoneDetail: null,
+      timezoneList: null
     }))
   )
 });
@@ -149,5 +204,8 @@ export const {
   selectUploadError,
   selectIsDownloading,
   selectDownloadError,
-  selectDownloadSuccess
+  selectDownloadSuccess,
+  selectTimezoneList,
+  selectTimezoneLoading,
+  selectTimezoneDetail
 } = sharedFeature;

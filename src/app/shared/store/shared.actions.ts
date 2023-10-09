@@ -4,6 +4,7 @@ import { Experiment } from '@app/experiment/model/experiment';
 import { Crawler } from '@app/crawler/model/crawler';
 import { Queue } from '@app/queue/model/queue';
 import { Job } from '@app/job/model/Job';
+import { TimezoneDetail } from '@shared/service/timezone.service';
 
 export const SharedActions = createActionGroup({
   source: 'Shared',
@@ -19,11 +20,21 @@ export const SharedActions = createActionGroup({
     'Queue Selection': props<{ queue: Queue | null }>(),
     'Job Selection': props<{ job: Job | null }>(),
     'Request Page': props<{ page: number }>(),
-    'Upload File': props<{ file: File }>(),
-    'Upload File Success': props<{ response: any }>(),
-    'Upload File Failure': props<{ error: any }>(),
+    'Upload experiment requested': props<{ file: File }>(),
+    'Upload experiment success': props<{ response: any }>(),
+    'Upload experiment failure': props<{ error: any }>(),
+    'Upload crawler requested': props<{ file: File }>(),
+    'Upload crawler success': props<{ response: any }>(),
+    'Upload crawler failure': props<{ error: any }>(),
     'Download File': props<{ job: Job | null }>(),
     'Download File Success': props<{ response: any }>(),
-    'Download File Failure': props<{ error: any }>()
+    'Download File Failure': props<{ error: any }>(),
+    'Timezone reset requested': emptyProps(),
+    'Timezone list requested': emptyProps(),
+    'Timezone list success': props<{ response: string[] }>(),
+    'Timezone list error': props<{ error: any }>(),
+    'Timezone detail requested': props<{ timezone: string }>(),
+    'Timezone detail success': props<{ detail: TimezoneDetail }>(),
+    'Timezone detail error': props<{ error: any }>()
   }
 });
