@@ -103,9 +103,6 @@ export class ExperimentComponent implements OnDestroy {
 
   downloadExperimentData(experiment: Experiment): void | Boolean {
     this.store.dispatch(SharedActions.downloadExperimentData({ experiment }));
-    // this.apiService.download(experiment?.id).subscribe((response: any) => {
-    //   saveAs(response, `${experiment.name}.zip`);
-    // });
   }
 
   onModalResponse(event: boolean): void {

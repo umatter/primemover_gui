@@ -95,10 +95,7 @@ export class SharedEffects {
             saveAs(data.body, `${action.job.id} ${action.job.name}.zip`);
             return SharedActions.downloadFileSuccess();
           }),
-          catchError((error) => {
-            console.log(error);
-            return of(SharedActions.downloadFileFailure({ error }));
-          })
+          catchError((error) => of(SharedActions.downloadFileFailure({ error })))
         );
       })
     );

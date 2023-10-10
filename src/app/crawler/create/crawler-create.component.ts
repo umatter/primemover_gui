@@ -211,7 +211,6 @@ export class CrawlerCreateComponent implements OnDestroy {
   }
 
   setProxy(proxy: Proxy): void {
-    console.log(proxy);
     this.proxyAutocompletion.setValue(proxy.name);
     this.proxyId.setValue(proxy.id);
   }
