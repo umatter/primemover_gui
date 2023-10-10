@@ -9,10 +9,7 @@ import { Experiment } from '../model/experiment';
 import { ExperimentService } from '@app/entity/service';
 import { ExperimentApiService } from '@app/experiment/service/experiment-api.service';
 import { QueryFilterType, selectCurrentExperiment } from '@shared/store/shared.selectors';
-import { QueryFilter } from '@shared/model/query-filter';
-import { Meta } from '@shared/pagination/model';
-import { saveAs } from 'file-saver';
-import { selectQueryFilter } from '@shared/store/shared.reducer';
+import { selectIsDownloading, selectQueryFilter } from '@shared/store/shared.reducer';
 import { SharedActions } from '@shared/store/shared.actions';
 import { LoadingSpinnerComponent } from '@shared/overlay/loading-spinner/loading-spinner.component';
 import { AsyncPipe, DatePipe, NgClass, NgForOf, NgIf } from '@angular/common';
@@ -50,12 +47,13 @@ import { HeroiconDownloadArchiveComponent } from '@shared/icon/heroicon-download
 })
 export class ExperimentComponent implements OnDestroy {
   paginationConfig: PaginatePipeArgs;
-  isLoading$: Observable<boolean>;
-  entities$: Observable<Experiment[] | any>;
+  isLoading$ = this.entityService.loading$;
+  isDownloading$ = this.store.select(selectIsDownloading);
+  entities$: Observable<Experiment[] | any> = this.entityService.entities$;
   experimentToDelete: Experiment | null = null;
-  queryFilter$: Observable<QueryFilter[]>;
-  currentExperiment$: Observable<Experiment>;
-  pageMeta$: Observable<Meta>;
+  queryFilter$ = this.store.select(selectQueryFilter);
+  currentExperiment$ = this.store.pipe(select(selectCurrentExperiment));
+  pageMeta$ = this.entityService.pageMeta$;
 
   private subscriptions = new Subscription();
 
@@ -66,10 +64,6 @@ export class ExperimentComponent implements OnDestroy {
     private apiService: ExperimentApiService
   ) {
     this.entities$ = entityService.entities$;
-    this.isLoading$ = this.entityService.loading$;
-    this.pageMeta$ = entityService.pageMeta$;
-    this.queryFilter$ = this.store.select(selectQueryFilter);
-    this.currentExperiment$ = this.store.pipe(select(selectCurrentExperiment));
 
     this.getData();
     this.initPagination();
@@ -107,10 +101,11 @@ export class ExperimentComponent implements OnDestroy {
     this.experimentToDelete = experiment;
   }
 
-  downloadExperimentData(experiment: any): void | Boolean {
-    this.apiService.download(experiment?.id).subscribe((response: any) => {
-      saveAs(response, `${experiment.name}.zip`);
-    });
+  downloadExperimentData(experiment: Experiment): void | Boolean {
+    this.store.dispatch(SharedActions.downloadExperimentData({ experiment }));
+    // this.apiService.download(experiment?.id).subscribe((response: any) => {
+    //   saveAs(response, `${experiment.name}.zip`);
+    // });
   }
 
   onModalResponse(event: boolean): void {

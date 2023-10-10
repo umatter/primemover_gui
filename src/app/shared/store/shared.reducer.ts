@@ -145,8 +145,7 @@ export const sharedFeature = createFeature({
     on(SharedActions.downloadFile, (state) => ({ ...state, isDownloading: true })),
     on(SharedActions.downloadFileSuccess, (state, action) => ({
       ...state,
-      isDownloading: false,
-      downloadSuccess: action.response
+      isDownloading: false
     })),
     on(SharedActions.downloadFileFailure, (state, action) => ({
       ...state,
@@ -186,6 +185,18 @@ export const sharedFeature = createFeature({
       timezoneLoading: false,
       timezoneDetail: null,
       timezoneList: null
+    })),
+    on(SharedActions.downloadExperimentData, (state) => ({
+      ...state,
+      isDownloading: true
+    })),
+    on(SharedActions.downloadExperimentDataFailure, (state) => ({
+      ...state,
+      isDownloading: false
+    })),
+    on(SharedActions.downloadExperimentDataSuccess, SharedActions.downloadExperimentDataDone, (state) => ({
+      ...state,
+      isDownloading: false
     }))
   )
 });

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { filter, first, Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Store } from '@ngrx/store';
 import { AppConfig } from '@app/app-config';
 import { QueryFilterService } from '@shared/service/query-filter.service';
@@ -35,11 +35,11 @@ export class ExperimentApiService {
     `);
   }
 
-  public download(keyword: any): Observable<Blob> {
+  public download(experimentId: any): Observable<HttpResponse<any>> {
     return this.http.get(
-      `${this.config.apiBaseUrl}/experiments/${keyword}/download
+      `${this.config.apiBaseUrl}/experiments/${experimentId}/download
     `,
-      { responseType: 'blob' }
+      { headers: {}, responseType: 'blob', observe: 'response' }
     );
   }
 

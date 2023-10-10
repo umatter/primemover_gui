@@ -10,6 +10,9 @@ import { SharedActions } from '@shared/store/shared.actions';
 import { selectQueryFilter } from '@shared/store/shared.reducer';
 import { JobApiService } from '@app/job/service/job-api.service';
 import { TimezoneService } from '@shared/service/timezone.service';
+import { ExperimentApiService } from '@app/experiment/service/experiment-api.service';
+import { DownloadService } from '@shared/service/download.service';
+import { saveAs } from 'file-saver';
 
 @Injectable()
 export class SharedEffects {
@@ -97,13 +100,39 @@ export class SharedEffects {
             document.body.appendChild(anchor);
             anchor.click();
             window.URL.revokeObjectURL(url);
-            return SharedActions.downloadFileSuccess({ response: 'download report' });
+
+            return SharedActions.downloadFileSuccess();
           }),
-          catchError((error) => of(SharedActions.downloadFileFailure({ error: 'download report' })))
+          catchError((error) => of(SharedActions.downloadFileFailure({ error })))
         );
       })
     );
   });
+
+  downloadExperimentData$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(SharedActions.downloadExperimentData),
+      switchMap((action) => {
+        return this.experimentApiService.download(action.experiment.id).pipe(
+          map((response) => SharedActions.downloadExperimentDataDone({ experiment: action.experiment, response })),
+          catchError((error) => of(SharedActions.downloadExperimentDataFailure({ error })))
+        );
+      })
+    );
+  });
+
+  downloadExperimentDataDone$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(SharedActions.downloadExperimentDataDone),
+        map((action) => {
+          saveAs(action.response.body, `${action.experiment.id} ${action.experiment.name}.zip`);
+          return SharedActions.downloadExperimentDataSuccess();
+        })
+      );
+    },
+    { dispatch: false }
+  );
 
   timezoneListRequested$ = createEffect(() =>
     this.actions$.pipe(
@@ -137,6 +166,8 @@ export class SharedEffects {
     private fileService: FileUploadService,
     private router: Router,
     private jobApiService: JobApiService,
-    private timezoneService: TimezoneService
+    private experimentApiService: ExperimentApiService,
+    private timezoneService: TimezoneService,
+    private downloadService: DownloadService
   ) {}
 }

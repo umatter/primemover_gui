@@ -5,6 +5,7 @@ import { Crawler } from '@app/crawler/model/crawler';
 import { Queue } from '@app/queue/model/queue';
 import { Job } from '@app/job/model/Job';
 import { TimezoneDetail } from '@shared/service/timezone.service';
+import { HttpResponse } from '@angular/common/http';
 
 export const SharedActions = createActionGroup({
   source: 'Shared',
@@ -26,8 +27,12 @@ export const SharedActions = createActionGroup({
     'Upload crawler requested': props<{ file: File }>(),
     'Upload crawler success': props<{ response: any }>(),
     'Upload crawler failure': props<{ error: any }>(),
+    'Download experiment data': props<{ experiment: Experiment }>(),
+    'Download experiment data success': emptyProps(),
+    'Download experiment data done': props<{ experiment: Experiment; response: HttpResponse<any> }>(),
+    'Download experiment data failure': props<{ error: any }>(),
     'Download File': props<{ job: Job | null }>(),
-    'Download File Success': props<{ response: any }>(),
+    'Download File Success': emptyProps(),
     'Download File Failure': props<{ error: any }>(),
     'Timezone reset requested': emptyProps(),
     'Timezone list requested': emptyProps(),
