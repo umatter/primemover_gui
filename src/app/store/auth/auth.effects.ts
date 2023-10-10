@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { Store } from '@ngrx/store';
-import { AuthService } from '../../core/services/auth.service';
+import { AuthService } from '@core/services/auth.service';
 import {
   fetchUserDataFailed,
   fetchUserDataSuccess,
@@ -11,10 +10,8 @@ import {
   signInFailed,
   signInRequested
 } from './auth.actions';
-import { catchError, exhaustMap, map, switchMap, tap } from 'rxjs';
-import { of } from 'rxjs';
-import { Router } from '@angular/router';
-import { LocalStorageService } from '../../core/services/local-storage.service';
+import { catchError, map, of, switchMap, tap } from 'rxjs';
+import { LocalStorageService } from '@core/services/local-storage.service';
 
 @Injectable()
 export class AuthEffects {
@@ -53,9 +50,7 @@ export class AuthEffects {
 
   constructor(
     private actions$: Actions,
-    private store: Store,
     private authService: AuthService,
-    private router: Router,
     private localStorageService: LocalStorageService
   ) {}
 }

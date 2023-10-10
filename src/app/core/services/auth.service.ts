@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { User } from '../../store/auth/auth.actions';
-import { AppConfig } from '../../app-config';
+import { HttpClient } from '@angular/common/http';
+import { User } from '@app/store/auth/auth.actions';
+import { AppConfig } from '@app/app-config';
 
 export interface OAuthResource {
   token_type: string | null;
