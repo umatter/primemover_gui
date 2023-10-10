@@ -1,13 +1,13 @@
 <app-notification
   *ngIf="downloadError$ | async; let errorMessage"
-  [bodyText]="errorMessage"
+  [bodyText]="errorMessage?.message"
   [typeError]="true"
   titleText="Failure"
 >
 </app-notification>
 <app-notification
   *ngIf="downloadSuccess$ | async; let successMessage"
-  [bodyText]="successMessage"
+  [bodyText]="successMessage?.message"
   [typeSuccess]="true"
   titleText="Success"
 >
@@ -78,9 +78,9 @@
                   <button
                     (click)="downloadReport(item)"
                     *ngIf="item.reports.length > 0"
-                    class="text-gray-400 hover:text-indigo-900 ml-2"
+                    class="text-gray-400 hover:text-indigo-900 mr-2"
                   >
-                    <app-heroicon-download></app-heroicon-download>
+                    <app-heroicon-download-archive></app-heroicon-download-archive>
                   </button>
                   <button (click)="deleteRequested(item)" class="text-gray-400 hover:text-indigo-900 mr-2">
                     <app-heroicon-trash></app-heroicon-trash>

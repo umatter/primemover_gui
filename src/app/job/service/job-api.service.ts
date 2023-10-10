@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { filter, first } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
+import { filter, first, Observable } from 'rxjs';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Store } from '@ngrx/store';
 import { AppConfig } from '@app/app-config';
 import { QueryFilterService } from '@shared/service/query-filter.service';
@@ -54,7 +54,10 @@ export class JobApiService {
     return this.queryFilterParams;
   }
 
-  downloadReport(id: number) {
-    return this.http.get<any>(`${this.config.apiBaseUrl}/download/report/${id}`, { responseType: 'blob' as 'json' });
+  downloadReport(id: number): Observable<HttpResponse<any>> {
+    return this.http.get<any>(`${this.config.apiBaseUrl}/download/report/${id}`, {
+      responseType: 'blob' as 'json',
+      observe: 'response'
+    });
   }
 }

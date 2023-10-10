@@ -91,19 +91,14 @@ export class SharedEffects {
       ofType(SharedActions.downloadFile),
       switchMap((action) => {
         return this.jobApiService.downloadReport(action.job.id).pipe(
-          map((data: Blob) => {
-            const blob = new Blob([data], { type: 'application/zip' });
-            const url = window.URL.createObjectURL(blob);
-            const anchor = document.createElement('a');
-            anchor.href = url;
-            anchor.download = 'job-' + action.job.id;
-            document.body.appendChild(anchor);
-            anchor.click();
-            window.URL.revokeObjectURL(url);
-
+          map((data) => {
+            saveAs(data.body, `${action.job.id} ${action.job.name}.zip`);
             return SharedActions.downloadFileSuccess();
           }),
-          catchError((error) => of(SharedActions.downloadFileFailure({ error })))
+          catchError((error) => {
+            console.log(error);
+            return of(SharedActions.downloadFileFailure({ error }));
+          })
         );
       })
     );

@@ -28,6 +28,7 @@ import { AsyncPipe, NgClass, NgForOf, NgIf } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { HeroiconDownloadComponent } from '@shared/icon/heroicon-download/heroicon-download.component';
 import { StatusComponent } from '@app/queue/status/status.component';
+import { HeroiconDownloadArchiveComponent } from '@shared/icon/heroicon-download-archive/heroicon-download-archive.component';
 
 @Component({
   selector: 'app-job',
@@ -49,7 +50,8 @@ import { StatusComponent } from '@app/queue/status/status.component';
     NgForOf,
     NgClass,
     HeroiconDownloadComponent,
-    StatusComponent
+    StatusComponent,
+    HeroiconDownloadArchiveComponent
   ],
   standalone: true
 })
