@@ -7,6 +7,7 @@ import { QueryFilterType } from '@shared/store/shared.selectors';
 import { Job } from '@app/job/model/Job';
 import { SharedActions } from '@shared/store/shared.actions';
 import { TimezoneDetail } from '@shared/service/timezone.service';
+import { HttpResponseBase } from '@angular/common/http';
 
 export interface SharedState {
   queryFilter: QueryFilter[];
@@ -15,15 +16,12 @@ export interface SharedState {
   currentQueue: Queue | null;
   currentJob: Job | null;
   pageRequested: number;
-  isUploading: boolean;
-  uploadError: any;
-  error: object;
-  isDownloading: boolean;
-  downloadError: any;
+  error: HttpResponseBase | null;
   downloadSuccess: any;
   timezoneList: string[];
   timezoneLoading: boolean;
   timezoneDetail: TimezoneDetail;
+  isLoading: boolean;
 }
 
 export const initialState: SharedState = {
@@ -39,14 +37,11 @@ export const initialState: SharedState = {
       value: 30
     }
   ],
-  isUploading: false,
-  uploadError: null,
-  isDownloading: false,
-  downloadError: null,
   downloadSuccess: null,
   timezoneList: [],
   timezoneLoading: false,
-  timezoneDetail: null
+  timezoneDetail: null,
+  isLoading: false
 };
 export const sharedFeature = createFeature({
   name: 'shared',
@@ -117,40 +112,46 @@ export const sharedFeature = createFeature({
     on(SharedActions.uploadExperimentFailure, (state, action) => {
       return {
         ...state,
-        isUploading: false,
-        uploadError: action.error
+        isLoading: false,
+        error: action.error
       };
     }),
 
     on(SharedActions.uploadExperimentRequested, (state) => {
-      return { ...state, isUploading: true, uploadError: null };
+      return { ...state, isLoading: true, error: null };
     }),
     on(SharedActions.uploadExperimentSuccess, (state) => {
-      return { ...state, isUploading: false, uploadError: null };
+      return { ...state, isLoading: false, error: null };
     }),
     on(SharedActions.uploadCrawlerFailure, (state, action) => {
       return {
         ...state,
-        isUploading: false,
-        uploadError: action.error
+        isLoading: false,
+        error: action.error
       };
     }),
 
     on(SharedActions.uploadCrawlerRequested, (state) => {
-      return { ...state, isUploading: true, uploadError: null };
+      return { ...state, isLoading: true, error: null };
     }),
     on(SharedActions.uploadCrawlerSuccess, (state) => {
-      return { ...state, isUploading: false, uploadError: null };
+      return { ...state, isLoading: false, error: null };
     }),
-    on(SharedActions.downloadFile, (state) => ({ ...state, isDownloading: true })),
-    on(SharedActions.downloadFileSuccess, (state, action) => ({
+    on(SharedActions.downloadFile, (state) => ({ ...state, isLoading: true })),
+    on(SharedActions.apiFailure, SharedActions.downloadFileFailure, (state, action) => ({
       ...state,
-      isDownloading: false
+      error: action.error,
+      isLoading: false
     })),
-    on(SharedActions.downloadFileFailure, (state, action) => ({
+    on(SharedActions.clientFailure, (state, action) => ({
       ...state,
-      isDownloading: false,
-      downloadError: action.error
+      error: action.error,
+      isLoading: false
+    })),
+    on(SharedActions.emptyFailure, (state, action) => ({
+      ...state,
+      error: null,
+      isLoading: false
     })),
     on(SharedActions.timezoneListRequested, (state) => ({
       ...state,
@@ -188,35 +189,33 @@ export const sharedFeature = createFeature({
     })),
     on(SharedActions.downloadExperimentData, (state) => ({
       ...state,
-      isDownloading: true
+      isLoading: true
     })),
-    on(SharedActions.downloadExperimentDataFailure, (state) => ({
-      ...state,
-      isDownloading: false
-    })),
-    on(SharedActions.downloadExperimentDataSuccess, SharedActions.downloadExperimentDataDone, (state) => ({
-      ...state,
-      isDownloading: false
-    }))
+
+    on(
+      SharedActions.downloadExperimentDataSuccess,
+      SharedActions.downloadExperimentDataDone,
+      SharedActions.loadingDone,
+      SharedActions.downloadExperimentDataFailure,
+      SharedActions.downloadFileSuccess,
+      (state) => ({
+        ...state,
+        isLoading: false
+      })
+    )
   )
 });
 
 export const {
   name,
   reducer: sharedReducer,
-  selectSharedState,
   selectQueryFilter,
-  selectCurrentExperiment,
   selectCurrentCrawler,
-  selectCurrentQueue,
-  selectCurrentJob,
   selectPageRequested,
-  selectIsUploading,
-  selectUploadError,
-  selectIsDownloading,
-  selectDownloadError,
   selectDownloadSuccess,
   selectTimezoneList,
   selectTimezoneLoading,
-  selectTimezoneDetail
+  selectTimezoneDetail,
+  selectError,
+  selectIsLoading
 } = sharedFeature;

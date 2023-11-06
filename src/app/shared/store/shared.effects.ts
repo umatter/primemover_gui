@@ -11,7 +11,6 @@ import { selectQueryFilter } from '@shared/store/shared.reducer';
 import { JobApiService } from '@app/job/service/job-api.service';
 import { TimezoneService } from '@shared/service/timezone.service';
 import { ExperimentApiService } from '@app/experiment/service/experiment-api.service';
-import { DownloadService } from '@shared/service/download.service';
 import { saveAs } from 'file-saver';
 
 @Injectable()
@@ -64,8 +63,8 @@ export class SharedEffects {
       concatLatestFrom(() => this.store.pipe(select(selectCurrentExperiment))),
       switchMap(([action, currentExperiment]) => {
         return this.fileService.uploadExperiment(action.file, currentExperiment.id).pipe(
-          map((response) => SharedActions.uploadExperimentSuccess(response)),
-          catchError((error) => of(SharedActions.uploadExperimentFailure(error)))
+          map((response) => SharedActions.uploadExperimentSuccess(response))
+          //catchError((error) => of(SharedActions.uploadExperimentFailure(error)))
         );
       }),
       tap(() => this.router.navigate(['/crawlers']))
@@ -78,8 +77,8 @@ export class SharedEffects {
       concatLatestFrom(() => this.store.pipe(select(selectCurrentCrawler))),
       switchMap(([action, currentCrawler]) => {
         return this.fileService.uploadCrawler(action.file, currentCrawler.id).pipe(
-          map((response) => SharedActions.uploadCrawlerSuccess(response)),
-          catchError((error) => of(SharedActions.uploadCrawlerFailure(error)))
+          map((response) => SharedActions.uploadCrawlerSuccess(response))
+          // catchError((error) => of(SharedActions.uploadCrawlerFailure(error)))
         );
       }),
       tap(() => this.router.navigate(['/queues']))
@@ -94,8 +93,8 @@ export class SharedEffects {
           map((data) => {
             saveAs(data.body, `${action.job.id} ${action.job.name}.zip`);
             return SharedActions.downloadFileSuccess();
-          }),
-          catchError((error) => of(SharedActions.downloadFileFailure({ error })))
+          })
+          //catchError((error) => of(SharedActions.downloadFileFailure({ error })))
         );
       })
     );
@@ -106,8 +105,8 @@ export class SharedEffects {
       ofType(SharedActions.downloadExperimentData),
       switchMap((action) => {
         return this.experimentApiService.download(action.experiment.id).pipe(
-          map((response) => SharedActions.downloadExperimentDataDone({ experiment: action.experiment, response })),
-          catchError((error) => of(SharedActions.downloadExperimentDataFailure({ error })))
+          map((response) => SharedActions.downloadExperimentDataDone({ experiment: action.experiment, response }))
+          // catchError((error) => of(SharedActions.downloadExperimentDataFailure({ error })))
         );
       })
     );
@@ -131,8 +130,8 @@ export class SharedEffects {
       ofType(SharedActions.timezoneListRequested),
       switchMap(() => {
         return this.timezoneService.getList().pipe(
-          map((response) => SharedActions.timezoneListSuccess({ response })),
-          catchError((error) => of(SharedActions.timezoneListError(error)))
+          map((response) => SharedActions.timezoneListSuccess({ response }))
+          // catchError((error) => of(SharedActions.timezoneListError(error)))
         );
       })
     )
@@ -143,8 +142,8 @@ export class SharedEffects {
       ofType(SharedActions.timezoneDetailRequested),
       switchMap((action) => {
         return this.timezoneService.getDetail(action.timezone).pipe(
-          map((detail) => SharedActions.timezoneDetailSuccess({ detail })),
-          catchError((error) => of(SharedActions.timezoneDetailError(error)))
+          map((detail) => SharedActions.timezoneDetailSuccess({ detail }))
+          // catchError((error) => of(SharedActions.timezoneDetailError(error)))
         );
       })
     )
@@ -159,7 +158,6 @@ export class SharedEffects {
     private router: Router,
     private jobApiService: JobApiService,
     private experimentApiService: ExperimentApiService,
-    private timezoneService: TimezoneService,
-    private downloadService: DownloadService
+    private timezoneService: TimezoneService
   ) {}
 }

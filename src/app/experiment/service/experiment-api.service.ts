@@ -11,6 +11,7 @@ import { PaginationType } from '@shared/pagination/type';
 import { PaginationService } from '@shared/pagination/pagination.service';
 import { QueryParams } from '@ngrx/data';
 import { selectPageRequested } from '@shared/store/shared.reducer';
+import { httpContext } from '@shared/error-handler/http-context';
 
 @Injectable({
   providedIn: 'root'
@@ -39,7 +40,7 @@ export class ExperimentApiService {
     return this.http.get(
       `${this.config.apiBaseUrl}/experiments/${experimentId}/download
     `,
-      { headers: {}, responseType: 'blob', observe: 'response' }
+      { headers: {}, responseType: 'blob', observe: 'response', context: httpContext }
     );
   }
 

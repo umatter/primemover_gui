@@ -5,7 +5,7 @@ import { Crawler } from '@app/crawler/model/crawler';
 import { Queue } from '@app/queue/model/queue';
 import { Job } from '@app/job/model/Job';
 import { TimezoneDetail } from '@shared/service/timezone.service';
-import { HttpResponse } from '@angular/common/http';
+import { HttpResponse, HttpResponseBase } from '@angular/common/http';
 
 export const SharedActions = createActionGroup({
   source: 'Shared',
@@ -40,6 +40,10 @@ export const SharedActions = createActionGroup({
     'Timezone list error': props<{ error: any }>(),
     'Timezone detail requested': props<{ timezone: string }>(),
     'Timezone detail success': props<{ detail: TimezoneDetail }>(),
-    'Timezone detail error': props<{ error: any }>()
+    'Timezone detail error': props<{ error: any }>(),
+    'Api failure': props<{ error: HttpResponseBase | any }>(),
+    'Client failure': props<{ error: HttpResponseBase | any }>(),
+    'Empty failure': emptyProps(),
+    'Loading done': emptyProps()
   }
 });

@@ -9,6 +9,13 @@
           <h2 class="sr-only" id="section-1-title">Section title</h2>
           <div class="overflow-hidden rounded-lg bg-white shadow">
             <div class="p-6">
+              <app-notification
+                *ngIf="error$ | async; let errorMessage"
+                [bodyText]="errorMessage.statusText"
+                [typeError]="true"
+                titleText="Failure"
+              >
+              </app-notification>
               <router-outlet></router-outlet>
             </div>
           </div>

@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { httpContext } from '@shared/error-handler/http-context';
 
 export interface TimezoneDetail {
   abbreviation: string;
@@ -25,10 +26,12 @@ export class TimezoneService {
   constructor(private httpClient: HttpClient) {}
 
   getList(): Observable<string[]> {
-    return this.httpClient.get<string[]>('https://worldtimeapi.org/api/timezone');
+    return this.httpClient.get<string[]>('https://worldtimeapi.org/api/timezone', { context: httpContext });
   }
 
   getDetail(timezone: string): Observable<TimezoneDetail> {
-    return this.httpClient.get<TimezoneDetail>('https://worldtimeapi.org/api/timezone/' + timezone);
+    return this.httpClient.get<TimezoneDetail>('https://worldtimeapi.org/api/timezone/' + timezone, {
+      context: httpContext
+    });
   }
 }

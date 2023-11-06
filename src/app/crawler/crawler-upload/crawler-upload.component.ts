@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { CrawlerService } from '@app/entity/service';
 import { requiredFileType } from '@app/shared/file-upload/file.validator';
 import { SharedActions } from '@app/shared/store/shared.actions';
-import { selectCurrentCrawler, selectIsUploading, selectUploadError } from '@app/shared/store/shared.reducer';
+import { selectCurrentCrawler, selectError, selectIsLoading } from '@app/shared/store/shared.reducer';
 import { select, Store } from '@ngrx/store';
 
 import { fadeIn } from '@shared/animation/trigger';
@@ -48,13 +48,13 @@ export class CrawlerUploadComponent implements OnInit, OnDestroy {
 
   constructor(private store: Store, public router: Router, private entityService: CrawlerService) {
     this.currentCrawler$ = this.store.pipe(select(selectCurrentCrawler));
-    this.uploadError$ = this.store.select(selectUploadError);
+    this.uploadError$ = this.store.select(selectError);
     this.entityService
       .getAll()
       .pipe(distinctUntilChanged())
       .subscribe((crawlers) => (this.crawlers = crawlers));
 
-    this.initLoading(entityService.loading$, this.store.pipe(select(selectIsUploading)));
+    this.initLoading(entityService.loading$, this.store.pipe(select(selectIsLoading)));
   }
 
   get fileUpload(): FormControl {

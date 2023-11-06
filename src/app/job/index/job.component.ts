@@ -10,12 +10,7 @@ import { JobApiService } from '@app/job/service/job-api.service';
 import { Router, RouterLink } from '@angular/router';
 import { Meta } from '@shared/pagination/model';
 import { SharedActions } from '@shared/store/shared.actions';
-import {
-  selectDownloadError,
-  selectDownloadSuccess,
-  selectIsDownloading,
-  selectQueryFilter
-} from '@shared/store/shared.reducer';
+import { selectDownloadSuccess, selectError, selectIsLoading, selectQueryFilter } from '@shared/store/shared.reducer';
 import { HeroiconTrashComponent } from '@shared/icon/heroicon-trash/heroicon-trash.component';
 import { LinkSortableComponent } from '@shared/link/link-sortable/link-sortable.component';
 import { NotificationComponent } from '@shared/overlay/notification/notification.component';
@@ -58,12 +53,12 @@ import { HeroiconDownloadArchiveComponent } from '@shared/icon/heroicon-download
 export class JobComponent implements OnDestroy {
   isLoading$: Observable<boolean>;
   paginationConfig: PaginatePipeArgs;
-  entities$: Observable<Job[] | any>;
+  entities$: Observable<Job[]>;
   entityToDelete: Job | null = null;
   queryFilter$: Observable<QueryFilter[]>;
   currentJob$: Observable<Job>;
   pageMeta$: Observable<Meta>;
-  downloadError$: Observable<any>;
+  error$: Observable<any>;
   downloadSuccess$: Observable<any>;
 
   private subscriptions = new Subscription();
@@ -77,7 +72,7 @@ export class JobComponent implements OnDestroy {
     this.pageMeta$ = this.entityService.pageMeta$;
     this.entities$ = this.entityService.entities$;
     this.isLoading$ = this.entityService.loading$;
-    this.downloadError$ = this.store.select(selectDownloadError);
+    this.error$ = this.store.select(selectError);
     this.downloadSuccess$ = this.store.select(selectDownloadSuccess);
 
     this.queryFilter$ = this.store.select(selectQueryFilter);
@@ -109,7 +104,7 @@ export class JobComponent implements OnDestroy {
   }
 
   downloadReport(job: Job): void {
-    this.isLoading$ = this.store.select(selectIsDownloading);
+    this.isLoading$ = this.store.select(selectIsLoading);
     this.store.dispatch(SharedActions.downloadFile({ job: job }));
   }
 

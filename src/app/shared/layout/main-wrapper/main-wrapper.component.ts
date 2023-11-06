@@ -1,24 +1,24 @@
 import { Component } from '@angular/core';
 import { fadeIn } from '../../animation/trigger';
-import { Observable } from 'rxjs';
-import { select, Store } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 import { selectIsSignedIn } from '@app/store/auth/auth.selectors';
 import { RouterOutlet } from '@angular/router';
 import { HeaderComponent } from '@shared/layout/header/header.component';
 import { MetadataComponent } from '@shared/metadata/metadata.component';
 import { AsyncPipe, NgIf } from '@angular/common';
+import { NotificationComponent } from '@shared/overlay/notification/notification.component';
+import { selectError } from '@shared/store/shared.reducer';
 
 @Component({
   selector: 'app-main-wrapper',
   templateUrl: './main-wrapper.component.html',
   standalone: true,
-  imports: [RouterOutlet, HeaderComponent, MetadataComponent, AsyncPipe, NgIf],
+  imports: [RouterOutlet, HeaderComponent, MetadataComponent, AsyncPipe, NgIf, NotificationComponent],
   animations: [fadeIn]
 })
 export class MainWrapperComponent {
-  isLoggedIn$: Observable<boolean>;
+  isLoggedIn$ = this.store.select(selectIsSignedIn);
+  error$ = this.store.select(selectError);
 
-  constructor(private store: Store) {
-    this.isLoggedIn$ = store.pipe(select(selectIsSignedIn));
-  }
+  constructor(private store: Store) {}
 }

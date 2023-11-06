@@ -10,12 +10,12 @@ import { selectCurrentExperiment } from '@shared/store/shared.selectors';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { requiredFileType } from '@shared/file-upload/file.validator';
 import { SharedActions } from '@shared/store/shared.actions';
-import { selectIsUploading, selectUploadError } from '@shared/store/shared.reducer';
 import { NotificationComponent } from '@shared/overlay/notification/notification.component';
 import { LoadingSpinnerComponent } from '@shared/overlay/loading-spinner/loading-spinner.component';
 import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import { FileUploadComponent } from '@shared/file-upload/file-upload.component';
+import { selectError, selectIsLoading } from '@shared/store/shared.reducer';
 
 @Component({
   selector: 'app-experiment-upload',
@@ -49,13 +49,13 @@ export class ExperimentUploadComponent implements OnDestroy, OnInit {
 
   constructor(private store: Store, public router: Router, private entityService: ExperimentService) {
     this.currentExperiment$ = this.store.pipe(select(selectCurrentExperiment));
-    this.uploadError$ = this.store.select(selectUploadError);
+    this.uploadError$ = this.store.select(selectError);
     this.entityService
       .getAll()
       .pipe(distinctUntilChanged())
       .subscribe((experiments) => (this.experiments = experiments));
 
-    this.initLoading(entityService.loading$, this.store.pipe(select(selectIsUploading)));
+    this.initLoading(entityService.loading$, this.store.pipe(select(selectIsLoading)));
   }
 
   get fileUpload(): FormControl {

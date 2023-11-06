@@ -11,6 +11,7 @@ import { Meta } from '@shared/pagination/model';
 import { PaginationType } from '@shared/pagination/type';
 import { PaginationService } from '@shared/pagination/pagination.service';
 import { selectPageRequested } from '@shared/store/shared.reducer';
+import { httpContext } from '@shared/error-handler/http-context';
 
 @Injectable({
   providedIn: 'root'
@@ -56,6 +57,7 @@ export class JobApiService {
 
   downloadReport(id: number): Observable<HttpResponse<any>> {
     return this.http.get<any>(`${this.config.apiBaseUrl}/download/report/${id}`, {
+      context: httpContext,
       responseType: 'blob' as 'json',
       observe: 'response'
     });

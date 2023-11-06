@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { ErrorHandler, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -13,7 +13,6 @@ import { EffectsModule } from '@ngrx/effects';
 import { authReducer } from './store/auth/auth.reducer';
 import { AuthEffects } from './store/auth/auth.effects';
 import { TokenInterceptor } from '@core/interceptors/token.interceptor';
-import { ErrorInterceptor } from '@core/interceptors/error.interceptor';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { Language, LanguageFilePath } from 'src/app/core/language/language.enum';
@@ -32,6 +31,9 @@ import { AdditionalEntityCollectionReducerMethodsFactory } from './entity/reduce
 import { ContainerComponent } from '@shared/layout/container/container.component';
 import { AsyncPipe, NgIf } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
+import { ErrorInterceptor } from '@shared/error-handler/error.interceptor';
+import { CustomHandlerService } from '@shared/error-handler/custom-handler.service';
+import { NotificationComponent } from '@shared/overlay/notification/notification.component';
 
 @NgModule({
   declarations: [AppComponent],
@@ -46,6 +48,7 @@ import { RouterOutlet } from '@angular/router';
     AsyncPipe,
     NgIf,
     RouterOutlet,
+    NotificationComponent,
     StoreModule.forFeature('auth', authReducer),
     EffectsModule.forFeature([AuthEffects]),
     TranslateModule.forRoot({
@@ -90,10 +93,19 @@ import { RouterOutlet } from '@angular/router';
       useClass: TokenInterceptor,
       multi: true
     },
+    // {
+    //   provide: HTTP_INTERCEPTORS,
+    //   useClass: ErrorInterceptor,
+    //   multi: true
+    // },
     {
+      provide: ErrorHandler,
+      useClass: CustomHandlerService
+    },
+    {
+      multi: true,
       provide: HTTP_INTERCEPTORS,
-      useClass: ErrorInterceptor,
-      multi: true
+      useClass: ErrorInterceptor
     }
   ],
   bootstrap: [AppComponent]

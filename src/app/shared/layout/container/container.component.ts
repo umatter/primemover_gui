@@ -8,6 +8,7 @@ import { ConfirmationModalComponent } from '@shared/dialog/confirmation-modal/co
 import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
 import { MainWrapperComponent } from '@shared/layout/main-wrapper/main-wrapper.component';
 import { NavbarComponent } from '@shared/layout/navbar/navbar.component';
+import { NotificationComponent } from '@shared/overlay/notification/notification.component';
 
 @Component({
   selector: 'app-container',
@@ -21,7 +22,8 @@ import { NavbarComponent } from '@shared/layout/navbar/navbar.component';
     NgForOf,
     RouterLinkActive,
     MainWrapperComponent,
-    NavbarComponent
+    NavbarComponent,
+    NotificationComponent
   ],
   templateUrl: './container.component.html'
 })

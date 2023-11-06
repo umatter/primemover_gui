@@ -13,4 +13,5 @@ export interface Job {
   captcha_found: any;
   captcha_solved: any;
   reports: any;
+  reports_with_path_count: number;
 }

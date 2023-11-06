@@ -1,5 +1,5 @@
 import { Component, OnDestroy } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
+import { combineLatest, map, Observable, Subscription } from 'rxjs';
 import { select, Store } from '@ngrx/store';
 
 import { NgxPaginationModule, PaginatePipeArgs } from 'ngx-pagination';
@@ -9,7 +9,7 @@ import { Experiment } from '../model/experiment';
 import { ExperimentService } from '@app/entity/service';
 import { ExperimentApiService } from '@app/experiment/service/experiment-api.service';
 import { QueryFilterType, selectCurrentExperiment } from '@shared/store/shared.selectors';
-import { selectIsDownloading, selectQueryFilter } from '@shared/store/shared.reducer';
+import { selectIsLoading, selectQueryFilter } from '@shared/store/shared.reducer';
 import { SharedActions } from '@shared/store/shared.actions';
 import { LoadingSpinnerComponent } from '@shared/overlay/loading-spinner/loading-spinner.component';
 import { AsyncPipe, DatePipe, NgClass, NgForOf, NgIf } from '@angular/common';
@@ -48,7 +48,6 @@ import { HeroiconDownloadArchiveComponent } from '@shared/icon/heroicon-download
 export class ExperimentComponent implements OnDestroy {
   paginationConfig: PaginatePipeArgs;
   isLoading$ = this.entityService.loading$;
-  isDownloading$ = this.store.select(selectIsDownloading);
   entities$: Observable<Experiment[] | any> = this.entityService.entities$;
   experimentToDelete: Experiment | null = null;
   queryFilter$ = this.store.select(selectQueryFilter);
@@ -67,6 +66,11 @@ export class ExperimentComponent implements OnDestroy {
 
     this.getData();
     this.initPagination();
+    this.initLoading(entityService.loading$, this.store.pipe(select(selectIsLoading)));
+  }
+
+  initLoading(...sources: Observable<boolean>[]): void {
+    this.isLoading$ = combineLatest(sources).pipe(map((loadings) => loadings.some((loading) => loading)));
   }
 
   getData(page: number = 1): void {

@@ -118,6 +118,6 @@ export const entityConfig = {
 
 export const defaultDataServiceConfig: DefaultDataServiceConfig = {
   root: environment.configService.apiBaseUrl,
-  timeout: 3000,
+  timeout: 30000,
   trailingSlashEndpoints: true
 };

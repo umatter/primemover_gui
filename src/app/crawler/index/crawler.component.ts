@@ -10,7 +10,7 @@ import { QueryFilter } from '@shared/model/query-filter';
 import { QueryFilterType, selectCurrentCrawler } from '@shared/store/shared.selectors';
 import { Meta } from '@shared/pagination/model';
 import { SharedActions } from '@shared/store/shared.actions';
-import { selectQueryFilter, selectUploadError } from '@shared/store/shared.reducer';
+import { selectError, selectQueryFilter } from '@shared/store/shared.reducer';
 import { Router, RouterLink } from '@angular/router';
 import { NotificationComponent } from '@shared/overlay/notification/notification.component';
 import { LoadingSpinnerComponent } from '@shared/overlay/loading-spinner/loading-spinner.component';
@@ -71,7 +71,7 @@ export class CrawlerComponent implements OnDestroy {
     this.pageMeta$ = entityService.pageMeta$;
     this.queryFilter$ = this.store.select(selectQueryFilter);
     this.currentCrawler$ = this.store.select(selectCurrentCrawler);
-    this.uploadError$ = this.store.select(selectUploadError);
+    this.uploadError$ = this.store.select(selectError);
     this.getData();
     this.initPagination();
   }
