@@ -10,8 +10,10 @@
           <div class="overflow-hidden rounded-lg bg-white shadow">
             <div class="p-6">
               <app-notification
+                (closeRequested)="dismiss()"
                 *ngIf="error$ | async; let errorMessage"
                 [bodyText]="errorMessage.statusText"
+                [error]="errorMessage"
                 [typeError]="true"
                 titleText="Failure"
               >

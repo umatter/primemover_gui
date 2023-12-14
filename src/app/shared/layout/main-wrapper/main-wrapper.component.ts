@@ -8,6 +8,7 @@ import { MetadataComponent } from '@shared/metadata/metadata.component';
 import { AsyncPipe, NgIf } from '@angular/common';
 import { NotificationComponent } from '@shared/overlay/notification/notification.component';
 import { selectError } from '@shared/store/shared.reducer';
+import { SharedActions } from '@shared/store/shared.actions';
 
 @Component({
   selector: 'app-main-wrapper',
@@ -21,4 +22,8 @@ export class MainWrapperComponent {
   error$ = this.store.select(selectError);
 
   constructor(private store: Store) {}
+
+  dismiss() {
+    this.store.dispatch(SharedActions.errorResetRequested());
+  }
 }

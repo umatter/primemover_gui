@@ -38,7 +38,7 @@ export class ExperimentUploadComponent implements OnDestroy, OnInit {
   isLoading$: Observable<boolean>;
   currentExperiment$: Observable<Experiment>;
   subscriptions = new Subscription();
-  uploadError$: Observable<any>;
+  uploadError$ = this.store.select(selectError);
   experiment: Experiment | null = null;
   experiments: Experiment[] = [];
 
@@ -49,7 +49,6 @@ export class ExperimentUploadComponent implements OnDestroy, OnInit {
 
   constructor(private store: Store, public router: Router, private entityService: ExperimentService) {
     this.currentExperiment$ = this.store.pipe(select(selectCurrentExperiment));
-    this.uploadError$ = this.store.select(selectError);
     this.entityService
       .getAll()
       .pipe(distinctUntilChanged())

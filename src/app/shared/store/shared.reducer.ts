@@ -49,7 +49,7 @@ export const sharedFeature = createFeature({
     initialState,
     on(SharedActions.init, (): SharedState => ({ ...initialState })),
     on(SharedActions.errorRequested, (state, action): SharedState => ({ ...initialState, error: action.error })),
-    on(SharedActions.errorResetRequested, (state) => ({ ...state, error: null })),
+    on(SharedActions.errorResetRequested, (state) => ({ ...state, error: null, isLoading: false })),
     on(SharedActions.clearQueryFilterRequested, (state) => ({ ...state, queryFilter: [] })),
     on(SharedActions.updateQueryFilter, (state, action) => ({ ...state, queryFilter: action.updatedFilter })),
     on(SharedActions.requestPage, (state, action) => ({ ...state, pageRequested: action.page })),

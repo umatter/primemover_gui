@@ -13,7 +13,7 @@ import { Observable, Subscription } from 'rxjs';
 import { Proxy } from '@app/proxy/model/proxy';
 import { ProxyService } from '@app/entity/service';
 import { Router } from '@angular/router';
-import { ProxyType } from '@app/enum/proxy-type.enum';
+import { ProxyType, usernamePasswortRequiredFor } from '@app/enum/proxy-type.enum';
 import { TranslateModule } from '@ngx-translate/core';
 import { AutocompleteSelectComponent } from '@shared/autocomplete-select/autocomplete-select.component';
 import { HeroiconTrashComponent } from '@shared/icon/heroicon-trash/heroicon-trash.component';
@@ -45,6 +45,7 @@ export class ProxyFormComponent implements OnDestroy, OnInit {
   showAutocompletion: boolean;
   proxyTypes = Object.values(ProxyType);
   protected readonly ProxyType = ProxyType;
+  protected readonly usernamePasswortRequiredFor = usernamePasswortRequiredFor;
 
   constructor(
     private store: Store,
@@ -142,7 +143,7 @@ export class ProxyFormComponent implements OnDestroy, OnInit {
     this.username?.clearValidators();
     this.password?.clearValidators();
 
-    if (this.type.value == ProxyType.GEOSURF) {
+    if (usernamePasswortRequiredFor.includes(this.type.value)) {
       this.username?.setValidators([Validators.required]);
       this.password?.setValidators([Validators.required]);
     }

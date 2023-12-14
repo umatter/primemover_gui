@@ -1,10 +1,3 @@
-<app-notification
-  *ngIf="uploadError$ | async; let errorMessage"
-  [bodyText]="errorMessage.message"
-  [typeError]="true"
-  titleText="Failure"
->
-</app-notification>
 <app-loading-spinner *ngIf="isLoading$ | async"></app-loading-spinner>
 <form [formGroup]="uploadForm">
   <div class="space-y-4">
