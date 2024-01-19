@@ -9,50 +9,50 @@
         <div class="overflow-hidden">
           <table *ngIf="entities$ | async" class="min-w-full divide-y divide-gray-300">
             <thead>
-              <tr>
-                <th class="py-3.5 pl-6 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0" scope="col">
-                  <app-link-sortable href="/agents" label="{{ 'common.id' | translate }}"></app-link-sortable>
-                </th>
-                <th class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900" scope="col">
-                  <app-link-sortable href="/agents" label="{{ 'common.name' | translate }}"></app-link-sortable>
-                </th>
+            <tr>
+              <th class="py-3.5 pl-6 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0" scope="col">
+                <app-link-sortable label="{{ 'common.id' | translate }}"></app-link-sortable>
+              </th>
+              <th class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900" scope="col">
+                <app-link-sortable label="{{ 'common.name' | translate }}"></app-link-sortable>
+              </th>
 
-                <th class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900" scope="col">
-                  {{ 'common.contact' | translate }}
-                </th>
-                <th class="relative py-3.5 pl-3 pr-6 sm:pr-0" scope="col">
-                  <span class="sr-only"></span>
-                </th>
-              </tr>
+              <th class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900" scope="col">
+                {{ 'common.contact' | translate }}
+              </th>
+              <th class="relative py-3.5 pl-3 pr-6 sm:pr-0" scope="col">
+                <span class="sr-only"></span>
+              </th>
+            </tr>
             </thead>
             <tbody class="divide-y divide-gray-200 bg-white">
-              <tr *ngFor="let item of entities$ | async | paginate : paginationConfig">
-                <td class="whitespace-nowrap py-4 pl-6 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
-                  {{ item.id }}
-                </td>
-                <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
-                  {{ item.name }}
-                </td>
+            <tr *ngFor="let item of entities$ | async | paginate : paginationConfig">
+              <td class="whitespace-nowrap py-4 pl-6 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
+                {{ item.id }}
+              </td>
+              <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
+                {{ item.name }}
+              </td>
 
-                <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
-                  {{ item.contact }}
-                </td>
-                <td class="relative whitespace-nowrap text-right text-sm font-medium sm:pr-0">
-                  <button (click)="editRequested(item)" class="text-gray-400 hover:text-indigo-900 mr-2">
-                    <app-heroicon-pencil-square></app-heroicon-pencil-square>
-                  </button>
-                  <button (click)="deleteRequested(item)" class="text-gray-400 hover:text-indigo-900">
-                    <app-heroicon-trash></app-heroicon-trash>
-                  </button>
-                </td>
-              </tr>
+              <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
+                {{ item.contact }}
+              </td>
+              <td class="relative whitespace-nowrap text-right text-sm font-medium sm:pr-0">
+                <button (click)="editRequested(item)" class="text-gray-400 hover:text-indigo-900 mr-2">
+                  <app-heroicon-pencil-square></app-heroicon-pencil-square>
+                </button>
+                <button (click)="deleteRequested(item)" class="text-gray-400 hover:text-indigo-900">
+                  <app-heroicon-trash></app-heroicon-trash>
+                </button>
+              </td>
+            </tr>
             </tbody>
             <tfoot>
-              <tr>
-                <th class="whitespace-nowrap px-3 py-4 text-sm text-gray-500" colspan="30">
-                  <app-pagination-controls (pageChange)="getData($event)" id="agents"></app-pagination-controls>
-                </th>
-              </tr>
+            <tr>
+              <th class="whitespace-nowrap px-3 py-4 text-sm text-gray-500" colspan="30">
+                <app-pagination-controls (pageChange)="getData($event)" id="agents"></app-pagination-controls>
+              </th>
+            </tr>
             </tfoot>
           </table>
         </div>

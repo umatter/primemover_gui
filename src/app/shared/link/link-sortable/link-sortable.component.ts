@@ -8,7 +8,7 @@ import { NgIf } from '@angular/common';
   standalone: true
 })
 export class LinkSortableComponent {
-  @Input() href: string = '#';
+  @Input() href: string = '';
   @Input() label: string = 'Label';
   @Input() sortIcon: boolean = false;
 

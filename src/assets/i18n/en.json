@@ -52,7 +52,7 @@
     "home": "Home",
     "hostName": "Host Name",
     "hostNamePlaceholder": "e.g. proxy.geosurf.io",
-    "id": "Id",
+    "id": "ID",
     "identification": "Identification",
     "identificationPlaceholder": "e.g. Browser-v10",
     "label": "Choose",
@@ -239,6 +239,7 @@
     "review": "Review",
     "running": "Running",
     "sipped": "Skipped",
+    "skipped": "Skipped",
     "success": "Success",
     "type": "Type",
     "unknown": "Unknown"
