@@ -9,10 +9,14 @@ export function sortByName(a: { name: string }, b: { name: string }): number {
   return a.name.localeCompare(b.name);
 }
 
+export function sortById(a: { id: number }, b: { id: number }): number {
+  return b.id - a.id;
+}
+
 const entityMetadata: EntityMetadataMap = {
   Experiment: {
     filterFn: filterBySearchTerm,
-    sortComparer: sortByName,
+    sortComparer: sortById,
     entityDispatcherOptions: {
       optimisticDelete: true
     },
@@ -23,7 +27,7 @@ const entityMetadata: EntityMetadataMap = {
   },
   Crawler: {
     filterFn: filterBySearchTerm,
-    sortComparer: sortByName,
+    sortComparer: sortById,
     entityDispatcherOptions: {
       optimisticDelete: true
     },
@@ -34,7 +38,7 @@ const entityMetadata: EntityMetadataMap = {
   },
   Queue: {
     filterFn: filterBySearchTerm,
-    sortComparer: sortByName,
+    sortComparer: sortById,
     entityDispatcherOptions: {
       optimisticDelete: true
     },
@@ -45,7 +49,7 @@ const entityMetadata: EntityMetadataMap = {
   },
   Job: {
     filterFn: filterBySearchTerm,
-    sortComparer: sortByName,
+    sortComparer: sortById,
     entityDispatcherOptions: {
       optimisticDelete: true
     },
@@ -56,7 +60,7 @@ const entityMetadata: EntityMetadataMap = {
   },
   Agent: {
     filterFn: filterBySearchTerm,
-    sortComparer: sortByName,
+    sortComparer: sortById,
     entityDispatcherOptions: {
       optimisticDelete: true
     },
@@ -67,7 +71,7 @@ const entityMetadata: EntityMetadataMap = {
   },
   Proxy: {
     filterFn: filterBySearchTerm,
-    sortComparer: sortByName,
+    sortComparer: sortById,
     entityDispatcherOptions: {
       optimisticDelete: true
     },
@@ -78,7 +82,7 @@ const entityMetadata: EntityMetadataMap = {
   },
   Configuration: {
     filterFn: filterBySearchTerm,
-    sortComparer: sortByName,
+    sortComparer: sortById,
     entityDispatcherOptions: {
       optimisticDelete: true
     },
@@ -89,7 +93,7 @@ const entityMetadata: EntityMetadataMap = {
   },
   Behavior: {
     filterFn: filterBySearchTerm,
-    sortComparer: sortByName,
+    sortComparer: sortById,
     entityDispatcherOptions: {
       optimisticDelete: true
     },
