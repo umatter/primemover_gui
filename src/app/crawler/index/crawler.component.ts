@@ -23,6 +23,7 @@ import { HeroiconClipboardDocumentComponent } from '@shared/icon/heroicon-clipbo
 import { SharedModule } from '@shared/shared.module';
 import { ControlsComponent } from '@shared/pagination/controls/controls.component';
 import { HeroiconUploadComponent } from '@shared/icon/heroicon-upload/heroicon-upload.component';
+import { SortBy } from '@shared/model/sort';
 
 @Component({
   selector: 'app-crawler',
@@ -57,7 +58,7 @@ export class CrawlerComponent implements OnDestroy {
   currentCrawler$: Observable<Crawler>;
   pageMeta$: Observable<Meta>;
   uploadError$: Observable<any>;
-
+  protected readonly SortBy = SortBy;
   private subscriptions = new Subscription();
 
   constructor(

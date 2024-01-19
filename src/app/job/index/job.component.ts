@@ -24,6 +24,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { HeroiconDownloadComponent } from '@shared/icon/heroicon-download/heroicon-download.component';
 import { StatusComponent } from '@app/queue/status/status.component';
 import { HeroiconDownloadArchiveComponent } from '@shared/icon/heroicon-download-archive/heroicon-download-archive.component';
+import { SortBy } from '@shared/model/sort';
 
 @Component({
   selector: 'app-job',
@@ -60,7 +61,7 @@ export class JobComponent implements OnDestroy {
   pageMeta$: Observable<Meta>;
   error$: Observable<any>;
   downloadSuccess$: Observable<any>;
-
+  protected readonly SortBy = SortBy;
   private subscriptions = new Subscription();
 
   constructor(

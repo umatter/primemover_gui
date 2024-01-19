@@ -9,9 +9,10 @@ import { Meta } from '@shared/pagination/model';
 import { PaginatePipeArgs } from 'ngx-pagination';
 import { PaginationType } from '@shared/pagination/type';
 import { PaginationService } from '@shared/pagination/pagination.service';
-import { QueryParams } from '@ngrx/data';
-import { selectPageRequested } from '@shared/store/shared.reducer';
+import { selectPageRequested, selectSort } from '@shared/store/shared.reducer';
 import { httpContext } from '@shared/error-handler/http-context';
+import { SortDirection } from '@shared/model/sort';
+import { concatLatestFrom } from '@ngrx/effects';
 
 @Injectable({
   providedIn: 'root'
@@ -48,19 +49,22 @@ export class ExperimentApiService {
     return this.paginationService.getPipeArgs(meta, PaginationType.EXPERIMENT);
   }
 
-  getParams(): QueryParams {
+  getParams(): { [name: string]: any } {
     this.queryFilterParams = this.filterService.getFilterParams([QueryFilterType.Recent]);
 
     this.store
       .select(selectPageRequested)
       .pipe(
         first(),
-        filter((page) => Boolean(page))
+        filter((page) => Boolean(page)),
+        concatLatestFrom(() => this.store.select(selectSort))
       )
-      .subscribe((pageRequested) => {
+      .subscribe(([pageRequested, sortData]) => {
+        console.log('sortData', sortData);
         this.queryFilterParams = {
           ...this.queryFilterParams,
-          page: pageRequested || 1
+          page: pageRequested || 1,
+          sort: sortData.sortDirection === SortDirection.ASC ? sortData.sortBy : `-${sortData.sortBy}`
         };
       });
 

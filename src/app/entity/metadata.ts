@@ -16,7 +16,7 @@ export function sortById(a: { id: number }, b: { id: number }): number {
 const entityMetadata: EntityMetadataMap = {
   Experiment: {
     filterFn: filterBySearchTerm,
-    sortComparer: sortById,
+    //sortComparer: sortById,
     entityDispatcherOptions: {
       optimisticDelete: true
     },
@@ -27,7 +27,7 @@ const entityMetadata: EntityMetadataMap = {
   },
   Crawler: {
     filterFn: filterBySearchTerm,
-    sortComparer: sortById,
+    //sortComparer: sortById,
     entityDispatcherOptions: {
       optimisticDelete: true
     },
@@ -38,7 +38,7 @@ const entityMetadata: EntityMetadataMap = {
   },
   Queue: {
     filterFn: filterBySearchTerm,
-    sortComparer: sortById,
+    //sortComparer: sortById,
     entityDispatcherOptions: {
       optimisticDelete: true
     },

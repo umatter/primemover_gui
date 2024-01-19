@@ -23,6 +23,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { AsyncPipe, NgClass, NgForOf, NgIf } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { StatusComponent } from '@app/queue/status/status.component';
+import { SortBy } from '@shared/model/sort';
 
 @Component({
   selector: 'app-queue',
@@ -61,7 +62,7 @@ export class QueueComponent implements OnDestroy {
   queryFilter$: Observable<QueryFilter[]>;
   currentQueue$: Observable<Queue>;
   pageMeta$: Observable<Meta>;
-
+  protected readonly SortBy = SortBy;
   private subscriptions = new Subscription();
 
   constructor(

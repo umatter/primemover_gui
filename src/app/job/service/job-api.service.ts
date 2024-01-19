@@ -4,14 +4,15 @@ import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Store } from '@ngrx/store';
 import { AppConfig } from '@app/app-config';
 import { QueryFilterService } from '@shared/service/query-filter.service';
-import { QueryParams } from '@ngrx/data';
 import { QueryFilterType } from '@shared/store/shared.selectors';
 import { PaginatePipeArgs } from 'ngx-pagination';
 import { Meta } from '@shared/pagination/model';
 import { PaginationType } from '@shared/pagination/type';
 import { PaginationService } from '@shared/pagination/pagination.service';
-import { selectPageRequested } from '@shared/store/shared.reducer';
+import { selectPageRequested, selectSort } from '@shared/store/shared.reducer';
 import { httpContext } from '@shared/error-handler/http-context';
+import { concatLatestFrom } from '@ngrx/effects';
+import { SortDirection } from '@shared/model/sort';
 
 @Injectable({
   providedIn: 'root'
@@ -36,19 +37,22 @@ export class JobApiService {
     return this.paginationService.getPipeArgs(meta, PaginationType.JOB);
   }
 
-  getParams(): QueryParams {
+  getParams(): { [name: string]: any } {
     this.queryFilterParams = this.filterService.getFilterParams([QueryFilterType.Recent, QueryFilterType.Queue]);
 
     this.store
       .select(selectPageRequested)
       .pipe(
         first(),
-        filter((page) => Boolean(page))
+        filter((page) => Boolean(page)),
+        concatLatestFrom(() => this.store.select(selectSort))
       )
-      .subscribe((pageRequested) => {
+      .subscribe(([pageRequested, sortData]) => {
+        console.log('sortData', sortData);
         this.queryFilterParams = {
           ...this.queryFilterParams,
-          page: pageRequested || 1
+          page: pageRequested || 1,
+          sort: sortData.sortDirection === SortDirection.ASC ? sortData.sortBy : `-${sortData.sortBy}`
         };
       });
 

@@ -6,6 +6,7 @@ import { Queue } from '@app/queue/model/queue';
 import { Job } from '@app/job/model/Job';
 import { TimezoneDetail } from '@shared/service/timezone.service';
 import { HttpResponse, HttpResponseBase } from '@angular/common/http';
+import { Sort } from '@shared/model/sort';
 
 export const SharedActions = createActionGroup({
   source: 'Shared',
@@ -16,6 +17,7 @@ export const SharedActions = createActionGroup({
     'Clear Query Filter Requested': emptyProps(),
     'Reset Query Filter Requested': props<{ filterName: string }>(),
     'Update Query Filter': props<{ updatedFilter: QueryFilter[] }>(),
+    'Sort Requested': props<{ sort: Sort }>(),
     'Experiment Selection': props<{ experiment: Experiment | null }>(),
     'Crawler Selection': props<{ crawler: Crawler | null }>(),
     'Queue Selection': props<{ queue: Queue | null }>(),

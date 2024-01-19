@@ -8,8 +8,10 @@ import { Job } from '@app/job/model/Job';
 import { SharedActions } from '@shared/store/shared.actions';
 import { TimezoneDetail } from '@shared/service/timezone.service';
 import { HttpResponseBase } from '@angular/common/http';
+import { Sort, SortBy, SortDirection } from '@shared/model/sort';
 
 export interface SharedState {
+  sort: Sort;
   queryFilter: QueryFilter[];
   currentExperiment: Experiment | null;
   currentCrawler: Crawler | null;
@@ -25,6 +27,10 @@ export interface SharedState {
 }
 
 export const initialState: SharedState = {
+  sort: {
+    sortBy: SortBy.ID,
+    sortDirection: SortDirection.DESC
+  },
   error: null,
   currentJob: null,
   currentQueue: null,
@@ -191,6 +197,10 @@ export const sharedFeature = createFeature({
       ...state,
       isLoading: true
     })),
+    on(SharedActions.sortRequested, (state, action) => ({
+      ...state,
+      sort: action.sort
+    })),
 
     on(
       SharedActions.downloadExperimentDataSuccess,
@@ -217,5 +227,6 @@ export const {
   selectTimezoneLoading,
   selectTimezoneDetail,
   selectError,
+  selectSort,
   selectIsLoading
 } = sharedFeature;

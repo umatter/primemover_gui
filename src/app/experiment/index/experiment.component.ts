@@ -21,6 +21,7 @@ import { HeroiconClipboardDocumentComponent } from '@shared/icon/heroicon-clipbo
 import { HeroiconUploadComponent } from '@shared/icon/heroicon-upload/heroicon-upload.component';
 import { ControlsComponent } from '@shared/pagination/controls/controls.component';
 import { HeroiconDownloadArchiveComponent } from '@shared/icon/heroicon-download-archive/heroicon-download-archive.component';
+import { SortBy } from '@shared/model/sort';
 
 @Component({
   selector: 'app-experiment',
@@ -48,12 +49,12 @@ import { HeroiconDownloadArchiveComponent } from '@shared/icon/heroicon-download
 export class ExperimentComponent implements OnDestroy {
   paginationConfig: PaginatePipeArgs;
   isLoading$ = this.entityService.loading$;
-  entities$: Observable<Experiment[] | any> = this.entityService.entities$;
+  entities$: Observable<Experiment[]> = this.entityService.entities$;
   experimentToDelete: Experiment | null = null;
   queryFilter$ = this.store.select(selectQueryFilter);
   currentExperiment$ = this.store.pipe(select(selectCurrentExperiment));
   pageMeta$ = this.entityService.pageMeta$;
-
+  protected readonly SortBy = SortBy;
   private subscriptions = new Subscription();
 
   constructor(

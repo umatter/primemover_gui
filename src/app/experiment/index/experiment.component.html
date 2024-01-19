@@ -23,14 +23,20 @@
             <thead>
             <tr>
               <th class="py-3.5 pl-6 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0" scope="col">
-                {{ 'common.id' | translate }}
+                <app-link-sortable (sortRequested)="getData()"
+                                   [sortBy]="SortBy.ID"
+                                   label="{{ 'common.id' | translate }}">
+                </app-link-sortable>
               </th>
               <th class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900" scope="col">
-                <app-link-sortable label="{{ 'common.name' | translate }}"></app-link-sortable>
+                <app-link-sortable (sortRequested)="getData()"
+                                   [sortBy]="SortBy.NAME"
+                                   label="{{ 'common.name' | translate }}"></app-link-sortable>
               </th>
               <th class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900" scope="col">
                 <app-link-sortable
-                  href="/experiments"
+                  (sortRequested)="getData()"
+                  [sortBy]="SortBy.UPDATED"
                   label="{{ 'common.updatedAt' | translate }}"
                 ></app-link-sortable>
               </th>
