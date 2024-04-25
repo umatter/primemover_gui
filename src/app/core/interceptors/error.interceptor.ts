@@ -8,7 +8,11 @@ import { logoutRequested } from '../../store/auth/auth.actions';
 
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
-  constructor(private authService: AuthService, private router: Router, private store: Store) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private store: Store
+  ) {}
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(request).pipe(

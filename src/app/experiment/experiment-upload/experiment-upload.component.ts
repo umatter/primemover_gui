@@ -47,7 +47,11 @@ export class ExperimentUploadComponent implements OnDestroy, OnInit {
     fileUpload: new FormControl(null, [Validators.required, requiredFileType('json')])
   });
 
-  constructor(private store: Store, public router: Router, private entityService: ExperimentService) {
+  constructor(
+    private store: Store,
+    public router: Router,
+    private entityService: ExperimentService
+  ) {
     this.currentExperiment$ = this.store.pipe(select(selectCurrentExperiment));
     this.entityService
       .getAll()

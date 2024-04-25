@@ -28,7 +28,11 @@ export class AgentFormComponent implements OnDestroy, OnInit {
   agentForm: FormGroup;
   subscriptions = new Subscription();
 
-  constructor(private store: Store, private formBuilder: FormBuilder, private router: Router) {
+  constructor(
+    private store: Store,
+    private formBuilder: FormBuilder,
+    private router: Router
+  ) {
     this.initAgentForm();
   }
 

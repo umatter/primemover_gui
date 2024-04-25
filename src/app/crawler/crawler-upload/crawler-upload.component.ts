@@ -46,7 +46,11 @@ export class CrawlerUploadComponent implements OnInit, OnDestroy {
     fileUpload: new FormControl(null, [Validators.required, requiredFileType('json')])
   });
 
-  constructor(private store: Store, public router: Router, private entityService: CrawlerService) {
+  constructor(
+    private store: Store,
+    public router: Router,
+    private entityService: CrawlerService
+  ) {
     this.currentCrawler$ = this.store.pipe(select(selectCurrentCrawler));
     this.uploadError$ = this.store.select(selectError);
     this.entityService

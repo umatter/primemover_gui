@@ -33,7 +33,11 @@ export class BehaviorFormComponent implements OnDestroy {
   showAutocompletion: boolean;
   behaviorAutocompletion = new FormControl('', [Validators.required]);
 
-  constructor(private store: Store, private formBuilder: FormBuilder, private entityService: BehaviorService) {
+  constructor(
+    private store: Store,
+    private formBuilder: FormBuilder,
+    private entityService: BehaviorService
+  ) {
     this.filteredBehaviors$ = entityService.filteredEntities$;
     this.initEntityForm();
     this.initEntityAutocompletion();

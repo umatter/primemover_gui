@@ -9,7 +9,10 @@ import {
 import { Injectable } from '@angular/core';
 
 export class AdditionalEntityCollectionReducerMethods<T> extends EntityCollectionReducerMethods<T> {
-  constructor(public override entityName: string, public override definition: EntityDefinition<T>) {
+  constructor(
+    public override entityName: string,
+    public override definition: EntityDefinition<T>
+  ) {
     super(entityName, definition);
   }
 

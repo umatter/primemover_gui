@@ -15,7 +15,10 @@ export interface OAuthResource {
   providedIn: 'root'
 })
 export class AuthService {
-  constructor(private http: HttpClient, private config: AppConfig) {}
+  constructor(
+    private http: HttpClient,
+    private config: AppConfig
+  ) {}
 
   public createToken(username: string, password: string): Observable<OAuthResource> {
     return this.http.post<OAuthResource>(`${this.config.apiBaseUrl}/auth/token`, {

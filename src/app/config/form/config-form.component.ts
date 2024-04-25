@@ -33,7 +33,11 @@ export class ConfigFormComponent implements OnDestroy {
   filteredConfigurations$: Observable<Configuration[]>;
   showAutocompletion: boolean;
 
-  constructor(private store: Store, private formBuilder: FormBuilder, private entityService: ConfigurationService) {
+  constructor(
+    private store: Store,
+    private formBuilder: FormBuilder,
+    private entityService: ConfigurationService
+  ) {
     this.filteredConfigurations$ = entityService.filteredEntities$;
     this.initEntityForm();
     this.initEntityAutocompletion();

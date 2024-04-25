@@ -21,7 +21,10 @@ export class NavbarComponent implements OnInit {
   activeClassList: string =
     'text-white text-sm font-medium rounded-md bg-white bg-opacity-0 px-3 py-2 hover:bg-opacity-10';
 
-  constructor(private store: Store, private router: Router) {
+  constructor(
+    private store: Store,
+    private router: Router
+  ) {
     this.currentRoute = router.url;
   }
 

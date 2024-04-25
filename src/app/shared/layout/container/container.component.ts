@@ -39,7 +39,11 @@ export class ContainerComponent implements OnInit {
   classUserMenuBtn: string = 'transition ease-out duration-100';
   confirmModal: boolean = false;
 
-  constructor(private store: Store, private translate: TranslateService, private router: Router) {
+  constructor(
+    private store: Store,
+    private translate: TranslateService,
+    private router: Router
+  ) {
     this.isLoggedIn$ = store.pipe(select(selectIsSignedIn));
   }
 

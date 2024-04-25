@@ -10,7 +10,11 @@ import { Router } from '@angular/router';
   templateUrl: './logout.component.html'
 })
 export class LogoutComponent implements OnInit {
-  constructor(private localStorageService: LocalStorageService, private store: Store, private router: Router) {}
+  constructor(
+    private localStorageService: LocalStorageService,
+    private store: Store,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.store.dispatch(logoutRequested());

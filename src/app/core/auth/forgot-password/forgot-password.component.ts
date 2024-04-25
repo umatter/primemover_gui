@@ -31,7 +31,11 @@ export class ForgotPasswordComponent implements OnInit {
   isLoading: Boolean;
   typeSuccess: boolean;
 
-  constructor(private fb: UntypedFormBuilder, private store: Store, private service: AuthService) {
+  constructor(
+    private fb: UntypedFormBuilder,
+    private store: Store,
+    private service: AuthService
+  ) {
     this.form = this.fb.group({
       email: [null, [Validators.required]]
     });

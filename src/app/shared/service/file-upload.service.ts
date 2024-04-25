@@ -8,7 +8,10 @@ import { httpContext } from '@shared/error-handler/http-context';
   providedIn: 'root'
 })
 export class FileUploadService {
-  constructor(private http: HttpClient, private config: AppConfig) {}
+  constructor(
+    private http: HttpClient,
+    private config: AppConfig
+  ) {}
 
   uploadExperiment(file: File, id: number): Observable<any> {
     const formData = this.getFormData(file);

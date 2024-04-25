@@ -49,7 +49,11 @@ export class ConfigComponent implements OnDestroy {
 
   private subscriptions = new Subscription();
 
-  constructor(private store: Store, private entityService: ConfigurationService, private apiService: ConfigApiService) {
+  constructor(
+    private store: Store,
+    private entityService: ConfigurationService,
+    private apiService: ConfigApiService
+  ) {
     this.entities$ = entityService.entities$;
     this.isLoading$ = entityService.loading$;
     this.pageMeta$ = entityService.pageMeta$;

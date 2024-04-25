@@ -13,6 +13,7 @@ import { TimezoneService } from '@shared/service/timezone.service';
 import { ExperimentApiService } from '@app/experiment/service/experiment-api.service';
 import { saveAs } from 'file-saver';
 
+
 @Injectable()
 export class SharedEffects {
   resetQueryFilterRequested$ = createEffect(() =>
@@ -159,5 +160,6 @@ export class SharedEffects {
     private jobApiService: JobApiService,
     private experimentApiService: ExperimentApiService,
     private timezoneService: TimezoneService
-  ) {}
+  ) {
+  }
 }
