@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
+import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { select, Store } from '@ngrx/store';
 import { catchError, map, of, switchMap, tap, withLatestFrom } from 'rxjs';
 import { selectCurrentCrawler, selectCurrentExperiment } from './shared.selectors';
@@ -61,7 +61,7 @@ export class SharedEffects {
   uploadExperimentRequested$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(SharedActions.uploadExperimentRequested),
-      concatLatestFrom(() => this.store.pipe(select(selectCurrentExperiment))),
+      withLatestFrom(this.store.pipe(select(selectCurrentExperiment))),
       switchMap(([action, currentExperiment]) => {
         return this.fileService.uploadExperiment(action.file, currentExperiment.id).pipe(
           map((response) => SharedActions.uploadExperimentSuccess(response))
@@ -75,7 +75,7 @@ export class SharedEffects {
   uploadCrawlerRequested$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(SharedActions.uploadCrawlerRequested),
-      concatLatestFrom(() => this.store.pipe(select(selectCurrentCrawler))),
+      withLatestFrom(this.store.pipe(select(selectCurrentCrawler))),
       switchMap(([action, currentCrawler]) => {
         return this.fileService.uploadCrawler(action.file, currentCrawler.id).pipe(
           map((response) => SharedActions.uploadCrawlerSuccess(response))

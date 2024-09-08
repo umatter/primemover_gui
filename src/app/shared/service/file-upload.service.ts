@@ -11,7 +11,8 @@ export class FileUploadService {
   constructor(
     private http: HttpClient,
     private config: AppConfig
-  ) {}
+  ) {
+  }
 
   uploadExperiment(file: File, id: number): Observable<any> {
     const formData = this.getFormData(file);
@@ -24,6 +25,7 @@ export class FileUploadService {
   uploadCrawler(file: File, id: number): Observable<any> {
     const formData = this.getFormData(file);
 
+    console.log('uploading crawler', id, formData);
     return this.http.post(`${this.config.apiBaseUrl}/crawlers/${id}/upload`, formData, {
       context: httpContext
     });
