@@ -41,6 +41,12 @@ const routes: Routes = [
     data: { requiresLogin: true }
   },
   {
+    path: 'library',
+    loadComponent: () => import('./library/library.component').then((m) => m.LibraryComponent),
+    canActivate: [AuthGuard],
+    data: { requiresLogin: true }
+  },
+  {
     path: 'queues',
     loadChildren: () => import('./queue/queue-routing.module').then((m) => m.queueRoutes)
   },

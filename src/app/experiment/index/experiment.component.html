@@ -1,99 +1,149 @@
-<app-loading-spinner *ngIf="isLoading$ | async"></app-loading-spinner>
-
 <app-confirmation-modal
   (modalResponse)="onModalResponse($event)"
   [isModal]="!!experimentToDelete"
 ></app-confirmation-modal>
-<div *ngIf="false === (isLoading$ | async)" class="px-4">
-  <div class="sm:flex mb-6">
+
+<!-- ============================== Page header ============================== -->
+<div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+  <div>
+    <p class="mb-1 text-xs font-semibold uppercase tracking-[0.14em] text-faint">
+      {{ 'nav.experiments' | translate }}
+    </p>
+    <h1 class="font-display text-3xl font-semibold tracking-tight text-ink">
+      {{ 'projects.title' | translate }}
+    </h1>
+    <p class="mt-1.5 max-w-prose text-sm text-muted">{{ 'projects.subtitle' | translate }}</p>
+  </div>
+
+  <button
+    (click)="router.navigate(['experiments/create'])"
+    class="inline-flex flex-shrink-0 items-center gap-2 rounded-md bg-brand px-4 py-2.5 text-sm font-semibold text-on-brand shadow-sm transition hover:bg-brand-hover"
+    type="button"
+  >
+    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 5v14M5 12h14" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+    {{ 'projects.new' | translate }}
+  </button>
+</div>
+
+<!-- ============================== Loading (skeleton) ============================== -->
+<div *ngIf="isLoading$ | async" class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+  <div *ngFor="let s of [1, 2, 3, 4, 5, 6]" class="rounded-xl border border-line bg-surface p-5">
+    <div class="mb-4 flex items-center gap-3">
+      <div class="h-9 w-9 animate-pulse-soft rounded-lg bg-surface-3"></div>
+      <div class="h-4 w-2/3 animate-pulse-soft rounded bg-surface-3"></div>
+    </div>
+    <div class="mb-2 h-3 w-full animate-pulse-soft rounded bg-surface-2"></div>
+    <div class="h-3 w-4/5 animate-pulse-soft rounded bg-surface-2"></div>
+  </div>
+</div>
+
+<ng-container *ngIf="false === (isLoading$ | async)">
+  <!-- ============================== Empty state ============================== -->
+  <div
+    *ngIf="(entities$ | async)?.length === 0"
+    class="animate-fade-up rounded-2xl border border-dashed border-line-strong bg-surface px-6 py-16 text-center"
+  >
+    <div class="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-tint">
+      <svg
+        class="h-7 w-7 text-brand"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        viewBox="0 0 24 24"
+        aria-hidden="true"
+      >
+        <circle cx="12" cy="12" r="8.25" />
+        <path d="M12 7.5v9M7.5 12h9" stroke-linecap="round" />
+      </svg>
+    </div>
+    <h2 class="font-display text-xl font-semibold text-ink">{{ 'projects.empty.title' | translate }}</h2>
+    <p class="mx-auto mt-2 max-w-md text-sm text-muted">{{ 'projects.empty.body' | translate }}</p>
     <button
       (click)="router.navigate(['experiments/create'])"
-      class="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto"
+      class="mt-6 inline-flex items-center gap-2 rounded-md bg-brand px-4 py-2.5 text-sm font-semibold text-on-brand shadow-sm transition hover:bg-brand-hover"
       type="button"
     >
-      {{ 'experiment.add' | translate }}
+      <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 5v14M5 12h14" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      {{ 'projects.empty.cta' | translate }}
     </button>
   </div>
 
-  <div class="flex flex-col">
-    <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
-      <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-        <div class="overflow-hidden">
-          <table *ngIf="entities$" class="min-w-full divide-y divide-gray-300">
-            <thead>
-              <tr>
-                <th class="py-3.5 pl-6 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0" scope="col">
-                  <app-link-sortable
-                    (sortRequested)="getData()"
-                    [sortBy]="SortBy.ID"
-                    label="{{ 'common.id' | translate }}"
-                  >
-                  </app-link-sortable>
-                </th>
-                <th class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900" scope="col">
-                  <app-link-sortable
-                    (sortRequested)="getData()"
-                    [sortBy]="SortBy.NAME"
-                    label="{{ 'common.name' | translate }}"
-                  ></app-link-sortable>
-                </th>
-                <th class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900" scope="col">
-                  <app-link-sortable
-                    (sortRequested)="getData()"
-                    [sortBy]="SortBy.UPDATED"
-                    label="{{ 'common.updatedAt' | translate }}"
-                  ></app-link-sortable>
-                </th>
-                <th class="relative py-3.5 pl-3 pr-6 sm:pr-0" scope="col">
-                  <span class="sr-only"></span>
-                </th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200">
-              <tr *ngFor="let item of entities$ | async | paginate: paginationConfig">
-                <td class="whitespace-nowrap py-4 pl-6 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
-                  {{ item.id }}
-                </td>
+  <!-- ============================== Project grid ============================== -->
+  <div *ngIf="(entities$ | async)?.length" class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+    <article
+      *ngFor="let item of entities$ | async | paginate: paginationConfig; let i = index"
+      class="group relative flex animate-fade-up flex-col rounded-xl border border-line bg-surface p-5 transition duration-200 hover:border-line-strong hover:shadow-md"
+      [style.animation-delay]="i * 40 + 'ms'"
+    >
+      <!-- selected marker -->
+      <span
+        *ngIf="(currentExperiment$ | async)?.id === item.id"
+        class="absolute right-4 top-4 inline-flex items-center gap-1 rounded-full bg-accent-tint px-2 py-0.5 text-xs font-semibold text-on-accent"
+      >
+        {{ 'projects.selectedBadge' | translate }}
+      </span>
 
-                <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
-                  {{ item.name }}
-                </td>
-                <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
-                  {{ item.updated_at | date: 'dd.MM.yyyy HH:mm' }}
-                </td>
-                <td class="relative whitespace-nowrap text-right text-sm font-medium pr-1">
-                  <button (click)="downloadExperimentData(item)" class="text-gray-400 hover:text-indigo-900 mr-2">
-                    <app-heroicon-download-archive></app-heroicon-download-archive>
-                  </button>
-                  <button (click)="deleteExperimentRequest(item)" class="text-gray-400 hover:text-indigo-900 mr-2">
-                    <app-heroicon-trash></app-heroicon-trash>
-                  </button>
-                  <button
-                    (click)="selectExperiment(item)"
-                    [ngClass]="{
-                      'text-gray-400': (currentExperiment$ | async)?.id !== item.id,
-                      'hover:text-indigo-900': (currentExperiment$ | async)?.id !== item.id,
-                      'text-indigo-900': (currentExperiment$ | async)?.id === item.id
-                    }"
-                  >
-                    <app-heroicon-clipboard-document></app-heroicon-clipboard-document>
-                  </button>
-                  <button (click)="selectAndUploadExperiment(item)" class="text-gray-400 hover:text-indigo-900 ml-2">
-                    <app-heroicon-upload></app-heroicon-upload>
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-            <tfoot>
-              <tr>
-                <th class="whitespace-nowrap px-3 py-4 text-sm text-gray-500" colspan="30">
-                  <app-pagination-controls (pageChange)="getData($event)" id="experiments"></app-pagination-controls>
-                </th>
-              </tr>
-            </tfoot>
-          </table>
+      <button (click)="openExperiment(item)" class="flex flex-1 flex-col text-left">
+        <div class="mb-3 flex items-center gap-3">
+          <span
+            class="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-brand-tint font-display text-base font-semibold text-brand"
+          >
+            {{ item.name?.charAt(0) || '?' }}
+          </span>
+          <span class="font-mono text-xs text-faint">EXP-{{ item.id }}</span>
+        </div>
+
+        <h3 class="font-display text-lg font-semibold leading-snug text-ink transition group-hover:text-brand">
+          {{ item.name }}
+        </h3>
+        <p class="mt-1.5 line-clamp-2 min-h-[2.5rem] text-sm text-muted">
+          {{ item.description || ('projects.noDescription' | translate) }}
+        </p>
+      </button>
+
+      <div class="mt-4 flex items-center justify-between border-t border-line pt-3.5">
+        <div class="min-w-0">
+          <p class="truncate text-xs text-faint">
+            <span class="text-muted">{{ item.contact }}</span>
+          </p>
+          <p class="mt-0.5 text-xs text-faint">
+            {{ 'projects.updated' | translate }} · {{ item.updated_at | date: 'dd MMM yyyy' }}
+          </p>
+        </div>
+
+        <div class="flex flex-shrink-0 items-center gap-0.5">
+          <button
+            (click)="downloadExperimentData(item)"
+            class="rounded-md p-2 text-faint transition hover:bg-surface-2 hover:text-brand"
+            [title]="'workspace.download' | translate"
+          >
+            <app-heroicon-download-archive></app-heroicon-download-archive>
+          </button>
+          <button
+            (click)="selectAndUploadExperiment(item)"
+            class="rounded-md p-2 text-faint transition hover:bg-surface-2 hover:text-brand"
+            [title]="'workspace.uploadData' | translate"
+          >
+            <app-heroicon-upload></app-heroicon-upload>
+          </button>
+          <button
+            (click)="deleteExperimentRequest(item)"
+            class="rounded-md p-2 text-faint transition hover:bg-danger-tint hover:text-danger"
+            [title]="'common.delete' | translate"
+          >
+            <app-heroicon-trash></app-heroicon-trash>
+          </button>
         </div>
       </div>
-    </div>
+    </article>
   </div>
-</div>
+
+  <!-- ============================== Pagination ============================== -->
+  <div *ngIf="(entities$ | async)?.length" class="mt-8 flex justify-center">
+    <app-pagination-controls (pageChange)="getData($event)" id="experiments"></app-pagination-controls>
+  </div>
+</ng-container>

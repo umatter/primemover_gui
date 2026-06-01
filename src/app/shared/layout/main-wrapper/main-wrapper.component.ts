@@ -3,8 +3,6 @@ import { fadeIn } from '../../animation/trigger';
 import { Store } from '@ngrx/store';
 import { selectIsSignedIn } from '@app/store/auth/auth.selectors';
 import { RouterOutlet } from '@angular/router';
-import { HeaderComponent } from '@shared/layout/header/header.component';
-import { MetadataComponent } from '@shared/metadata/metadata.component';
 import { AsyncPipe, NgIf } from '@angular/common';
 import { NotificationComponent } from '@shared/overlay/notification/notification.component';
 import { selectError } from '@shared/store/shared.reducer';
@@ -14,7 +12,7 @@ import { SharedActions } from '@shared/store/shared.actions';
   selector: 'app-main-wrapper',
   templateUrl: './main-wrapper.component.html',
   standalone: true,
-  imports: [RouterOutlet, HeaderComponent, MetadataComponent, AsyncPipe, NgIf, NotificationComponent],
+  imports: [RouterOutlet, AsyncPipe, NgIf, NotificationComponent],
   animations: [fadeIn]
 })
 export class MainWrapperComponent {

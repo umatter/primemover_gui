@@ -1,62 +1,69 @@
 <app-loading-spinner *ngIf="isLoading$ | async"></app-loading-spinner>
-
 <app-confirmation-modal (modalResponse)="onModalResponse($event)" [isModal]="!!entityToDelete"></app-confirmation-modal>
 
-<div *ngIf="false === (isLoading$ | async)" class="px-4">
-  <div class="flex flex-col">
-    <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
-      <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-        <div class="overflow-hidden">
-          <table *ngIf="entities$ | async" class="min-w-full divide-y divide-gray-300">
-            <thead>
-              <tr>
-                <th class="py-3.5 pl-6 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0" scope="col">
-                  <app-link-sortable label="{{ 'common.id' | translate }}"></app-link-sortable>
-                </th>
-                <th class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900" scope="col">
-                  <app-link-sortable label="{{ 'common.name' | translate }}"></app-link-sortable>
-                </th>
+<div *ngIf="false === (isLoading$ | async)">
+  <a
+    routerLink="/library"
+    class="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-muted transition hover:text-brand"
+  >
+    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+      <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+    {{ 'library.title' | translate }}
+  </a>
 
-                <th class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900" scope="col">
-                  {{ 'common.contact' | translate }}
-                </th>
-                <th class="relative py-3.5 pl-3 pr-6 sm:pr-0" scope="col">
-                  <span class="sr-only"></span>
-                </th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200 bg-white">
-              <tr *ngFor="let item of entities$ | async | paginate: paginationConfig">
-                <td class="whitespace-nowrap py-4 pl-6 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
-                  {{ item.id }}
-                </td>
-                <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
-                  {{ item.name }}
-                </td>
+  <div class="mb-8">
+    <h1 class="font-display text-3xl font-semibold tracking-tight text-ink">
+      {{ 'library.agents.title' | translate }}
+    </h1>
+    <p class="mt-1.5 max-w-prose text-sm text-muted">{{ 'library.agents.body' | translate }}</p>
+  </div>
 
-                <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
-                  {{ item.contact }}
-                </td>
-                <td class="relative whitespace-nowrap text-right text-sm font-medium sm:pr-0">
-                  <button (click)="editRequested(item)" class="text-gray-400 hover:text-indigo-900 mr-2">
-                    <app-heroicon-pencil-square></app-heroicon-pencil-square>
-                  </button>
-                  <button (click)="deleteRequested(item)" class="text-gray-400 hover:text-indigo-900">
-                    <app-heroicon-trash></app-heroicon-trash>
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-            <tfoot>
-              <tr>
-                <th class="whitespace-nowrap px-3 py-4 text-sm text-gray-500" colspan="30">
-                  <app-pagination-controls (pageChange)="getData($event)" id="agents"></app-pagination-controls>
-                </th>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-      </div>
+  <div class="overflow-hidden rounded-xl border border-line bg-surface shadow-sm">
+    <div class="overflow-x-auto">
+      <table *ngIf="entities$ | async" class="min-w-full divide-y divide-line">
+        <thead class="bg-surface-2">
+          <tr class="text-left text-xs font-semibold uppercase tracking-wide text-faint">
+            <th class="px-4 py-3" scope="col">
+              <app-link-sortable label="{{ 'common.id' | translate }}"></app-link-sortable>
+            </th>
+            <th class="px-4 py-3" scope="col">
+              <app-link-sortable label="{{ 'common.name' | translate }}"></app-link-sortable>
+            </th>
+            <th class="px-4 py-3" scope="col">{{ 'common.contact' | translate }}</th>
+            <th class="px-4 py-3 text-right" scope="col"><span class="sr-only">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-line">
+          <tr *ngFor="let item of entities$ | async | paginate: paginationConfig" class="transition hover:bg-surface-2">
+            <td class="whitespace-nowrap px-4 py-3.5 font-mono text-xs text-faint">{{ item.id }}</td>
+            <td class="whitespace-nowrap px-4 py-3.5 text-sm font-medium text-ink">{{ item.name }}</td>
+            <td class="whitespace-nowrap px-4 py-3.5 text-sm text-muted">{{ item.contact }}</td>
+            <td class="whitespace-nowrap px-4 py-3.5 text-right">
+              <div class="flex items-center justify-end gap-0.5">
+                <button
+                  (click)="editRequested(item)"
+                  [title]="'common.edit' | translate"
+                  class="rounded-md p-2 text-faint transition hover:bg-surface-3 hover:text-brand"
+                >
+                  <app-heroicon-pencil-square></app-heroicon-pencil-square>
+                </button>
+                <button
+                  (click)="deleteRequested(item)"
+                  [title]="'common.delete' | translate"
+                  class="rounded-md p-2 text-faint transition hover:bg-danger-tint hover:text-danger"
+                >
+                  <app-heroicon-trash></app-heroicon-trash>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
+  </div>
+
+  <div class="mt-8 flex justify-center">
+    <app-pagination-controls (pageChange)="getData($event)" id="agents"></app-pagination-controls>
   </div>
 </div>

@@ -102,6 +102,11 @@ export class ExperimentComponent implements OnDestroy {
     this.router.navigate(['experiments', experiment.id, 'upload']).then();
   }
 
+  openExperiment(experiment: Experiment): void {
+    this.store.dispatch(SharedActions.experimentSelection({ experiment: experiment }));
+    this.router.navigate(['experiments', experiment.id]).then();
+  }
+
   deleteExperimentRequest(experiment: Experiment): void {
     this.experimentToDelete = experiment;
   }

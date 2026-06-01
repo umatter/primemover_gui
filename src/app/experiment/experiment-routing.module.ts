@@ -1,8 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ExperimentComponent } from './index/experiment.component';
-import { ExperimentCreateComponent } from './create/experiment-create.component';
 import { ExperimentUploadComponent } from './experiment-upload/experiment-upload.component';
+import { ExperimentWorkspaceComponent } from './workspace/experiment-workspace.component';
+import { ExperimentWizardComponent } from './wizard/experiment-wizard.component';
 
 export const experimentRroutes: Routes = [
   {
@@ -11,11 +12,15 @@ export const experimentRroutes: Routes = [
   },
   {
     path: 'create',
-    component: ExperimentCreateComponent
+    component: ExperimentWizardComponent
   },
   {
     path: ':id/upload',
     component: ExperimentUploadComponent
+  },
+  {
+    path: ':id',
+    component: ExperimentWorkspaceComponent
   }
 ];
 

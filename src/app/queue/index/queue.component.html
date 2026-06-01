@@ -1,135 +1,120 @@
 <app-loading-spinner *ngIf="isLoading$ | async; else content"></app-loading-spinner>
 <app-confirmation-modal (modalResponse)="onModalResponse($event)" [isModal]="!!entityToDelete"></app-confirmation-modal>
 <ng-template #content>
-  <div class="px-4">
-    <div class="sm:flex mb-6">
-      <button
-        [routerLink]="['create']"
-        class="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto"
-        type="button"
-      >
-        {{ 'queue.add' | translate }}
-      </button>
+  <!-- Page header -->
+  <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <h1 class="font-display text-3xl font-semibold tracking-tight text-ink">
+        {{ 'workspace.sections.runs' | translate }}
+      </h1>
+      <p class="mt-1.5 max-w-prose text-sm text-muted">{{ 'workspace.sections.botsHint' | translate }}</p>
     </div>
+    <button
+      [routerLink]="['create']"
+      class="inline-flex flex-shrink-0 items-center gap-2 rounded-md bg-brand px-4 py-2.5 text-sm font-semibold text-on-brand shadow-sm transition hover:bg-brand-hover"
+      type="button"
+    >
+      <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+        <path d="M12 5v14M5 12h14" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      {{ 'queue.add' | translate }}
+    </button>
+  </div>
 
-    <div class="flex flex-col">
-      <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
-        <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-          <div class="overflow-hidden">
-            <table *ngIf="entities$ | async" class="min-w-full divide-y divide-gray-300">
-              <thead>
-                <tr>
-                  <th class="py-3.5 pl-6 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0" scope="col">
-                    <app-link-sortable
-                      (sortRequested)="getData()"
-                      [sortBy]="SortBy.ID"
-                      label="{{ 'common.id' | translate }}"
-                    >
-                    </app-link-sortable>
-                  </th>
-                  <th class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900" scope="col">
-                    <app-link-sortable
-                      (sortRequested)="getData()"
-                      [sortBy]="SortBy.NAME"
-                      label="{{ 'queue.label' | translate }}"
-                    >
-                    </app-link-sortable>
-                  </th>
-                  <th class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900" scope="col">
-                    <app-link-sortable
-                      (sortRequested)="getData()"
-                      [sortBy]="SortBy.PROCESSED"
-                      label="{{ 'status.processed' | translate }}"
-                    ></app-link-sortable>
-                  </th>
-                  <th class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900" scope="col">
-                    <app-link-sortable
-                      (sortRequested)="getData()"
-                      [sortBy]="SortBy.PROCESSING"
-                      label="{{ 'status.processing' | translate }}"
-                    ></app-link-sortable>
-                  </th>
-                  <th class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900" scope="col">
-                    <app-link-sortable
-                      (sortRequested)="getData()"
-                      [sortBy]="SortBy.REVIEWED"
-                      label="{{ 'status.review' | translate }}"
-                    ></app-link-sortable>
-                  </th>
-                  <th class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900" scope="col">
-                    <app-link-sortable
-                      (sortRequested)="getData()"
-                      [sortBy]="SortBy.STATUSCODE"
-                      label="{{ 'status.label' | translate }}"
-                    ></app-link-sortable>
-                  </th>
-                  <th class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900" scope="col">
-                    <app-link-sortable
-                      (sortRequested)="getData()"
-                      [sortBy]="SortBy.CRAWLER"
-                      label="{{ 'crawler.label' | translate }}"
-                    ></app-link-sortable>
-                  </th>
-                  <th class="relative py-3.5 pl-3 pr-6 sm:pr-0" scope="col">
-                    <span class="sr-only"></span>
-                  </th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-gray-200 bg-white">
-                <tr *ngFor="let item of entities$ | async | paginate: paginationConfig">
-                  <td class="whitespace-nowrap py-4 pl-6 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
-                    {{ item.id }}
-                  </td>
-                  <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                    {{ item.name }}
-                  </td>
-                  <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
-                    {{ item.processed ? 'Ja' : 'Nein' }}
-                  </td>
-                  <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
-                    {{ item.processing ? 'Ja' : 'Nein' }}
-                  </td>
-                  <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
-                    {{ item.reviewed ? 'Ja' : 'Nein' }}
-                  </td>
-                  <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
-                    <app-status [statusCode]="item.status_code" [statusMessage]="item.status_message"></app-status>
-                  </td>
-
-                  <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
-                    {{ item.crawler_id }}
-                  </td>
-
-                  <td class="relative whitespace-nowrap text-right text-sm font-medium sm:pr-0">
-                    <button (click)="deleteRequested(item)" class="text-gray-400 hover:text-indigo-900 mr-2">
-                      <app-heroicon-trash></app-heroicon-trash>
-                    </button>
-                    <button
-                      (click)="selectQueue(item)"
-                      [ngClass]="{
-                        'text-gray-400': (currentQueue$ | async)?.id !== item.id,
-                        'hover:text-indigo-900': (currentQueue$ | async)?.id !== item.id,
-                        'text-indigo-900': (currentQueue$ | async)?.id === item.id
-                      }"
-                    >
-                      <app-heroicon-clipboard-document></app-heroicon-clipboard-document>
-                    </button>
-                  </td>
-                </tr>
-
-                <!-- More people... -->
-              </tbody>
-              <tfoot>
-                <tr>
-                  <th class="whitespace-nowrap px-3 py-4 text-sm text-gray-500" colspan="30">
-                    <app-pagination-controls (pageChange)="getData($event)" id="queues"></app-pagination-controls>
-                  </th>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
-        </div>
-      </div>
+  <div class="overflow-hidden rounded-xl border border-line bg-surface shadow-sm">
+    <div class="overflow-x-auto">
+      <table *ngIf="entities$ | async" class="min-w-full divide-y divide-line">
+        <thead class="bg-surface-2">
+          <tr class="text-left text-xs font-semibold uppercase tracking-wide text-faint">
+            <th class="px-4 py-3" scope="col">
+              <app-link-sortable
+                (sortRequested)="getData()"
+                [sortBy]="SortBy.ID"
+                label="{{ 'common.id' | translate }}"
+              ></app-link-sortable>
+            </th>
+            <th class="px-4 py-3" scope="col">
+              <app-link-sortable
+                (sortRequested)="getData()"
+                [sortBy]="SortBy.NAME"
+                label="{{ 'common.name' | translate }}"
+              ></app-link-sortable>
+            </th>
+            <th class="px-4 py-3" scope="col">
+              <app-link-sortable
+                (sortRequested)="getData()"
+                [sortBy]="SortBy.PROCESSED"
+                label="{{ 'status.processed' | translate }}"
+              ></app-link-sortable>
+            </th>
+            <th class="px-4 py-3" scope="col">
+              <app-link-sortable
+                (sortRequested)="getData()"
+                [sortBy]="SortBy.PROCESSING"
+                label="{{ 'status.processing' | translate }}"
+              ></app-link-sortable>
+            </th>
+            <th class="px-4 py-3" scope="col">
+              <app-link-sortable
+                (sortRequested)="getData()"
+                [sortBy]="SortBy.REVIEWED"
+                label="{{ 'status.review' | translate }}"
+              ></app-link-sortable>
+            </th>
+            <th class="px-4 py-3" scope="col">
+              <app-link-sortable
+                (sortRequested)="getData()"
+                [sortBy]="SortBy.STATUSCODE"
+                label="{{ 'status.label' | translate }}"
+              ></app-link-sortable>
+            </th>
+            <th class="px-4 py-3" scope="col">
+              <app-link-sortable
+                (sortRequested)="getData()"
+                [sortBy]="SortBy.CRAWLER"
+                label="{{ 'queue.botLabel' | translate }}"
+              ></app-link-sortable>
+            </th>
+            <th class="px-4 py-3 text-right" scope="col"><span class="sr-only">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-line">
+          <tr *ngFor="let item of entities$ | async | paginate: paginationConfig" class="transition hover:bg-surface-2">
+            <td class="whitespace-nowrap px-4 py-3.5 font-mono text-xs text-faint">{{ item.id }}</td>
+            <td class="whitespace-nowrap px-4 py-3.5 text-sm font-medium text-ink">{{ item.name }}</td>
+            <td class="whitespace-nowrap px-4 py-3.5 text-sm text-muted">{{ item.processed ? 'Yes' : 'No' }}</td>
+            <td class="whitespace-nowrap px-4 py-3.5 text-sm text-muted">{{ item.processing ? 'Yes' : 'No' }}</td>
+            <td class="whitespace-nowrap px-4 py-3.5 text-sm text-muted">{{ item.reviewed ? 'Yes' : 'No' }}</td>
+            <td class="whitespace-nowrap px-4 py-3.5 text-sm text-muted">
+              <app-status [statusCode]="item.status_code" [statusMessage]="item.status_message"></app-status>
+            </td>
+            <td class="whitespace-nowrap px-4 py-3.5 font-mono text-xs text-faint">CR-{{ item.crawler_id }}</td>
+            <td class="whitespace-nowrap px-4 py-3.5 text-right">
+              <div class="flex items-center justify-end gap-0.5">
+                <button
+                  (click)="selectQueue(item)"
+                  [title]="'common.show' | translate"
+                  class="rounded-md p-2 transition hover:bg-surface-3"
+                  [ngClass]="(currentQueue$ | async)?.id === item.id ? 'text-brand' : 'text-faint hover:text-brand'"
+                >
+                  <app-heroicon-clipboard-document></app-heroicon-clipboard-document>
+                </button>
+                <button
+                  (click)="deleteRequested(item)"
+                  [title]="'common.delete' | translate"
+                  class="rounded-md p-2 text-faint transition hover:bg-danger-tint hover:text-danger"
+                >
+                  <app-heroicon-trash></app-heroicon-trash>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
+  </div>
+
+  <div class="mt-8 flex justify-center">
+    <app-pagination-controls (pageChange)="getData($event)" id="queues"></app-pagination-controls>
   </div>
 </ng-template>

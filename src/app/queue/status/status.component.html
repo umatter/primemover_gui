@@ -1,9 +1,32 @@
-<div [title]="statusMessage">
-  <div [ngSwitch]="statusCode">
-    <div *ngSwitchCase="QueueStatusEnum.FAILURE" class="text-red-600">{{ 'status.failure' | translate }}</div>
-    <div *ngSwitchCase="QueueStatusEnum.SUCCESS" class="text-green-600">{{ 'status.success' | translate }}</div>
-    <div *ngSwitchCase="QueueStatusEnum.SKIPPED" class="text-blue-600">{{ 'status.skipped' | translate }}</div>
-    <div *ngSwitchCase="QueueStatusEnum.RUNNING" class="text-orange-700">{{ 'status.running' | translate }}</div>
-    <div *ngSwitchDefault class="text-yellow-600">{{ 'status.unknown' | translate }}</div>
-  </div>
+<div [title]="statusMessage" [ngSwitch]="statusCode" class="inline-flex">
+  <span
+    *ngSwitchCase="QueueStatusEnum.FAILURE"
+    class="inline-flex items-center gap-1.5 rounded-full bg-danger-tint px-2.5 py-1 text-xs font-semibold text-danger"
+  >
+    <span class="h-1.5 w-1.5 rounded-full bg-danger"></span>{{ 'status.failure' | translate }}
+  </span>
+  <span
+    *ngSwitchCase="QueueStatusEnum.SUCCESS"
+    class="inline-flex items-center gap-1.5 rounded-full bg-success-tint px-2.5 py-1 text-xs font-semibold text-success"
+  >
+    <span class="h-1.5 w-1.5 rounded-full bg-success"></span>{{ 'status.success' | translate }}
+  </span>
+  <span
+    *ngSwitchCase="QueueStatusEnum.SKIPPED"
+    class="inline-flex items-center gap-1.5 rounded-full bg-info-tint px-2.5 py-1 text-xs font-semibold text-info"
+  >
+    <span class="h-1.5 w-1.5 rounded-full bg-info"></span>{{ 'status.skipped' | translate }}
+  </span>
+  <span
+    *ngSwitchCase="QueueStatusEnum.RUNNING"
+    class="inline-flex items-center gap-1.5 rounded-full bg-warning-tint px-2.5 py-1 text-xs font-semibold text-warning"
+  >
+    <span class="h-1.5 w-1.5 animate-pulse-soft rounded-full bg-warning"></span>{{ 'status.running' | translate }}
+  </span>
+  <span
+    *ngSwitchDefault
+    class="inline-flex items-center gap-1.5 rounded-full bg-surface-3 px-2.5 py-1 text-xs font-semibold text-muted"
+  >
+    <span class="h-1.5 w-1.5 rounded-full bg-faint"></span>{{ 'status.unknown' | translate }}
+  </span>
 </div>

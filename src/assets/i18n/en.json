@@ -1,4 +1,141 @@
 {
+  "nav": {
+    "experiments": "Experiments",
+    "library": "Library"
+  },
+  "brand": {
+    "name": "PrimeMover",
+    "tagline": "Observe what the algorithm surfaces."
+  },
+  "projects": {
+    "title": "Experiments",
+    "subtitle": "Design and run your algorithm studies.",
+    "new": "New experiment",
+    "searchPlaceholder": "Search experiments",
+    "open": "Open",
+    "updated": "Updated",
+    "contact": "Contact",
+    "selectedBadge": "Selected",
+    "noDescription": "No description yet",
+    "empty": {
+      "title": "Design your first experiment",
+      "body": "An experiment is your study: a set of simulated users (bots) that browse a platform so you can observe what its algorithm surfaces to each one. Create one and we'll walk you through the setup.",
+      "cta": "New experiment"
+    },
+    "noResults": {
+      "title": "No experiments match",
+      "body": "Try a different search term."
+    },
+    "error": {
+      "title": "Couldn't load experiments",
+      "body": "Something went wrong while fetching your experiments.",
+      "retry": "Try again"
+    }
+  },
+  "workspace": {
+    "overview": "Overview",
+    "back": "All experiments",
+    "settings": "Settings",
+    "uploadData": "Upload data",
+    "download": "Download data",
+    "sections": {
+      "bots": "Bots",
+      "botsHint": "Simulated users that browse the platform for this study.",
+      "runs": "Runs",
+      "activity": "Recent activity"
+    },
+    "addBot": "Add bot",
+    "progress": "Progress",
+    "state": {
+      "idle": "Idle",
+      "running": "Running",
+      "succeeded": "Succeeded",
+      "failed": "Failed"
+    },
+    "nextStep": {
+      "title": "Finish setting up your experiment",
+      "body": "Add at least one bot to start collecting observations.",
+      "cta": "Add a bot"
+    },
+    "stat": {
+      "bots": "Bots",
+      "runs": "Runs",
+      "succeeded": "Succeeded",
+      "failed": "Failed"
+    },
+    "bot": {
+      "identity": "Browser identity",
+      "connection": "Connection",
+      "behavior": "Behavior",
+      "noRuns": "No runs yet",
+      "empty": {
+        "title": "No bots yet",
+        "body": "A bot is one simulated user. Add a bot to define who browses the platform and how."
+      }
+    }
+  },
+  "wizard": {
+    "title": "New experiment",
+    "subtitle": "We'll set up the study and its first bot. You can change anything later.",
+    "cancel": "Cancel",
+    "back": "Back",
+    "next": "Continue",
+    "create": "Create experiment",
+    "creating": "Creating…",
+    "advanced": "Advanced settings",
+    "advancedHint": "Low-level options for operators. Sensible defaults are filled in.",
+    "steps": {
+      "study": "The study",
+      "bot": "First bot",
+      "runs": "Runs",
+      "review": "Review"
+    },
+    "study": {
+      "title": "Define the study",
+      "body": "Give your experiment a clear name and a contact so collaborators know who owns it.",
+      "name": "Experiment name",
+      "namePlaceholder": "e.g. YouTube political recommendations 2026",
+      "contact": "Contact",
+      "description": "Research question or notes",
+      "descriptionPlaceholder": "What are you trying to observe?"
+    },
+    "bot": {
+      "title": "Add your first bot",
+      "body": "A bot is a simulated user. We'll create one with sensible defaults — open Advanced to set its browser identity, connection and behavior.",
+      "name": "Bot name",
+      "namePlaceholder": "e.g. Persona A — moderate viewer",
+      "skip": "Skip for now"
+    },
+    "runs": {
+      "title": "Plan the runs",
+      "body": "Runs are when your bots go to work. You can schedule these now or later from the workspace.",
+      "later": "I'll set up runs later"
+    },
+    "review": {
+      "title": "Review & create",
+      "body": "Here's what we'll create. You can refine every part afterwards.",
+      "study": "Study",
+      "bot": "First bot",
+      "none": "None yet"
+    }
+  },
+  "library": {
+    "title": "Library",
+    "subtitle": "Reusable building blocks for your bots — manage these directly when you need fine control.",
+    "agents": {
+      "title": "Browser identities",
+      "body": "The browser fingerprint and login profile a bot presents."
+    },
+    "proxies": {
+      "title": "Connections",
+      "body": "Proxies and locations your bots connect through."
+    },
+    "configs": {
+      "title": "Behaviors",
+      "body": "Reusable behavior configurations for bots."
+    },
+    "manage": "Manage"
+  },
   "agent": {
     "add": "Add agent",
     "createIntroText": "Please enter the required data to create a new agent.",
@@ -108,7 +245,18 @@
     "create": "Create crawler",
     "createText": "Select the parent experiment. Fill out mandatory fields.",
     "label": "Crawler",
-    "list": "List of all crawlers including the experiment to which they are assigned."
+    "list": "List of all crawlers including the experiment to which they are assigned.",
+    "botTitle": "Add a bot",
+    "botLead": "A bot is one simulated user. Choose who it is and how it behaves — create new building blocks on the fly with the + button.",
+    "botSection": "Bot",
+    "setupSection": "Setup",
+    "identityHint": "The browser fingerprint and login profile the bot presents.",
+    "connectionHint": "The proxy and location the bot connects through.",
+    "behaviorHint": "The behavior configuration the bot follows.",
+    "newIdentity": "New browser identity",
+    "newConnection": "New connection",
+    "newBehavior": "New behavior",
+    "clear": "Clear"
   },
   "experiment": {
     "add": "Add experiment",
@@ -127,6 +275,8 @@
   "foo": "bar",
   "job": {
     "add": "add jobs",
+    "formTitle": "Add a job",
+    "formLead": "A job is a single browser action in a run — visit, click, scroll, and so on. Set its type and where it fits in the sequence.",
     "crawlerId": "Crawler-ID",
     "createIntroText": "Geben Sie die erforderlichen Daten ein, um einen neuen Job zu erstellen.",
     "label": "Job",
@@ -219,6 +369,9 @@
   },
   "queue": {
     "add": "Add Queue",
+    "runTitle": "Schedule a run",
+    "runLead": "A run sends a bot to work at a set time. Pick the bot, when it should start, and in which timezone.",
+    "botLabel": "Bot",
     "createIntroText": "Enter the required data to create a new queue.",
     "finishedAt": "Done",
     "label": "Queue",

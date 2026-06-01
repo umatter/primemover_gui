@@ -9,7 +9,7 @@ import { Agent } from '@app/agent/model/agent';
 import { AgentApiService } from '@app/agent/service/agent-api.service';
 import { QueryFilter } from '@shared/model/query-filter';
 import { Meta } from '@shared/pagination/model';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { EntityErrorService } from '@app/entity/entity-error.service';
 import { SharedActions } from '@shared/store/shared.actions';
 import { selectQueryFilter } from '@shared/store/shared.reducer';
@@ -28,6 +28,7 @@ import { HeroiconPencilSquareComponent } from '@shared/icon/heroicon-pencil-squa
   standalone: true,
   templateUrl: './agent.component.html',
   imports: [
+    RouterLink,
     LinkSortableComponent,
     SharedModule,
     HeroiconTrashComponent,

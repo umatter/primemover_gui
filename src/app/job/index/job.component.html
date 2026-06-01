@@ -3,126 +3,115 @@
   [bodyText]="successMessage?.message"
   [typeSuccess]="true"
   titleText="Success"
->
-</app-notification>
+></app-notification>
 <app-loading-spinner *ngIf="isLoading$ | async"></app-loading-spinner>
 <app-confirmation-modal (modalResponse)="onModalResponse($event)" [isModal]="!!entityToDelete"></app-confirmation-modal>
-<div *ngIf="false === (isLoading$ | async)" class="px-4">
-  <div class="sm:flex mb-6">
+
+<div *ngIf="false === (isLoading$ | async)">
+  <!-- Page header -->
+  <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <h1 class="font-display text-3xl font-semibold tracking-tight text-ink">{{ 'job.label' | translate }}</h1>
+      <p class="mt-1.5 max-w-prose text-sm text-muted">{{ 'job.formLead' | translate }}</p>
+    </div>
     <button
       [routerLink]="['create']"
-      class="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:w-auto"
+      class="inline-flex flex-shrink-0 items-center gap-2 rounded-md bg-brand px-4 py-2.5 text-sm font-semibold text-on-brand shadow-sm transition hover:bg-brand-hover"
       type="button"
     >
+      <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+        <path d="M12 5v14M5 12h14" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
       {{ 'job.add' | translate }}
     </button>
   </div>
-  <div class="flex flex-col">
-    <div class="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
-      <div class="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-        <div class="overflow-hidden">
-          <table *ngIf="entities$ | async" class="min-w-full divide-y divide-gray-300">
-            <thead>
-              <tr>
-                <th class="py-3.5 pl-6 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0" scope="col">
-                  <app-link-sortable
-                    (sortRequested)="getData()"
-                    [sortBy]="SortBy.ID"
-                    label="{{ 'common.id' | translate }}"
-                  ></app-link-sortable>
-                </th>
-                <th class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900" scope="col">
-                  <app-link-sortable
-                    (sortRequested)="getData()"
-                    [sortBy]="SortBy.NAME"
-                    label="{{ 'job.label' | translate }}"
-                  ></app-link-sortable>
-                </th>
-                <th class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900" scope="col">
-                  <app-link-sortable
-                    (sortRequested)="getData()"
-                    [sortBy]="SortBy.TYPE"
-                    label="{{ 'status.type' | translate }}"
-                  ></app-link-sortable>
-                </th>
 
-                <th class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900" scope="col">
-                  <app-link-sortable
-                    (sortRequested)="getData()"
-                    [sortBy]="SortBy.STATUSCODE"
-                    label="{{ 'status.label' | translate }}"
-                  ></app-link-sortable>
-                </th>
-                <th class="py-3.5 px-3 text-left text-sm font-semibold text-gray-900" scope="col">
-                  <app-link-sortable
-                    (sortRequested)="getData()"
-                    [sortBy]="SortBy.QUEUE"
-                    label="{{ 'queue.label' | translate }}"
-                  ></app-link-sortable>
-                </th>
-                <th class="relative py-3.5 pl-3 pr-6 sm:pr-0" scope="col">
-                  <span class="sr-only"></span>
-                </th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200 bg-white">
-              <tr *ngFor="let item of entities$ | async | paginate: paginationConfig">
-                <td class="whitespace-nowrap py-4 pl-6 pr-3 text-sm font-medium text-gray-900 sm:pl-0">
-                  {{ item.id }}
-                </td>
-                <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
-                  {{ item.name }}
-                </td>
-                <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
-                  {{ item.type }}
-                </td>
-
-                <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
-                  <app-status
-                    statusCode="{{ item.status_code }}"
-                    statusMessage="{{ item.status_message }}"
-                  ></app-status>
-                </td>
-                <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-500">
-                  {{ item.queue_id }}
-                </td>
-
-                <td class="relative whitespace-nowrap text-right text-sm font-medium pr-1">
-                  <button
-                    (click)="downloadReport(item)"
-                    *ngIf="item.reports_with_path_count"
-                    class="text-gray-400 hover:text-indigo-900 mr-2"
-                  >
-                    <app-heroicon-download-archive></app-heroicon-download-archive>
-                  </button>
-                  <button (click)="deleteRequested(item)" class="text-gray-400 hover:text-indigo-900 mr-2">
-                    <app-heroicon-trash></app-heroicon-trash>
-                  </button>
-                  <button
-                    (click)="selectJob(item)"
-                    [ngClass]="{
-                      'text-gray-400': (currentJob$ | async)?.id !== item.id,
-                      'hover:text-indigo-900': (currentJob$ | async)?.id !== item.id,
-                      'text-indigo-900': (currentJob$ | async)?.id === item.id
-                    }"
-                  >
-                    <app-heroicon-clipboard-document></app-heroicon-clipboard-document>
-                  </button>
-                </td>
-              </tr>
-
-              <!-- More people... -->
-            </tbody>
-            <tfoot>
-              <tr>
-                <th class="whitespace-nowrap px-3 py-4 text-sm text-gray-500" colspan="30">
-                  <app-pagination-controls (pageChange)="getData($event)" id="jobs"></app-pagination-controls>
-                </th>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-      </div>
+  <div class="overflow-hidden rounded-xl border border-line bg-surface shadow-sm">
+    <div class="overflow-x-auto">
+      <table *ngIf="entities$ | async" class="min-w-full divide-y divide-line">
+        <thead class="bg-surface-2">
+          <tr class="text-left text-xs font-semibold uppercase tracking-wide text-faint">
+            <th class="px-4 py-3" scope="col">
+              <app-link-sortable
+                (sortRequested)="getData()"
+                [sortBy]="SortBy.ID"
+                label="{{ 'common.id' | translate }}"
+              ></app-link-sortable>
+            </th>
+            <th class="px-4 py-3" scope="col">
+              <app-link-sortable
+                (sortRequested)="getData()"
+                [sortBy]="SortBy.NAME"
+                label="{{ 'common.name' | translate }}"
+              ></app-link-sortable>
+            </th>
+            <th class="px-4 py-3" scope="col">
+              <app-link-sortable
+                (sortRequested)="getData()"
+                [sortBy]="SortBy.TYPE"
+                label="{{ 'status.type' | translate }}"
+              ></app-link-sortable>
+            </th>
+            <th class="px-4 py-3" scope="col">
+              <app-link-sortable
+                (sortRequested)="getData()"
+                [sortBy]="SortBy.STATUSCODE"
+                label="{{ 'status.label' | translate }}"
+              ></app-link-sortable>
+            </th>
+            <th class="px-4 py-3" scope="col">
+              <app-link-sortable
+                (sortRequested)="getData()"
+                [sortBy]="SortBy.QUEUE"
+                label="{{ 'workspace.sections.runs' | translate }}"
+              ></app-link-sortable>
+            </th>
+            <th class="px-4 py-3 text-right" scope="col"><span class="sr-only">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-line">
+          <tr *ngFor="let item of entities$ | async | paginate: paginationConfig" class="transition hover:bg-surface-2">
+            <td class="whitespace-nowrap px-4 py-3.5 font-mono text-xs text-faint">{{ item.id }}</td>
+            <td class="whitespace-nowrap px-4 py-3.5 text-sm font-medium text-ink">{{ item.name }}</td>
+            <td class="whitespace-nowrap px-4 py-3.5 text-sm text-muted">{{ item.type }}</td>
+            <td class="whitespace-nowrap px-4 py-3.5 text-sm text-muted">
+              <app-status statusCode="{{ item.status_code }}" statusMessage="{{ item.status_message }}"></app-status>
+            </td>
+            <td class="whitespace-nowrap px-4 py-3.5 font-mono text-xs text-faint">Q-{{ item.queue_id }}</td>
+            <td class="whitespace-nowrap px-4 py-3.5 text-right">
+              <div class="flex items-center justify-end gap-0.5">
+                <button
+                  (click)="downloadReport(item)"
+                  *ngIf="item.reports_with_path_count"
+                  [title]="'experiment.download' | translate"
+                  class="rounded-md p-2 text-faint transition hover:bg-surface-3 hover:text-brand"
+                >
+                  <app-heroicon-download-archive></app-heroicon-download-archive>
+                </button>
+                <button
+                  (click)="selectJob(item)"
+                  [title]="'common.show' | translate"
+                  class="rounded-md p-2 transition hover:bg-surface-3"
+                  [ngClass]="(currentJob$ | async)?.id === item.id ? 'text-brand' : 'text-faint hover:text-brand'"
+                >
+                  <app-heroicon-clipboard-document></app-heroicon-clipboard-document>
+                </button>
+                <button
+                  (click)="deleteRequested(item)"
+                  [title]="'common.delete' | translate"
+                  class="rounded-md p-2 text-faint transition hover:bg-danger-tint hover:text-danger"
+                >
+                  <app-heroicon-trash></app-heroicon-trash>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
+  </div>
+
+  <div class="mt-8 flex justify-center">
+    <app-pagination-controls (pageChange)="getData($event)" id="jobs"></app-pagination-controls>
   </div>
 </div>

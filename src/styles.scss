@@ -1,7 +1,107 @@
-@import url('tailwindcss/base');
-@import url('tailwindcss/components');
-@import url('tailwindcss/utilities');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
+/* =============================================================================
+   PrimeMover design tokens — calm, scientific, trustworthy.
+   OKLCH: perceptually uniform; neutrals tinted toward the brand ink-blue (h≈255).
+   ========================================================================== */
+:root {
+  /* Surfaces — warm-cool paper */
+  --bg: oklch(0.984 0.004 255);
+  --surface: oklch(0.998 0.0015 255);
+  --surface-2: oklch(0.968 0.005 255);
+  --surface-3: oklch(0.945 0.007 255);
+  --line: oklch(0.905 0.008 255);
+  --line-strong: oklch(0.84 0.011 255);
+
+  /* Ink — text */
+  --ink: oklch(0.28 0.028 258);
+  --muted: oklch(0.5 0.022 258);
+  --faint: oklch(0.63 0.016 258);
+  --on-brand: oklch(0.97 0.01 255);
+  --on-accent: oklch(0.27 0.04 70);
+
+  /* Brand — Prussian ink-blue */
+  --brand: oklch(0.45 0.097 256);
+  --brand-hover: oklch(0.39 0.097 256);
+  --brand-tint: oklch(0.95 0.022 256);
+
+  /* Accent — signal amber/ochre (rare, ~10% of weight) */
+  --accent: oklch(0.74 0.13 67);
+  --accent-strong: oklch(0.67 0.142 60);
+  --accent-tint: oklch(0.95 0.035 72);
+
+  /* Status — refined, never harsh */
+  --success: oklch(0.56 0.11 152);
+  --success-tint: oklch(0.95 0.035 152);
+  --warning: oklch(0.71 0.12 75);
+  --warning-tint: oklch(0.95 0.04 80);
+  --danger: oklch(0.55 0.16 25);
+  --danger-tint: oklch(0.95 0.035 25);
+  --info: oklch(0.55 0.1 245);
+  --info-tint: oklch(0.95 0.03 245);
+
+  /* Focus ring */
+  --ring: oklch(0.62 0.11 256 / 0.45);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--ink);
+    font-family: 'Hanken Grotesk', ui-sans-serif, system-ui, sans-serif;
+    font-feature-settings: 'ss01', 'cv01';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizelegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: Spectral, ui-serif, Georgia, serif;
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  ::selection {
+    background-color: var(--brand-tint);
+    color: var(--brand-hover);
+  }
+
+  :focus-visible {
+    outline: 2px solid transparent;
+    box-shadow: 0 0 0 3px var(--ring);
+    border-radius: 0.25rem;
+  }
+
+  /* Tasteful, thin scrollbars that match the paper palette */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--line-strong) transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* =============================================================================
+   ngx-pagination reset (unchanged behaviour, re-themed below in pagination cmp)
+   ========================================================================== */
 pagination-controls {
   & ul.ngx-pagination {
     & * {
@@ -46,11 +146,12 @@ pagination-controls {
 
     & li {
       & a {
-        padding: 0 5px;
-        margin: 0 6px;
+        padding: 0 0.5rem;
+        margin: 0 0.375rem;
+        border-radius: 0.375rem;
 
         &:hover {
-          background-color: unset;
+          background-color: var(--surface-2);
         }
 
         &:not(:hover) {
@@ -60,8 +161,10 @@ pagination-controls {
     }
 
     & li.current {
-      background: #444;
-      color: white;
+      padding: 0 0.5rem;
+      border-radius: 0.375rem;
+      background: var(--brand);
+      color: var(--on-brand);
     }
 
     width: 100%;
@@ -69,10 +172,12 @@ pagination-controls {
   }
 }
 
+/* Status dot — re-themed to the refined status tokens (used by legacy screens) */
 .dot {
   display: flex;
   width: 1.6rem;
   height: 1.6rem;
+  align-items: center;
   justify-content: center;
   border-radius: 50%;
   color: white;
@@ -80,15 +185,15 @@ pagination-controls {
   text-align: center;
 
   &.red {
-    background-color: #b91c1c;
+    background-color: var(--danger);
   }
 
   &.green {
-    background-color: #14532d;
+    background-color: var(--success);
   }
 
   &.yellow {
-    background-color: #eab308;
+    background-color: var(--warning);
   }
 }
 
@@ -96,17 +201,18 @@ pagination-controls {
   width: 512px;
 }
 
+/* Material language selector in the header */
 .navabar-select-language {
   .mat-select-min-line {
-    color: rgb(209 213 219);
-    font-family: system-ui;
+    color: var(--on-brand);
+    font-family: 'Hanken Grotesk', sans-serif;
   }
 
   .mat-select-arrow {
-    color: rgb(209 213 219);
+    color: var(--on-brand);
   }
 
   .mat-form-field-appearance-legacy .mat-form-field-underline {
-    background-color: white;
+    background-color: var(--on-brand);
   }
 }

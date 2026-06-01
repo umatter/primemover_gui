@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { combineLatest, distinctUntilChanged, map, Observable, Subscription } from 'rxjs';
 import { select, Store } from '@ngrx/store';
 
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { fadeIn } from '@shared/animation/trigger';
 import { Experiment } from '../model/experiment';
 import { ExperimentService } from '@app/entity/service';
@@ -29,7 +29,8 @@ import { selectError, selectIsLoading } from '@shared/store/shared.reducer';
     TranslateModule,
     NgForOf,
     ReactiveFormsModule,
-    FileUploadComponent
+    FileUploadComponent,
+    RouterLink
   ],
   standalone: true
 })

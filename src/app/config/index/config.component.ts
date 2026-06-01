@@ -17,6 +17,7 @@ import { LoadingSpinnerComponent } from '@shared/overlay/loading-spinner/loading
 import { ControlsComponent } from '@shared/pagination/controls/controls.component';
 import { HeroiconTrashComponent } from '@shared/icon/heroicon-trash/heroicon-trash.component';
 import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
@@ -25,6 +26,7 @@ import { TranslateModule } from '@ngx-translate/core';
   standalone: true,
   styleUrls: ['./config.component.scss'],
   imports: [
+    RouterLink,
     ConfirmationModalComponent,
     LinkSortableComponent,
     LoadingSpinnerComponent,
