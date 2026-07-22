@@ -124,7 +124,8 @@
     <div *ngIf="(bots$ | async)?.length" class="grid grid-cols-1 gap-4 lg:grid-cols-2">
       <article
         *ngFor="let bot of bots$ | async; let i = index"
-        class="animate-fade-up rounded-xl border border-line bg-surface p-5 transition hover:border-line-strong hover:shadow-sm"
+        [routerLink]="['/experiments', experimentId, 'bots', bot.id]"
+        class="block animate-fade-up cursor-pointer rounded-xl border border-line bg-surface p-5 transition hover:border-line-strong hover:shadow-sm"
         [style.animation-delay]="i * 40 + 'ms'"
       >
         <div class="flex items-start justify-between gap-3">
@@ -180,13 +181,21 @@
             {{ bot.proxy?.name || '—' }}
           </span>
           <span class="inline-flex items-center gap-1">
-            <span class="text-faint">{{ 'workspace.bot.behavior' | translate }}:</span>
+            <span class="text-faint">{{ 'workspace.bot.profile' | translate }}:</span>
             {{ bot.configuration?.name || '—' }}
           </span>
         </div>
       </article>
     </div>
   </section>
+
+  <!-- ============================== Add-bot panel ============================== -->
+  <app-add-bot
+    *ngIf="showAddBot"
+    [experimentId]="experiment.id"
+    (created)="onBotCreated()"
+    (closed)="onAddBotClosed()"
+  ></app-add-bot>
 </ng-container>
 
 <ng-template #loadingTpl>

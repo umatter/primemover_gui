@@ -1,0 +1,114 @@
+<!-- Backdrop -->
+<div
+  class="fixed inset-0 z-40 flex items-start justify-center overflow-y-auto bg-ink/30 px-4 py-10 backdrop-blur-sm"
+  (click)="cancel()"
+>
+  <!-- Panel -->
+  <div
+    @fadeIn
+    (click)="$event.stopPropagation()"
+    class="w-full max-w-lg rounded-2xl border border-line bg-surface p-6 shadow-xl"
+    role="dialog"
+    aria-modal="true"
+  >
+    <header class="mb-5">
+      <h2 class="font-display text-xl font-semibold text-ink">{{ 'workspace.runPanel.title' | translate }}</h2>
+      <p class="mt-1 text-sm text-muted">
+        {{ 'workspace.runPanel.subtitle' | translate }}
+        <span *ngIf="crawlerName" class="font-medium text-ink">{{ crawlerName }}</span>
+      </p>
+    </header>
+
+    <form [formGroup]="form" (ngSubmit)="save()" class="space-y-4">
+      <!-- Name -->
+      <div>
+        <label for="run-name" class="mb-1 block text-sm font-medium text-ink">
+          {{ 'workspace.runPanel.name' | translate }}
+        </label>
+        <input
+          id="run-name"
+          type="text"
+          formControlName="name"
+          class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink placeholder:text-faint focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+          [placeholder]="'workspace.runPanel.namePlaceholder' | translate"
+        />
+        <p *ngIf="hasError('name', 'required')" class="mt-1 text-xs text-danger">
+          {{ 'workspace.runPanel.nameRequired' | translate }}
+        </p>
+      </div>
+
+      <!-- Start at -->
+      <div>
+        <label for="run-start" class="mb-1 block text-sm font-medium text-ink">
+          {{ 'workspace.runPanel.startAt' | translate }}
+        </label>
+        <input
+          id="run-start"
+          type="datetime-local"
+          formControlName="start_at"
+          class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+        />
+        <p *ngIf="hasError('start_at', 'required')" class="mt-1 text-xs text-danger">
+          {{ 'workspace.runPanel.startRequired' | translate }}
+        </p>
+      </div>
+
+      <!-- Timezone -->
+      <div>
+        <label for="run-tz" class="mb-1 block text-sm font-medium text-ink">
+          {{ 'workspace.runPanel.timezone' | translate }}
+        </label>
+        <select
+          id="run-tz"
+          formControlName="timezone"
+          (change)="onTimezoneChange()"
+          class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+        >
+          <option *ngFor="let tz of timezones$ | async" [ngValue]="tz">{{ tz }}</option>
+        </select>
+        <p class="mt-1 text-xs text-faint">
+          {{ 'workspace.runPanel.offset' | translate }}:
+          <span class="font-mono">{{ form.get('timezone_utc_offset')?.value || '—' }}</span>
+        </p>
+      </div>
+
+      <!-- Description (optional) -->
+      <div>
+        <label for="run-desc" class="mb-1 block text-sm font-medium text-ink">
+          {{ 'workspace.runPanel.description' | translate }}
+          <span class="font-normal text-faint">({{ 'workspace.runPanel.optional' | translate }})</span>
+        </label>
+        <input
+          id="run-desc"
+          type="text"
+          formControlName="description"
+          class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink placeholder:text-faint focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+          [placeholder]="'workspace.runPanel.descriptionPlaceholder' | translate"
+        />
+      </div>
+
+      <!-- Submit error -->
+      <p *ngIf="errorKey" class="rounded-md bg-danger-tint px-3 py-2 text-sm text-danger">
+        {{ errorKey | translate }}
+      </p>
+
+      <!-- Actions -->
+      <div class="flex items-center justify-end gap-2 pt-2">
+        <button
+          type="button"
+          (click)="cancel()"
+          class="rounded-md border border-line bg-surface px-4 py-2 text-sm font-medium text-ink transition hover:bg-surface-2"
+        >
+          {{ 'workspace.runPanel.cancel' | translate }}
+        </button>
+        <button
+          type="submit"
+          [disabled]="submitting"
+          class="inline-flex items-center gap-2 rounded-md bg-brand px-4 py-2 text-sm font-semibold text-on-brand transition hover:bg-brand-hover disabled:opacity-60"
+        >
+          {{ (submitting ? 'workspace.runPanel.saving' : 'workspace.runPanel.save') | translate }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

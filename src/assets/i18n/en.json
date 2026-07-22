@@ -71,7 +71,91 @@
       "empty": {
         "title": "No bots yet",
         "body": "A bot is one simulated user. Add a bot to define who browses the platform and how."
+      },
+      "profile": "Profile"
+    },
+    "addBotPanel": {
+      "title": "Add a bot",
+      "subtitle": "A bot is one simulated user. Compose it from your Library building blocks.",
+      "libraryEmpty": "You need at least one browser identity, connection and profile in your Library first.",
+      "openLibrary": "Open Library",
+      "name": "Bot name",
+      "namePlaceholder": "e.g. Persona A — moderate viewer",
+      "nameRequired": "Give the bot a name.",
+      "choose": "Choose…",
+      "fieldRequired": "Please choose one.",
+      "cancel": "Cancel",
+      "save": "Add bot",
+      "saving": "Adding…",
+      "error": "Couldn't add the bot. Please try again."
+    },
+    "runPanel": {
+      "title": "Schedule a run",
+      "subtitle": "A run is one scheduled session for",
+      "name": "Run name",
+      "namePlaceholder": "e.g. Week 1 — morning session",
+      "nameRequired": "Give the run a name.",
+      "startAt": "Start",
+      "startRequired": "Choose when the run should start.",
+      "timezone": "Timezone",
+      "offset": "UTC offset",
+      "cancel": "Cancel",
+      "save": "Schedule run",
+      "saving": "Scheduling…",
+      "error": "Couldn't schedule the run. Please try again.",
+      "description": "Description",
+      "optional": "optional",
+      "descriptionPlaceholder": "What this run is for"
+    },
+    "runState": {
+      "scheduled": "Scheduled",
+      "running": "Running",
+      "succeeded": "Succeeded",
+      "failed": "Failed"
+    },
+    "botDetail": {
+      "back": "Back to experiment",
+      "newRun": "New run",
+      "noRuns": {
+        "title": "No runs yet",
+        "body": "Schedule a run to give this bot a session to execute."
       }
+    },
+    "composer": {
+      "back": "Back to bot",
+      "subtitle": "The ordered steps this run performs, top to bottom.",
+      "jobs": "Job sequence",
+      "empty": "No jobs yet. Add the first step below.",
+      "addTitle": "Add a job",
+      "type": "Job type",
+      "chooseType": "Choose a type…",
+      "typeRequired": "Pick a job type.",
+      "name": "Label",
+      "namePlaceholder": "e.g. Open YouTube home",
+      "nameRequired": "Give the job a label.",
+      "addJob": "Add job",
+      "behaviours": "Behaviours",
+      "active": "Active",
+      "inactive": "Inactive",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "remove": "Remove job",
+      "details": "Details",
+      "fieldRequired": "Required.",
+      "addError": "Couldn't add the job. Please try again."
+    },
+    "behaviours": {
+      "title": "Behaviours",
+      "subtitle": "The type-specific settings for this job (name → value).",
+      "empty": "No behaviours yet. Add the settings this job needs below.",
+      "name": "Setting",
+      "namePlaceholder": "e.g. url",
+      "value": "Value",
+      "valuePlaceholder": "e.g. https://youtube.com",
+      "required": "Required.",
+      "add": "Add behaviour",
+      "done": "Done",
+      "remove": "Remove behaviour"
     }
   },
   "wizard": {
@@ -108,8 +192,8 @@
     },
     "runs": {
       "title": "Plan the runs",
-      "body": "Runs are when your bots go to work. You can schedule these now or later from the workspace.",
-      "later": "I'll set up runs later"
+      "body": "Runs are scheduled per bot. Each run is one timed session your bot performs — you build its job sequence and behaviours on the bot's page.",
+      "later": "When you finish, we'll take you straight to your bot's page so you can schedule its first run."
     },
     "review": {
       "title": "Review & create",

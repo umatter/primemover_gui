@@ -71,7 +71,91 @@
       "empty": {
         "title": "Noch keine Bots",
         "body": "Ein Bot ist ein simulierter Nutzer. Fügen Sie einen Bot hinzu, um festzulegen, wer die Plattform wie durchsucht."
+      },
+      "profile": "Profil"
+    },
+    "addBotPanel": {
+      "title": "Bot hinzufügen",
+      "subtitle": "Ein Bot ist ein simulierter Nutzer. Stelle ihn aus deinen Bibliotheks-Bausteinen zusammen.",
+      "libraryEmpty": "Du brauchst zuerst mindestens eine Browser-Identität, Verbindung und ein Profil in deiner Bibliothek.",
+      "openLibrary": "Bibliothek öffnen",
+      "name": "Bot-Name",
+      "namePlaceholder": "z. B. Persona A — gemäßigter Zuschauer",
+      "nameRequired": "Gib dem Bot einen Namen.",
+      "choose": "Auswählen…",
+      "fieldRequired": "Bitte eine Option wählen.",
+      "cancel": "Abbrechen",
+      "save": "Bot hinzufügen",
+      "saving": "Wird hinzugefügt…",
+      "error": "Bot konnte nicht hinzugefügt werden. Bitte erneut versuchen."
+    },
+    "runPanel": {
+      "title": "Lauf planen",
+      "subtitle": "Ein Lauf ist eine geplante Sitzung für",
+      "name": "Lauf-Name",
+      "namePlaceholder": "z. B. Woche 1 — Morgensitzung",
+      "nameRequired": "Gib dem Lauf einen Namen.",
+      "startAt": "Start",
+      "startRequired": "Wähle, wann der Lauf starten soll.",
+      "timezone": "Zeitzone",
+      "offset": "UTC-Offset",
+      "cancel": "Abbrechen",
+      "save": "Lauf planen",
+      "saving": "Wird geplant…",
+      "error": "Lauf konnte nicht geplant werden. Bitte erneut versuchen.",
+      "description": "Beschreibung",
+      "optional": "optional",
+      "descriptionPlaceholder": "Wofür dieser Lauf ist"
+    },
+    "runState": {
+      "scheduled": "Geplant",
+      "running": "Läuft",
+      "succeeded": "Erfolgreich",
+      "failed": "Fehlgeschlagen"
+    },
+    "botDetail": {
+      "back": "Zurück zum Experiment",
+      "newRun": "Neuer Lauf",
+      "noRuns": {
+        "title": "Noch keine Läufe",
+        "body": "Plane einen Lauf, um diesem Bot eine Sitzung zu geben."
       }
+    },
+    "composer": {
+      "back": "Zurück zum Bot",
+      "subtitle": "Die geordneten Schritte dieses Laufs, von oben nach unten.",
+      "jobs": "Job-Sequenz",
+      "empty": "Noch keine Jobs. Füge unten den ersten Schritt hinzu.",
+      "addTitle": "Job hinzufügen",
+      "type": "Job-Typ",
+      "chooseType": "Typ wählen…",
+      "typeRequired": "Wähle einen Job-Typ.",
+      "name": "Bezeichnung",
+      "namePlaceholder": "z. B. YouTube-Startseite öffnen",
+      "nameRequired": "Gib dem Job eine Bezeichnung.",
+      "addJob": "Job hinzufügen",
+      "behaviours": "Verhalten",
+      "active": "Aktiv",
+      "inactive": "Inaktiv",
+      "moveUp": "Nach oben",
+      "moveDown": "Nach unten",
+      "remove": "Job entfernen",
+      "details": "Details",
+      "fieldRequired": "Erforderlich.",
+      "addError": "Job konnte nicht hinzugefügt werden. Bitte erneut versuchen."
+    },
+    "behaviours": {
+      "title": "Verhalten",
+      "subtitle": "Die typ-spezifischen Einstellungen dieses Jobs (Name → Wert).",
+      "empty": "Noch kein Verhalten. Füge unten die benötigten Einstellungen hinzu.",
+      "name": "Einstellung",
+      "namePlaceholder": "z. B. url",
+      "value": "Wert",
+      "valuePlaceholder": "z. B. https://youtube.com",
+      "required": "Erforderlich.",
+      "add": "Verhalten hinzufügen",
+      "done": "Fertig",
+      "remove": "Verhalten entfernen"
     }
   },
   "wizard": {
@@ -108,8 +192,8 @@
     },
     "runs": {
       "title": "Durchläufe planen",
-      "body": "Durchläufe sind, wenn Ihre Bots an die Arbeit gehen. Sie können diese jetzt oder später im Arbeitsbereich einrichten.",
-      "later": "Ich richte Durchläufe später ein"
+      "body": "Läufe werden pro Bot geplant. Jeder Lauf ist eine zeitlich geplante Sitzung deines Bots — Job-Sequenz und Verhalten legst du auf der Bot-Seite fest.",
+      "later": "Sobald du fertig bist, bringen wir dich direkt zur Bot-Seite, um den ersten Lauf zu planen."
     },
     "review": {
       "title": "Überprüfen & erstellen",

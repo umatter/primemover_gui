@@ -7,6 +7,7 @@ import { Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
 
 import { Experiment } from '../model/experiment';
+import { Crawler } from '@app/crawler/model/crawler';
 import { Agent } from '@app/agent/model/agent';
 import { Proxy } from '@app/proxy/model/proxy';
 import { Configuration } from '@app/config/model/config';
@@ -159,11 +160,21 @@ export class ExperimentWizardComponent implements OnInit, OnDestroy {
     };
     this.subscriptions.add(
       this.crawlerService.add(payload as any).subscribe({
-        next: () => this.finish(experiment),
+        // Land on the new bot's page so the operator can schedule its first run (Slice B).
+        next: (bot: Crawler) => this.finishToBot(experiment, bot),
         // The study exists; land in the workspace even if the bot call fails.
         error: () => this.finish(experiment)
       })
     );
+  }
+
+  private finishToBot(experiment: Experiment, bot: Crawler): void {
+    this.submitting = false;
+    if (bot?.id) {
+      this.router.navigate(['experiments', experiment.id, 'bots', bot.id]).then();
+    } else {
+      this.finish(experiment);
+    }
   }
 
   private finish(experiment: Experiment): void {

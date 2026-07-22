@@ -13,6 +13,7 @@ import { fadeIn } from '@shared/animation/trigger';
 import { LoadingSpinnerComponent } from '@shared/overlay/loading-spinner/loading-spinner.component';
 import { HeroiconUploadComponent } from '@shared/icon/heroicon-upload/heroicon-upload.component';
 import { HeroiconDownloadArchiveComponent } from '@shared/icon/heroicon-download-archive/heroicon-download-archive.component';
+import { AddBotComponent } from './add-bot/add-bot.component';
 
 interface RunSummary {
   total: number;
@@ -36,7 +37,8 @@ interface RunSummary {
     TranslateModule,
     LoadingSpinnerComponent,
     HeroiconUploadComponent,
-    HeroiconDownloadArchiveComponent
+    HeroiconDownloadArchiveComponent,
+    AddBotComponent
   ],
   animations: [fadeIn]
 })
@@ -46,6 +48,7 @@ export class ExperimentWorkspaceComponent implements OnInit, OnDestroy {
   summary$!: Observable<RunSummary>;
   isLoading$ = this.crawlerService.loading$;
   experimentId!: number;
+  showAddBot = false;
 
   private subscriptions = new Subscription();
 
@@ -62,7 +65,7 @@ export class ExperimentWorkspaceComponent implements OnInit, OnDestroy {
       switchMap((params) => {
         const id = Number(params.get('id'));
         this.experimentId = id;
-        this.crawlerService.getWithQuery({ ['filter[experiment_id]']: String(id) });
+        this.crawlerService.getWithQuery({ ['filter[experiment]']: String(id) });
         return this.experimentService.getByKey(id);
       })
     );
@@ -110,7 +113,18 @@ export class ExperimentWorkspaceComponent implements OnInit, OnDestroy {
   }
 
   addBot(): void {
-    this.router.navigate(['crawlers/create']).then();
+    this.showAddBot = true;
+  }
+
+  onBotCreated(): void {
+    // The @ngrx/data store already holds the new crawler; make sure this
+    // experiment's scoped list reflects it, then close the panel.
+    this.crawlerService.getWithQuery({ ['filter[experiment]']: String(this.experimentId) });
+    this.showAddBot = false;
+  }
+
+  onAddBotClosed(): void {
+    this.showAddBot = false;
   }
 
   uploadData(experiment: Experiment): void {
