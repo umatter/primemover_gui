@@ -240,7 +240,7 @@
     "passwordRequiredError": "Password is required",
     "resetPassword": "Reset password",
     "settings": "Settings",
-    "signIn": "Register",
+    "signIn": "Sign in",
     "signOut": "Sign out",
     "username": "User name"
   },
