@@ -1,28 +1,16 @@
-<nav class="flex space-x-4">
+<nav class="flex items-center gap-1">
   <a
-    [ngClass]="isActiveRoute('/experiments') ? activeClassList : regularClassList"
+    class="rounded-md px-3 py-1.5 text-sm font-medium text-muted transition hover:bg-surface-2 hover:text-ink"
     routerLink="experiments"
-    routerLinkActive="bg-gray-900 text-white"
+    routerLinkActive="!bg-brand-tint !text-brand"
   >
     {{ 'experiment.label' | translate }}
   </a>
-  <a [ngClass]="isActiveRoute('/crawlers') ? activeClassList : regularClassList" routerLink="crawlers">
-    {{ 'crawler.label' | translate }}
-  </a>
-  <a [ngClass]="isActiveRoute('/queues') ? activeClassList : regularClassList" routerLink="queues">
-    {{ 'queue.label' | translate }}
-  </a>
-  <a [ngClass]="isActiveRoute('/jobs') ? activeClassList : regularClassList" routerLink="jobs">
-    {{ 'job.label' | translate }}
-  </a>
-
-  <a [ngClass]="isActiveRoute('/agents') ? activeClassList : regularClassList" routerLink="agents">
-    {{ 'agent.label' | translate }}
-  </a>
-  <a [ngClass]="isActiveRoute('/configurations') ? activeClassList : regularClassList" routerLink="configurations">
-    {{ 'config.label' | translate }}
-  </a>
-  <a [ngClass]="isActiveRoute('/proxies') ? activeClassList : regularClassList" routerLink="proxies">
-    {{ 'proxy.label' | translate }}
+  <a
+    class="rounded-md px-3 py-1.5 text-sm font-medium text-muted transition hover:bg-surface-2 hover:text-ink"
+    routerLink="library"
+    routerLinkActive="!bg-brand-tint !text-brand"
+  >
+    {{ 'nav.library' | translate }}
   </a>
 </nav>

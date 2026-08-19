@@ -1,39 +1,16 @@
-<main class="-mt-24 pb-8">
-  <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:max-w-7xl lg:px-8">
-    <h1 class="sr-only">Page title</h1>
-    <!-- Main 3 column grid -->
-    <div class="grid grid-cols-1 items-start gap-4 lg:grid-cols-3 lg:gap-8">
-      <!-- Left column -->
-      <div class="grid grid-cols-1 gap-4 lg:col-span-2">
-        <section aria-labelledby="section-1-title">
-          <h2 class="sr-only" id="section-1-title">Section title</h2>
-          <div class="overflow-hidden rounded-lg bg-white shadow">
-            <div class="p-6">
-              <app-notification
-                (closeRequested)="dismiss()"
-                *ngIf="error$ | async; let errorMessage"
-                [bodyText]="errorMessage.statusText"
-                [error]="errorMessage"
-                [typeError]="true"
-                titleText="Failure"
-              >
-              </app-notification>
-              <router-outlet></router-outlet>
-            </div>
-          </div>
-        </section>
-      </div>
+<main class="py-8 sm:py-10">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <app-notification
+      (closeRequested)="dismiss()"
+      *ngIf="error$ | async; let errorMessage"
+      [bodyText]="errorMessage.statusText"
+      [error]="errorMessage"
+      [typeError]="true"
+      titleText="Something went wrong"
+      class="mb-6 block"
+    >
+    </app-notification>
 
-      <!-- Right column -->
-      <div class="grid grid-cols-1 gap-4">
-        <section aria-labelledby="section-2-title">
-          <h2 class="sr-only" id="section-2-title">Section title</h2>
-          <div class="overflow-hidden rounded-lg bg-white shadow">
-            <app-header *ngIf="isLoggedIn$ | async"></app-header>
-            <app-metadata></app-metadata>
-          </div>
-        </section>
-      </div>
-    </div>
+    <router-outlet></router-outlet>
   </div>
 </main>

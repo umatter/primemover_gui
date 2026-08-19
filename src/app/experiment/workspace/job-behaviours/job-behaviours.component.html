@@ -1,0 +1,86 @@
+<div
+  class="fixed inset-0 z-40 flex items-start justify-center overflow-y-auto bg-ink/30 px-4 py-10 backdrop-blur-sm"
+  (click)="cancel()"
+>
+  <div
+    @fadeIn
+    (click)="$event.stopPropagation()"
+    class="w-full max-w-xl rounded-2xl border border-line bg-surface p-6 shadow-xl"
+    role="dialog"
+    aria-modal="true"
+  >
+    <header class="mb-5">
+      <p class="font-mono text-xs text-faint">{{ job.type }} · J-{{ job.id }}</p>
+      <h2 class="mt-1 font-display text-xl font-semibold text-ink">
+        {{ 'workspace.behaviours.title' | translate }} — {{ job.name }}
+      </h2>
+      <p class="mt-1 text-sm text-muted">{{ 'workspace.behaviours.subtitle' | translate }}</p>
+    </header>
+
+    <!-- Existing behaviours -->
+    <ul *ngIf="(behaviours$ | async)?.length; else noBehaviours" class="mb-5 space-y-2">
+      <li
+        *ngFor="let b of behaviours$ | async"
+        class="flex items-center gap-3 rounded-lg border border-line bg-surface-2/40 p-3"
+        [ngClass]="{ 'opacity-60': !b.active }"
+      >
+        <div class="min-w-0 flex-1">
+          <p class="truncate text-sm font-semibold text-ink">{{ b.name }}</p>
+          <p class="truncate font-mono text-xs text-muted">{{ b.value }}</p>
+        </div>
+        <button
+          type="button"
+          (click)="toggleActive(b)"
+          class="rounded-md px-2.5 py-1 text-xs font-semibold transition"
+          [ngClass]="b.active ? 'bg-success-tint text-success' : 'bg-surface-2 text-muted'"
+        >
+          {{ (b.active ? 'workspace.composer.active' : 'workspace.composer.inactive') | translate }}
+        </button>
+        <button
+          type="button"
+          (click)="removeBehaviour(b)"
+          class="text-faint transition hover:text-danger"
+          [attr.aria-label]="'workspace.behaviours.remove' | translate"
+        >
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+            <path d="M6 7h12M9 7V5h6v2M10 11v6M14 11v6M7 7l1 12h8l1-12" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+      </li>
+    </ul>
+    <ng-template #noBehaviours>
+      <p class="mb-5 rounded-lg border border-dashed border-line-strong bg-brand-tint/40 px-4 py-3 text-sm text-muted">
+        {{ 'workspace.behaviours.empty' | translate }}
+      </p>
+    </ng-template>
+
+    <!-- Add behaviour -->
+    <form [formGroup]="addForm" (ngSubmit)="addBehaviour()" class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+      <div>
+        <label for="beh-name" class="mb-1 block text-sm font-medium text-ink">{{ 'workspace.behaviours.name' | translate }}</label>
+        <input id="beh-name" type="text" formControlName="name"
+          class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink placeholder:text-faint focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+          [placeholder]="'workspace.behaviours.namePlaceholder' | translate" />
+        <p *ngIf="hasError('name', 'required')" class="mt-1 text-xs text-danger">{{ 'workspace.behaviours.required' | translate }}</p>
+      </div>
+      <div>
+        <label for="beh-value" class="mb-1 block text-sm font-medium text-ink">{{ 'workspace.behaviours.value' | translate }}</label>
+        <input id="beh-value" type="text" formControlName="value"
+          class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink placeholder:text-faint focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+          [placeholder]="'workspace.behaviours.valuePlaceholder' | translate" />
+        <p *ngIf="hasError('value', 'required')" class="mt-1 text-xs text-danger">{{ 'workspace.behaviours.required' | translate }}</p>
+      </div>
+      <div class="sm:col-span-2 flex items-center justify-between pt-1">
+        <button type="button" (click)="cancel()"
+          class="rounded-md border border-line bg-surface px-4 py-2 text-sm font-medium text-ink transition hover:bg-surface-2">
+          {{ 'workspace.behaviours.done' | translate }}
+        </button>
+        <button type="submit"
+          class="inline-flex items-center gap-2 rounded-md bg-brand px-4 py-2 text-sm font-semibold text-on-brand transition hover:bg-brand-hover">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          {{ 'workspace.behaviours.add' | translate }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

@@ -1,4 +1,225 @@
 {
+  "nav": {
+    "experiments": "Experimente",
+    "library": "Bibliothek"
+  },
+  "brand": {
+    "name": "PrimeMover",
+    "tagline": "Beobachten, was der Algorithmus zeigt."
+  },
+  "projects": {
+    "title": "Experimente",
+    "subtitle": "Entwerfen und führen Sie Ihre Algorithmus-Studien durch.",
+    "new": "Neues Experiment",
+    "searchPlaceholder": "Experimente suchen",
+    "open": "Öffnen",
+    "updated": "Aktualisiert",
+    "contact": "Kontakt",
+    "selectedBadge": "Ausgewählt",
+    "noDescription": "Noch keine Beschreibung",
+    "empty": {
+      "title": "Entwerfen Sie Ihr erstes Experiment",
+      "body": "Ein Experiment ist Ihre Studie: simulierte Nutzer (Bots), die eine Plattform durchsuchen, damit Sie beobachten können, was deren Algorithmus jedem einzelnen zeigt. Erstellen Sie eines – wir führen Sie durch die Einrichtung.",
+      "cta": "Neues Experiment"
+    },
+    "noResults": {
+      "title": "Keine Experimente gefunden",
+      "body": "Versuchen Sie einen anderen Suchbegriff."
+    },
+    "error": {
+      "title": "Experimente konnten nicht geladen werden",
+      "body": "Beim Laden Ihrer Experimente ist ein Fehler aufgetreten.",
+      "retry": "Erneut versuchen"
+    }
+  },
+  "workspace": {
+    "overview": "Übersicht",
+    "back": "Alle Experimente",
+    "settings": "Einstellungen",
+    "uploadData": "Daten hochladen",
+    "download": "Daten herunterladen",
+    "sections": {
+      "bots": "Bots",
+      "botsHint": "Simulierte Nutzer, die die Plattform für diese Studie durchsuchen.",
+      "runs": "Durchläufe",
+      "activity": "Letzte Aktivität"
+    },
+    "addBot": "Bot hinzufügen",
+    "progress": "Fortschritt",
+    "state": {
+      "idle": "Inaktiv",
+      "running": "Läuft",
+      "succeeded": "Erfolgreich",
+      "failed": "Fehlgeschlagen"
+    },
+    "nextStep": {
+      "title": "Schließen Sie die Einrichtung Ihres Experiments ab",
+      "body": "Fügen Sie mindestens einen Bot hinzu, um mit dem Sammeln von Beobachtungen zu beginnen.",
+      "cta": "Bot hinzufügen"
+    },
+    "stat": {
+      "bots": "Bots",
+      "runs": "Durchläufe",
+      "succeeded": "Erfolgreich",
+      "failed": "Fehlgeschlagen"
+    },
+    "bot": {
+      "identity": "Browser-Identität",
+      "connection": "Verbindung",
+      "behavior": "Verhalten",
+      "noRuns": "Noch keine Durchläufe",
+      "empty": {
+        "title": "Noch keine Bots",
+        "body": "Ein Bot ist ein simulierter Nutzer. Fügen Sie einen Bot hinzu, um festzulegen, wer die Plattform wie durchsucht."
+      },
+      "profile": "Profil"
+    },
+    "addBotPanel": {
+      "title": "Bot hinzufügen",
+      "subtitle": "Ein Bot ist ein simulierter Nutzer. Stelle ihn aus deinen Bibliotheks-Bausteinen zusammen.",
+      "libraryEmpty": "Du brauchst zuerst mindestens eine Browser-Identität, Verbindung und ein Profil in deiner Bibliothek.",
+      "openLibrary": "Bibliothek öffnen",
+      "name": "Bot-Name",
+      "namePlaceholder": "z. B. Persona A — gemäßigter Zuschauer",
+      "nameRequired": "Gib dem Bot einen Namen.",
+      "choose": "Auswählen…",
+      "fieldRequired": "Bitte eine Option wählen.",
+      "cancel": "Abbrechen",
+      "save": "Bot hinzufügen",
+      "saving": "Wird hinzugefügt…",
+      "error": "Bot konnte nicht hinzugefügt werden. Bitte erneut versuchen."
+    },
+    "runPanel": {
+      "title": "Lauf planen",
+      "subtitle": "Ein Lauf ist eine geplante Sitzung für",
+      "name": "Lauf-Name",
+      "namePlaceholder": "z. B. Woche 1 — Morgensitzung",
+      "nameRequired": "Gib dem Lauf einen Namen.",
+      "startAt": "Start",
+      "startRequired": "Wähle, wann der Lauf starten soll.",
+      "timezone": "Zeitzone",
+      "offset": "UTC-Offset",
+      "cancel": "Abbrechen",
+      "save": "Lauf planen",
+      "saving": "Wird geplant…",
+      "error": "Lauf konnte nicht geplant werden. Bitte erneut versuchen.",
+      "description": "Beschreibung",
+      "optional": "optional",
+      "descriptionPlaceholder": "Wofür dieser Lauf ist"
+    },
+    "runState": {
+      "scheduled": "Geplant",
+      "running": "Läuft",
+      "succeeded": "Erfolgreich",
+      "failed": "Fehlgeschlagen"
+    },
+    "botDetail": {
+      "back": "Zurück zum Experiment",
+      "newRun": "Neuer Lauf",
+      "noRuns": {
+        "title": "Noch keine Läufe",
+        "body": "Plane einen Lauf, um diesem Bot eine Sitzung zu geben."
+      }
+    },
+    "composer": {
+      "back": "Zurück zum Bot",
+      "subtitle": "Die geordneten Schritte dieses Laufs, von oben nach unten.",
+      "jobs": "Job-Sequenz",
+      "empty": "Noch keine Jobs. Füge unten den ersten Schritt hinzu.",
+      "addTitle": "Job hinzufügen",
+      "type": "Job-Typ",
+      "chooseType": "Typ wählen…",
+      "typeRequired": "Wähle einen Job-Typ.",
+      "name": "Bezeichnung",
+      "namePlaceholder": "z. B. YouTube-Startseite öffnen",
+      "nameRequired": "Gib dem Job eine Bezeichnung.",
+      "addJob": "Job hinzufügen",
+      "behaviours": "Verhalten",
+      "active": "Aktiv",
+      "inactive": "Inaktiv",
+      "moveUp": "Nach oben",
+      "moveDown": "Nach unten",
+      "remove": "Job entfernen",
+      "details": "Details",
+      "fieldRequired": "Erforderlich.",
+      "addError": "Job konnte nicht hinzugefügt werden. Bitte erneut versuchen."
+    },
+    "behaviours": {
+      "title": "Verhalten",
+      "subtitle": "Die typ-spezifischen Einstellungen dieses Jobs (Name → Wert).",
+      "empty": "Noch kein Verhalten. Füge unten die benötigten Einstellungen hinzu.",
+      "name": "Einstellung",
+      "namePlaceholder": "z. B. url",
+      "value": "Wert",
+      "valuePlaceholder": "z. B. https://youtube.com",
+      "required": "Erforderlich.",
+      "add": "Verhalten hinzufügen",
+      "done": "Fertig",
+      "remove": "Verhalten entfernen"
+    }
+  },
+  "wizard": {
+    "title": "Neues Experiment",
+    "subtitle": "Wir richten die Studie und ihren ersten Bot ein. Sie können später alles ändern.",
+    "cancel": "Abbrechen",
+    "back": "Zurück",
+    "next": "Weiter",
+    "create": "Experiment erstellen",
+    "creating": "Wird erstellt…",
+    "advanced": "Erweiterte Einstellungen",
+    "advancedHint": "Low-Level-Optionen für Operatoren. Sinnvolle Standardwerte sind ausgefüllt.",
+    "steps": {
+      "study": "Die Studie",
+      "bot": "Erster Bot",
+      "runs": "Durchläufe",
+      "review": "Überprüfen"
+    },
+    "study": {
+      "title": "Studie definieren",
+      "body": "Geben Sie Ihrem Experiment einen klaren Namen und einen Kontakt, damit Mitarbeitende wissen, wem es gehört.",
+      "name": "Name des Experiments",
+      "namePlaceholder": "z. B. YouTube politische Empfehlungen 2026",
+      "contact": "Kontakt",
+      "description": "Forschungsfrage oder Notizen",
+      "descriptionPlaceholder": "Was möchten Sie beobachten?"
+    },
+    "bot": {
+      "title": "Fügen Sie Ihren ersten Bot hinzu",
+      "body": "Ein Bot ist ein simulierter Nutzer. Wir erstellen einen mit sinnvollen Standardwerten – öffnen Sie Erweitert, um Browser-Identität, Verbindung und Verhalten festzulegen.",
+      "name": "Bot-Name",
+      "namePlaceholder": "z. B. Persona A — moderater Zuschauer",
+      "skip": "Vorerst überspringen"
+    },
+    "runs": {
+      "title": "Durchläufe planen",
+      "body": "Läufe werden pro Bot geplant. Jeder Lauf ist eine zeitlich geplante Sitzung deines Bots — Job-Sequenz und Verhalten legst du auf der Bot-Seite fest.",
+      "later": "Sobald du fertig bist, bringen wir dich direkt zur Bot-Seite, um den ersten Lauf zu planen."
+    },
+    "review": {
+      "title": "Überprüfen & erstellen",
+      "body": "Das werden wir erstellen. Sie können jeden Teil danach anpassen.",
+      "study": "Studie",
+      "bot": "Erster Bot",
+      "none": "Noch keiner"
+    }
+  },
+  "library": {
+    "title": "Bibliothek",
+    "subtitle": "Wiederverwendbare Bausteine für Ihre Bots – verwalten Sie diese direkt, wenn Sie Feinsteuerung brauchen.",
+    "agents": {
+      "title": "Browser-Identitäten",
+      "body": "Der Browser-Fingerabdruck und das Login-Profil, das ein Bot zeigt."
+    },
+    "proxies": {
+      "title": "Verbindungen",
+      "body": "Proxys und Standorte, über die sich Ihre Bots verbinden."
+    },
+    "configs": {
+      "title": "Verhalten",
+      "body": "Wiederverwendbare Verhaltenskonfigurationen für Bots."
+    },
+    "manage": "Verwalten"
+  },
   "agent": {
     "add": "Agent hinzufügen",
     "createIntroText": "Bitte geben Sie die erforderlichen Daten ein, um einen neuen Agenten zu erstellen.",
@@ -108,7 +329,18 @@
     "create": "Crawler erstellen",
     "createText": "Wählen Sie das Experiment aus. Geben Sie erforderliche Daten ein.",
     "label": "Crawler",
-    "list": "Liste aller Crawler einschliesslich der Angabe, welchem Experiment diese zugeordnet sind."
+    "list": "Liste aller Crawler einschliesslich der Angabe, welchem Experiment diese zugeordnet sind.",
+    "botTitle": "Bot hinzufügen",
+    "botLead": "Ein Bot ist ein simulierter Nutzer. Legen Sie fest, wer er ist und wie er sich verhält – erstellen Sie neue Bausteine direkt über die Schaltfläche +.",
+    "botSection": "Bot",
+    "setupSection": "Einrichtung",
+    "identityHint": "Der Browser-Fingerabdruck und das Login-Profil, das der Bot zeigt.",
+    "connectionHint": "Der Proxy und Standort, über den der Bot sich verbindet.",
+    "behaviorHint": "Die Verhaltenskonfiguration, der der Bot folgt.",
+    "newIdentity": "Neue Browser-Identität",
+    "newConnection": "Neue Verbindung",
+    "newBehavior": "Neues Verhalten",
+    "clear": "Leeren"
   },
   "experiment": {
     "add": "Experiment hinzufügen",
@@ -127,6 +359,8 @@
   "foo": "bar",
   "job": {
     "add": "Job hinzufügen",
+    "formTitle": "Job hinzufügen",
+    "formLead": "Ein Job ist eine einzelne Browser-Aktion in einem Durchlauf – besuchen, klicken, scrollen usw. Legen Sie den Typ und die Position in der Abfolge fest.",
     "crawlerId": "Crawler-ID",
     "createIntroText": "Geben Sie die erforderlichen Daten ein, um einen neuen Job zu erstellen.",
     "label": "Job",
@@ -219,6 +453,9 @@
   },
   "queue": {
     "add": "Queue hinzufügen",
+    "runTitle": "Durchlauf planen",
+    "runLead": "Ein Durchlauf schickt einen Bot zu einem festgelegten Zeitpunkt an die Arbeit. Wählen Sie den Bot, den Startzeitpunkt und die Zeitzone.",
+    "botLabel": "Bot",
     "createIntroText": "Geben Sie die erforderlichen Daten ein, um eine neue Queue zu erstellen.",
     "finishedAt": "Beendet",
     "label": "Queue",

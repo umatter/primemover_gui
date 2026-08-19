@@ -1,182 +1,158 @@
-<div class="px-4 sm:px-6 lg:px-8">
-  <form [formGroup]="entityForm" class="space-y-8 divide-y divide-gray-200">
-    <div class="space-y-8 divide-y divide-gray-200 sm:space-y-5">
-      <div class="sm:flex sm:items-center">
-        <div class="sm:flex-auto">
-          <h1 class="text-xl font-semibold text-gray-900">{{ 'job.label' | translate }}</h1>
-          <p class="mt-2 text-sm text-gray-700">
-            {{ 'job.createIntroText' | translate }}
+<div class="mx-auto max-w-2xl">
+  <a
+    routerLink="/jobs"
+    class="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-muted transition hover:text-brand"
+  >
+    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+    {{ 'job.label' | translate }}
+  </a>
+
+  <header class="mb-8">
+    <h1 class="font-display text-3xl font-semibold tracking-tight text-ink">{{ 'job.formTitle' | translate }}</h1>
+    <p class="mt-1.5 max-w-prose text-sm text-muted">{{ 'job.formLead' | translate }}</p>
+  </header>
+
+  <form [formGroup]="entityForm" class="rounded-2xl border border-line bg-surface p-6 shadow-sm sm:p-8">
+    <div class="space-y-5">
+      <!-- Name -->
+      <div>
+        <label class="mb-1.5 block text-sm font-medium text-ink" for="job">{{ 'common.name' | translate }}</label>
+        <div class="flex items-center gap-2">
+          <div class="relative w-full">
+            <input
+              [formControl]="jobAutocompletion"
+              id="job"
+              name="job"
+              type="text"
+              placeholder="{{ 'common.namePlaceholder' | translate }}"
+              class="w-full rounded-md border border-line bg-surface px-3.5 py-2.5 text-sm text-ink shadow-xs transition placeholder:text-faint focus:border-brand focus:ring-2 focus:ring-brand/20"
+            />
+            <app-autocomplete-select
+              (isSelectChange)="setFormValuesToSelectedEntity($event)"
+              *ngIf="filteredJobs$"
+              [isSelect]="showJobAutocompletion"
+              [list$]="filteredJobs$"
+            ></app-autocomplete-select>
+          </div>
+          <button
+            (click)="reset()"
+            [title]="'common.clear' | translate"
+            type="button"
+            class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md border border-line text-faint transition hover:bg-surface-2 hover:text-ink"
+          >
+            <app-heroicon-trash></app-heroicon-trash>
+          </button>
+        </div>
+        <p *ngIf="hasError('name', 'required')" @fadeIn class="mt-1.5 text-xs text-danger">
+          {{ 'common.nameRequiredError' | translate }}
+        </p>
+      </div>
+
+      <!-- Run (queue) -->
+      <div>
+        <label class="mb-1.5 block text-sm font-medium text-ink" for="queue">{{
+          'workspace.sections.runs' | translate
+        }}</label>
+        <div class="flex items-center gap-2">
+          <div class="relative w-full">
+            <input
+              [formControl]="queueAutocompletion"
+              id="queue"
+              name="queue"
+              type="text"
+              placeholder="{{ 'common.select' | translate }}"
+              class="w-full rounded-md border border-line bg-surface px-3.5 py-2.5 text-sm text-ink shadow-xs transition placeholder:text-faint focus:border-brand focus:ring-2 focus:ring-brand/20 disabled:bg-surface-2 disabled:text-muted"
+            />
+            <app-autocomplete-select
+              (isSelectChange)="setFormValuesToSelectedQueue($event)"
+              *ngIf="filteredQueues$"
+              [isSelect]="showQueueAutocompletion"
+              [list$]="filteredQueues$"
+            ></app-autocomplete-select>
+          </div>
+          <button
+            (click)="resetQueueAutocompletion()"
+            [title]="'common.clear' | translate"
+            type="button"
+            class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md border border-line text-faint transition hover:bg-surface-2 hover:text-ink"
+          >
+            <app-heroicon-trash></app-heroicon-trash>
+          </button>
+        </div>
+      </div>
+
+      <!-- Type + previous job -->
+      <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        <div>
+          <label class="mb-1.5 block text-sm font-medium text-ink" for="type">{{ 'job.type.label' | translate }}</label>
+          <select
+            formControlName="type"
+            id="type"
+            name="type"
+            autocomplete="off"
+            class="w-full rounded-md border border-line bg-surface px-3.5 py-2.5 text-sm text-ink shadow-xs transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+          >
+            <option disabled selected value="null">{{ 'job.selectType' | translate }}</option>
+            <option *ngFor="let jobType of jobTypes" [value]="jobType">{{ 'job.type.' + jobType | translate }}</option>
+          </select>
+          <p *ngIf="hasError('type', 'required')" @fadeIn class="mt-1.5 text-xs text-danger">
+            {{ 'common.typeRequiredError' | translate }}
+          </p>
+        </div>
+
+        <div>
+          <label class="mb-1.5 block text-sm font-medium text-ink" for="previous-job">{{
+            'job.previousJob' | translate
+          }}</label>
+          <select
+            [formControl]="previousJob"
+            id="previous-job"
+            name="previous-job"
+            class="w-full rounded-md border border-line bg-surface px-3.5 py-2.5 text-sm text-ink shadow-xs transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+          >
+            <option disabled selected value="null">{{ 'job.selectPreviousJob' | translate }}</option>
+            <option *ngFor="let job of filteredJobs$ | async" [value]="job.id">{{ job.id }} — {{ job.name }}</option>
+          </select>
+          <p *ngIf="hasError('previous_job_id', 'required')" @fadeIn class="mt-1.5 text-xs text-danger">
+            {{ 'common.previousJobRequiredError' | translate }}
           </p>
         </div>
       </div>
-      <div class="space-y-6 sm:space-y-5">
-        <div class="space-y-6 sm:space-y-5">
-          <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-            <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="job">
-              {{ 'common.name' | translate }}
-            </label>
-            <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <div class="relative">
-                <div class="flex items-center gap-1">
-                  <div class="w-full">
-                    <input
-                      [formControl]="jobAutocompletion"
-                      autocomplete="job"
-                      class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
-                      id="job"
-                      name="job"
-                      placeholder="{{ 'common.namePlaceholder' | translate }}"
-                      type="text"
-                    />
-                    <app-autocomplete-select
-                      (isSelectChange)="setFormValuesToSelectedEntity($event)"
-                      *ngIf="filteredJobs$"
-                      [isSelect]="showJobAutocompletion"
-                      [list$]="filteredJobs$"
-                    ></app-autocomplete-select>
-                  </div>
-                  <button (click)="reset()" class="text-gray-400 hover:text-indigo-900">
-                    <app-heroicon-trash></app-heroicon-trash>
-                  </button>
-                </div>
-                <p *ngIf="hasError('name', 'required')" @fadeIn class="mt-2 text-sm text-red-600" id="job-error">
-                  {{ 'common.nameRequiredError' | translate }}
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-            <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="queue">
-              {{ 'queue.label' | translate }}
-            </label>
-            <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <div class="relative">
-                <div class="flex items-center gap-1">
-                  <div class="w-full">
-                    <input
-                      [formControl]="queueAutocompletion"
-                      autocomplete="queue"
-                      class="disabled:opacity-50 max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
-                      id="queue"
-                      name="queue"
-                      placeholder="{{ 'common.namePlaceholder' | translate }}"
-                      type="text"
-                    />
-                    <app-autocomplete-select
-                      (isSelectChange)="setFormValuesToSelectedQueue($event)"
-                      *ngIf="filteredQueues$"
-                      [isSelect]="showQueueAutocompletion"
-                      [list$]="filteredQueues$"
-                    ></app-autocomplete-select>
-                  </div>
-                  <button (click)="resetQueueAutocompletion()" class="text-gray-400 hover:text-indigo-900">
-                    <app-heroicon-trash></app-heroicon-trash>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-            <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="previous-job">
-              {{ 'job.previousJob' | translate }}
-            </label>
-            <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <div class="relative">
-                <div class="flex items-center gap-1">
-                  <div class="w-full">
-                    <select
-                      [formControl]="previousJob"
-                      class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
-                      id="previous-job"
-                      name="previous-job"
-                    >
-                      <option disabled selected value="null">{{ 'job.selectPreviousJob' | translate }}</option>
-                      <option *ngFor="let job of filteredJobs$ | async" [value]="job.id">
-                        {{ job.id }} - {{ job.name }}
-                      </option>
-                    </select>
-                  </div>
-                </div>
-                <p
-                  *ngIf="hasError('previous_job_id', 'required')"
-                  @fadeIn
-                  class="mt-2 text-sm text-red-600"
-                  id="previous-job-error"
-                >
-                  {{ 'common.previousJobRequiredError' | translate }}
-                </p>
-              </div>
-            </div>
-          </div>
-          <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-            <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="description">
-              {{ 'common.description' | translate }}
-            </label>
-            <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <textarea
-                class="shadow-sm block w-full focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border border-gray-300 rounded-md"
-                formControlName="description"
-                id="description"
-                name="description"
-                placeholder="{{ 'common.descriptionPlaceholder' | translate }}"
-                rows="3"
-              ></textarea>
-              <p
-                *ngIf="hasError('description', 'required')"
-                @fadeIn
-                class="mt-2 text-sm text-red-600"
-                id="description-error"
-              >
-                {{ 'common.descriptionRequiredError' | translate }}
-              </p>
-            </div>
-          </div>
 
-          <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-            <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="description">
-              {{ 'job.type.label' | translate }}
-            </label>
-            <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <select
-                autocomplete="off"
-                class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
-                formControlName="type"
-                id="type"
-                name="type"
-              >
-                <option disabled selected value="null">{{ 'job.selectType' | translate }}</option>
-                <option *ngFor="let jobType of jobTypes" [value]="jobType">
-                  {{ 'job.type.' + jobType | translate }}
-                </option>
-              </select>
-              <p *ngIf="hasError('type', 'required')" @fadeIn class="mt-2 text-sm text-red-600" id="contact-error">
-                {{ 'common.typeRequiredError' | translate }}
-              </p>
-            </div>
-          </div>
-        </div>
+      <!-- Description -->
+      <div>
+        <label class="mb-1.5 block text-sm font-medium text-ink" for="description">{{
+          'common.description' | translate
+        }}</label>
+        <textarea
+          formControlName="description"
+          id="description"
+          name="description"
+          rows="2"
+          placeholder="{{ 'common.descriptionPlaceholder' | translate }}"
+          class="w-full resize-none rounded-md border border-line bg-surface px-3.5 py-2.5 text-sm text-ink shadow-xs transition placeholder:text-faint focus:border-brand focus:ring-2 focus:ring-brand/20"
+        ></textarea>
+        <p *ngIf="hasError('description', 'required')" @fadeIn class="mt-1.5 text-xs text-danger">
+          {{ 'common.descriptionRequiredError' | translate }}
+        </p>
       </div>
     </div>
 
-    <div class="pt-5">
-      <div class="flex justify-end">
-        <button
-          class="ml-3 bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          routerLink="/jobs"
-          type="button"
-        >
-          {{ 'common.cancel' | translate }}
-        </button>
-        <button
-          (click)="onSave()"
-          [disabled]="!entityForm.valid"
-          [ngClass]="{ 'opacity-25 hover:bg-indigo-600 ': !entityForm.valid }"
-          class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          type="button"
-        >
-          {{ 'common.save' | translate }}
-        </button>
-      </div>
+    <!-- Footer -->
+    <div class="mt-8 flex items-center justify-between border-t border-line pt-6">
+      <button routerLink="/jobs" type="button" class="text-sm font-medium text-muted transition hover:text-ink">
+        {{ 'common.cancel' | translate }}
+      </button>
+      <button
+        (click)="onSave()"
+        [disabled]="!entityForm.valid"
+        type="button"
+        class="inline-flex items-center gap-2 rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-on-brand shadow-sm transition hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        {{ 'common.save' | translate }}
+      </button>
     </div>
   </form>
 </div>

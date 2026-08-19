@@ -1,0 +1,203 @@
+<a
+  routerLink="/experiments"
+  class="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-muted transition hover:text-brand"
+>
+  <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+  </svg>
+  {{ 'workspace.back' | translate }}
+</a>
+
+<ng-container *ngIf="experiment$ | async as experiment; else loadingTpl">
+  <!-- ============================== Header ============================== -->
+  <header class="animate-fade-up">
+    <p class="font-mono text-xs text-faint">EXP-{{ experiment.id }}</p>
+    <div class="mt-1 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+      <div class="min-w-0">
+        <h1 class="font-display text-3xl font-semibold tracking-tight text-ink">{{ experiment.name }}</h1>
+        <p class="mt-2 max-w-prose text-sm text-muted">
+          {{ experiment.description || ('projects.noDescription' | translate) }}
+        </p>
+        <div class="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1 text-xs text-faint">
+          <span class="inline-flex items-center gap-1.5">
+            <svg class="h-3.5 w-3.5" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
+              <circle cx="12" cy="8" r="3" />
+              <path d="M5 19c1.4-2.6 3.6-4 7-4s5.6 1.4 7 4" stroke-linecap="round" />
+            </svg>
+            {{ experiment.contact }}
+          </span>
+          <span>{{ 'projects.updated' | translate }} · {{ experiment.updated_at | date: 'dd MMM yyyy, HH:mm' }}</span>
+        </div>
+      </div>
+
+      <div class="flex flex-shrink-0 items-center gap-2">
+        <button
+          (click)="downloadData(experiment)"
+          class="inline-flex items-center gap-2 rounded-md border border-line bg-surface px-3 py-2 text-sm font-medium text-ink transition hover:bg-surface-2"
+          type="button"
+        >
+          <app-heroicon-download-archive></app-heroicon-download-archive>
+          <span class="hidden sm:inline">{{ 'workspace.download' | translate }}</span>
+        </button>
+        <button
+          (click)="uploadData(experiment)"
+          class="inline-flex items-center gap-2 rounded-md border border-line bg-surface px-3 py-2 text-sm font-medium text-ink transition hover:bg-surface-2"
+          type="button"
+        >
+          <app-heroicon-upload></app-heroicon-upload>
+          <span class="hidden sm:inline">{{ 'workspace.uploadData' | translate }}</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============================== Run summary ============================== -->
+  <section
+    *ngIf="summary$ | async as summary"
+    class="mt-7 grid animate-fade-up grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-4"
+    style="animation-delay: 60ms"
+  >
+    <div class="bg-surface p-4">
+      <p class="text-xs font-medium uppercase tracking-wide text-faint">{{ 'workspace.stat.bots' | translate }}</p>
+      <p class="mt-1 font-display text-2xl font-semibold text-ink">{{ (bots$ | async)?.length || 0 }}</p>
+    </div>
+    <div class="bg-surface p-4">
+      <p class="text-xs font-medium uppercase tracking-wide text-faint">{{ 'workspace.stat.runs' | translate }}</p>
+      <p class="mt-1 font-display text-2xl font-semibold text-ink">{{ summary.total }}</p>
+    </div>
+    <div class="bg-surface p-4">
+      <p class="text-xs font-medium uppercase tracking-wide text-faint">{{ 'workspace.stat.succeeded' | translate }}</p>
+      <p class="mt-1 font-display text-2xl font-semibold text-success">{{ summary.succeeded }}</p>
+    </div>
+    <div class="bg-surface p-4">
+      <p class="text-xs font-medium uppercase tracking-wide text-faint">{{ 'workspace.stat.failed' | translate }}</p>
+      <p class="mt-1 font-display text-2xl font-semibold" [ngClass]="summary.failed ? 'text-danger' : 'text-ink'">
+        {{ summary.failed }}
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================== Bots ============================== -->
+  <section class="mt-10">
+    <div class="mb-4 flex items-center justify-between">
+      <h2 class="font-display text-xl font-semibold text-ink">{{ 'workspace.sections.bots' | translate }}</h2>
+      <button
+        *ngIf="(bots$ | async)?.length"
+        (click)="addBot()"
+        class="inline-flex items-center gap-1.5 rounded-md bg-brand px-3 py-1.5 text-sm font-semibold text-on-brand transition hover:bg-brand-hover"
+        type="button"
+      >
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+          <path d="M12 5v14M5 12h14" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        {{ 'workspace.addBot' | translate }}
+      </button>
+    </div>
+
+    <!-- Next-step banner when no bots yet -->
+    <div
+      *ngIf="(bots$ | async)?.length === 0"
+      class="flex flex-col items-start gap-4 rounded-2xl border border-dashed border-line-strong bg-brand-tint/40 px-6 py-8 sm:flex-row sm:items-center sm:justify-between"
+    >
+      <div class="flex items-start gap-4">
+        <span class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-brand text-on-brand">
+          <svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
+            <rect x="5" y="8" width="14" height="11" rx="2" />
+            <path d="M12 8V5M9 13h.01M15 13h.01" stroke-linecap="round" />
+          </svg>
+        </span>
+        <div>
+          <h3 class="font-display text-lg font-semibold text-ink">{{ 'workspace.nextStep.title' | translate }}</h3>
+          <p class="mt-1 max-w-prose text-sm text-muted">{{ 'workspace.nextStep.body' | translate }}</p>
+        </div>
+      </div>
+      <button
+        (click)="addBot()"
+        class="inline-flex flex-shrink-0 items-center gap-2 rounded-md bg-brand px-4 py-2.5 text-sm font-semibold text-on-brand shadow-sm transition hover:bg-brand-hover"
+        type="button"
+      >
+        {{ 'workspace.nextStep.cta' | translate }}
+      </button>
+    </div>
+
+    <!-- Bot list -->
+    <div *ngIf="(bots$ | async)?.length" class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+      <article
+        *ngFor="let bot of bots$ | async; let i = index"
+        [routerLink]="['/experiments', experimentId, 'bots', bot.id]"
+        class="block animate-fade-up cursor-pointer rounded-xl border border-line bg-surface p-5 transition hover:border-line-strong hover:shadow-sm"
+        [style.animation-delay]="i * 40 + 'ms'"
+      >
+        <div class="flex items-start justify-between gap-3">
+          <div class="min-w-0">
+            <h3 class="truncate font-display text-base font-semibold text-ink">{{ bot.name }}</h3>
+            <p class="font-mono text-xs text-faint">CR-{{ bot.id }}</p>
+          </div>
+          <span
+            class="inline-flex flex-shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold"
+            [ngClass]="{
+              'bg-surface-2 text-muted': botState(bot) === 'idle',
+              'bg-info-tint text-info': botState(bot) === 'running',
+              'bg-success-tint text-success': botState(bot) === 'succeeded',
+              'bg-danger-tint text-danger': botState(bot) === 'failed'
+            }"
+          >
+            <span
+              class="h-1.5 w-1.5 rounded-full"
+              [ngClass]="{
+                'bg-faint': botState(bot) === 'idle',
+                'bg-info animate-pulse-soft': botState(bot) === 'running',
+                'bg-success': botState(bot) === 'succeeded',
+                'bg-danger': botState(bot) === 'failed'
+              }"
+            ></span>
+            {{ 'workspace.state.' + botState(bot) | translate }}
+          </span>
+        </div>
+
+        <!-- progress -->
+        <div class="mt-4">
+          <div class="mb-1.5 flex justify-between text-xs text-faint">
+            <span>{{ 'workspace.sections.runs' | translate }}</span>
+            <span class="font-mono">{{ bot.latest_queues_succeeded || 0 }}/{{ bot.latest_queues_count || 0 }}</span>
+          </div>
+          <div class="h-1.5 overflow-hidden rounded-full bg-surface-3">
+            <div
+              class="h-full rounded-full transition-all duration-500 ease-out-expo"
+              [ngClass]="bot.latest_queues_failed ? 'bg-danger' : 'bg-success'"
+              [style.width.%]="botProgress(bot)"
+            ></div>
+          </div>
+        </div>
+
+        <!-- setup details -->
+        <div class="mt-4 flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-muted">
+          <span class="inline-flex items-center gap-1">
+            <span class="text-faint">{{ 'workspace.bot.identity' | translate }}:</span>
+            {{ bot.agent?.name || '—' }}
+          </span>
+          <span class="inline-flex items-center gap-1">
+            <span class="text-faint">{{ 'workspace.bot.connection' | translate }}:</span>
+            {{ bot.proxy?.name || '—' }}
+          </span>
+          <span class="inline-flex items-center gap-1">
+            <span class="text-faint">{{ 'workspace.bot.profile' | translate }}:</span>
+            {{ bot.configuration?.name || '—' }}
+          </span>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============================== Add-bot panel ============================== -->
+  <app-add-bot
+    *ngIf="showAddBot"
+    [experimentId]="experiment.id"
+    (created)="onBotCreated()"
+    (closed)="onAddBotClosed()"
+  ></app-add-bot>
+</ng-container>
+
+<ng-template #loadingTpl>
+  <app-loading-spinner></app-loading-spinner>
+</ng-template>

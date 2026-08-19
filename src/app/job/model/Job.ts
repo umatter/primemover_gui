@@ -3,6 +3,7 @@ export interface Job {
   name: string;
   description: string;
   type: string;
+  active: number;
   status_code: string;
   status_message: string;
   order: number;

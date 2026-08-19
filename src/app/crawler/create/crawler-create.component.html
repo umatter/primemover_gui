@@ -1,3 +1,4 @@
+<!-- Inline-create overlays (agent / configuration / proxy) -->
 <app-content-modal [isModal]="agentModal">
   <app-agent-form
     (cancelClicked)="onAgentModalCancel()"
@@ -22,230 +23,255 @@
   ></app-proxy-form>
 </app-content-modal>
 
-<div class="px-4 sm:px-6 lg:px-8">
-  <form [formGroup]="crawlerForm" class="space-y-8 divide-y divide-gray-200">
-    <div class="space-y-8 divide-y divide-gray-200 sm:space-y-5">
-      <div class="sm:flex sm:items-center">
-        <div class="sm:flex-auto">
-          <h1 class="text-xl font-semibold text-gray-900">{{ 'crawler.create' | translate }}</h1>
-          <p class="mt-2 text-sm text-gray-700">
-            {{ 'crawler.createText' | translate }}
-          </p>
+<div class="mx-auto max-w-2xl">
+  <a
+    [routerLink]="experimentId.value ? ['/experiments', experimentId.value] : ['/experiments']"
+    class="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-muted transition hover:text-brand"
+  >
+    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+    {{ 'workspace.back' | translate }}
+  </a>
+
+  <header class="mb-8">
+    <h1 class="font-display text-3xl font-semibold tracking-tight text-ink">{{ 'crawler.botTitle' | translate }}</h1>
+    <p class="mt-1.5 max-w-prose text-sm text-muted">{{ 'crawler.botLead' | translate }}</p>
+  </header>
+
+  <form [formGroup]="crawlerForm" class="rounded-2xl border border-line bg-surface p-6 shadow-sm sm:p-8">
+    <!-- ============================== Bot ============================== -->
+    <p class="text-xs font-semibold uppercase tracking-[0.14em] text-faint">{{ 'crawler.botSection' | translate }}</p>
+    <div class="mt-4 space-y-5">
+      <!-- Name -->
+      <div>
+        <label class="mb-1.5 block text-sm font-medium text-ink" for="name">{{ 'wizard.bot.name' | translate }}</label>
+        <input
+          formControlName="name"
+          id="name"
+          name="name"
+          type="text"
+          placeholder="{{ 'wizard.bot.namePlaceholder' | translate }}"
+          class="w-full rounded-md border border-line bg-surface px-3.5 py-2.5 text-sm text-ink shadow-xs transition placeholder:text-faint focus:border-brand focus:ring-2 focus:ring-brand/20"
+        />
+        <p *ngIf="hasError('name', 'required')" @fadeIn class="mt-1.5 text-xs text-danger">
+          {{ 'common.nameRequiredError' | translate }}
+        </p>
+      </div>
+
+      <!-- Experiment (context — usually pre-filled & locked) -->
+      <div>
+        <label class="mb-1.5 block text-sm font-medium text-ink" for="experiment">{{
+          'experiment.label' | translate
+        }}</label>
+        <div class="flex items-center gap-2">
+          <div class="relative w-full">
+            <input
+              [formControl]="experimentAutocompletion"
+              id="experiment"
+              name="experiment"
+              type="text"
+              placeholder="{{ 'projects.searchPlaceholder' | translate }}"
+              class="w-full rounded-md border border-line bg-surface px-3.5 py-2.5 text-sm text-ink shadow-xs transition placeholder:text-faint focus:border-brand focus:ring-2 focus:ring-brand/20 disabled:bg-surface-2 disabled:text-muted"
+            />
+            <app-autocomplete-select
+              (isSelectChange)="setExperiment($event)"
+              *ngIf="(filteredExperiments$ | async)?.length"
+              [isSelect]="showExperimentAutocompletion"
+              [list$]="filteredExperiments$"
+            ></app-autocomplete-select>
+          </div>
+          <button
+            (click)="reset('experiment_id', experimentAutocompletion)"
+            [title]="'crawler.clear' | translate"
+            type="button"
+            class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md border border-line text-faint transition hover:bg-surface-2 hover:text-ink"
+          >
+            <app-heroicon-trash></app-heroicon-trash>
+          </button>
         </div>
       </div>
-      <div class="space-y-6 sm:space-y-5">
-        <div class="space-y-6 sm:space-y-5">
-          <!-- Name -->
-          <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-            <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="name">
-              {{ 'common.name' | translate }}
-            </label>
-            <div class="mt-1 sm:mt-0 sm:col-span-2">
+
+      <!-- Description -->
+      <div>
+        <label class="mb-1.5 block text-sm font-medium text-ink" for="description">{{
+          'common.description' | translate
+        }}</label>
+        <textarea
+          formControlName="description"
+          id="description"
+          name="description"
+          rows="2"
+          placeholder="{{ 'common.descriptionPlaceholder' | translate }}"
+          class="w-full resize-none rounded-md border border-line bg-surface px-3.5 py-2.5 text-sm text-ink shadow-xs transition placeholder:text-faint focus:border-brand focus:ring-2 focus:ring-brand/20"
+        ></textarea>
+      </div>
+    </div>
+
+    <!-- ============================== Setup ============================== -->
+    <div class="mt-8 border-t border-line pt-6">
+      <p class="text-xs font-semibold uppercase tracking-[0.14em] text-faint">
+        {{ 'crawler.setupSection' | translate }}
+      </p>
+      <div class="mt-4 space-y-5">
+        <!-- Browser identity (agent) -->
+        <div>
+          <label class="mb-1.5 block text-sm font-medium text-ink" for="agent">{{
+            'workspace.bot.identity' | translate
+          }}</label>
+          <div class="flex items-center gap-2">
+            <div class="relative w-full">
               <input
-                autocomplete="name"
-                class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
-                formControlName="name"
-                id="name"
-                name="name"
-                placeholder="{{ 'common.namePlaceholder' | translate }}"
+                [formControl]="agentAutocompletion"
+                id="agent"
+                name="agent"
                 type="text"
+                placeholder="{{ 'common.select' | translate }}"
+                class="w-full rounded-md border border-line bg-surface px-3.5 py-2.5 text-sm text-ink shadow-xs transition placeholder:text-faint focus:border-brand focus:ring-2 focus:ring-brand/20"
               />
-              <p *ngIf="hasError('name', 'required')" @fadeIn class="mt-2 text-sm text-red-600" id="name-error">
-                {{ 'common.nameRequiredError' | translate }}
-              </p>
+              <app-autocomplete-select
+                (isSelectChange)="setAgent($event)"
+                *ngIf="(filteredAgents$ | async)?.length"
+                [isSelect]="showAgentAutocompletion"
+                [list$]="filteredAgents$"
+              ></app-autocomplete-select>
             </div>
+            <button
+              (click)="reset('agent_id', agentAutocompletion)"
+              [title]="'crawler.clear' | translate"
+              type="button"
+              class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md border border-line text-faint transition hover:bg-surface-2 hover:text-ink"
+            >
+              <app-heroicon-trash></app-heroicon-trash>
+            </button>
+            <button
+              (click)="agentModal = true"
+              [title]="'crawler.newIdentity' | translate"
+              type="button"
+              class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md border border-line text-brand transition hover:bg-brand-tint"
+            >
+              <app-heroicon-plus></app-heroicon-plus>
+            </button>
           </div>
-          <!-- Experiment select -->
-          <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-            <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="experiment">
-              {{ 'experiment.label' | translate }}
-            </label>
-            <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <div class="relative">
-                <div class="flex items-center gap-1">
-                  <div class="w-full">
-                    <input
-                      [formControl]="experimentAutocompletion"
-                      class="disabled:opacity-50 max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
-                      id="experiment"
-                      name="experiment"
-                      placeholder="{{ 'common.namePlaceholder' | translate }}"
-                      type="text"
-                    />
-                    <app-autocomplete-select
-                      (isSelectChange)="setExperiment($event)"
-                      *ngIf="(filteredExperiments$ | async)?.length"
-                      [isSelect]="showExperimentAutocompletion"
-                      [list$]="filteredExperiments$"
-                    ></app-autocomplete-select>
-                  </div>
-                  <button
-                    (click)="reset('experiment_id', experimentAutocompletion)"
-                    class="text-gray-400 hover:text-indigo-900"
-                  >
-                    <app-heroicon-trash></app-heroicon-trash>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <!-- Agent -->
-          <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-            <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="agent">
-              {{ 'agent.label' | translate }}
-            </label>
-            <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <div class="relative">
-                <div class="flex items-center gap-1">
-                  <div class="w-full">
-                    <input
-                      [formControl]="agentAutocompletion"
-                      autocomplete="agent"
-                      class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
-                      id="agent"
-                      name="agent"
-                      placeholder="{{ 'common.namePlaceholder' | translate }}"
-                      type="text"
-                    />
+          <p class="mt-1.5 text-xs text-faint">{{ 'crawler.identityHint' | translate }}</p>
+        </div>
 
-                    <app-autocomplete-select
-                      (isSelectChange)="setAgent($event)"
-                      *ngIf="(filteredAgents$ | async)?.length"
-                      [isSelect]="showAgentAutocompletion"
-                      [list$]="filteredAgents$"
-                    ></app-autocomplete-select>
-                  </div>
-                  <button (click)="reset('agent_id', agentAutocompletion)" class="text-gray-400 hover:text-indigo-900">
-                    <app-heroicon-trash></app-heroicon-trash>
-                  </button>
-                  <button (click)="agentModal = true" class="text-gray-400 hover:text-indigo-900">
-                    <app-heroicon-plus></app-heroicon-plus>
-                  </button>
-                </div>
-              </div>
+        <!-- Connection (proxy) -->
+        <div>
+          <label class="mb-1.5 block text-sm font-medium text-ink" for="proxy">{{
+            'workspace.bot.connection' | translate
+          }}</label>
+          <div class="flex items-center gap-2">
+            <div class="relative w-full">
+              <input
+                [formControl]="proxyAutocompletion"
+                id="proxy"
+                name="proxy"
+                type="text"
+                placeholder="{{ 'common.select' | translate }}"
+                class="w-full rounded-md border border-line bg-surface px-3.5 py-2.5 text-sm text-ink shadow-xs transition placeholder:text-faint focus:border-brand focus:ring-2 focus:ring-brand/20"
+              />
+              <app-autocomplete-select
+                (isSelectChange)="setProxy($event)"
+                *ngIf="(filteredProxies$ | async)?.length"
+                [isSelect]="showProxyAutocompletion"
+                [list$]="filteredProxies$"
+              ></app-autocomplete-select>
             </div>
+            <button
+              (click)="reset('proxy_id', proxyAutocompletion)"
+              [title]="'crawler.clear' | translate"
+              type="button"
+              class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md border border-line text-faint transition hover:bg-surface-2 hover:text-ink"
+            >
+              <app-heroicon-trash></app-heroicon-trash>
+            </button>
+            <button
+              (click)="proxyModal = true"
+              [title]="'crawler.newConnection' | translate"
+              type="button"
+              class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md border border-line text-brand transition hover:bg-brand-tint"
+            >
+              <app-heroicon-plus></app-heroicon-plus>
+            </button>
           </div>
-          <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-            <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="config">
-              {{ 'config.label' | translate }}
-            </label>
-            <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <div class="relative">
-                <div class="flex items-center gap-1">
-                  <div class="w-full">
-                    <input
-                      [formControl]="configAutocompletion"
-                      autocomplete="config"
-                      class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
-                      id="config"
-                      name="config"
-                      placeholder="{{ 'common.namePlaceholder' | translate }}"
-                      type="text"
-                    />
-                    <app-autocomplete-select
-                      (isSelectChange)="setConfiguration($event)"
-                      *ngIf="(filteredConfigurations$ | async)?.length"
-                      [isSelect]="showConfigAutocompletion"
-                      [list$]="filteredConfigurations$"
-                    ></app-autocomplete-select>
-                  </div>
-                  <button
-                    (click)="reset('configuration_id', configAutocompletion)"
-                    class="text-gray-400 hover:text-indigo-900"
-                  >
-                    <app-heroicon-trash></app-heroicon-trash>
-                  </button>
-                  <button (click)="configurationModal = true" class="text-gray-400 hover:text-indigo-900">
-                    <app-heroicon-plus></app-heroicon-plus>
-                  </button>
-                </div>
-              </div>
-              <p
-                *ngIf="hasError('configuration_id', 'required')"
-                @fadeIn
-                class="mt-2 text-sm text-red-600"
-                id="config-error"
-              >
-                {{ 'common.configurationRequiredError' | translate }}
-              </p>
-            </div>
-          </div>
-          <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-            <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="proxy">
-              {{ 'proxy.label' | translate }}
-            </label>
+          <p *ngIf="hasError('proxy_id', 'required')" @fadeIn class="mt-1.5 text-xs text-danger">
+            {{ 'common.proxyRequiredError' | translate }}
+          </p>
+          <p *ngIf="!hasError('proxy_id', 'required')" class="mt-1.5 text-xs text-faint">
+            {{ 'crawler.connectionHint' | translate }}
+          </p>
+        </div>
 
-            <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <div class="relative">
-                <div class="flex items-center gap-1">
-                  <div class="w-full">
-                    <input
-                      [formControl]="proxyAutocompletion"
-                      autocomplete="proxy"
-                      class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
-                      id="proxy"
-                      name="proxy"
-                      placeholder="{{ 'common.namePlaceholder' | translate }}"
-                      type="text"
-                    />
-                    <app-autocomplete-select
-                      (isSelectChange)="setProxy($event)"
-                      *ngIf="(filteredProxies$ | async)?.length"
-                      [isSelect]="showProxyAutocompletion"
-                      [list$]="filteredProxies$"
-                    ></app-autocomplete-select>
-                  </div>
-                  <button (click)="reset('proxy_id', proxyAutocompletion)" class="text-gray-400 hover:text-indigo-900">
-                    <app-heroicon-trash></app-heroicon-trash>
-                  </button>
-                  <button (click)="proxyModal = true" class="text-gray-400 hover:text-indigo-900">
-                    <app-heroicon-plus></app-heroicon-plus>
-                  </button>
-                </div>
-              </div>
-              <p *ngIf="hasError('proxy_id', 'required')" @fadeIn class="mt-2 text-sm text-red-600" id="proxy-error">
-                {{ 'common.proxyRequiredError' | translate }}
-              </p>
+        <!-- Behavior (configuration) -->
+        <div>
+          <label class="mb-1.5 block text-sm font-medium text-ink" for="config">{{
+            'workspace.bot.behavior' | translate
+          }}</label>
+          <div class="flex items-center gap-2">
+            <div class="relative w-full">
+              <input
+                [formControl]="configAutocompletion"
+                id="config"
+                name="config"
+                type="text"
+                placeholder="{{ 'common.select' | translate }}"
+                class="w-full rounded-md border border-line bg-surface px-3.5 py-2.5 text-sm text-ink shadow-xs transition placeholder:text-faint focus:border-brand focus:ring-2 focus:ring-brand/20"
+              />
+              <app-autocomplete-select
+                (isSelectChange)="setConfiguration($event)"
+                *ngIf="(filteredConfigurations$ | async)?.length"
+                [isSelect]="showConfigAutocompletion"
+                [list$]="filteredConfigurations$"
+              ></app-autocomplete-select>
             </div>
+            <button
+              (click)="reset('configuration_id', configAutocompletion)"
+              [title]="'crawler.clear' | translate"
+              type="button"
+              class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md border border-line text-faint transition hover:bg-surface-2 hover:text-ink"
+            >
+              <app-heroicon-trash></app-heroicon-trash>
+            </button>
+            <button
+              (click)="configurationModal = true"
+              [title]="'crawler.newBehavior' | translate"
+              type="button"
+              class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md border border-line text-brand transition hover:bg-brand-tint"
+            >
+              <app-heroicon-plus></app-heroicon-plus>
+            </button>
           </div>
-          <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-            <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="description">
-              {{ 'common.description' | translate }}
-            </label>
-            <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <textarea
-                class="shadow-sm block w-full focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border border-gray-300 rounded-md"
-                formControlName="description"
-                id="description"
-                name="description"
-                placeholder="{{ 'common.descriptionPlaceholder' | translate }}"
-                rows="3"
-              ></textarea>
-            </div>
-          </div>
+          <p *ngIf="hasError('configuration_id', 'required')" @fadeIn class="mt-1.5 text-xs text-danger">
+            {{ 'common.configurationRequiredError' | translate }}
+          </p>
+          <p *ngIf="!hasError('configuration_id', 'required')" class="mt-1.5 text-xs text-faint">
+            {{ 'crawler.behaviorHint' | translate }}
+          </p>
         </div>
       </div>
     </div>
 
-    <div class="pt-5">
-      <div class="flex justify-end">
-        <button
-          [routerLink]="['crawlers']"
-          class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          type="button"
-        >
-          {{ 'common.cancel' | translate }}
-        </button>
-        <button
-          (click)="onSave()"
-          [disabled]="!crawlerForm.valid"
-          [ngClass]="{ 'opacity-25 hover:bg-indigo-600 ': !crawlerForm.valid }"
-          class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          type="button"
-        >
-          {{ 'common.save' | translate }}
-        </button>
-      </div>
+    <!-- ============================== Footer ============================== -->
+    <div class="mt-8 flex items-center justify-between border-t border-line pt-6">
+      <button
+        [routerLink]="['/experiments']"
+        type="button"
+        class="text-sm font-medium text-muted transition hover:text-ink"
+      >
+        {{ 'common.cancel' | translate }}
+      </button>
+      <button
+        (click)="onSave()"
+        [disabled]="!crawlerForm.valid"
+        type="button"
+        class="inline-flex items-center gap-2 rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-on-brand shadow-sm transition hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+          <path d="M12 5v14M5 12h14" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        {{ 'workspace.addBot' | translate }}
+      </button>
     </div>
   </form>
 </div>

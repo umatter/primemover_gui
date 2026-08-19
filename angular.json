@@ -125,7 +125,10 @@
             "styles": [
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "include": [
+              "app/experiment/workspace/**/*.spec.ts"
+            ]
           }
         },
         "lint": {

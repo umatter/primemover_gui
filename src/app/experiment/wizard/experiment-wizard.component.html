@@ -1,0 +1,286 @@
+<div class="mx-auto max-w-2xl">
+  <!-- ============================== Header ============================== -->
+  <a
+    routerLink="/experiments"
+    class="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-muted transition hover:text-brand"
+  >
+    <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+    {{ 'workspace.back' | translate }}
+  </a>
+
+  <header class="mb-8">
+    <h1 class="font-display text-3xl font-semibold tracking-tight text-ink">{{ 'wizard.title' | translate }}</h1>
+    <p class="mt-1.5 max-w-prose text-sm text-muted">{{ 'wizard.subtitle' | translate }}</p>
+  </header>
+
+  <!-- ============================== Stepper ============================== -->
+  <ol class="mb-8 flex items-center">
+    <li *ngFor="let key of stepKeys; let i = index" class="flex flex-1 items-center last:flex-none">
+      <button (click)="goTo(i)" type="button" class="group flex items-center gap-2.5 rounded-md outline-none">
+        <span
+          class="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full border text-sm font-semibold transition"
+          [ngClass]="{
+            'border-brand bg-brand text-on-brand': i === step,
+            'border-brand bg-brand-tint text-brand': i < step,
+            'border-line bg-surface text-faint': i > step
+          }"
+        >
+          <svg
+            *ngIf="i < step"
+            class="h-4 w-4"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.2"
+            viewBox="0 0 24 24"
+          >
+            <path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <span *ngIf="i >= step">{{ i + 1 }}</span>
+        </span>
+        <span
+          class="hidden text-sm font-medium transition sm:block"
+          [ngClass]="i === step ? 'text-ink' : 'text-faint group-hover:text-muted'"
+        >
+          {{ 'wizard.steps.' + key | translate }}
+        </span>
+      </button>
+      <span *ngIf="i < stepKeys.length - 1" class="mx-3 h-px flex-1 bg-line"></span>
+    </li>
+  </ol>
+
+  <!-- ============================== Step card ============================== -->
+  <div class="rounded-2xl border border-line bg-surface p-6 shadow-sm sm:p-8">
+    <!-- Step 1 — The study -->
+    <section *ngIf="step === 0" class="animate-fade-up" [formGroup]="studyForm">
+      <h2 class="font-display text-xl font-semibold text-ink">{{ 'wizard.study.title' | translate }}</h2>
+      <p class="mt-1 text-sm text-muted">{{ 'wizard.study.body' | translate }}</p>
+
+      <div class="mt-6 space-y-5">
+        <div>
+          <label for="study-name" class="mb-1.5 block text-sm font-medium text-ink">
+            {{ 'wizard.study.name' | translate }}
+          </label>
+          <input
+            id="study-name"
+            formControlName="name"
+            type="text"
+            [placeholder]="'wizard.study.namePlaceholder' | translate"
+            class="w-full rounded-md border border-line bg-surface px-3.5 py-2.5 text-sm text-ink shadow-xs transition placeholder:text-faint focus:border-brand focus:ring-2 focus:ring-brand/20"
+          />
+          <p *ngIf="hasError('name', 'required')" class="mt-1.5 text-xs text-danger">
+            {{ 'common.nameRequiredError' | translate }}
+          </p>
+        </div>
+
+        <div>
+          <label for="study-contact" class="mb-1.5 block text-sm font-medium text-ink">
+            {{ 'wizard.study.contact' | translate }}
+          </label>
+          <input
+            id="study-contact"
+            formControlName="contact"
+            type="text"
+            [placeholder]="'common.contactPlaceholder' | translate"
+            class="w-full rounded-md border border-line bg-surface px-3.5 py-2.5 text-sm text-ink shadow-xs transition placeholder:text-faint focus:border-brand focus:ring-2 focus:ring-brand/20"
+          />
+          <p *ngIf="hasError('contact', 'required')" class="mt-1.5 text-xs text-danger">
+            {{ 'common.contactRequiredError' | translate }}
+          </p>
+        </div>
+
+        <div>
+          <label for="study-desc" class="mb-1.5 block text-sm font-medium text-ink">
+            {{ 'wizard.study.description' | translate }}
+          </label>
+          <textarea
+            id="study-desc"
+            formControlName="description"
+            rows="3"
+            [placeholder]="'wizard.study.descriptionPlaceholder' | translate"
+            class="w-full resize-none rounded-md border border-line bg-surface px-3.5 py-2.5 text-sm text-ink shadow-xs transition placeholder:text-faint focus:border-brand focus:ring-2 focus:ring-brand/20"
+          ></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- Step 2 — First bot -->
+    <section *ngIf="step === 1" class="animate-fade-up" [formGroup]="botForm">
+      <h2 class="font-display text-xl font-semibold text-ink">{{ 'wizard.bot.title' | translate }}</h2>
+      <p class="mt-1 max-w-prose text-sm text-muted">{{ 'wizard.bot.body' | translate }}</p>
+
+      <div class="mt-6">
+        <label for="bot-name" class="mb-1.5 block text-sm font-medium text-ink">{{
+          'wizard.bot.name' | translate
+        }}</label>
+        <input
+          id="bot-name"
+          formControlName="name"
+          type="text"
+          [placeholder]="'wizard.bot.namePlaceholder' | translate"
+          class="w-full rounded-md border border-line bg-surface px-3.5 py-2.5 text-sm text-ink shadow-xs transition placeholder:text-faint focus:border-brand focus:ring-2 focus:ring-brand/20"
+        />
+      </div>
+
+      <!-- Advanced disclosure -->
+      <div class="mt-6 overflow-hidden rounded-xl border border-line">
+        <button
+          (click)="showAdvanced = !showAdvanced"
+          type="button"
+          class="flex w-full items-center justify-between gap-3 bg-surface-2 px-4 py-3 text-left transition hover:bg-surface-3"
+        >
+          <span>
+            <span class="block text-sm font-semibold text-ink">{{ 'wizard.advanced' | translate }}</span>
+            <span class="mt-0.5 block text-xs text-muted">{{ 'wizard.advancedHint' | translate }}</span>
+          </span>
+          <svg
+            class="h-5 w-5 flex-shrink-0 text-muted transition"
+            [ngClass]="{ 'rotate-180': showAdvanced }"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            viewBox="0 0 24 24"
+          >
+            <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+
+        <div *ngIf="showAdvanced" class="space-y-5 border-t border-line p-4">
+          <div>
+            <label for="bot-agent" class="mb-1.5 block text-sm font-medium text-ink">
+              {{ 'workspace.bot.identity' | translate }}
+            </label>
+            <select
+              id="bot-agent"
+              formControlName="agent_id"
+              class="w-full rounded-md border border-line bg-surface px-3.5 py-2.5 text-sm text-ink shadow-xs transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+            >
+              <option [ngValue]="null">{{ 'common.select' | translate }}</option>
+              <option *ngFor="let a of agents$ | async" [ngValue]="a.id">{{ a.name }}</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="bot-proxy" class="mb-1.5 block text-sm font-medium text-ink">
+              {{ 'workspace.bot.connection' | translate }}
+            </label>
+            <select
+              id="bot-proxy"
+              formControlName="proxy_id"
+              class="w-full rounded-md border border-line bg-surface px-3.5 py-2.5 text-sm text-ink shadow-xs transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+            >
+              <option [ngValue]="null">{{ 'common.select' | translate }}</option>
+              <option *ngFor="let p of proxies$ | async" [ngValue]="p.id">{{ p.name }}</option>
+            </select>
+          </div>
+
+          <div>
+            <label for="bot-config" class="mb-1.5 block text-sm font-medium text-ink">
+              {{ 'workspace.bot.behavior' | translate }}
+            </label>
+            <select
+              id="bot-config"
+              formControlName="configuration_id"
+              class="w-full rounded-md border border-line bg-surface px-3.5 py-2.5 text-sm text-ink shadow-xs transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+            >
+              <option [ngValue]="null">{{ 'common.select' | translate }}</option>
+              <option *ngFor="let c of configurations$ | async" [ngValue]="c.id">{{ c.name }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <p class="mt-4 text-xs text-faint">{{ 'wizard.bot.skip' | translate }}</p>
+    </section>
+
+    <!-- Step 3 — Runs -->
+    <section *ngIf="step === 2" class="animate-fade-up">
+      <h2 class="font-display text-xl font-semibold text-ink">{{ 'wizard.runs.title' | translate }}</h2>
+      <p class="mt-1 max-w-prose text-sm text-muted">{{ 'wizard.runs.body' | translate }}</p>
+      <div class="mt-6 flex items-start gap-3 rounded-xl bg-info-tint p-4">
+        <svg
+          class="mt-0.5 h-5 w-5 flex-shrink-0 text-info"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.7"
+          viewBox="0 0 24 24"
+        >
+          <circle cx="12" cy="12" r="9" />
+          <path d="M12 8h.01M11 12h1v4h1" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <p class="text-sm text-ink">{{ 'wizard.runs.later' | translate }}</p>
+      </div>
+    </section>
+
+    <!-- Step 4 — Review -->
+    <section *ngIf="step === 3" class="animate-fade-up">
+      <h2 class="font-display text-xl font-semibold text-ink">{{ 'wizard.review.title' | translate }}</h2>
+      <p class="mt-1 text-sm text-muted">{{ 'wizard.review.body' | translate }}</p>
+
+      <dl class="mt-6 divide-y divide-line overflow-hidden rounded-xl border border-line">
+        <div class="flex items-baseline gap-4 px-4 py-3.5">
+          <dt class="w-28 flex-shrink-0 text-xs font-semibold uppercase tracking-wide text-faint">
+            {{ 'wizard.review.study' | translate }}
+          </dt>
+          <dd class="min-w-0 text-sm text-ink">
+            <p class="font-medium">{{ studyForm.value.name }}</p>
+            <p class="mt-0.5 text-muted">{{ studyForm.value.contact }}</p>
+            <p *ngIf="studyForm.value.description" class="mt-0.5 text-muted">{{ studyForm.value.description }}</p>
+          </dd>
+        </div>
+        <div class="flex items-baseline gap-4 px-4 py-3.5">
+          <dt class="w-28 flex-shrink-0 text-xs font-semibold uppercase tracking-wide text-faint">
+            {{ 'wizard.review.bot' | translate }}
+          </dt>
+          <dd class="min-w-0 text-sm">
+            <p *ngIf="botIsComplete" class="font-medium text-ink">{{ botForm.value.name }}</p>
+            <p *ngIf="!botIsComplete" class="text-muted">{{ 'wizard.review.none' | translate }}</p>
+          </dd>
+        </div>
+      </dl>
+    </section>
+
+    <!-- ============================== Footer nav ============================== -->
+    <div class="mt-8 flex items-center justify-between border-t border-line pt-6">
+      <button (click)="cancel()" type="button" class="text-sm font-medium text-muted transition hover:text-ink">
+        {{ 'wizard.cancel' | translate }}
+      </button>
+
+      <div class="flex items-center gap-2">
+        <button
+          *ngIf="step > 0"
+          (click)="back()"
+          type="button"
+          class="rounded-md border border-line bg-surface px-4 py-2.5 text-sm font-medium text-ink transition hover:bg-surface-2"
+        >
+          {{ 'wizard.back' | translate }}
+        </button>
+        <button
+          *ngIf="step < stepKeys.length - 1"
+          (click)="next()"
+          type="button"
+          class="inline-flex items-center gap-2 rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-on-brand shadow-sm transition hover:bg-brand-hover"
+        >
+          {{ 'wizard.next' | translate }}
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.9" viewBox="0 0 24 24">
+            <path d="M9 6l6 6-6 6" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+        <button
+          *ngIf="step === stepKeys.length - 1"
+          (click)="create()"
+          [disabled]="submitting"
+          type="button"
+          class="inline-flex items-center gap-2 rounded-md bg-brand px-5 py-2.5 text-sm font-semibold text-on-brand shadow-sm transition hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          <svg *ngIf="submitting" class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" />
+            <path class="opacity-90" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+          </svg>
+          {{ (submitting ? 'wizard.creating' : 'wizard.create') | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

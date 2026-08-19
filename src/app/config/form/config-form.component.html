@@ -1,97 +1,89 @@
-<form [formGroup]="entityForm" class="space-y-8 divide-y divide-gray-200">
-  <div class="space-y-8 divide-y divide-gray-200 sm:space-y-5">
-    <div class="sm:flex sm:items-center">
-      <div class="sm:flex-auto">
-        <h1 class="text-xl font-semibold text-gray-900">{{ 'config.label' | translate }}</h1>
-        <p class="mt-2 text-sm text-gray-700">
-          {{ 'config.createIntroText' | translate }}
-        </p>
-      </div>
-    </div>
-    <div class="space-y-6 sm:space-y-5">
-      <div class="space-y-6 sm:space-y-5">
-        <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-          <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="name">
-            {{ 'common.name' | translate }}
-          </label>
-          <div class="mt-1 sm:mt-0 sm:col-span-2">
-            <div class="relative">
-              <div class="flex items-center gap-1">
-                <div class="w-full">
-                  <input
-                    [formControl]="name"
-                    autocomplete="name"
-                    class="max-w-lg block w-full shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border-gray-300 rounded-md"
-                    id="name"
-                    name="name"
-                    placeholder="{{ 'common.namePlaceholder' | translate }}"
-                    type="text"
-                  />
+<div>
+  <header class="mb-6">
+    <h2 class="font-display text-xl font-semibold text-ink">{{ 'library.configs.title' | translate }}</h2>
+    <p class="mt-1 text-sm text-muted">{{ 'config.createIntroText' | translate }}</p>
+  </header>
 
-                  <app-autocomplete-select
-                    (isSelectChange)="setFormValuesToSelectedAgent($event)"
-                    *ngIf="filteredConfigurations$"
-                    [isSelect]="showAutocompletion"
-                    [list$]="filteredConfigurations$"
-                  ></app-autocomplete-select>
-                </div>
-                <app-button
-                  (click)="reset()"
-                  class="text-indigo-600 hover:text-indigo-900"
-                  size="md"
-                  text="{{ 'common.reset' | translate }}"
-                  type="white"
-                ></app-button>
-              </div>
-              <p *ngIf="hasError('name', 'required')" @fadeIn class="mt-2 text-sm text-red-600" id="config-error">
-                {{ 'common.nameRequiredError' | translate }}
-              </p>
-            </div>
-          </div>
+  <form [formGroup]="entityForm" class="space-y-5">
+    <!-- Name -->
+    <div>
+      <label class="mb-1.5 block text-sm font-medium text-ink" for="name">{{ 'common.name' | translate }}</label>
+      <div class="flex items-center gap-2">
+        <div class="relative w-full">
+          <input
+            [formControl]="name"
+            id="name"
+            name="name"
+            type="text"
+            placeholder="{{ 'common.namePlaceholder' | translate }}"
+            class="w-full rounded-md border border-line bg-surface px-3.5 py-2.5 text-sm text-ink shadow-xs transition placeholder:text-faint focus:border-brand focus:ring-2 focus:ring-brand/20"
+          />
+          <app-autocomplete-select
+            (isSelectChange)="setFormValuesToSelectedAgent($event)"
+            *ngIf="filteredConfigurations$"
+            [isSelect]="showAutocompletion"
+            [list$]="filteredConfigurations$"
+          ></app-autocomplete-select>
         </div>
-
-        <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
-          <label class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2" for="description">
-            {{ 'common.description' | translate }}
-          </label>
-          <div class="mt-1 sm:mt-0 sm:col-span-2">
-            <textarea
-              class="shadow-sm block w-full focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border border-gray-300 rounded-md"
-              formControlName="description"
-              id="description"
-              name="description"
-              placeholder="{{ 'common.descriptionPlaceholder' | translate }}"
-              rows="3"
-            ></textarea>
-            <p
-              *ngIf="hasError('description', 'maxlength')"
-              @fadeIn
-              class="mt-2 text-sm text-red-600"
-              id="contact-error"
-            >
-              {{ 'common.maxLengthExceed' | translate }}
-            </p>
-          </div>
-        </div>
+        <button
+          (click)="reset()"
+          [title]="'common.clear' | translate"
+          type="button"
+          class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-md border border-line text-faint transition hover:bg-surface-2 hover:text-ink"
+        >
+          <svg
+            class="h-4 w-4"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.7"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+          >
+            <path
+              d="M6 7h12M9 7V5h6v2m-7 0v12a1 1 0 001 1h6a1 1 0 001-1V7"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
       </div>
+      <p *ngIf="hasError('name', 'required')" @fadeIn class="mt-1.5 text-xs text-danger">
+        {{ 'common.nameRequiredError' | translate }}
+      </p>
     </div>
-  </div>
-</form>
-<div class="pt-5">
-  <div class="flex justify-end">
+
+    <!-- Description -->
+    <div>
+      <label class="mb-1.5 block text-sm font-medium text-ink" for="description">{{
+        'common.description' | translate
+      }}</label>
+      <textarea
+        formControlName="description"
+        id="description"
+        name="description"
+        rows="3"
+        placeholder="{{ 'common.descriptionPlaceholder' | translate }}"
+        class="w-full resize-none rounded-md border border-line bg-surface px-3.5 py-2.5 text-sm text-ink shadow-xs transition placeholder:text-faint focus:border-brand focus:ring-2 focus:ring-brand/20"
+      ></textarea>
+      <p *ngIf="hasError('description', 'maxlength')" @fadeIn class="mt-1.5 text-xs text-danger">
+        {{ 'common.maxLengthExceed' | translate }}
+      </p>
+    </div>
+  </form>
+
+  <div class="mt-6 flex items-center justify-end gap-2 border-t border-line pt-5">
     <button
       (click)="onCancel()"
-      class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
       type="button"
+      class="rounded-md px-4 py-2 text-sm font-medium text-muted transition hover:text-ink"
     >
       {{ 'common.cancel' | translate }}
     </button>
     <button
       (click)="onSave()"
       [disabled]="!entityForm.valid"
-      [ngClass]="{ 'opacity-25 hover:bg-indigo-600 ': !entityForm.valid }"
-      class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
       type="button"
+      class="inline-flex items-center rounded-md bg-brand px-4 py-2 text-sm font-semibold text-on-brand shadow-sm transition hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-50"
     >
       {{ 'common.save' | translate }}
     </button>

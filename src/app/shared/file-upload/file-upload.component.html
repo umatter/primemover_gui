@@ -1,33 +1,28 @@
-<div class="flex items-center justify-center w-full mt-2">
+<div class="mt-2 flex w-full items-center justify-center">
   <label
-    class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+    class="flex h-56 w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-line-strong bg-surface-2 transition hover:border-brand hover:bg-brand-tint/40"
     for="dropzone-file"
   >
-    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+    <div class="flex flex-col items-center justify-center px-6 py-5 text-center">
       <svg
-        aria-hidden="true"
-        class="w-10 h-10 mb-3 text-gray-400"
+        class="mb-3 h-9 w-9 text-faint"
         fill="none"
         stroke="currentColor"
+        stroke-width="1.6"
         viewBox="0 0 24 24"
-        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
       >
         <path
           d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
           stroke-linecap="round"
           stroke-linejoin="round"
-          stroke-width="2"
-        ></path>
+        />
       </svg>
-      <p class="mb-2 text-sm text-gray-500 dark:text-gray-400 text-center">
-        <span class="font-semibold">
-          {{ 'upload.clickToUpload' | translate }}
-        </span>
+      <p class="mb-1 text-sm text-muted">
+        <span class="font-semibold text-brand">{{ 'upload.clickToUpload' | translate }}</span>
         {{ 'upload.orDragAndDrop' | translate }}
       </p>
-      <p class="text-xs text-gray-500 dark:text-gray-400">
-        {{ 'upload.experimentUploadFormat' | translate }}
-      </p>
+      <p class="text-xs text-faint">{{ 'upload.experimentUploadFormat' | translate }}</p>
     </div>
     <input accept="application/json" class="hidden" id="dropzone-file" type="file" />
   </label>

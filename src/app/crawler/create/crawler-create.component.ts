@@ -27,7 +27,7 @@ import { HeroiconTrashComponent } from '@shared/icon/heroicon-trash/heroicon-tra
 import { ConfigurationModule } from '@app/config/config.module';
 import { AgentModule } from '@app/agent/agent.module';
 import { AsyncPipe, NgClass, NgIf } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { ProxyModule } from '@app/proxy/proxy.module';
 import { AutocompleteSelectComponent } from '@shared/autocomplete-select/autocomplete-select.component';
 import { ContentModalComponent } from '@shared/dialog/content-modal/content-modal.component';
@@ -87,6 +87,7 @@ export class CrawlerCreateComponent implements OnDestroy {
   constructor(
     private store: Store,
     private formBuilder: FormBuilder,
+    public router: Router,
     private experimentEntityService: ExperimentService,
     private agentEntityService: AgentService,
     private configurationEntityService: ConfigurationService,
@@ -252,10 +253,18 @@ export class CrawlerCreateComponent implements OnDestroy {
   }
 
   onSave(): void {
+    const experimentId = this.experimentId.value;
     this.crawlerEntityService
       .add(this.crawlerForm.value)
       .pipe()
-      .subscribe(() => this.resetForms());
+      .subscribe(() => {
+        // Return to the experiment workspace the bot belongs to; otherwise reset in place.
+        if (experimentId) {
+          this.router.navigate(['experiments', experimentId]).then();
+        } else {
+          this.resetForms();
+        }
+      });
   }
 
   resetForms(): void {

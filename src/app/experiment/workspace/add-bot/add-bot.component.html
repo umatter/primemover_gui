@@ -1,0 +1,126 @@
+<!-- Backdrop -->
+<div
+  class="fixed inset-0 z-40 flex items-start justify-center overflow-y-auto bg-ink/30 px-4 py-10 backdrop-blur-sm"
+  (click)="cancel()"
+>
+  <!-- Panel -->
+  <div
+    @fadeIn
+    (click)="$event.stopPropagation()"
+    class="w-full max-w-lg rounded-2xl border border-line bg-surface p-6 shadow-xl"
+    role="dialog"
+    aria-modal="true"
+  >
+    <header class="mb-5">
+      <h2 class="font-display text-xl font-semibold text-ink">{{ 'workspace.addBotPanel.title' | translate }}</h2>
+      <p class="mt-1 text-sm text-muted">{{ 'workspace.addBotPanel.subtitle' | translate }}</p>
+    </header>
+
+    <!-- Library not ready: guide to create building blocks first -->
+    <div
+      *ngIf="(librariesReady$ | async) === false"
+      class="mb-5 rounded-lg border border-dashed border-line-strong bg-brand-tint/40 px-4 py-3 text-sm text-muted"
+    >
+      {{ 'workspace.addBotPanel.libraryEmpty' | translate }}
+      <a routerLink="/library" class="font-semibold text-brand hover:underline">
+        {{ 'workspace.addBotPanel.openLibrary' | translate }}
+      </a>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="save()" class="space-y-4">
+      <!-- Name -->
+      <div>
+        <label for="bot-name" class="mb-1 block text-sm font-medium text-ink">
+          {{ 'workspace.addBotPanel.name' | translate }}
+        </label>
+        <input
+          id="bot-name"
+          type="text"
+          formControlName="name"
+          class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink placeholder:text-faint focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+          [placeholder]="'workspace.addBotPanel.namePlaceholder' | translate"
+        />
+        <p *ngIf="hasError('name', 'required')" class="mt-1 text-xs text-danger">
+          {{ 'workspace.addBotPanel.nameRequired' | translate }}
+        </p>
+      </div>
+
+      <!-- Browser identity (agent) -->
+      <div>
+        <label for="bot-agent" class="mb-1 block text-sm font-medium text-ink">
+          {{ 'workspace.bot.identity' | translate }}
+        </label>
+        <select
+          id="bot-agent"
+          formControlName="agent_id"
+          class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+        >
+          <option [ngValue]="null" disabled>{{ 'workspace.addBotPanel.choose' | translate }}</option>
+          <option *ngFor="let agent of agents$ | async" [ngValue]="agent.id">{{ agent.name }}</option>
+        </select>
+        <p *ngIf="hasError('agent_id', 'required')" class="mt-1 text-xs text-danger">
+          {{ 'workspace.addBotPanel.fieldRequired' | translate }}
+        </p>
+      </div>
+
+      <!-- Connection (proxy) -->
+      <div>
+        <label for="bot-proxy" class="mb-1 block text-sm font-medium text-ink">
+          {{ 'workspace.bot.connection' | translate }}
+        </label>
+        <select
+          id="bot-proxy"
+          formControlName="proxy_id"
+          class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+        >
+          <option [ngValue]="null" disabled>{{ 'workspace.addBotPanel.choose' | translate }}</option>
+          <option *ngFor="let proxy of proxies$ | async" [ngValue]="proxy.id">{{ proxy.name }}</option>
+        </select>
+        <p *ngIf="hasError('proxy_id', 'required')" class="mt-1 text-xs text-danger">
+          {{ 'workspace.addBotPanel.fieldRequired' | translate }}
+        </p>
+      </div>
+
+      <!-- Configuration (the bot's profile) -->
+      <div>
+        <label for="bot-config" class="mb-1 block text-sm font-medium text-ink">
+          {{ 'workspace.bot.profile' | translate }}
+        </label>
+        <select
+          id="bot-config"
+          formControlName="configuration_id"
+          class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+        >
+          <option [ngValue]="null" disabled>{{ 'workspace.addBotPanel.choose' | translate }}</option>
+          <option *ngFor="let config of configurations$ | async" [ngValue]="config.id">{{ config.name }}</option>
+        </select>
+        <p *ngIf="hasError('configuration_id', 'required')" class="mt-1 text-xs text-danger">
+          {{ 'workspace.addBotPanel.fieldRequired' | translate }}
+        </p>
+      </div>
+
+      <!-- Submit error -->
+      <p *ngIf="errorKey" class="rounded-md bg-danger-tint px-3 py-2 text-sm text-danger">
+        {{ errorKey | translate }}
+      </p>
+
+      <!-- Actions -->
+      <div class="flex items-center justify-end gap-2 pt-2">
+        <button
+          type="button"
+          (click)="cancel()"
+          class="rounded-md border border-line bg-surface px-4 py-2 text-sm font-medium text-ink transition hover:bg-surface-2"
+        >
+          {{ 'workspace.addBotPanel.cancel' | translate }}
+        </button>
+        <button
+          type="submit"
+          [disabled]="submitting"
+          class="inline-flex items-center gap-2 rounded-md bg-brand px-4 py-2 text-sm font-semibold text-on-brand transition hover:bg-brand-hover disabled:opacity-60"
+        >
+          {{ (submitting ? 'workspace.addBotPanel.saving' : 'workspace.addBotPanel.save') | translate }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

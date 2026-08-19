@@ -1,0 +1,146 @@
+<a
+  [routerLink]="['/experiments', experimentId, 'bots', botId]"
+  class="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-muted transition hover:text-brand"
+>
+  <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+  </svg>
+  {{ 'workspace.composer.back' | translate }}
+</a>
+
+<ng-container *ngIf="run$ | async as run; else loadingTpl">
+  <header class="animate-fade-up">
+    <p class="font-mono text-xs text-faint">Q-{{ run.id }}</p>
+    <h1 class="mt-1 font-display text-3xl font-semibold tracking-tight text-ink">{{ run.name }}</h1>
+    <p class="mt-2 text-sm text-muted">{{ 'workspace.composer.subtitle' | translate }}</p>
+  </header>
+
+  <!-- Job sequence -->
+  <section class="mt-8">
+    <h2 class="mb-4 font-display text-xl font-semibold text-ink">{{ 'workspace.composer.jobs' | translate }}</h2>
+
+    <p *ngIf="jobs.length === 0" class="rounded-xl border border-dashed border-line-strong bg-brand-tint/40 px-6 py-6 text-sm text-muted">
+      {{ 'workspace.composer.empty' | translate }}
+    </p>
+
+    <ol *ngIf="jobs.length" class="space-y-2">
+      <li
+        *ngFor="let job of jobs; let i = index; let first = first; let last = last"
+        class="flex items-center gap-3 rounded-xl border border-line bg-surface p-3"
+        [ngClass]="{ 'opacity-60': !job.active }"
+      >
+        <span class="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-surface-2 font-mono text-xs text-muted">
+          {{ i + 1 }}
+        </span>
+        <div class="min-w-0 flex-1">
+          <p class="truncate text-sm font-semibold text-ink">{{ job.name }}</p>
+          <p class="font-mono text-xs text-faint">{{ job.type }}</p>
+        </div>
+
+        <!-- reorder -->
+        <div class="flex flex-col">
+          <button type="button" (click)="moveUp(job)" [disabled]="first"
+            class="text-faint transition hover:text-brand disabled:opacity-30" [attr.aria-label]="'workspace.composer.moveUp' | translate">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button type="button" (click)="moveDown(job)" [disabled]="last"
+            class="text-faint transition hover:text-brand disabled:opacity-30" [attr.aria-label]="'workspace.composer.moveDown' | translate">
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+
+        <!-- behaviours (Slice D) -->
+        <button type="button" (click)="editBehaviours(job)"
+          class="rounded-md border border-line px-2.5 py-1 text-xs font-medium text-ink transition hover:bg-surface-2">
+          {{ 'workspace.composer.behaviours' | translate }}
+        </button>
+
+        <!-- active toggle -->
+        <button type="button" (click)="toggleActive(job)"
+          class="rounded-md px-2.5 py-1 text-xs font-semibold transition"
+          [ngClass]="job.active ? 'bg-success-tint text-success' : 'bg-surface-2 text-muted'">
+          {{ (job.active ? 'workspace.composer.active' : 'workspace.composer.inactive') | translate }}
+        </button>
+
+        <!-- remove -->
+        <button type="button" (click)="removeJob(job)"
+          class="text-faint transition hover:text-danger" [attr.aria-label]="'workspace.composer.remove' | translate">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M6 7h12M9 7V5h6v2M10 11v6M14 11v6M7 7l1 12h8l1-12" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </li>
+    </ol>
+  </section>
+
+  <!-- Add job -->
+  <section class="mt-8 rounded-2xl border border-line bg-surface p-5">
+    <h3 class="mb-4 font-display text-base font-semibold text-ink">{{ 'workspace.composer.addTitle' | translate }}</h3>
+    <form [formGroup]="addForm" (ngSubmit)="addJob()">
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <label for="job-type" class="mb-1 block text-sm font-medium text-ink">{{ 'workspace.composer.type' | translate }}</label>
+          <select id="job-type" formControlName="type" (change)="onTypeChange()"
+            class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand">
+            <option [ngValue]="null" disabled>{{ 'workspace.composer.chooseType' | translate }}</option>
+            <option *ngFor="let t of jobTypes" [ngValue]="t.apiType">{{ t.displayName }}</option>
+          </select>
+          <p *ngIf="hasError('type', 'required')" class="mt-1 text-xs text-danger">{{ 'workspace.composer.typeRequired' | translate }}</p>
+        </div>
+        <div>
+          <label for="job-name" class="mb-1 block text-sm font-medium text-ink">{{ 'workspace.composer.name' | translate }}</label>
+          <input id="job-name" type="text" formControlName="name"
+            class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink placeholder:text-faint focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+            [placeholder]="'workspace.composer.namePlaceholder' | translate" />
+          <p *ngIf="hasError('name', 'required')" class="mt-1 text-xs text-danger">{{ 'workspace.composer.nameRequired' | translate }}</p>
+        </div>
+      </div>
+
+      <!-- Type-specific parameter fields (become the job's behaviours) -->
+      <div *ngIf="currentFields.length" [formGroup]="fieldsForm" class="mt-5 border-t border-line pt-5">
+        <p class="mb-3 text-xs font-medium uppercase tracking-wide text-faint">{{ 'workspace.composer.details' | translate }}</p>
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div *ngFor="let f of currentFields">
+            <label [for]="'field-' + f.name" class="mb-1 block text-sm font-medium text-ink">
+              {{ f.name }}
+              <span *ngIf="!f.required" class="font-normal text-faint">({{ 'workspace.runPanel.optional' | translate }})</span>
+            </label>
+
+            <select *ngIf="f.options" [id]="'field-' + f.name" [formControlName]="f.name"
+              class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand">
+              <option *ngFor="let opt of f.options" [ngValue]="opt">{{ opt }}</option>
+            </select>
+
+            <input *ngIf="!f.options" [id]="'field-' + f.name" type="text" [formControlName]="f.name"
+              class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink placeholder:text-faint focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+              [placeholder]="f.description || f.name" />
+
+            <p *ngIf="fieldHasError(f.name)" class="mt-1 text-xs text-danger">{{ 'workspace.composer.fieldRequired' | translate }}</p>
+            <p *ngIf="f.description && !fieldHasError(f.name)" class="mt-1 text-xs text-faint">{{ f.description }}</p>
+          </div>
+        </div>
+      </div>
+
+      <p *ngIf="addErrorKey" class="mt-4 rounded-md bg-danger-tint px-3 py-2 text-sm text-danger">
+        {{ addErrorKey | translate }}
+      </p>
+
+      <div class="mt-5 flex justify-end">
+        <button type="submit"
+          class="inline-flex items-center gap-2 rounded-md bg-brand px-4 py-2 text-sm font-semibold text-on-brand transition hover:bg-brand-hover">
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          {{ 'workspace.composer.addJob' | translate }}
+        </button>
+      </div>
+    </form>
+  </section>
+
+  <!-- Per-job behaviours editor (Slice D) -->
+  <app-job-behaviours
+    *ngIf="behavioursJob"
+    [job]="behavioursJob"
+    (closed)="closeBehaviours()"
+  ></app-job-behaviours>
+</ng-container>
+
+<ng-template #loadingTpl>
+  <app-loading-spinner></app-loading-spinner>
+</ng-template>
