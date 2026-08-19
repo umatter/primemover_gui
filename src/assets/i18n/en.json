@@ -51,7 +51,7 @@
     "experimentRequiredError": "Experiment is Required",
     "home": "Home",
     "hostName": "Host Name",
-    "hostNamePlaceholder": "e.g. proxy.geosurf.io",
+    "hostNamePlaceholder": "e.g. pr.oxylabs.io",
     "id": "ID",
     "identification": "Identification",
     "identificationPlaceholder": "e.g. Browser-v10",
