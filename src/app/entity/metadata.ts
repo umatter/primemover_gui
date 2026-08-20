@@ -1,5 +1,5 @@
 import { DefaultDataServiceConfig, EntityMetadataMap } from '@ngrx/data';
-import { environment } from '@environments/environment';
+import { resolveApiBaseUrl } from '@app/app-config';
 
 export const filterBySearchTerm = (entities: { name: string }[], search: string) => {
   return entities.filter((entity) => -1 < entity.name.indexOf(search));
@@ -121,7 +121,10 @@ export const entityConfig = {
 };
 
 export const defaultDataServiceConfig: DefaultDataServiceConfig = {
-  root: environment.configService.apiBaseUrl,
+  // Same runtime resolution as AppConfig. ngrx-data builds every entity URL
+  // from this root, so leaving it on the build-time environment would make
+  // most of the app ignore the deployed API endpoint.
+  root: resolveApiBaseUrl(),
   timeout: 30000,
   trailingSlashEndpoints: true
 };
