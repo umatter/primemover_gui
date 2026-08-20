@@ -71,10 +71,18 @@ jobs:
             curl -fsS http://127.0.0.1:18080/index.html >/dev/null 2>&1 && break
             sleep 1
           done
-          html=$(curl -fsS http://127.0.0.1:18080/index.html)
-          if ! printf '%s' "$html" | grep -qF "content=\"$endpoint\""; then
+          # Extract once, then match in the shell. Piping into `grep -q` looks
+          # tidier but is a trap here: grep exits on the first match and closes
+          # the pipe while printf still has ~60 KB to write, and under pipefail
+          # that EPIPE becomes the pipeline's status -- so a SUCCESSFUL match
+          # reports failure. It survives locally only while the document fits
+          # in the 64 KB pipe buffer, which it barely does. `grep -o` is safe
+          # because it consumes all of its input.
+          tag=$(printf '%s' "$(curl -fsS http://127.0.0.1:18080/index.html)" \
+                | grep -o '<meta[^>]*name="config"[^>]*>' || true)
+          if [[ "$tag" != *"content=\"$endpoint\""* ]]; then
             echo "FAIL: API_ENDPOINT was not injected into the meta tag" >&2
-            printf '%s' "$html" | grep -o '<meta[^>]*name="config"[^>]*>' >&2 || true
+            echo "served tag: ${tag:-<no config meta tag found>}" >&2
             docker logs gui-injected >&2
             exit 1
           fi
@@ -98,9 +106,11 @@ jobs:
           done
           # The container must still come up -- the failure mode being guarded
           # against is an entrypoint that aborts on the unset variable.
-          html=$(curl -fsS http://127.0.0.1:18081/index.html)
-          if printf '%s' "$html" | grep -o '<meta[^>]*name="config"[^>]*>' | grep -q 'content="http'; then
+          tag=$(printf '%s' "$(curl -fsS http://127.0.0.1:18081/index.html)" \
+                | grep -o '<meta[^>]*name="config"[^>]*>' || true)
+          if [[ "$tag" == *'content="http'* ]]; then
             echo "FAIL: endpoint present although API_ENDPOINT was unset" >&2
+            echo "served tag: $tag" >&2
             exit 1
           fi
           echo "OK: tag left empty, app falls back to the built-in environment"
