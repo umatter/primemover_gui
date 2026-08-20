@@ -4,7 +4,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common/http';
 import { environment } from '@environments/environment';
-import { AppConfig } from './app-config';
+import { AppConfig, appConfig } from './app-config';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppStoreModule } from './store/store.module';
 import { SharedModule } from '@shared/shared.module';
@@ -84,8 +84,10 @@ import { NotificationComponent } from '@shared/overlay/notification/notification
       useClass: AdditionalEntityCollectionReducerMethodsFactory
     },
     {
+      // Resolved at runtime from the injected meta tag, falling back to the
+      // build-time environment. See app-config.ts.
       provide: AppConfig,
-      useValue: environment.configService
+      useValue: appConfig
     },
 
     {

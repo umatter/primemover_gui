@@ -127,7 +127,8 @@
             ],
             "scripts": [],
             "include": [
-              "app/experiment/workspace/**/*.spec.ts"
+              "app/experiment/workspace/**/*.spec.ts",
+              "app/app-config.spec.ts"
             ]
           }
         },

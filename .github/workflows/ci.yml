@@ -1,0 +1,117 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Lint, test, build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # Pinned to the major the Dockerfile builds with (node:22-alpine), so
+          # a build that passes here is the build the image produces.
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci --no-audit --no-fund
+
+      - name: ESLint
+        run: npx ng lint
+
+      # Scoped to the curated specs listed in tsconfig.spec.json / angular.json.
+      # The 80 quarantined auto-generated stubs are deliberately excluded; see
+      # the note in tsconfig.spec.json before re-broadening the glob.
+      - name: Unit tests
+        run: npm run test.ci
+
+      - name: Production build
+        run: npm run build.prod
+
+      # NOTE -- stylelint and prettier are deliberately NOT wired up yet: the
+      # tree currently has 64 stylelint errors and 18 unformatted files, so
+      # adding them here would make CI red on arrival and train everyone to
+      # ignore it. Both are largely auto-fixable (`npm run lint`, `npm run
+      # format`); do that sweep in its own commit, then add the jobs.
+
+  image:
+    name: Image + runtime endpoint injection
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build image
+        run: docker build -t primemover-gui:ci .
+
+      # The two worst bugs this file guards against were both invisible to
+      # review and only appeared when the image actually ran:
+      #   1. set-config.sh used bash's `[[ -v ]]`, which busybox ash does not
+      #      implement, so the entrypoint aborted;
+      #   2. Angular's production minifier rewrites content="" to a bare
+      #      `content` attribute, so a sed pattern matching only content=""
+      #      silently did nothing.
+      # Both fail closed to "app loads, every API call hits the wrong origin",
+      # which is why this asserts on the served bytes rather than on the build.
+      - name: Serves with API_ENDPOINT injected
+        run: |
+          set -euo pipefail
+          endpoint='https://pm-api.example.org/api/v1'
+          docker run -d --name gui-injected -e API_ENDPOINT="$endpoint" -p 18080:8080 primemover-gui:ci
+          for _ in $(seq 1 30); do
+            curl -fsS http://127.0.0.1:18080/index.html >/dev/null 2>&1 && break
+            sleep 1
+          done
+          # Extract once, then match in the shell. Piping into `grep -q` looks
+          # tidier but is a trap here: grep exits on the first match and closes
+          # the pipe while printf still has ~60 KB to write, and under pipefail
+          # that EPIPE becomes the pipeline's status -- so a SUCCESSFUL match
+          # reports failure. It survives locally only while the document fits
+          # in the 64 KB pipe buffer, which it barely does. `grep -o` is safe
+          # because it consumes all of its input.
+          tag=$(printf '%s' "$(curl -fsS http://127.0.0.1:18080/index.html)" \
+                | grep -o '<meta[^>]*name="config"[^>]*>' || true)
+          if [[ "$tag" != *"content=\"$endpoint\""* ]]; then
+            echo "FAIL: API_ENDPOINT was not injected into the meta tag" >&2
+            echo "served tag: ${tag:-<no config meta tag found>}" >&2
+            docker logs gui-injected >&2
+            exit 1
+          fi
+          echo "OK: meta tag carries the injected endpoint"
+
+      - name: Serves a deep link through the SPA rewrite
+        run: |
+          set -euo pipefail
+          code=$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:18080/experiment/42/workspace)
+          test "$code" = "200" || { echo "FAIL: deep link returned $code, expected 200" >&2; exit 1; }
+          echo "OK: unknown path served index.html"
+
+      - name: Falls back cleanly when API_ENDPOINT is unset
+        run: |
+          set -euo pipefail
+          docker rm -f gui-injected >/dev/null
+          docker run -d --name gui-fallback -p 18081:8080 primemover-gui:ci
+          for _ in $(seq 1 30); do
+            curl -fsS http://127.0.0.1:18081/index.html >/dev/null 2>&1 && break
+            sleep 1
+          done
+          # The container must still come up -- the failure mode being guarded
+          # against is an entrypoint that aborts on the unset variable.
+          tag=$(printf '%s' "$(curl -fsS http://127.0.0.1:18081/index.html)" \
+                | grep -o '<meta[^>]*name="config"[^>]*>' || true)
+          if [[ "$tag" == *'content="http'* ]]; then
+            echo "FAIL: endpoint present although API_ENDPOINT was unset" >&2
+            echo "served tag: $tag" >&2
+            exit 1
+          fi
+          echo "OK: tag left empty, app falls back to the built-in environment"
+          docker rm -f gui-fallback >/dev/null

@@ -7,5 +7,5 @@
   },
   "files": ["src/test.ts", "src/polyfills.ts"],
   "//": "Scoped to curated, runnable specs. 80 auto-generated 'should create' stubs never ran (they misuse declarations:[standalone] and reference stale class names). They are quarantined via this glob + angular.json test.include, NOT deleted (repo is not under git). See docs/specs/runs-and-bots.md §9; re-broaden as legacy stubs are repaired.",
-  "include": ["src/**/*.d.ts", "src/app/experiment/workspace/**/*.spec.ts"]
+  "include": ["src/**/*.d.ts", "src/app/experiment/workspace/**/*.spec.ts", "src/app/app-config.spec.ts"]
 }
