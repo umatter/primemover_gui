@@ -15,9 +15,9 @@ jobs:
     name: Lint, test, build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           # Pinned to the major the Dockerfile builds with (node:22-alpine), so
           # a build that passes here is the build the image produces.
@@ -48,7 +48,7 @@ jobs:
     name: Image + runtime endpoint injection
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Build image
         run: docker build -t primemover-gui:ci .
