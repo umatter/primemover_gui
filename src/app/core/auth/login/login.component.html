@@ -1,4 +1,12 @@
-<app-notification [typeError]="errorResponse$ | async" titleText="Failure" [bodyText]="message"></app-notification>
+<!-- `error` is what makes the notification render at all; without it the
+     component's `show` getter returns false and a failed sign-in is silent. -->
+<app-notification
+  [error]="error"
+  [typeError]="true"
+  titleText="Sign in failed"
+  [bodyText]="error?.message ?? ''"
+  (closeRequested)="error = null"
+></app-notification>
 
 <div class="grid min-h-screen lg:grid-cols-2">
   <!-- ============================== Brand panel ============================== -->

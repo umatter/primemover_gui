@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
@@ -27,8 +27,8 @@ import { AsyncPipe } from '@angular/common';
 })
 export class LoginComponent implements OnInit {
   form: UntypedFormGroup;
-  hasError: boolean;
-  message: string;
+  /** The failed sign-in to display, or null once dismissed / on a new attempt. */
+  error: { message: string } | null = null;
   errorResponse$: Observable<any>;
 
   constructor(
@@ -37,7 +37,8 @@ export class LoginComponent implements OnInit {
     private router: Router,
     private store: Store,
     private localStorageService: LocalStorageService,
-    private tokenService: TokenService
+    private tokenService: TokenService,
+    private cdr: ChangeDetectorRef
   ) {
     this.form = this.fb.group({
       username: [null, [Validators.required]],
@@ -50,8 +51,11 @@ export class LoginComponent implements OnInit {
 
     this.errorResponse$.subscribe((response) => {
       if (Boolean(response?.error)) {
-        this.hasError = true;
-        this.message = response?.message;
+        // Passport answers wrong credentials with 400 invalid_grant and a
+        // `message`; a network failure has no usable body, hence the fallback.
+        this.error = { message: response?.message || 'Sign in failed. Please try again.' };
+        // OnPush: a value set from a subscription is not picked up on its own.
+        this.cdr.markForCheck();
       }
     });
 
@@ -78,6 +82,7 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit() {
+    this.error = null;
     const username = this.form.get('username')?.value;
     const password = this.form.get('password')?.value;
     this.store.dispatch(signInRequested({ username: username, password: password }));
