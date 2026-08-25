@@ -128,7 +128,9 @@
             "scripts": [],
             "include": [
               "app/experiment/workspace/**/*.spec.ts",
-              "app/app-config.spec.ts"
+              "app/app-config.spec.ts",
+              "app/core/auth/login/login.component.spec.ts",
+              "app/shared/layout/user-setting/user-setting.component.spec.ts"
             ]
           }
         },

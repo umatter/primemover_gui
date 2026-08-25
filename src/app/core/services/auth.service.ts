@@ -47,6 +47,14 @@ export class AuthService {
     });
   }
 
+  public changePassword(current_password: string, password: string, password_confirmation: string): Observable<any> {
+    return this.http.post(`${this.config.apiBaseUrl}/auth/change-password`, {
+      current_password,
+      password,
+      password_confirmation
+    });
+  }
+
   public user(): Observable<User> {
     return this.http.get<User>(`${this.config.apiBaseUrl}/auth/user`);
   }

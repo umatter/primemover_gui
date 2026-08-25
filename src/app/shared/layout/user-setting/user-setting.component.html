@@ -1,36 +1,90 @@
+<app-loading-spinner *ngIf="isLoading"></app-loading-spinner>
+<app-notification
+  [error]="outcome"
+  [typeError]="outcome?.success === false"
+  [typeSuccess]="outcome?.success === true"
+  [titleText]="(outcome?.success ? 'auth.changePassword' : 'auth.passwordChangeFailed') | translate"
+  [bodyText]="outcome?.success ? ('auth.passwordChanged' | translate) : outcome?.message ?? ''"
+  (closeRequested)="outcome = null"
+></app-notification>
+
 <div class="mx-auto max-w-2xl">
   <header class="mb-8">
     <p class="mb-1 text-xs font-semibold uppercase tracking-[0.14em] text-faint">Account</p>
-    <h1 class="font-display text-3xl font-semibold tracking-tight text-ink">Settings</h1>
+    <h1 class="font-display text-3xl font-semibold tracking-tight text-ink">{{ 'auth.settings' | translate }}</h1>
     <p class="mt-1.5 max-w-prose text-sm text-muted">Manage your account preferences.</p>
   </header>
 
-  <div class="rounded-2xl border border-line bg-surface p-6 shadow-sm sm:p-8">
-    <div class="flex items-start gap-4">
-      <span class="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl bg-brand-tint text-brand">
-        <svg
-          class="h-5 w-5"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1.6"
-          viewBox="0 0 24 24"
-          aria-hidden="true"
-        >
-          <circle cx="12" cy="12" r="3.2" />
-          <path
-            d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09A1.65 1.65 0 008 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 004.6 15a1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 4.6a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06A1.65 1.65 0 0019.4 9c.2.62.79 1.02 1.42 1H21a2 2 0 110 4h-.09c-.66 0-1.25.4-1.51 1z"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          />
-        </svg>
-      </span>
+  <section class="rounded-2xl border border-line bg-surface p-6 shadow-sm sm:p-8">
+    <h2 class="font-display text-lg font-semibold text-ink">{{ 'auth.changePassword' | translate }}</h2>
+    <p class="mt-1 max-w-prose text-sm text-muted">{{ 'auth.passwordPatternError' | translate }}</p>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="mt-6 space-y-5">
       <div>
-        <h2 class="font-display text-lg font-semibold text-ink">More settings coming soon</h2>
-        <p class="mt-1 max-w-prose text-sm text-muted">
-          Language and sign-out are available from the menu in the top-right. Additional account preferences will live
-          here.
+        <label class="mb-1.5 block text-sm font-medium text-ink" for="currentPassword">{{
+          'auth.currentPassword' | translate
+        }}</label>
+        <input
+          formControlName="currentPassword"
+          id="currentPassword"
+          type="password"
+          autocomplete="current-password"
+          class="w-full rounded-md border border-line bg-surface px-3.5 py-2.5 text-sm text-ink shadow-xs transition placeholder:text-faint focus:border-brand focus:ring-2 focus:ring-brand/20"
+        />
+        <p *ngIf="hasError('currentPassword', 'required')" @fadeIn class="mt-1.5 text-xs text-danger">
+          {{ 'auth.passwordRequiredError' | translate }}
         </p>
       </div>
-    </div>
-  </div>
+
+      <div>
+        <label class="mb-1.5 block text-sm font-medium text-ink" for="password">{{
+          'auth.newPassword' | translate
+        }}</label>
+        <input
+          formControlName="password"
+          id="password"
+          type="password"
+          autocomplete="new-password"
+          class="w-full rounded-md border border-line bg-surface px-3.5 py-2.5 text-sm text-ink shadow-xs transition placeholder:text-faint focus:border-brand focus:ring-2 focus:ring-brand/20"
+        />
+        <p @fadeIn class="mt-1.5 space-y-0.5 text-xs text-danger">
+          <span *ngIf="hasError('password', 'required')" class="block">{{
+            'auth.passwordRequiredError' | translate
+          }}</span>
+          <span *ngIf="hasError('password', 'minlength')" class="block">{{
+            'auth.passwordMinCharsError' | translate
+          }}</span>
+          <span *ngIf="hasError('password', 'pattern')" class="block">{{
+            'auth.passwordPatternError' | translate
+          }}</span>
+        </p>
+      </div>
+
+      <div>
+        <label class="mb-1.5 block text-sm font-medium text-ink" for="confirmPassword">{{
+          'auth.confirmPassword' | translate
+        }}</label>
+        <input
+          formControlName="confirmPassword"
+          id="confirmPassword"
+          type="password"
+          autocomplete="new-password"
+          class="w-full rounded-md border border-line bg-surface px-3.5 py-2.5 text-sm text-ink shadow-xs transition placeholder:text-faint focus:border-brand focus:ring-2 focus:ring-brand/20"
+        />
+        <p *ngIf="passwordsDiffer()" @fadeIn class="mt-1.5 text-xs text-danger">
+          {{ 'auth.passwordConfirmError' | translate }}
+        </p>
+      </div>
+
+      <div class="flex justify-end">
+        <button
+          type="submit"
+          [disabled]="form.invalid || passwordsDiffer() || isLoading"
+          class="rounded-md bg-brand px-4 py-2.5 text-sm font-semibold text-on-brand shadow-sm transition hover:bg-brand-hover focus:outline-none focus:ring-2 focus:ring-brand/30 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          {{ 'auth.changePassword' | translate }}
+        </button>
+      </div>
+    </form>
+  </section>
 </div>

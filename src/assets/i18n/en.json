@@ -230,10 +230,14 @@
     "selected": "agent selected"
   },
   "auth": {
+    "changePassword": "Change password",
     "confirmPassword": "Confirm Password",
+    "currentPassword": "Current password",
     "email": "Email",
     "newPassword": "New Password",
     "password": "password",
+    "passwordChangeFailed": "Password change failed",
+    "passwordChanged": "Your password has been changed.",
     "passwordConfirmError": "The password confirmation does not match.",
     "passwordMinCharsError": "Password minimun 8 character",
     "passwordPatternError": "At least one capital letter, at least one number, at least one special char",

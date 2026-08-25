@@ -3,6 +3,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 import { MockStore, provideMockStore } from '@ngrx/store/testing';
 import { TranslateModule } from '@ngx-translate/core';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { LoginComponent } from './login.component';
 import { AuthState, initialState } from '../../../store/auth/auth.reducer';
@@ -14,12 +15,8 @@ describe('LoginComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [LoginComponent, TranslateModule.forRoot()],
-      providers: [
-        provideHttpClient(),
-        provideRouter([]),
-        provideMockStore({ initialState: { auth: initialState } })
-      ]
+      imports: [LoginComponent, TranslateModule.forRoot(), NoopAnimationsModule],
+      providers: [provideHttpClient(), provideRouter([]), provideMockStore({ initialState: { auth: initialState } })]
     }).compileComponents();
 
     store = TestBed.inject(MockStore);
@@ -28,8 +25,7 @@ describe('LoginComponent', () => {
     fixture.detectChanges();
   });
 
-  const notification = (): HTMLElement | null =>
-    fixture.nativeElement.querySelector('app-notification [aria-live]');
+  const notification = (): HTMLElement | null => fixture.nativeElement.querySelector('app-notification [aria-live]');
 
   it('should create', () => {
     expect(component).toBeTruthy();
@@ -58,13 +54,18 @@ describe('LoginComponent', () => {
     expect(notification()?.textContent).toContain('Sign in failed');
   });
 
-  it('hides the notification when dismissed', () => {
+  it('hides the notification when dismissed', async () => {
     store.setState({ auth: { ...initialState, response: { error: 'invalid_grant', message: 'nope' } } });
     fixture.detectChanges();
     expect(notification()).not.toBeNull();
 
-    component.error = null;
+    // Click the notification's close button, as a user would. (The component
+    // is OnPush: assigning `error = null` from outside would not re-render.)
+    (fixture.nativeElement.querySelector('app-notification button') as HTMLButtonElement).click();
     fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+    expect(component.error).toBeNull();
     expect(notification()).toBeNull();
   });
 });
