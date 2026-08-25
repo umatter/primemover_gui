@@ -230,10 +230,14 @@
     "selected": "Agent ausgewählt"
   },
   "auth": {
+    "changePassword": "Kennwort ändern",
     "confirmPassword": "Kennwort bestätigen",
+    "currentPassword": "Aktuelles Kennwort",
     "email": "Email",
     "newPassword": "Neues Kennwort",
     "password": "Kennwort",
+    "passwordChangeFailed": "Kennwortänderung fehlgeschlagen",
+    "passwordChanged": "Ihr Kennwort wurde geändert.",
     "passwordConfirmError": "Passwörter stimmen nicht überein.",
     "passwordMinCharsError": "Es sind min. 8 Zeichen erforderlich.",
     "passwordPatternError": "Es ist mindestens ein Grossbuchstabe, eine Zahl und ein Sonderzeichen erforderlich.",
