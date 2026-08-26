@@ -16,6 +16,32 @@ npm run lint         # eslint + stylelint --fix
 npm run format       # prettier --write .
 ```
 
+## Tests: the curated spec list
+
+`ng test` runs only the specs listed in `tsconfig.spec.json` (`include`) **and**
+`angular.json` (`test.include`). ~80 auto-generated `should create` stubs are
+quarantined that way. A new `*.spec.ts` outside the list is compiled by nobody
+and the "Executed N of N" count does not move — add it to both lists and check
+the count rises. Standalone components in specs need `imports:`, not
+`declarations:`; components with animations need `NoopAnimationsModule`; an
+`OnPush` component will not re-render from a field assigned by the test — go
+through a real DOM event.
+
+## Deployment
+
+One image, any deployment: `Dockerfile` builds the prod bundle and serves it
+with httpd on **8080**. The API endpoint is injected at container start from
+`API_ENDPOINT` (`httpd-pre-init/set-config.sh`); unset, the bundle falls back
+to the same-origin path `/api/v1`.
+
+- CI publishes `ghcr.io/umatter/primemover_gui:sha-<short>` on every `main`
+  merge (`publish.yml`); there is no `latest` on purpose.
+- On ex63 the GUI runs from `ex63-infra/compose/apps.yml` (pin the sha there,
+  `make up`) at `https://primemover.qamelab.org`, and the API is routed
+  same-origin under `/api` — so `API_ENDPOINT` is deliberately **unset**.
+- Sign-in posts to `/auth/token`; a wrong password is a **400** from Passport,
+  not a 401. Settings (`/user/settings`) has the change-password form.
+
 ## Design System (read before touching UI)
 Visual direction, tokens, and rules live in **`.impeccable.md`** and the `## Design Context`
 section below. Key implementation facts:

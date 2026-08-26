@@ -22,6 +22,13 @@ Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.
 
 Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
 
+## Deployment
+
+`docker build -t primemover-gui .` then run with `-e API_ENDPOINT=https://<api>/api/v1 -p 8080:8080`
+(omit `API_ENDPOINT` when the API is served on the same origin under `/api`).
+CI publishes `ghcr.io/umatter/primemover_gui:sha-<short>` on every `main` merge.
+Details, incl. the ex63 setup and the curated test list: [CLAUDE.md](CLAUDE.md).
+
 ## Further help
 
 To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
