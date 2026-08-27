@@ -85,8 +85,13 @@
             <td class="whitespace-nowrap px-4 py-3.5 text-sm text-muted">{{ item.processed ? 'Yes' : 'No' }}</td>
             <td class="whitespace-nowrap px-4 py-3.5 text-sm text-muted">{{ item.processing ? 'Yes' : 'No' }}</td>
             <td class="whitespace-nowrap px-4 py-3.5 text-sm text-muted">{{ item.reviewed ? 'Yes' : 'No' }}</td>
-            <td class="whitespace-nowrap px-4 py-3.5 text-sm text-muted">
-              <app-status [statusCode]="item.status_code" [statusMessage]="item.status_message"></app-status>
+            <td class="px-4 py-3.5 text-sm text-muted">
+              <app-status
+                [showMessage]="true"
+                [statusCode]="item.status_code"
+                [statusMessage]="item.status_message"
+                class="block max-w-xs"
+              ></app-status>
             </td>
             <td class="whitespace-nowrap px-4 py-3.5 font-mono text-xs text-faint">CR-{{ item.crawler_id }}</td>
             <td class="whitespace-nowrap px-4 py-3.5 text-right">

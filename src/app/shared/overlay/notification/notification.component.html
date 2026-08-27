@@ -55,7 +55,10 @@
           </div>
           <div class="w-0 flex-1">
             <p class="text-sm font-semibold text-ink">{{ titleText }}</p>
-            <p class="mt-0.5 text-sm text-muted">{{ bodyText }}</p>
+            <!-- A notification can now render on its kind alone, so an empty body
+                 must not leave a stray blank line under the title. Server messages
+                 can be long: wrap them instead of overflowing the toast. -->
+            <p *ngIf="bodyText" class="mt-0.5 break-words text-sm text-muted">{{ bodyText }}</p>
           </div>
           <div class="flex flex-shrink-0">
             <button

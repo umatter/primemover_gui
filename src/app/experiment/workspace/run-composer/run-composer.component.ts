@@ -10,9 +10,21 @@ import { Queue } from '@app/queue/model/queue';
 import { Behavior } from '@app/behavior/behavior';
 import { BehaviorService, JobService, QueueService } from '@app/entity/service';
 import { JobFieldSchema, JobTypeSchema, JOB_TYPE_OPTIONS, JOB_TYPE_SCHEMAS } from '@app/enum/job-type-schema';
+import { normalizeStatus, QueueStatusEnum } from '@app/queue/status/status.enum';
+import { StatusComponent } from '@app/queue/status/status.component';
 import { fadeIn } from '@shared/animation/trigger';
 import { LoadingSpinnerComponent } from '@shared/overlay/loading-spinner/loading-spinner.component';
 import { JobBehavioursComponent } from '../job-behaviours/job-behaviours.component';
+
+/** Terminal-state tally over a run's jobs, computed from the jobs this screen already holds. */
+export interface JobOutcomeCounts {
+  total: number;
+  succeeded: number;
+  warning: number;
+  failed: number;
+  skipped: number;
+  running: number;
+}
 
 /**
  * Slice C — Run composer: authors the ordered Job sequence of a Run (Queue) at
@@ -33,7 +45,8 @@ import { JobBehavioursComponent } from '../job-behaviours/job-behaviours.compone
     RouterLink,
     TranslateModule,
     LoadingSpinnerComponent,
-    JobBehavioursComponent
+    JobBehavioursComponent,
+    StatusComponent
   ],
   animations: [fadeIn]
 })
@@ -44,6 +57,13 @@ export class RunComposerComponent implements OnInit, OnDestroy {
 
   /** Live, order-sorted snapshot of this run's jobs — drives ordering math. */
   jobs: Job[] = [];
+
+  /**
+   * Outcome tally over `jobs`. This screen is where a user lands to ask "why did my run
+   * fail", and until 2026-08-27 it showed no job status and no error text at all — so the
+   * one job that degraded or failed inside an otherwise green run was invisible here.
+   */
+  counts: JobOutcomeCounts = { total: 0, succeeded: 0, warning: 0, failed: 0, skipped: 0, running: 0 };
 
   experimentId!: number;
   botId!: number;
@@ -89,11 +109,65 @@ export class RunComposerComponent implements OnInit, OnDestroy {
     this.jobs$ = this.jobService.entities$.pipe(
       map((jobs) => jobs.filter((j) => Number(j.queue_id) === Number(this.runId)).sort((a, b) => a.order - b.order))
     );
-    this.subscriptions.add(this.jobs$.subscribe((jobs) => (this.jobs = jobs)));
+    this.subscriptions.add(
+      this.jobs$.subscribe((jobs) => {
+        this.jobs = jobs;
+        this.counts = this.tally(jobs);
+      })
+    );
   }
 
   private loadJobs(): void {
     this.jobService.getWithQuery({ ['filter[queue]']: String(this.runId) });
+  }
+
+  private tally(jobs: Job[]): JobOutcomeCounts {
+    const counts: JobOutcomeCounts = {
+      total: jobs.length,
+      succeeded: 0,
+      warning: 0,
+      failed: 0,
+      skipped: 0,
+      running: 0
+    };
+    for (const job of jobs) {
+      switch (normalizeStatus(job.status_code)) {
+        case QueueStatusEnum.SUCCESS:
+          counts.succeeded++;
+          break;
+        case QueueStatusEnum.WARNING:
+          counts.warning++;
+          break;
+        case QueueStatusEnum.FAILURE:
+          counts.failed++;
+          break;
+        case QueueStatusEnum.SKIPPED:
+          counts.skipped++;
+          break;
+        case QueueStatusEnum.RUNNING:
+          counts.running++;
+          break;
+        default:
+          break;
+      }
+    }
+    return counts;
+  }
+
+  /** True once any job has reported a terminal or running state worth showing. */
+  get hasJobOutcomes(): boolean {
+    const c = this.counts;
+    return c.succeeded + c.warning + c.failed + c.skipped + c.running > 0;
+  }
+
+  /** The runner's diagnostic for a job, or '' (never the literal 'null'). */
+  jobMessage(job: Job): string {
+    return (job.status_message ?? '').toString().trim();
+  }
+
+  /** The run's own diagnostic, or ''. */
+  runMessage(run: Queue): string {
+    return (run.status_message ?? '').toString().trim();
   }
 
   /** Rebuild the parameter sub-form when the job type changes. */

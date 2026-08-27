@@ -12,6 +12,8 @@
     "src/app/experiment/workspace/**/*.spec.ts",
     "src/app/app-config.spec.ts",
     "src/app/core/auth/login/login.component.spec.ts",
+    "src/app/shared/overlay/notification/notification.component.spec.ts",
+    "src/app/shared/store/shared.effects.spec.ts",
     "src/app/shared/layout/user-setting/user-setting.component.spec.ts"
   ]
 }
