@@ -50,6 +50,7 @@
       "idle": "Inaktiv",
       "running": "Läuft",
       "succeeded": "Erfolgreich",
+      "warning": "Beeinträchtigt",
       "failed": "Fehlgeschlagen"
     },
     "nextStep": {
@@ -61,6 +62,8 @@
       "bots": "Bots",
       "runs": "Durchläufe",
       "succeeded": "Erfolgreich",
+      "degraded": "Beeinträchtigt",
+      "degradedHint": "Abgeschlossen, aber Jobs beeinträchtigt",
       "failed": "Fehlgeschlagen"
     },
     "bot": {
@@ -111,7 +114,13 @@
       "scheduled": "Geplant",
       "running": "Läuft",
       "succeeded": "Erfolgreich",
-      "failed": "Fehlgeschlagen"
+      "warning": "Beeinträchtigt",
+      "failed": "Fehlgeschlagen",
+      "skipped": "Übersprungen",
+      "jobsSucceeded": "Jobs erfolgreich",
+      "jobsDegraded": "Jobs beeinträchtigt",
+      "jobsFailed": "Jobs fehlgeschlagen",
+      "jobsSkipped": "Jobs übersprungen"
     },
     "botDetail": {
       "back": "Zurück zum Experiment",
@@ -142,7 +151,8 @@
       "remove": "Job entfernen",
       "details": "Details",
       "fieldRequired": "Erforderlich.",
-      "addError": "Job konnte nicht hinzugefügt werden. Bitte erneut versuchen."
+      "addError": "Job konnte nicht hinzugefügt werden. Bitte erneut versuchen.",
+      "degradedNotice": "Einige Jobs wurden abgeschlossen, aber beeinträchtigt — ihre Daten wurden nicht geschrieben, oder ein von diesem Bot angefordertes Filterkriterium konnte nicht angewendet werden. (Eine zufällige Videoauswahl ist bei einem Kontroll-Bot normal; problematisch ist sie nur, wenn eine Behandlung angefordert wurde und nicht gewirkt hat.) Prüfe diese Jobs, bevor du die Daten dieses Laufs verwendest."
     },
     "behaviours": {
       "title": "Verhalten",
@@ -471,7 +481,6 @@
   },
   "status": {
     "code": "Code",
-    "failed": "Fehler",
     "failure": "Fehler",
     "label": "Status",
     "message": "Meldung",
@@ -479,11 +488,11 @@
     "processing": "Läuft..",
     "review": "Review",
     "running": "Läuft..",
-    "sipped": "Übersprungen",
     "skipped": "Übersprungen",
     "success": "Erfolg",
     "type": "Type",
-    "unknown": "Unbekannt"
+    "unknown": "Unbekannt",
+    "warning": "Beeinträchtigt"
   },
   "upload": {
     "clickToUpload": "Klicken, um eine Datei auszuwählen",

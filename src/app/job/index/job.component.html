@@ -74,8 +74,13 @@
             <td class="whitespace-nowrap px-4 py-3.5 font-mono text-xs text-faint">{{ item.id }}</td>
             <td class="whitespace-nowrap px-4 py-3.5 text-sm font-medium text-ink">{{ item.name }}</td>
             <td class="whitespace-nowrap px-4 py-3.5 text-sm text-muted">{{ item.type }}</td>
-            <td class="whitespace-nowrap px-4 py-3.5 text-sm text-muted">
-              <app-status statusCode="{{ item.status_code }}" statusMessage="{{ item.status_message }}"></app-status>
+            <td class="px-4 py-3.5 text-sm text-muted">
+              <app-status
+                [showMessage]="true"
+                [statusCode]="item.status_code"
+                [statusMessage]="item.status_message"
+                class="block max-w-xs"
+              ></app-status>
             </td>
             <td class="whitespace-nowrap px-4 py-3.5 font-mono text-xs text-faint">Q-{{ item.queue_id }}</td>
             <td class="whitespace-nowrap px-4 py-3.5 text-right">

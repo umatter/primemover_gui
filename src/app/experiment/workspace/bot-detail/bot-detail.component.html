@@ -73,22 +73,59 @@
             {{ 'workspace.runPanel.startAt' | translate }}:
             {{ run.start_at ? (run.start_at | date: 'dd MMM yyyy, HH:mm') : '—' }}
           </p>
+          <!-- The runner's diagnostic. Shown as text, not only as a hover tooltip. -->
+          <p
+            *ngIf="runMessage(run)"
+            class="mt-1 truncate text-xs"
+            [ngClass]="runState(run) === 'failed' ? 'text-danger' : 'text-muted'"
+            [title]="runMessage(run)"
+          >
+            {{ runMessage(run) }}
+          </p>
+          <!-- The per-job rollup. Shown whenever the API sends one, not only when
+               something went wrong: "69/113 jobs succeeded" is the number that tells the
+               reader whether a run marked "Succeeded" actually produced a full session. -->
+          <p *ngIf="hasJobCounts(run)" class="mt-1 flex flex-wrap gap-x-2 text-xs text-muted">
+            <span>
+              <span class="font-mono">{{ succeededJobs(run) }}/{{ totalJobs(run) }}</span>
+              {{ 'workspace.runState.jobsSucceeded' | translate }}
+            </span>
+            <span *ngIf="degradedJobs(run)" class="text-warning">
+              · {{ degradedJobs(run) }} {{ 'workspace.runState.jobsDegraded' | translate }}
+            </span>
+            <span *ngIf="failedJobs(run)" class="text-danger">
+              · {{ failedJobs(run) }} {{ 'workspace.runState.jobsFailed' | translate }}
+            </span>
+            <span *ngIf="skippedJobs(run)">
+              · {{ skippedJobs(run) }} {{ 'workspace.runState.jobsSkipped' | translate }}
+            </span>
+          </p>
         </div>
         <span
           class="inline-flex flex-shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold"
+          [attr.aria-label]="
+            ('status.label' | translate) +
+            ': ' +
+            ('workspace.runState.' + runState(run) | translate) +
+            (runMessage(run) ? ' — ' + runMessage(run) : '')
+          "
+          [attr.title]="runMessage(run) || null"
+          role="img"
           [ngClass]="{
-            'bg-surface-2 text-muted': runState(run) === 'scheduled',
+            'bg-surface-2 text-muted': runState(run) === 'scheduled' || runState(run) === 'skipped',
             'bg-info-tint text-info': runState(run) === 'running',
             'bg-success-tint text-success': runState(run) === 'succeeded',
+            'bg-warning-tint text-warning': runState(run) === 'warning',
             'bg-danger-tint text-danger': runState(run) === 'failed'
           }"
         >
           <span
             class="h-1.5 w-1.5 rounded-full"
             [ngClass]="{
-              'bg-faint': runState(run) === 'scheduled',
+              'bg-faint': runState(run) === 'scheduled' || runState(run) === 'skipped',
               'bg-info animate-pulse-soft': runState(run) === 'running',
               'bg-success': runState(run) === 'succeeded',
+              'bg-warning': runState(run) === 'warning',
               'bg-danger': runState(run) === 'failed'
             }"
           ></span>

@@ -54,7 +54,8 @@
   <!-- ============================== Run summary ============================== -->
   <section
     *ngIf="summary$ | async as summary"
-    class="mt-7 grid animate-fade-up grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-4"
+    class="mt-7 grid animate-fade-up grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line"
+    [ngClass]="summary.warningAvailable ? 'sm:grid-cols-3 lg:grid-cols-5' : 'sm:grid-cols-4'"
     style="animation-delay: 60ms"
   >
     <div class="bg-surface p-4">
@@ -68,6 +69,15 @@
     <div class="bg-surface p-4">
       <p class="text-xs font-medium uppercase tracking-wide text-faint">{{ 'workspace.stat.succeeded' | translate }}</p>
       <p class="mt-1 font-display text-2xl font-semibold text-success">{{ summary.succeeded }}</p>
+    </div>
+    <!-- Hidden entirely against an API that does not report degradation, rather than
+         showing a confident zero the API never actually claimed. -->
+    <div *ngIf="summary.warningAvailable" class="bg-surface p-4">
+      <p class="text-xs font-medium uppercase tracking-wide text-faint">{{ 'workspace.stat.degraded' | translate }}</p>
+      <p class="mt-1 font-display text-2xl font-semibold" [ngClass]="summary.warning ? 'text-warning' : 'text-ink'">
+        {{ summary.warning }}
+      </p>
+      <p *ngIf="summary.warning" class="mt-0.5 text-xs text-muted">{{ 'workspace.stat.degradedHint' | translate }}</p>
     </div>
     <div class="bg-surface p-4">
       <p class="text-xs font-medium uppercase tracking-wide text-faint">{{ 'workspace.stat.failed' | translate }}</p>
@@ -139,6 +149,7 @@
               'bg-surface-2 text-muted': botState(bot) === 'idle',
               'bg-info-tint text-info': botState(bot) === 'running',
               'bg-success-tint text-success': botState(bot) === 'succeeded',
+              'bg-warning-tint text-warning': botState(bot) === 'warning',
               'bg-danger-tint text-danger': botState(bot) === 'failed'
             }"
           >
@@ -148,6 +159,7 @@
                 'bg-faint': botState(bot) === 'idle',
                 'bg-info animate-pulse-soft': botState(bot) === 'running',
                 'bg-success': botState(bot) === 'succeeded',
+                'bg-warning': botState(bot) === 'warning',
                 'bg-danger': botState(bot) === 'failed'
               }"
             ></span>
@@ -157,14 +169,19 @@
 
         <!-- progress -->
         <div class="mt-4">
-          <div class="mb-1.5 flex justify-between text-xs text-faint">
+          <div class="mb-1.5 flex justify-between gap-2 text-xs text-faint">
             <span>{{ 'workspace.sections.runs' | translate }}</span>
-            <span class="font-mono">{{ bot.latest_queues_succeeded || 0 }}/{{ bot.latest_queues_count || 0 }}</span>
+            <span class="flex items-center gap-2">
+              <span *ngIf="botWarning(bot)" class="font-semibold text-warning">
+                {{ botWarning(bot) }} {{ 'workspace.stat.degraded' | translate }}
+              </span>
+              <span class="font-mono">{{ bot.latest_queues_succeeded || 0 }}/{{ bot.latest_queues_count || 0 }}</span>
+            </span>
           </div>
           <div class="h-1.5 overflow-hidden rounded-full bg-surface-3">
             <div
               class="h-full rounded-full transition-all duration-500 ease-out-expo"
-              [ngClass]="bot.latest_queues_failed ? 'bg-danger' : 'bg-success'"
+              [ngClass]="bot.latest_queues_failed ? 'bg-danger' : botWarning(bot) ? 'bg-warning' : 'bg-success'"
               [style.width.%]="botProgress(bot)"
             ></div>
           </div>

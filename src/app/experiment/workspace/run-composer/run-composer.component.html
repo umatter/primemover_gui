@@ -13,11 +13,43 @@
     <p class="font-mono text-xs text-faint">Q-{{ run.id }}</p>
     <h1 class="mt-1 font-display text-3xl font-semibold tracking-tight text-ink">{{ run.name }}</h1>
     <p class="mt-2 text-sm text-muted">{{ 'workspace.composer.subtitle' | translate }}</p>
+
+    <!-- Run outcome: the status the runner reported, plus its diagnostic as text. -->
+    <div *ngIf="run.status_code || runMessage(run)" class="mt-3">
+      <app-status
+        [showMessage]="true"
+        [statusCode]="run.status_code"
+        [statusMessage]="run.status_message"
+        class="block max-w-prose"
+      ></app-status>
+    </div>
   </header>
 
   <!-- Job sequence -->
   <section class="mt-8">
-    <h2 class="mb-4 font-display text-xl font-semibold text-ink">{{ 'workspace.composer.jobs' | translate }}</h2>
+    <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+      <h2 class="font-display text-xl font-semibold text-ink">{{ 'workspace.composer.jobs' | translate }}</h2>
+
+      <!-- Outcome tally, so one degraded job in an otherwise green run is not invisible. -->
+      <p *ngIf="hasJobOutcomes" class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted">
+        <span *ngIf="counts.succeeded" class="text-success">
+          {{ counts.succeeded }} {{ 'status.success' | translate }}
+        </span>
+        <span *ngIf="counts.warning" class="font-semibold text-warning">
+          {{ counts.warning }} {{ 'status.warning' | translate }}
+        </span>
+        <span *ngIf="counts.failed" class="font-semibold text-danger">
+          {{ counts.failed }} {{ 'status.failure' | translate }}
+        </span>
+        <span *ngIf="counts.skipped">{{ counts.skipped }} {{ 'status.skipped' | translate }}</span>
+        <span *ngIf="counts.running" class="text-info">{{ counts.running }} {{ 'status.running' | translate }}</span>
+      </p>
+    </div>
+
+    <!-- A run that completed while jobs degraded is a treatment arm that quietly became a control. -->
+    <p *ngIf="counts.warning" class="mb-4 rounded-md bg-warning-tint px-3 py-2 text-sm text-warning" role="status">
+      {{ 'workspace.composer.degradedNotice' | translate }}
+    </p>
 
     <p *ngIf="jobs.length === 0" class="rounded-xl border border-dashed border-line-strong bg-brand-tint/40 px-6 py-6 text-sm text-muted">
       {{ 'workspace.composer.empty' | translate }}
@@ -26,7 +58,7 @@
     <ol *ngIf="jobs.length" class="space-y-2">
       <li
         *ngFor="let job of jobs; let i = index; let first = first; let last = last"
-        class="flex items-center gap-3 rounded-xl border border-line bg-surface p-3"
+        class="flex items-start gap-3 rounded-xl border border-line bg-surface p-3"
         [ngClass]="{ 'opacity-60': !job.active }"
       >
         <span class="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-surface-2 font-mono text-xs text-muted">
@@ -35,6 +67,14 @@
         <div class="min-w-0 flex-1">
           <p class="truncate text-sm font-semibold text-ink">{{ job.name }}</p>
           <p class="font-mono text-xs text-faint">{{ job.type }}</p>
+          <!-- Per-job status_code + the runner's status_message, as text. -->
+          <app-status
+            *ngIf="job.status_code || jobMessage(job)"
+            [showMessage]="true"
+            [statusCode]="job.status_code"
+            [statusMessage]="job.status_message"
+            class="mt-1.5 block min-w-0"
+          ></app-status>
         </div>
 
         <!-- reorder -->

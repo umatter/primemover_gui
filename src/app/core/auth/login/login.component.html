@@ -1,5 +1,9 @@
-<!-- `error` is what makes the notification render at all; without it the
-     component's `show` getter returns false and a failed sign-in is silent. -->
+<!-- Binding `[error]` is deliberate, and it is what gates this toast: the notification
+     treats a bound-but-null `error` as "no error yet" and stays hidden, so the sign-in
+     page shows nothing until an attempt actually fails. (It is no longer what makes the
+     toast render at all — the `show` getter that required it was replaced by a field set
+     in ngOnChanges, so call sites that do not bind `error` now render on their kind
+     alone.) `error = null` on close is what dismisses it. -->
 <app-notification
   [error]="error"
   [typeError]="true"

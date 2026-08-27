@@ -48,4 +48,61 @@ describe('BotDetailComponent (Slice B — run status)', () => {
     expect(component.runState(run({ status_code: 'success' }))).toBe('succeeded');
     expect(component.runState(run({ status_code: 'failure' }))).toBe('failed');
   });
+
+  it('maps the runner\'s "skpped" typo to skipped, not to scheduled', () => {
+    expect(component.runState(run({ status_code: 'skpped' }))).toBe('skipped');
+  });
+
+  /**
+   * The runner's status_code reports the JOBLIST's outcome: it says 'success' as soon as
+   * the list was worked through, whatever became of the individual jobs. Queue 845 in the
+   * live database is exactly that — status_code 'success', status_message 'done', and 22
+   * of its 113 jobs failed. A green "Succeeded" pill there misrepresents the data.
+   */
+  describe('a run the runner called "success"', () => {
+    it('escalates to failed when jobs failed (live queue 845: 22 of 113)', () => {
+      const q845 = run({
+        status_code: 'success',
+        status_message: 'done',
+        jobs_count: 113,
+        jobs_succeeded_count: 69,
+        jobs_warning_count: 0,
+        jobs_failed_count: 22,
+        jobs_skipped_count: 22
+      });
+
+      expect(component.runState(q845)).toBe('failed');
+      expect(component.failedJobs(q845)).toBe(22);
+      expect(component.succeededJobs(q845)).toBe(69);
+      expect(component.totalJobs(q845)).toBe(113);
+      expect(component.hasJobCounts(q845)).toBeTrue();
+    });
+
+    it('escalates to warning when jobs merely degraded', () => {
+      expect(component.runState(run({ status_code: 'success', jobs_count: 10, jobs_warning_count: 3 }))).toBe(
+        'warning'
+      );
+    });
+
+    it('ranks a failure above a degradation', () => {
+      expect(
+        component.runState(run({ status_code: 'success', jobs_count: 10, jobs_warning_count: 3, jobs_failed_count: 1 }))
+      ).toBe('failed');
+    });
+
+    it('stays succeeded when every job succeeded', () => {
+      expect(
+        component.runState(run({ status_code: 'success', jobs_count: 20, jobs_succeeded_count: 20 }))
+      ).toBe('succeeded');
+    });
+
+    // An API older than the rollup sends no jobs_* fields at all. "Unknown" must not be
+    // read as "22 failures", nor the counts line rendered as a confident 0/0.
+    it('trusts the runner when the API sends no rollup', () => {
+      const legacy = run({ status_code: 'success' });
+
+      expect(component.runState(legacy)).toBe('succeeded');
+      expect(component.hasJobCounts(legacy)).toBeFalse();
+    });
+  });
 });

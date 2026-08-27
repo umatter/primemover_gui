@@ -6,7 +6,7 @@ import { combineLatest, map, Observable, of, Subscription, switchMap } from 'rxj
 import { Store } from '@ngrx/store';
 
 import { Experiment } from '../model/experiment';
-import { Crawler } from '@app/crawler/model/crawler';
+import { Crawler, crawlerDegradedRuns } from '@app/crawler/model/crawler';
 import { CrawlerService, ExperimentService } from '@app/entity/service';
 import { SharedActions } from '@shared/store/shared.actions';
 import { fadeIn } from '@shared/animation/trigger';
@@ -19,6 +19,13 @@ interface RunSummary {
   total: number;
   succeeded: number;
   failed: number;
+  /** Recent runs that completed but degraded. 0 when the API does not report it. */
+  warning: number;
+  /**
+   * False when the API sends no degradation count at all (an older API). The Degraded tile
+   * is hidden then, rather than claiming a confident zero.
+   */
+  warningAvailable: boolean;
   succeededPct: number;
   failedPct: number;
 }
@@ -90,13 +97,25 @@ export class ExperimentWorkspaceComponent implements OnInit, OnDestroy {
     const total = bots.reduce((acc, b) => acc + (b.latest_queues_count || 0), 0);
     const succeeded = bots.reduce((acc, b) => acc + (b.latest_queues_succeeded || 0), 0);
     const failed = bots.reduce((acc, b) => acc + (b.latest_queues_failed || 0), 0);
+    // `latest_queues_degraded` is the API's contract name (Crawler::$appends). Absent for
+    // every bot => an API older than 2026-08-27: unknown, so the tile hides rather than
+    // reporting a zero nobody asserted.
+    const warningAvailable = bots.some((b) => crawlerDegradedRuns(b) !== null);
+    const warning = bots.reduce((acc, b) => acc + (crawlerDegradedRuns(b) ?? 0), 0);
     return {
       total,
       succeeded,
       failed,
+      warning,
+      warningAvailable,
       succeededPct: total ? Math.round((succeeded / total) * 100) : 0,
       failedPct: total ? Math.round((failed / total) * 100) : 0
     };
+  }
+
+  /** Template-friendly degraded-run count for one bot (0 when the API does not send it). */
+  botWarning(bot: Crawler): number {
+    return crawlerDegradedRuns(bot) ?? 0;
   }
 
   botProgress(bot: Crawler): number {
@@ -104,10 +123,17 @@ export class ExperimentWorkspaceComponent implements OnInit, OnDestroy {
     return total ? Math.round(((bot.latest_queues_succeeded || 0) / total) * 100) : 0;
   }
 
-  botState(bot: Crawler): 'idle' | 'running' | 'failed' | 'succeeded' {
+  /**
+   * `warning` sits between `failed` and `succeeded`: those runs finished, so calling them
+   * "Succeeded" is what hid degraded treatment arms, but they are not failures either.
+   */
+  botState(bot: Crawler): 'idle' | 'running' | 'failed' | 'warning' | 'succeeded' {
     const total = bot.latest_queues_count || 0;
+    // No runs in the window at all: 'idle', which also keeps every ratio below off a
+    // zero denominator.
     if (!total) return 'idle';
-    if (bot.latest_queues_failed > 0) return 'failed';
+    if ((bot.latest_queues_failed || 0) > 0) return 'failed';
+    if (this.botWarning(bot) > 0) return 'warning';
     if ((bot.latest_queues_succeeded || 0) >= total) return 'succeeded';
     return 'running';
   }

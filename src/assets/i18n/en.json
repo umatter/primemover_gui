@@ -50,6 +50,7 @@
       "idle": "Idle",
       "running": "Running",
       "succeeded": "Succeeded",
+      "warning": "Degraded",
       "failed": "Failed"
     },
     "nextStep": {
@@ -61,6 +62,8 @@
       "bots": "Bots",
       "runs": "Runs",
       "succeeded": "Succeeded",
+      "degraded": "Degraded",
+      "degradedHint": "Finished, but jobs degraded",
       "failed": "Failed"
     },
     "bot": {
@@ -111,7 +114,13 @@
       "scheduled": "Scheduled",
       "running": "Running",
       "succeeded": "Succeeded",
-      "failed": "Failed"
+      "warning": "Degraded",
+      "failed": "Failed",
+      "skipped": "Skipped",
+      "jobsSucceeded": "jobs succeeded",
+      "jobsDegraded": "jobs degraded",
+      "jobsFailed": "jobs failed",
+      "jobsSkipped": "jobs skipped"
     },
     "botDetail": {
       "back": "Back to experiment",
@@ -142,7 +151,8 @@
       "remove": "Remove job",
       "details": "Details",
       "fieldRequired": "Required.",
-      "addError": "Couldn't add the job. Please try again."
+      "addError": "Couldn't add the job. Please try again.",
+      "degradedNotice": "Some jobs finished but degraded — their data was not written, or a filter this bot requested could not be applied. (A video picked at random is normal for a control bot; it is a problem only when a treatment was requested and did not take effect.) Check those jobs before using this run's data."
     },
     "behaviours": {
       "title": "Behaviours",
@@ -471,7 +481,6 @@
   },
   "status": {
     "code": "Code",
-    "failed": "Failed",
     "failure": "Failed",
     "label": "Status",
     "message": "Report",
@@ -479,11 +488,11 @@
     "processing": "Running",
     "review": "Review",
     "running": "Running",
-    "sipped": "Skipped",
     "skipped": "Skipped",
     "success": "Success",
     "type": "Type",
-    "unknown": "Unknown"
+    "unknown": "Unknown",
+    "warning": "Degraded"
   },
   "upload": {
     "clickToUpload": "Click to upload file",
