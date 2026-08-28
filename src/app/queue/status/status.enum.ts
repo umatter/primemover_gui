@@ -9,8 +9,12 @@
  * something the experiment cares about degraded — job data was not written, or the
  * decision function reported a degraded decision (see treatment_lost). It used to be
  * reported as `success`, which is exactly what hid silent treatment-arm degradation.
- * Queues never report `warning` themselves; a run is shown as degraded when its job
- * rollup says so (see `queueJobRollup` in `@app/queue/model/queue`).
+ * Since 2026-08-28 queues report `warning` too, for the same reason: a run that
+ * completed but lost jobs is neither a success nor a total failure. Before that the
+ * runner set the joblist result unconditionally, so a run reported `success` however
+ * many of its jobs had died — observed on experiment 145, where two runs finished
+ * 8 of 204 jobs (4%) and both recorded `success` / "done". A run's own status and its
+ * job rollup (`queueJobRollup` in `@app/queue/model/queue`) can now both show it.
  */
 export enum QueueStatusEnum {
   FAILURE = 'failure',
