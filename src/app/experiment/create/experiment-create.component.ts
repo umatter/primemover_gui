@@ -6,6 +6,8 @@ import { debounceTime, distinctUntilChanged, Observable, Subscription } from 'rx
 import { Router, RouterLink } from '@angular/router';
 import { ExperimentService } from '@app/entity/service';
 import { Experiment } from '../model/experiment';
+import { Runner } from '../model/runner';
+import { ExperimentApiService } from '../service/experiment-api.service';
 import { TranslateModule } from '@ngx-translate/core';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { ButtonComponent } from '@shared/form/button/button.component';
@@ -35,12 +37,14 @@ export class ExperimentCreateComponent implements OnInit, OnDestroy {
   entities$: Observable<Experiment[]>;
   filteredEntities$: Observable<Experiment[]>;
   isLoading$: Observable<boolean>;
+  runners: Runner[] = [];
 
   constructor(
     private store: Store,
     private formBuilder: FormBuilder,
     public router: Router,
-    private entityService: ExperimentService
+    private entityService: ExperimentService,
+    private experimentApi: ExperimentApiService
   ) {
     this.entities$ = this.entityService.entities$;
     this.isLoading$ = this.entityService.loading$;
@@ -48,7 +52,9 @@ export class ExperimentCreateComponent implements OnInit, OnDestroy {
     this.experimentForm = this.formBuilder.group({
       name: [null, [Validators.required]],
       contact: [null, [Validators.required]],
-      description: [null, [Validators.maxLength(1024)]]
+      description: [null, [Validators.maxLength(1024)]],
+      // Which runner executes the study; preselected with the API's default once loaded.
+      runner_user_id: [null]
     });
   }
 
@@ -64,8 +70,20 @@ export class ExperimentCreateComponent implements OnInit, OnDestroy {
     return this.experimentForm.get('description');
   }
 
+  get runnerUserId(): FormControl | any {
+    return this.experimentForm.get('runner_user_id');
+  }
+
   ngOnInit(): void {
     this.entityService.getAll();
+    this.subscriptions.add(
+      this.experimentApi.runners().subscribe((runners) => {
+        this.runners = runners;
+        if (this.runnerUserId.value === null) {
+          this.runnerUserId.setValue(runners.find((r) => r.is_default)?.id ?? null);
+        }
+      })
+    );
 
     this.subscriptions.add(
       this.experimentAutocomplete.valueChanges.pipe(distinctUntilChanged(), debounceTime(100)).subscribe((search) => {
@@ -92,10 +110,11 @@ export class ExperimentCreateComponent implements OnInit, OnDestroy {
   }
 
   setSelectedExperimentValues(item: any) {
-    this.experimentForm.setValue({
+    this.experimentForm.patchValue({
       name: item.name,
       contact: item.contact,
-      description: item.description
+      description: item.description,
+      runner_user_id: item.runner_user_id ?? this.runners.find((r) => r.is_default)?.id ?? null
     });
   }
 
