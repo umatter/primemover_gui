@@ -277,6 +277,8 @@
     "contact": "Contact",
     "contactPlaceholder": "e.g. Max Mustermann, 066 555 22 44",
     "contactRequiredError": "At least one contact is required",
+    "runner": "Runs on",
+    "runnerHint": "Which runner executes this study. The default is fine unless the study was planned for the other box.",
     "crawlerRequiredError": "Crawler is required",
     "delete": "Delete",
     "description": "Description",

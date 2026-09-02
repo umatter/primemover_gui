@@ -13,6 +13,7 @@ import { selectPageRequested, selectSort } from '@shared/store/shared.reducer';
 import { httpContext } from '@shared/error-handler/http-context';
 import { SortDirection } from '@shared/model/sort';
 import { concatLatestFrom } from '@ngrx/effects';
+import { Runner } from '../model/runner';
 
 @Injectable({
   providedIn: 'root'
@@ -30,6 +31,11 @@ export class ExperimentApiService {
 
   public simpleIndex(): Observable<[]> {
     return this.http.get<[]>(`${this.config.apiBaseUrl}/experiments-list`);
+  }
+
+  /** The runner accounts an experiment can be assigned to, default flagged. */
+  public runners(): Observable<Runner[]> {
+    return this.http.get<Runner[]>(`${this.config.apiBaseUrl}/runners`);
   }
 
   public search(keyword: string): Observable<any[]> {

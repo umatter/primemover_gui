@@ -277,6 +277,8 @@
     "contact": "Kontakt",
     "contactPlaceholder": "z.B. Max Mustermann, 066 555 22 44",
     "contactRequiredError": "Mindestens ein Kontakt ist erforderlich",
+    "runner": "Läuft auf",
+    "runnerHint": "Welcher Runner diese Studie ausführt. Der Standard passt, sofern die Studie nicht für die andere Maschine geplant ist.",
     "crawlerRequiredError": "Crawler ist erforderlich",
     "delete": "Löschen",
     "description": "Beschreibung",
