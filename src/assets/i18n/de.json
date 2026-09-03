@@ -191,7 +191,9 @@
       "namePlaceholder": "z. B. YouTube politische Empfehlungen 2026",
       "contact": "Kontakt",
       "description": "Forschungsfrage oder Notizen",
-      "descriptionPlaceholder": "Was möchten Sie beobachten?"
+      "descriptionPlaceholder": "Was möchten Sie beobachten?",
+      "runner": "Läuft auf",
+      "runnerHint": "Welche Runner-Maschine diese Studie ausführt. Standard beibehalten, sofern die Studie nicht für die andere Maschine geplant ist."
     },
     "bot": {
       "title": "Fügen Sie Ihren ersten Bot hinzu",

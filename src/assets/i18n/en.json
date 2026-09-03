@@ -191,7 +191,9 @@
       "namePlaceholder": "e.g. YouTube political recommendations 2026",
       "contact": "Contact",
       "description": "Research question or notes",
-      "descriptionPlaceholder": "What are you trying to observe?"
+      "descriptionPlaceholder": "What are you trying to observe?",
+      "runner": "Runs on",
+      "runnerHint": "Which runner machine executes this study. Keep the default unless the study was planned for the other box."
     },
     "bot": {
       "title": "Add your first bot",
