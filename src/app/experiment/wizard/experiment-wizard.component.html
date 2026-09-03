@@ -102,6 +102,20 @@
             class="w-full resize-none rounded-md border border-line bg-surface px-3.5 py-2.5 text-sm text-ink shadow-xs transition placeholder:text-faint focus:border-brand focus:ring-2 focus:ring-brand/20"
           ></textarea>
         </div>
+
+        <div>
+          <label for="study-runner" class="mb-1.5 block text-sm font-medium text-ink">
+            {{ 'wizard.study.runner' | translate }}
+          </label>
+          <select
+            id="study-runner"
+            formControlName="runner_user_id"
+            class="w-full rounded-md border border-line bg-surface px-3.5 py-2.5 text-sm text-ink shadow-xs transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+          >
+            <option *ngFor="let r of runners" [ngValue]="r.id">{{ r.name }}</option>
+          </select>
+          <p class="mt-1.5 text-xs text-muted">{{ 'wizard.study.runnerHint' | translate }}</p>
+        </div>
       </div>
     </section>
 
@@ -227,6 +241,9 @@
             <p class="font-medium">{{ studyForm.value.name }}</p>
             <p class="mt-0.5 text-muted">{{ studyForm.value.contact }}</p>
             <p *ngIf="studyForm.value.description" class="mt-0.5 text-muted">{{ studyForm.value.description }}</p>
+            <p *ngIf="selectedRunnerName" class="mt-0.5 text-muted">
+              {{ 'wizard.study.runner' | translate }}: {{ selectedRunnerName }}
+            </p>
           </dd>
         </div>
         <div class="flex items-baseline gap-4 px-4 py-3.5">

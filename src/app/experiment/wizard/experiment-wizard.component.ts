@@ -7,6 +7,8 @@ import { Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
 
 import { Experiment } from '../model/experiment';
+import { Runner } from '../model/runner';
+import { ExperimentApiService } from '../service/experiment-api.service';
 import { Crawler } from '@app/crawler/model/crawler';
 import { Agent } from '@app/agent/model/agent';
 import { Proxy } from '@app/proxy/model/proxy';
@@ -44,6 +46,8 @@ export class ExperimentWizardComponent implements OnInit, OnDestroy {
   showAdvanced = false;
 
   studyForm: FormGroup;
+  /** Runner accounts from GET /runners; the study's `runner_user_id` picks one. */
+  runners: Runner[] = [];
   botForm: FormGroup;
 
   agents$: Observable<Agent[]>;
@@ -60,12 +64,15 @@ export class ExperimentWizardComponent implements OnInit, OnDestroy {
     private crawlerService: CrawlerService,
     private agentService: AgentService,
     private proxyService: ProxyService,
-    private configurationService: ConfigurationService
+    private configurationService: ConfigurationService,
+    private experimentApi: ExperimentApiService
   ) {
     this.studyForm = this.fb.group({
       name: [null, [Validators.required]],
       contact: [null, [Validators.required]],
-      description: [null, [Validators.maxLength(1024)]]
+      description: [null, [Validators.maxLength(1024)]],
+      // Which runner executes the study; preselected with the API's default once loaded.
+      runner_user_id: [null]
     });
     this.botForm = this.fb.group({
       name: [null],
@@ -80,6 +87,15 @@ export class ExperimentWizardComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.subscriptions.add(
+      this.experimentApi.runners().subscribe((runners) => {
+        this.runners = runners;
+        const control = this.studyForm.get('runner_user_id');
+        if (control && control.value === null) {
+          control.setValue(runners.find((r) => r.is_default)?.id ?? null);
+        }
+      })
+    );
     // Load Library building blocks so the (optional) advanced bot selects can populate.
     this.agentService.getAll();
     this.proxyService.getAll();
@@ -125,6 +141,12 @@ export class ExperimentWizardComponent implements OnInit, OnDestroy {
 
   cancel(): void {
     this.router.navigate(['/experiments']).then();
+  }
+
+  /** Name of the runner chosen in step 1, for the review step. */
+  get selectedRunnerName(): string | null {
+    const id = this.studyForm.value.runner_user_id;
+    return this.runners.find((r) => r.id === id)?.name ?? null;
   }
 
   create(): void {
