@@ -1,0 +1,26 @@
+<div class="rounded-lg border px-3 py-2" [ngClass]="boxClass" [attr.data-health-state]="state">
+  <p class="flex items-center gap-2 text-xs font-semibold" [ngClass]="textClass">
+    <span class="h-2 w-2 flex-shrink-0 rounded-full" [ngClass]="dotClass" aria-hidden="true"></span>
+    <span>{{ headlineKey | translate: headlineParams }}</span>
+  </p>
+
+  <!-- The alarm keeps its own line and its own colour. Those runs typically finished
+       green: nothing in a status field is wrong with them, and their observations still
+       cannot answer the question the experiment was built to ask. -->
+  <p
+    *ngIf="treatmentLostJobs"
+    class="mt-1 text-xs font-semibold text-danger"
+    [attr.title]="'decision.alarm.hint' | translate"
+  >
+    {{ 'decision.alarm.jobs' | translate: { count: treatmentLostJobs } }}
+  </p>
+
+  <p class="mt-0.5 text-xs text-faint">
+    <ng-container *ngIf="lastFinishedAt; else updatedTpl">
+      {{ 'health.strip.lastRun' | translate }} · {{ lastFinishedAt | date: 'dd MMM, HH:mm' }}
+    </ng-container>
+    <ng-template #updatedTpl>
+      {{ 'projects.updated' | translate }} · {{ experiment?.updated_at | date: 'dd MMM yyyy' }}
+    </ng-template>
+  </p>
+</div>

@@ -1,0 +1,22 @@
+<div [attr.aria-label]="labelKey | translate" class="flex flex-wrap items-center gap-1.5" role="radiogroup">
+  <button
+    #chip
+    *ngFor="let option of options; let i = index"
+    (click)="select(option.key)"
+    (keydown)="onKeydown($event, i)"
+    [attr.aria-checked]="option.key === selected"
+    [attr.data-status-filter]="option.key"
+    [attr.tabindex]="isTabStop(option, i) ? 0 : -1"
+    [attr.title]="option.hintKey | translate"
+    [ngClass]="
+      option.key === selected
+        ? activeClass(option.key) + ' font-semibold shadow-sm'
+        : 'border-line bg-surface text-muted hover:border-line-strong hover:text-ink'
+    "
+    class="rounded-full border px-3 py-1 text-xs transition focus:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-1"
+    role="radio"
+    type="button"
+  >
+    {{ option.labelKey | translate }}
+  </button>
+</div>

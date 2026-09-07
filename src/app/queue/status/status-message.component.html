@@ -1,0 +1,62 @@
+<span *ngIf="message" class="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-0.5">
+  <!-- The first clause. Wraps instead of truncating: it is short by construction (the
+       runner's state text) and it is the half of the message that says what happened. -->
+  <span [class]="'min-w-0 break-words text-xs ' + toneClass" data-testid="status-message-head"
+    ><ng-container *ngFor="let seg of headSegments"
+      ><a
+        *ngIf="seg.jobId"
+        (click)="$event.stopPropagation()"
+        [routerLink]="jobLink(seg.jobId)"
+        [title]="'statusMessage.previousJob' | translate: { id: seg.jobId }"
+        class="font-medium text-brand underline decoration-dotted underline-offset-2 hover:text-brand-hover"
+        data-testid="previous-job-link"
+        >{{ seg.text }}</a
+      ><span *ngIf="!seg.jobId">{{ seg.text }}</span></ng-container
+    ></span
+  >
+
+  <!-- A real disclosure: a button, keyboard operable, with aria-expanded/-controls. Not a
+       tooltip — a tooltip is unreachable on touch and by keyboard, which is how an
+       1800-character diagnostic became unreadable in the first place. -->
+  <button
+    *ngIf="hasMore"
+    (click)="toggle($event)"
+    [attr.aria-controls]="disclosureId"
+    [attr.aria-expanded]="expanded"
+    class="inline-flex flex-shrink-0 items-center rounded border border-line px-1.5 py-0.5 text-[11px] font-medium text-muted transition hover:bg-surface-2 hover:text-ink focus:outline-none focus:ring-2 focus:ring-brand/30"
+    data-testid="status-message-toggle"
+    type="button"
+  >
+    {{ (expanded ? 'statusMessage.collapse' : 'statusMessage.expand') | translate }}
+  </button>
+
+  <button
+    (click)="copy($event)"
+    [attr.aria-label]="'statusMessage.copyFull' | translate"
+    class="inline-flex flex-shrink-0 items-center rounded border border-line px-1.5 py-0.5 text-[11px] font-medium text-muted transition hover:bg-surface-2 hover:text-ink focus:outline-none focus:ring-2 focus:ring-brand/30"
+    data-testid="status-message-copy"
+    type="button"
+  >
+    {{ copyLabelKey | translate }}
+  </button>
+
+  <!-- The remainder, expanded in place. Nothing here is truncated, and `pre-wrap` keeps
+       the runner's own `;` separators readable across a wrapped line. -->
+  <span
+    *ngIf="hasMore && expanded"
+    [id]="disclosureId"
+    class="mt-1 block w-full max-w-prose whitespace-pre-wrap break-words rounded-md bg-surface-2 px-2.5 py-1.5 text-xs text-muted"
+    data-testid="status-message-detail"
+    ><ng-container *ngFor="let seg of restSegments"
+      ><a
+        *ngIf="seg.jobId"
+        (click)="$event.stopPropagation()"
+        [routerLink]="jobLink(seg.jobId)"
+        [title]="'statusMessage.previousJob' | translate: { id: seg.jobId }"
+        class="font-medium text-brand underline decoration-dotted underline-offset-2 hover:text-brand-hover"
+        data-testid="previous-job-link"
+        >{{ seg.text }}</a
+      ><span *ngIf="!seg.jobId">{{ seg.text }}</span></ng-container
+    ></span
+  >
+</span>

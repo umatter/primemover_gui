@@ -51,41 +51,206 @@
     </div>
   </header>
 
-  <!-- ============================== Run summary ============================== -->
+  <!-- ============================== Treatment-loss alarm ============================== -->
+  <!-- Above the tiles and red, on its own, because it answers a different question from
+       every number below it. Those describe whether the runs completed; this describes
+       whether the science did. A treatment-lost run typically completed perfectly. -->
+  <ng-container *ngIf="summary$ | async as summary">
+    <p
+      *ngIf="summary.treatmentLost"
+      class="mt-7 animate-fade-up rounded-xl border border-danger/40 bg-danger-tint px-4 py-3 text-sm font-semibold text-danger"
+      role="alert"
+      style="animation-delay: 40ms"
+    >
+      {{ 'decision.alarm.experiment' | translate: { count: summary.treatmentLost } }}
+      <span class="mt-0.5 block font-normal">{{ 'decision.alarm.hint' | translate }}</span>
+    </p>
+  </ng-container>
+
+  <!-- ============================== Experiment health ==============================
+       Sourced from GET /experiments/{id}/health?hours=..., which is the only place the
+       runs are counted by their OWN status_code over a chosen window. When the endpoint
+       is not there (an API that predates it) `health$` is null and the crawler-derived
+       tiles below render instead -- never an empty header, and never a green one. -->
   <section
-    *ngIf="summary$ | async as summary"
-    class="mt-7 grid animate-fade-up grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line"
-    [ngClass]="summary.warningAvailable ? 'sm:grid-cols-3 lg:grid-cols-5' : 'sm:grid-cols-4'"
+    *ngIf="health$ | async as health; else crawlerSummaryTpl"
+    class="mt-7 animate-fade-up"
     style="animation-delay: 60ms"
   >
-    <div class="bg-surface p-4">
-      <p class="text-xs font-medium uppercase tracking-wide text-faint">{{ 'workspace.stat.bots' | translate }}</p>
-      <p class="mt-1 font-display text-2xl font-semibold text-ink">{{ (bots$ | async)?.length || 0 }}</p>
+    <div class="mb-3 flex flex-wrap items-center justify-between gap-3">
+      <h2 class="font-display text-lg font-semibold text-ink">{{ 'health.title' | translate }}</h2>
+
+      <div
+        class="inline-flex items-center gap-1 rounded-lg border border-line bg-surface p-1"
+        role="group"
+        [attr.aria-label]="'health.window.legend' | translate"
+      >
+        <button
+          *ngFor="let option of windows"
+          (click)="setWindow(option)"
+          type="button"
+          class="rounded-md px-2.5 py-1 text-xs font-semibold transition"
+          [attr.data-window]="option"
+          [attr.aria-pressed]="healthWindow === option"
+          [attr.title]="'health.window.' + option + 'Hint' | translate"
+          [ngClass]="healthWindow === option ? 'bg-brand text-on-brand' : 'text-muted hover:bg-surface-2'"
+        >
+          {{ 'health.window.' + option | translate }}
+        </button>
+      </div>
     </div>
-    <div class="bg-surface p-4">
-      <p class="text-xs font-medium uppercase tracking-wide text-faint">{{ 'workspace.stat.runs' | translate }}</p>
-      <p class="mt-1 font-display text-2xl font-semibold text-ink">{{ summary.total }}</p>
+
+    <div
+      class="grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-3"
+      [ngClass]="unknownRuns(health) ? 'lg:grid-cols-6' : 'lg:grid-cols-5'"
+    >
+      <div class="bg-surface p-4">
+        <p class="text-xs font-medium uppercase tracking-wide text-faint">{{ 'workspace.stat.bots' | translate }}</p>
+        <p class="mt-1 font-display text-2xl font-semibold text-ink">{{ health.bots }}</p>
+      </div>
+      <div class="bg-surface p-4">
+        <p class="text-xs font-medium uppercase tracking-wide text-faint">{{ 'workspace.stat.runs' | translate }}</p>
+        <p class="mt-1 font-display text-2xl font-semibold text-ink">{{ health.runs.total }}</p>
+        <p class="mt-0.5 text-xs text-muted">
+          {{ 'health.runs.detail' | translate: { running: health.runs.running, skipped: health.runs.skipped } }}
+        </p>
+      </div>
+      <div class="bg-surface p-4">
+        <p class="text-xs font-medium uppercase tracking-wide text-faint">
+          {{ 'workspace.stat.succeeded' | translate }}
+        </p>
+        <p class="mt-1 font-display text-2xl font-semibold text-success">{{ health.runs.success }}</p>
+      </div>
+      <!-- bad_runs is the contract's is_bad, computed server-side over the alias table:
+           failure OR warning, legacy spellings included. Never `failure` alone. -->
+      <div
+        class="bg-surface p-4"
+        [attr.title]="
+          'health.needsAttentionSplit' | translate: { warning: health.runs.warning, failed: health.runs.failure }
+        "
+      >
+        <p class="text-xs font-medium uppercase tracking-wide text-faint">
+          {{ 'workspace.stat.needsAttention' | translate }}
+        </p>
+        <p class="mt-1 font-display text-2xl font-semibold" [ngClass]="health.bad_runs ? 'text-warning' : 'text-ink'">
+          {{ health.bad_runs }}
+        </p>
+        <p *ngIf="health.bad_runs" class="mt-0.5 text-xs text-muted">
+          {{ 'health.needsAttentionSplit' | translate: { warning: health.runs.warning, failed: health.runs.failure } }}
+        </p>
+      </div>
+      <div class="bg-surface p-4">
+        <p class="text-xs font-medium uppercase tracking-wide text-faint">{{ 'workspace.stat.failed' | translate }}</p>
+        <p
+          class="mt-1 font-display text-2xl font-semibold"
+          [ngClass]="health.runs.failure ? 'text-danger' : 'text-ink'"
+        >
+          {{ health.runs.failure }}
+        </p>
+      </div>
+      <!-- Its own tile, shown only when it is non-zero, and never folded into Succeeded.
+           A status code nobody recognises is not a success. -->
+      <div *ngIf="unknownRuns(health)" class="bg-surface p-4" [attr.title]="'health.unknownHint' | translate">
+        <p class="text-xs font-medium uppercase tracking-wide text-faint">{{ 'status.unknown' | translate }}</p>
+        <p class="mt-1 font-display text-2xl font-semibold text-muted">{{ unknownRuns(health) }}</p>
+      </div>
     </div>
-    <div class="bg-surface p-4">
-      <p class="text-xs font-medium uppercase tracking-wide text-faint">{{ 'workspace.stat.succeeded' | translate }}</p>
-      <p class="mt-1 font-display text-2xl font-semibold text-success">{{ summary.succeeded }}</p>
-    </div>
-    <!-- Hidden entirely against an API that does not report degradation, rather than
-         showing a confident zero the API never actually claimed. -->
-    <div *ngIf="summary.warningAvailable" class="bg-surface p-4">
-      <p class="text-xs font-medium uppercase tracking-wide text-faint">{{ 'workspace.stat.degraded' | translate }}</p>
-      <p class="mt-1 font-display text-2xl font-semibold" [ngClass]="summary.warning ? 'text-warning' : 'text-ink'">
-        {{ summary.warning }}
-      </p>
-      <p *ngIf="summary.warning" class="mt-0.5 text-xs text-muted">{{ 'workspace.stat.degradedHint' | translate }}</p>
-    </div>
-    <div class="bg-surface p-4">
-      <p class="text-xs font-medium uppercase tracking-wide text-faint">{{ 'workspace.stat.failed' | translate }}</p>
-      <p class="mt-1 font-display text-2xl font-semibold" [ngClass]="summary.failed ? 'text-danger' : 'text-ink'">
-        {{ summary.failed }}
-      </p>
+
+    <div class="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted">
+      <span>
+        {{
+          'health.jobs.summary'
+            | translate: { total: health.jobs.total, bad: health.bad_jobs, degraded: health.degraded_jobs }
+        }}
+      </span>
+      <!-- The alarm, in jobs. Kept out of the amber "needs attention" arithmetic: those
+           jobs usually finished green, and what is wrong with them is the science. -->
+      <span
+        *ngIf="health.treatment_lost_jobs"
+        class="font-semibold text-danger"
+        [attr.title]="'decision.alarm.hint' | translate"
+      >
+        {{ 'decision.alarm.jobs' | translate: { count: health.treatment_lost_jobs } }}
+      </span>
+      <!-- Same rule one level down: a job whose status code nobody recognises is named,
+           never quietly absorbed into the successes. -->
+      <span *ngIf="health.jobs.unknown" [attr.title]="'health.unknownHint' | translate">
+        {{ 'health.jobs.unknown' | translate: { count: health.jobs.unknown } }}
+      </span>
+      <span *ngIf="health.last_finished_at">
+        {{ 'health.strip.lastRun' | translate }} · {{ health.last_finished_at | date: 'dd MMM, HH:mm' }}
+      </span>
     </div>
   </section>
+
+  <!-- ============================== Run summary (fallback) ==============================
+       Crawler-derived, fixed 24 h window: what this screen showed before /health existed,
+       and what it still shows against an API that does not serve it. -->
+  <ng-template #crawlerSummaryTpl>
+    <section
+      *ngIf="summary$ | async as summary"
+      class="mt-7 grid animate-fade-up grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line"
+      [ngClass]="summary.attentionAvailable ? 'sm:grid-cols-3 lg:grid-cols-5' : 'sm:grid-cols-4'"
+      style="animation-delay: 60ms"
+    >
+      <div class="bg-surface p-4">
+        <p class="text-xs font-medium uppercase tracking-wide text-faint">{{ 'workspace.stat.bots' | translate }}</p>
+        <p class="mt-1 font-display text-2xl font-semibold text-ink">{{ (bots$ | async)?.length || 0 }}</p>
+      </div>
+      <div class="bg-surface p-4">
+        <p class="text-xs font-medium uppercase tracking-wide text-faint">{{ 'workspace.stat.runs' | translate }}</p>
+        <p class="mt-1 font-display text-2xl font-semibold text-ink">{{ summary.total }}</p>
+      </div>
+      <div class="bg-surface p-4">
+        <p class="text-xs font-medium uppercase tracking-wide text-faint">
+          {{ 'workspace.stat.succeeded' | translate }}
+        </p>
+        <p class="mt-1 font-display text-2xl font-semibold text-success">{{ summary.succeeded }}</p>
+      </div>
+      <!-- "Needs attention" = the contract's is_bad for finished runs: a run that reported
+         `warning` itself, or one that carried a degraded job. One amber number rather than
+         two adjacent tiles nobody can tell apart, with the split in the tooltip and in the
+         accessible name so the composition is never guesswork.
+         Hidden entirely against an API that reports neither count, rather than showing a
+         confident zero the API never actually claimed. -->
+      <div
+        *ngIf="summary.attentionAvailable"
+        class="bg-surface p-4"
+        role="group"
+        [attr.aria-label]="
+          ('workspace.stat.needsAttention' | translate) +
+          ': ' +
+          summary.needsAttention +
+          ' — ' +
+          ('workspace.stat.needsAttentionSplit' | translate: { warning: summary.warning, degraded: summary.degraded })
+        "
+        [attr.title]="
+          'workspace.stat.needsAttentionSplit' | translate: { warning: summary.warning, degraded: summary.degraded }
+        "
+      >
+        <p class="text-xs font-medium uppercase tracking-wide text-faint">
+          {{ 'workspace.stat.needsAttention' | translate }}
+        </p>
+        <p
+          class="mt-1 font-display text-2xl font-semibold"
+          [ngClass]="summary.needsAttention ? 'text-warning' : 'text-ink'"
+        >
+          {{ summary.needsAttention }}
+        </p>
+        <p *ngIf="summary.needsAttention" class="mt-0.5 text-xs text-muted">
+          {{
+            'workspace.stat.needsAttentionSplit' | translate: { warning: summary.warning, degraded: summary.degraded }
+          }}
+        </p>
+      </div>
+      <div class="bg-surface p-4">
+        <p class="text-xs font-medium uppercase tracking-wide text-faint">{{ 'workspace.stat.failed' | translate }}</p>
+        <p class="mt-1 font-display text-2xl font-semibold" [ngClass]="summary.failed ? 'text-danger' : 'text-ink'">
+          {{ summary.failed }}
+        </p>
+      </div>
+    </section>
+  </ng-template>
 
   <!-- ============================== Bots ============================== -->
   <section class="mt-10">
@@ -143,8 +308,18 @@
             <h3 class="truncate font-display text-base font-semibold text-ink">{{ bot.name }}</h3>
             <p class="font-mono text-xs text-faint">CR-{{ bot.id }}</p>
           </div>
+          <!-- The pill is the WORST status among this bot's runs in the API's 24 h window
+               (failed > warning > succeeded > still going); the tooltip and the accessible
+               name carry the counts behind it, with an em dash for anything the API does
+               not report rather than a zero that would be believed. -->
           <span
             class="inline-flex flex-shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold"
+            [attr.title]="'workspace.bot.runCounts' | translate: botCounts(bot)"
+            [attr.aria-label]="
+              ('workspace.state.' + botState(bot) | translate) +
+              ' — ' +
+              ('workspace.bot.runCounts' | translate: botCounts(bot))
+            "
             [ngClass]="{
               'bg-surface-2 text-muted': botState(bot) === 'idle',
               'bg-info-tint text-info': botState(bot) === 'running',
@@ -172,8 +347,24 @@
           <div class="mb-1.5 flex justify-between gap-2 text-xs text-faint">
             <span>{{ 'workspace.sections.runs' | translate }}</span>
             <span class="flex items-center gap-2">
-              <span *ngIf="botWarning(bot)" class="font-semibold text-warning">
-                {{ botWarning(bot) }} {{ 'workspace.stat.degraded' | translate }}
+              <!-- The alarm keeps its own colour and its own place, ahead of the amber
+                   count: a lost treatment is not a bigger warning, it is a different one. -->
+              <span
+                *ngIf="botTreatmentLost(bot)"
+                class="font-semibold text-danger"
+                [attr.title]="'decision.alarm.hint' | translate"
+              >
+                {{ 'decision.alarm.botRuns' | translate: { count: botTreatmentLost(bot) } }}
+              </span>
+              <span
+                *ngIf="botNeedsAttention(bot)"
+                class="font-semibold text-warning"
+                [attr.title]="
+                  'workspace.stat.needsAttentionSplit'
+                    | translate: { warning: botWarning(bot), degraded: botDegraded(bot) }
+                "
+              >
+                {{ botNeedsAttention(bot) }} {{ 'workspace.stat.needsAttention' | translate }}
               </span>
               <span class="font-mono">{{ bot.latest_queues_succeeded || 0 }}/{{ bot.latest_queues_count || 0 }}</span>
             </span>
@@ -181,7 +372,13 @@
           <div class="h-1.5 overflow-hidden rounded-full bg-surface-3">
             <div
               class="h-full rounded-full transition-all duration-500 ease-out-expo"
-              [ngClass]="bot.latest_queues_failed ? 'bg-danger' : botWarning(bot) ? 'bg-warning' : 'bg-success'"
+              [ngClass]="
+                bot.latest_queues_failed || botTreatmentLost(bot)
+                  ? 'bg-danger'
+                  : botNeedsAttention(bot)
+                    ? 'bg-warning'
+                    : 'bg-success'
+              "
               [style.width.%]="botProgress(bot)"
             ></div>
           </div>

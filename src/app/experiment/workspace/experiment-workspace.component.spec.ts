@@ -8,15 +8,24 @@ import { of } from 'rxjs';
 import { ExperimentWorkspaceComponent } from './experiment-workspace.component';
 import { CrawlerService, ExperimentService } from '@app/entity/service';
 import { Crawler } from '@app/crawler/model/crawler';
+import { ExperimentHealthApiService } from '@app/experiment/service/experiment-health-api.service';
+import { ExperimentHealth, HealthCounts } from '@app/experiment/model/health';
 
 /**
- * The workspace's Degraded tile, per-bot badge and amber progress bar all read ONE API
- * attribute: `latest_queues_degraded`, appended by the Laravel Crawler model alongside
- * `latest_queues_succeeded` / `_failed` / `_count`. Verified against the live API on
- * 2026-08-27; the whole feature is dead pixels if this name drifts, which is what these
- * tests pin down.
+ * The workspace's "Needs attention" tile, per-bot badge and amber progress bar read TWO
+ * API attributes, appended by the Laravel Crawler model alongside
+ * `latest_queues_succeeded` / `_failed` / `_count`:
+ *
+ *  - `latest_queues_degraded` — runs carrying at least one `warning` JOB (live since
+ *    2026-08-27, verified against the live API on that date);
+ *  - `latest_queues_warning`  — runs whose OWN status_code is `warning` (new; NOT sent by
+ *    the API deployed on ex63 today, so the undefined path is the one that actually runs
+ *    in production and is tested first).
+ *
+ * The whole feature is dead pixels if either name drifts, which is what these tests pin
+ * down.
  */
-describe('ExperimentWorkspaceComponent (degraded runs)', () => {
+describe('ExperimentWorkspaceComponent (runs that need attention)', () => {
   let component: ExperimentWorkspaceComponent;
   let fixture: ComponentFixture<ExperimentWorkspaceComponent>;
 
@@ -34,7 +43,11 @@ describe('ExperimentWorkspaceComponent (degraded runs)', () => {
           provide: CrawlerService,
           useValue: { entities$: of([]), loading$: of(false), getWithQuery: () => {} }
         },
-        { provide: ActivatedRoute, useValue: { paramMap: of({ get: () => '42' }) } }
+        { provide: ActivatedRoute, useValue: { paramMap: of({ get: () => '42' }) } },
+        // The API deployed today has no /health endpoint, so the service answers null and
+        // the header falls back to these crawler-derived tiles. That is the path every
+        // assertion in this file exercises; the health path has its own describe below.
+        { provide: ExperimentHealthApiService, useValue: { health: () => of(null) } }
       ]
     }).compileComponents();
 
@@ -70,17 +83,24 @@ describe('ExperimentWorkspaceComponent (degraded runs)', () => {
 
   describe('against an API that reports degradation', () => {
     it('reads the count off latest_queues_degraded', () => {
-      expect(component.botWarning(bot({ latest_queues_count: 4, latest_queues_degraded: 3 }))).toBe(3);
+      expect(component.botDegraded(bot({ latest_queues_count: 4, latest_queues_degraded: 3 }))).toBe(3);
     });
 
     it('sums the tile across bots and marks it available', () => {
       const summary = component.buildSummary([
         bot({ id: 1, latest_queues_count: 4, latest_queues_succeeded: 4, latest_queues_degraded: 3 }),
-        bot({ id: 2, latest_queues_count: 2, latest_queues_succeeded: 1, latest_queues_failed: 1, latest_queues_degraded: 0 })
+        bot({
+          id: 2,
+          latest_queues_count: 2,
+          latest_queues_succeeded: 1,
+          latest_queues_failed: 1,
+          latest_queues_degraded: 0
+        })
       ]);
 
-      expect(summary.warningAvailable).toBeTrue();
-      expect(summary.warning).toBe(3);
+      expect(summary.attentionAvailable).toBeTrue();
+      expect(summary.degraded).toBe(3);
+      expect(summary.needsAttention).toBe(3);
       expect(summary.total).toBe(6);
       expect(summary.succeeded).toBe(5);
       expect(summary.failed).toBe(1);
@@ -88,14 +108,15 @@ describe('ExperimentWorkspaceComponent (degraded runs)', () => {
 
     // Laravel has been known to serialise appended integer attributes as strings.
     it('tolerates the count arriving as a string', () => {
-      expect(component.botWarning(bot({ latest_queues_degraded: '2' as unknown as number }))).toBe(2);
+      expect(component.botDegraded(bot({ latest_queues_degraded: '2' as unknown as number }))).toBe(2);
+      expect(component.botWarning(bot({ latest_queues_warning: '2' as unknown as number }))).toBe(2);
     });
 
     it('shows the tile at a confident zero', () => {
       const summary = component.buildSummary([bot({ latest_queues_count: 3, latest_queues_degraded: 0 })]);
 
-      expect(summary.warningAvailable).toBeTrue();
-      expect(summary.warning).toBe(0);
+      expect(summary.attentionAvailable).toBeTrue();
+      expect(summary.needsAttention).toBe(0);
     });
 
     it('puts a degraded bot between succeeded and failed', () => {
@@ -105,12 +126,17 @@ describe('ExperimentWorkspaceComponent (degraded runs)', () => {
       // A failed run still outranks a degraded one.
       expect(
         component.botState(
-          bot({ latest_queues_count: 3, latest_queues_succeeded: 2, latest_queues_failed: 1, latest_queues_degraded: 1 })
+          bot({
+            latest_queues_count: 3,
+            latest_queues_succeeded: 2,
+            latest_queues_failed: 1,
+            latest_queues_degraded: 1
+          })
         )
       ).toBe('failed');
-      expect(component.botState(bot({ latest_queues_count: 3, latest_queues_succeeded: 3, latest_queues_degraded: 0 }))).toBe(
-        'succeeded'
-      );
+      expect(
+        component.botState(bot({ latest_queues_count: 3, latest_queues_succeeded: 3, latest_queues_degraded: 0 }))
+      ).toBe('succeeded');
     });
   });
 
@@ -118,8 +144,10 @@ describe('ExperimentWorkspaceComponent (degraded runs)', () => {
     it('hides the tile rather than claiming a zero the API never sent', () => {
       const summary = component.buildSummary([bot({ latest_queues_count: 3, latest_queues_succeeded: 3 })]);
 
-      expect(summary.warningAvailable).toBeFalse();
+      expect(summary.attentionAvailable).toBeFalse();
+      expect(summary.needsAttention).toBe(0);
       expect(summary.warning).toBe(0);
+      expect(summary.degraded).toBe(0);
     });
 
     it('does not turn a healthy bot amber', () => {
@@ -132,7 +160,7 @@ describe('ExperimentWorkspaceComponent (degraded runs)', () => {
    * rendered `undefined` (or, once guarded, hid itself forever). These drive the real
    * template over the real payload shape.
    */
-  describe('the Degraded tile, rendered', () => {
+  describe('the "Needs attention" tile, rendered', () => {
     /** Boots the component with a crawler list, as the API would deliver it. */
     const renderWith = (crawlers: unknown[]): ComponentFixture<ExperimentWorkspaceComponent> => {
       TestBed.resetTestingModule();
@@ -146,7 +174,11 @@ describe('ExperimentWorkspaceComponent (degraded runs)', () => {
             provide: CrawlerService,
             useValue: { entities$: of(crawlers), loading$: of(false), getWithQuery: () => {} }
           },
-          { provide: ActivatedRoute, useValue: { paramMap: of({ get: () => '42' }) } }
+          { provide: ActivatedRoute, useValue: { paramMap: of({ get: () => '42' }) } },
+          // The API deployed today has no /health endpoint, so the service answers null and
+          // the header falls back to these crawler-derived tiles. That is the path every
+          // assertion in this file exercises; the health path has its own describe below.
+          { provide: ExperimentHealthApiService, useValue: { health: () => of(null) } }
         ]
       });
       const f = TestBed.createComponent(ExperimentWorkspaceComponent);
@@ -162,15 +194,13 @@ describe('ExperimentWorkspaceComponent (degraded runs)', () => {
       );
 
     const tileValue = (f: ComponentFixture<unknown>, key: string): string | undefined =>
-      tile(f, key)
-        ?.querySelector('p:nth-of-type(2)')
-        ?.textContent?.trim();
+      tile(f, key)?.querySelector('p:nth-of-type(2)')?.textContent?.trim();
 
     it('renders a real number -- not "undefined" -- from the live payload', () => {
       const f = renderWith(LIVE_CRAWLERS_EXP42.map((c) => ({ ...c, experiment_id: 42, name: 'bot' })));
 
-      expect(tile(f, 'workspace.stat.degraded')).withContext('Degraded tile is present').toBeDefined();
-      expect(tileValue(f, 'workspace.stat.degraded')).toBe('0');
+      expect(tile(f, 'workspace.stat.needsAttention')).withContext('Needs attention tile is present').toBeDefined();
+      expect(tileValue(f, 'workspace.stat.needsAttention')).toBe('0');
       expect(f.nativeElement.textContent).not.toContain('undefined');
       expect(f.nativeElement.textContent).not.toContain('NaN');
       // sanity: the neighbouring tiles agree with the same payload
@@ -185,7 +215,7 @@ describe('ExperimentWorkspaceComponent (degraded runs)', () => {
         { ...LIVE_CRAWLERS_EXP42[1], experiment_id: 42, name: 'control bot' }
       ]);
 
-      expect(tileValue(f, 'workspace.stat.degraded')).toBe('2');
+      expect(tileValue(f, 'workspace.stat.needsAttention')).toBe('2');
       // The bot badge escalates too, and the progress bar goes amber rather than green.
       expect(f.nativeElement.textContent).toContain('workspace.state.warning');
       expect(f.nativeElement.querySelector('.bg-warning')).not.toBeNull();
@@ -200,10 +230,92 @@ describe('ExperimentWorkspaceComponent (degraded runs)', () => {
         }))
       );
 
-      expect(tile(f, 'workspace.stat.degraded')).toBeUndefined();
+      expect(tile(f, 'workspace.stat.needsAttention')).toBeUndefined();
       expect(f.nativeElement.textContent).not.toContain('undefined');
       // the rest of the summary is unaffected
       expect(tileValue(f, 'workspace.stat.runs')).toBe('4');
+    });
+  });
+
+  /**
+   * F1 in docs/proposals/gui-error-warning-surfacing.md, and the reason
+   * `latest_queues_warning` exists at all.
+   *
+   * A run whose OWN status_code is `warning` — the runner's `DONE_JOBSWARNING`, "completed
+   * but lost work" — is counted by none of `latest_queues_succeeded`, `_failed` or
+   * `_degraded` (that last one is derived from the JOBS, and a queue can report `warning`
+   * with zero `warning` jobs). So `succeeded >= total` was never satisfied, `botState`
+   * fell through to `running`, and the bot card showed a pulsing blue "Running" pill
+   * forever for a run that had finished hours before in the one state a researcher most
+   * needs to see.
+   */
+  describe('a run whose OWN status was warning (latest_queues_warning)', () => {
+    it('no longer shows a finished bot as "Running" forever', () => {
+      const stuck = bot({ latest_queues_count: 3, latest_queues_succeeded: 2, latest_queues_warning: 1 });
+
+      expect(component.botState(stuck)).toBe('warning');
+    });
+
+    it('reports succeeded once every run is accounted for, warnings included', () => {
+      // Without latest_queues_warning in the sum this bot reads 2 of 3 and stays 'running'.
+      expect(
+        component.botState(bot({ latest_queues_count: 3, latest_queues_succeeded: 2, latest_queues_warning: 0 }))
+      ).toBe('running');
+    });
+
+    it('still ranks a failure above a queue-level warning', () => {
+      expect(
+        component.botState(
+          bot({ latest_queues_count: 3, latest_queues_succeeded: 1, latest_queues_failed: 1, latest_queues_warning: 1 })
+        )
+      ).toBe('failed');
+    });
+
+    it('counts it in the tile alongside job-level degradation', () => {
+      const summary = component.buildSummary([
+        bot({ id: 1, latest_queues_count: 2, latest_queues_succeeded: 1, latest_queues_warning: 1 }),
+        bot({ id: 2, latest_queues_count: 2, latest_queues_succeeded: 2, latest_queues_degraded: 2 })
+      ]);
+
+      expect(summary.warning).toBe(1);
+      expect(summary.degraded).toBe(2);
+      expect(summary.needsAttention).toBe(3);
+      expect(summary.attentionAvailable).toBeTrue();
+    });
+
+    it('makes the tile available even when only latest_queues_warning is sent', () => {
+      const summary = component.buildSummary([bot({ latest_queues_count: 1, latest_queues_warning: 0 })]);
+
+      expect(summary.attentionAvailable).toBeTrue();
+      expect(summary.needsAttention).toBe(0);
+    });
+  });
+
+  /**
+   * The API deployed on ex63 today sends `latest_queues_degraded` and NOT
+   * `latest_queues_warning`. That is the path every production page load takes, so it is
+   * tested explicitly rather than assumed: undefined reads as 0 and nothing regresses.
+   */
+  describe('against the API actually deployed today (no latest_queues_warning)', () => {
+    it('treats the missing field as 0 rather than NaN or a false alarm', () => {
+      const deployed = bot({ latest_queues_count: 3, latest_queues_succeeded: 3, latest_queues_degraded: 0 });
+
+      expect(component.botWarning(deployed)).toBe(0);
+      expect(component.botNeedsAttention(deployed)).toBe(0);
+      expect(component.botState(deployed)).toBe('succeeded');
+    });
+
+    it('keeps the pre-existing job-level degradation behaviour exactly', () => {
+      const degraded = bot({ latest_queues_count: 3, latest_queues_succeeded: 3, latest_queues_degraded: 1 });
+
+      expect(component.botState(degraded)).toBe('warning');
+      expect(component.botNeedsAttention(degraded)).toBe(1);
+    });
+
+    it('leaves a genuinely in-flight bot as running', () => {
+      expect(
+        component.botState(bot({ latest_queues_count: 4, latest_queues_succeeded: 1, latest_queues_degraded: 0 }))
+      ).toBe('running');
     });
   });
 
@@ -228,7 +340,387 @@ describe('ExperimentWorkspaceComponent (degraded runs)', () => {
 
       expect(summary.total).toBe(0);
       expect(summary.succeededPct).toBe(0);
-      expect(summary.warningAvailable).toBeFalse();
+      expect(summary.attentionAvailable).toBeFalse();
+    });
+  });
+  /**
+   * Phase 4 — the treatment-loss alarm (`latest_queues_treatment_lost`, contract §7.3).
+   *
+   * It is deliberately NOT part of `needsAttention`: a lost treatment is not a louder
+   * warning but a different claim — those runs finished, often green, and produced
+   * control-arm data while configured to be treated. Folding it into the amber sum is
+   * how it would stop being an alarm.
+   */
+  describe('the treatment-loss alarm', () => {
+    const renderWith = (crawlers: unknown[]): ComponentFixture<ExperimentWorkspaceComponent> => {
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        imports: [ExperimentWorkspaceComponent, TranslateModule.forRoot(), NoopAnimationsModule],
+        providers: [
+          provideRouter([]),
+          provideMockStore({ initialState: {} }),
+          { provide: ExperimentService, useValue: { getByKey: () => of({ id: 42, name: 'Political News' }) } },
+          {
+            provide: CrawlerService,
+            useValue: { entities$: of(crawlers), loading$: of(false), getWithQuery: () => {} }
+          },
+          { provide: ActivatedRoute, useValue: { paramMap: of({ get: () => '42' }) } },
+          // The API deployed today has no /health endpoint, so the service answers null and
+          // the header falls back to these crawler-derived tiles. That is the path every
+          // assertion in this file exercises; the health path has its own describe below.
+          { provide: ExperimentHealthApiService, useValue: { health: () => of(null) } }
+        ]
+      });
+      const f = TestBed.createComponent(ExperimentWorkspaceComponent);
+      f.detectChanges();
+      return f;
+    };
+
+    it('sums latest_queues_treatment_lost and keeps it out of needsAttention', () => {
+      const summary = component.buildSummary([
+        bot({ id: 1, latest_queues_count: 4, latest_queues_succeeded: 4, latest_queues_treatment_lost: 2 }),
+        bot({ id: 2, latest_queues_count: 2, latest_queues_succeeded: 2, latest_queues_treatment_lost: 1 })
+      ]);
+
+      expect(summary.treatmentLost).toBe(3);
+      expect(summary.treatmentLostAvailable).toBeTrue();
+      expect(summary.needsAttention).withContext('the alarm is not folded into the amber sum').toBe(0);
+    });
+
+    it('reads an absent field as unknown rather than as a confident zero', () => {
+      const summary = component.buildSummary([bot({ latest_queues_count: 3, latest_queues_succeeded: 3 })]);
+
+      expect(summary.treatmentLostAvailable).toBeFalse();
+      expect(summary.treatmentLost).toBe(0);
+    });
+
+    it('tolerates the count arriving as a string', () => {
+      expect(component.botTreatmentLost(bot({ latest_queues_treatment_lost: '2' as unknown as number }))).toBe(2);
+    });
+
+    it('renders a red alert above the tiles when a treatment was lost', () => {
+      const f = renderWith([
+        {
+          id: 251,
+          experiment_id: 42,
+          name: 'treated bot',
+          latest_queues_count: 2,
+          latest_queues_succeeded: 2,
+          latest_queues_treatment_lost: 1
+        }
+      ]);
+      const alert = f.nativeElement.querySelector('[role="alert"]') as HTMLElement;
+
+      expect(alert).withContext('the alarm is rendered').not.toBeNull();
+      expect(alert.textContent).toContain('decision.alarm.experiment');
+      expect(alert.className).toContain('text-danger');
+      // ...and it sits above the run-summary tiles.
+      const html: string = f.nativeElement.innerHTML;
+      expect(html.indexOf('decision.alarm.experiment')).toBeLessThan(html.indexOf('workspace.stat.runs'));
+    });
+
+    it('shows no alarm at zero — a nullable column cannot assert "no treatment was lost"', () => {
+      const f = renderWith([
+        {
+          id: 251,
+          experiment_id: 42,
+          name: 'bot',
+          latest_queues_count: 2,
+          latest_queues_succeeded: 2,
+          latest_queues_treatment_lost: 0
+        }
+      ]);
+
+      expect(f.nativeElement.querySelector('[role="alert"]')).toBeNull();
+      expect(f.nativeElement.textContent).not.toContain('decision.alarm.experiment');
+    });
+
+    it('marks the bot card red for a lost treatment even when every run succeeded', () => {
+      const f = renderWith([
+        {
+          id: 251,
+          experiment_id: 42,
+          name: 'treated bot',
+          latest_queues_count: 2,
+          latest_queues_succeeded: 2,
+          latest_queues_treatment_lost: 1
+        }
+      ]);
+      const card = f.nativeElement.querySelector('article') as HTMLElement;
+
+      expect(card.textContent).toContain('decision.alarm.botRuns');
+      expect(card.innerHTML).withContext('the progress bar goes red, not green').toContain('bg-danger');
+    });
+  });
+  /**
+   * Phase 3 — health above the bot.
+   *
+   * The header's figures move from the crawler rollups (a fixed 24 h window, no unknown
+   * bucket, no job-level view) to `GET /experiments/{id}/health?hours=…`, which is the
+   * only place runs are counted by their OWN status_code over a chosen window. Two things
+   * are load-bearing and are what these tests hold down: the **unknown** bucket is
+   * rendered and never folded into success, and an API that cannot answer falls back to
+   * the old tiles rather than to a blank — or worse, a green — header.
+   */
+  describe('the health header', () => {
+    const counts = (over: Partial<HealthCounts> = {}): HealthCounts => ({
+      total: 0,
+      running: 0,
+      success: 0,
+      warning: 0,
+      failure: 0,
+      skipped: 0,
+      unknown: 0,
+      ...over
+    });
+
+    const payload = (over: Partial<ExperimentHealth> = {}): ExperimentHealth => ({
+      experiment_id: 42,
+      window_hours: 24,
+      bots: 14,
+      runs: counts({ total: 10, success: 7, warning: 2, failure: 1 }),
+      jobs: counts({ total: 200, success: 180, warning: 15, failure: 5 }),
+      bad_runs: 3,
+      bad_jobs: 20,
+      treatment_lost_jobs: 0,
+      degraded_jobs: 15,
+      last_finished_at: '2026-09-07T06:00:00Z',
+      ...over
+    });
+
+    let healthSpy: jasmine.Spy;
+
+    const renderWithHealth = (
+      health: ExperimentHealth | null,
+      crawlers: unknown[] = []
+    ): ComponentFixture<ExperimentWorkspaceComponent> => {
+      healthSpy = jasmine.createSpy('health').and.returnValue(of(health));
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        imports: [ExperimentWorkspaceComponent, TranslateModule.forRoot(), NoopAnimationsModule],
+        providers: [
+          provideRouter([]),
+          provideMockStore({ initialState: {} }),
+          { provide: ExperimentService, useValue: { getByKey: () => of({ id: 42, name: 'Political News' }) } },
+          {
+            provide: CrawlerService,
+            useValue: { entities$: of(crawlers), loading$: of(false), getWithQuery: () => {} }
+          },
+          { provide: ActivatedRoute, useValue: { paramMap: of({ get: () => '42' }) } },
+          { provide: ExperimentHealthApiService, useValue: { health: healthSpy } }
+        ]
+      });
+      const f = TestBed.createComponent(ExperimentWorkspaceComponent);
+      f.detectChanges();
+      return f;
+    };
+
+    const tile = (f: ComponentFixture<unknown>, key: string): HTMLElement | undefined =>
+      Array.from(f.nativeElement.querySelectorAll('section div.bg-surface') as NodeListOf<HTMLElement>).find((el) =>
+        el.textContent?.includes(key)
+      );
+
+    const tileValue = (f: ComponentFixture<unknown>, key: string): string | undefined =>
+      tile(f, key)?.querySelector('p:nth-of-type(2)')?.textContent?.trim();
+
+    it('renders the health figures as tiles', () => {
+      const f = renderWithHealth(payload());
+
+      expect(tileValue(f, 'workspace.stat.bots')).toBe('14');
+      expect(tileValue(f, 'workspace.stat.runs')).toBe('10');
+      expect(tileValue(f, 'workspace.stat.succeeded')).toBe('7');
+      // bad_runs is the contract's is_bad: failure OR warning, never failure alone.
+      expect(tileValue(f, 'workspace.stat.needsAttention')).toBe('3');
+      expect(tileValue(f, 'workspace.stat.failed')).toBe('1');
+      expect(f.nativeElement.textContent).not.toContain('undefined');
+      expect(f.nativeElement.textContent).not.toContain('NaN');
+    });
+
+    it('shows the unknown bucket when it is non-zero, separately from success', () => {
+      const f = renderWithHealth(
+        payload({ runs: counts({ total: 10, success: 6, warning: 2, failure: 1, unknown: 1 }), bad_runs: 3 })
+      );
+
+      expect(tile(f, 'status.unknown')).withContext('an unknown-status run has its own tile').toBeDefined();
+      expect(tileValue(f, 'status.unknown')).toBe('1');
+      expect(tileValue(f, 'workspace.stat.succeeded')).withContext('never folded into success').toBe('6');
+    });
+
+    it('hides the unknown tile when nothing is unknown', () => {
+      const f = renderWithHealth(payload());
+
+      expect(tile(f, 'status.unknown')).toBeUndefined();
+    });
+
+    it('names jobs with an unrecognised status instead of absorbing them into success', () => {
+      const f = renderWithHealth(
+        payload({ jobs: counts({ total: 200, success: 180, warning: 15, failure: 4, unknown: 1 }) })
+      );
+
+      expect(f.nativeElement.textContent).toContain('health.jobs.unknown');
+    });
+
+    it('reports the jobs and the treatment-loss alarm from the same window', () => {
+      const f = renderWithHealth(payload({ treatment_lost_jobs: 4 }));
+
+      expect(f.nativeElement.textContent).toContain('health.jobs.summary');
+      expect(f.nativeElement.textContent).toContain('decision.alarm.jobs');
+    });
+
+    it('falls back to the crawler tiles when the endpoint cannot answer', () => {
+      // A 404 from an API that predates the endpoint arrives as null. The header must
+      // keep working — and must not turn into a green "all clear" it never computed.
+      const f = renderWithHealth(null, [
+        { id: 251, experiment_id: 42, name: 'bot', latest_queues_count: 4, latest_queues_succeeded: 3 }
+      ]);
+
+      expect(tileValue(f, 'workspace.stat.runs')).withContext('crawler-derived tiles').toBe('4');
+      expect(f.nativeElement.querySelector('[data-window]'))
+        .withContext('no window selector: there is nothing behind it to select')
+        .toBeNull();
+      expect(f.nativeElement.textContent).not.toContain('undefined');
+    });
+  });
+
+  describe('the health window selector', () => {
+    let component2: ExperimentWorkspaceComponent;
+    let healthSpy: jasmine.Spy;
+    let fixture2: ComponentFixture<ExperimentWorkspaceComponent>;
+
+    const health: ExperimentHealth = {
+      experiment_id: 42,
+      window_hours: 24,
+      bots: 1,
+      runs: { total: 1, running: 0, success: 1, warning: 0, failure: 0, skipped: 0, unknown: 0 },
+      jobs: { total: 1, running: 0, success: 1, warning: 0, failure: 0, skipped: 0, unknown: 0 },
+      bad_runs: 0,
+      bad_jobs: 0,
+      treatment_lost_jobs: 0,
+      degraded_jobs: 0,
+      last_finished_at: null
+    };
+
+    beforeEach(() => {
+      healthSpy = jasmine.createSpy('health').and.returnValue(of(health));
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        imports: [ExperimentWorkspaceComponent, TranslateModule.forRoot(), NoopAnimationsModule],
+        providers: [
+          provideRouter([]),
+          provideMockStore({ initialState: {} }),
+          { provide: ExperimentService, useValue: { getByKey: () => of({ id: 42, name: 'Political News' }) } },
+          { provide: CrawlerService, useValue: { entities$: of([]), loading$: of(false), getWithQuery: () => {} } },
+          { provide: ActivatedRoute, useValue: { paramMap: of({ get: () => '42' }) } },
+          { provide: ExperimentHealthApiService, useValue: { health: healthSpy } }
+        ]
+      });
+      fixture2 = TestBed.createComponent(ExperimentWorkspaceComponent);
+      component2 = fixture2.componentInstance;
+      fixture2.detectChanges();
+    });
+
+    it('opens on 24 h and asks for hours=24', () => {
+      expect(component2.healthWindow).toBe('24h');
+      expect(healthSpy).toHaveBeenCalledWith(42, 24);
+    });
+
+    it('maps 7d to hours=168 and all to hours=720', () => {
+      component2.setWindow('7d');
+      expect(component2.windowHours).toBe(168);
+      expect(healthSpy).toHaveBeenCalledWith(42, 168);
+
+      component2.setWindow('all');
+      expect(component2.windowHours).toBe(720);
+      expect(healthSpy).toHaveBeenCalledWith(42, 720);
+    });
+
+    it('does not re-ask when the selected window is clicked again', () => {
+      const before = healthSpy.calls.count();
+      component2.setWindow('24h');
+
+      expect(healthSpy.calls.count()).toBe(before);
+    });
+
+    it('renders one chip per window, with the selection announced', () => {
+      const chips = Array.from(fixture2.nativeElement.querySelectorAll('[data-window]')) as HTMLElement[];
+
+      expect(chips.map((c) => c.getAttribute('data-window'))).toEqual(['24h', '7d', 'all']);
+      expect(chips[0].getAttribute('aria-pressed')).toBe('true');
+      expect(chips[1].getAttribute('aria-pressed')).toBe('false');
+    });
+  });
+
+  /**
+   * The bot pill shows the WORST run status in the window; the tooltip has to say what is
+   * behind it. A count the API does not send reads as an em dash, because a tooltip is
+   * exactly where a confident zero would be believed.
+   */
+  describe('the bot card counts', () => {
+    it('lists the counts behind the pill', () => {
+      const counts = component.botCounts(
+        bot({
+          latest_queues_count: 6,
+          latest_queues_succeeded: 3,
+          latest_queues_failed: 1,
+          latest_queues_warning: 1,
+          latest_queues_degraded: 2,
+          latest_queues_treatment_lost: 1
+        })
+      );
+
+      expect(counts['total']).toBe(6);
+      expect(counts['succeeded']).toBe(3);
+      expect(counts['failed']).toBe(1);
+      expect(counts['warning']).toBe('1');
+      expect(counts['degraded']).toBe('2');
+      expect(counts['treatmentLost']).toBe('1');
+      expect(counts['inProgress']).withContext('6 - (3 + 1 + 1)').toBe(1);
+    });
+
+    it('reports a count the API never sent as an em dash, not as zero', () => {
+      const counts = component.botCounts(bot({ latest_queues_count: 2, latest_queues_succeeded: 2 }));
+
+      expect(counts['warning']).toBe('—');
+      expect(counts['degraded']).toBe('—');
+      expect(counts['treatmentLost']).toBe('—');
+    });
+
+    it('never renders a negative remainder from an inconsistent rollup', () => {
+      const counts = component.botCounts(
+        bot({ latest_queues_count: 1, latest_queues_succeeded: 3, latest_queues_failed: 2 })
+      );
+
+      expect(counts['inProgress']).toBe(0);
+    });
+
+    it("puts the counts in the pill's tooltip and accessible name", () => {
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        imports: [ExperimentWorkspaceComponent, TranslateModule.forRoot(), NoopAnimationsModule],
+        providers: [
+          provideRouter([]),
+          provideMockStore({ initialState: {} }),
+          { provide: ExperimentService, useValue: { getByKey: () => of({ id: 42, name: 'Political News' }) } },
+          {
+            provide: CrawlerService,
+            useValue: {
+              entities$: of([
+                { id: 251, experiment_id: 42, name: 'bot', latest_queues_count: 2, latest_queues_succeeded: 2 }
+              ]),
+              loading$: of(false),
+              getWithQuery: () => {}
+            }
+          },
+          { provide: ActivatedRoute, useValue: { paramMap: of({ get: () => '42' }) } },
+          { provide: ExperimentHealthApiService, useValue: { health: () => of(null) } }
+        ]
+      });
+      const f = TestBed.createComponent(ExperimentWorkspaceComponent);
+      f.detectChanges();
+      const pill = f.nativeElement.querySelector('article span[title]') as HTMLElement;
+
+      expect(pill.getAttribute('title')).toContain('workspace.bot.runCounts');
+      expect(pill.getAttribute('aria-label')).toContain('workspace.state.succeeded');
     });
   });
 });

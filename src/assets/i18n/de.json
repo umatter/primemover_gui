@@ -62,9 +62,9 @@
       "bots": "Bots",
       "runs": "Durchläufe",
       "succeeded": "Erfolgreich",
-      "degraded": "Beeinträchtigt",
-      "degradedHint": "Abgeschlossen, aber Jobs beeinträchtigt",
-      "failed": "Fehlgeschlagen"
+      "failed": "Fehlgeschlagen",
+      "needsAttention": "Zu prüfen",
+      "needsAttentionSplit": "{{warning}} Durchläufe meldeten eine Warnung, {{degraded}} Durchläufe hatten beeinträchtigte Jobs"
     },
     "bot": {
       "identity": "Browser-Identität",
@@ -75,7 +75,8 @@
         "title": "Noch keine Bots",
         "body": "Ein Bot ist ein simulierter Nutzer. Fügen Sie einen Bot hinzu, um festzulegen, wer die Plattform wie durchsucht."
       },
-      "profile": "Profil"
+      "profile": "Profil",
+      "runCounts": "{{total}} Durchläufe in den letzten 24 Std. · {{succeeded}} erfolgreich · {{warning}} mit Warnung · {{degraded}} mit beeinträchtigten Jobs · {{failed}} fehlgeschlagen · {{inProgress}} noch laufend · {{treatmentLost}} Treatment verloren"
     },
     "addBotPanel": {
       "title": "Bot hinzufügen",
@@ -120,7 +121,9 @@
       "jobsSucceeded": "Jobs erfolgreich",
       "jobsDegraded": "Jobs beeinträchtigt",
       "jobsFailed": "Jobs fehlgeschlagen",
-      "jobsSkipped": "Jobs übersprungen"
+      "jobsSkipped": "Jobs übersprungen",
+      "unknown": "Unbekannt",
+      "rollupHint": "Von der API aus den Jobs dieses Laufs gezählt. Die Zeile darüber ist die Meldung des Runners selbst."
     },
     "botDetail": {
       "back": "Zurück zum Experiment",
@@ -152,7 +155,9 @@
       "details": "Details",
       "fieldRequired": "Erforderlich.",
       "addError": "Job konnte nicht hinzugefügt werden. Bitte erneut versuchen.",
-      "degradedNotice": "Einige Jobs wurden abgeschlossen, aber beeinträchtigt — ihre Daten wurden nicht geschrieben, oder ein von diesem Bot angefordertes Filterkriterium konnte nicht angewendet werden. (Eine zufällige Videoauswahl ist bei einem Kontroll-Bot normal; problematisch ist sie nur, wenn eine Behandlung angefordert wurde und nicht gewirkt hat.) Prüfe diese Jobs, bevor du die Daten dieses Laufs verwendest."
+      "degradedNotice": "Einige Jobs wurden abgeschlossen, aber beeinträchtigt — ihre Daten wurden nicht geschrieben, oder ein von diesem Bot angefordertes Filterkriterium konnte nicht angewendet werden. (Eine zufällige Videoauswahl ist bei einem Kontroll-Bot normal; problematisch ist sie nur, wenn eine Behandlung angefordert wurde und nicht gewirkt hat.) Prüfe diese Jobs, bevor du die Daten dieses Laufs verwendest.",
+      "tallyHint": "Aus den Jobs unten gezählt. Der Status des Laufs darüber ist die Meldung des Runners.",
+      "unknownHint": "Die API meldete einen Status, den diese App nicht kennt. Kein Erfolg — prüfe den Job."
     },
     "behaviours": {
       "title": "Verhalten",
@@ -324,7 +329,9 @@
     "updatedAt": "Aktualisiert am",
     "username": "Nutzername",
     "usernamePlaceholder": "e.g. max.mustermann",
-    "usernameRequiredError": "Nutzername ist erforderlich"
+    "usernameRequiredError": "Nutzername ist erforderlich",
+    "yes": "Ja",
+    "no": "Nein"
   },
   "config": {
     "add": "Konfiguration hinzufügen",
@@ -481,7 +488,13 @@
     "startAt": "Startzeit",
     "startedAt": "Gestartet",
     "timezone": "Zeitzone",
-    "timezoneOffset": "UTC Verschiebung"
+    "timezoneOffset": "UTC Verschiebung",
+    "rollup": {
+      "header": "Jobs",
+      "label": "{{succeeded}} erfolgreich, {{warning}} beeinträchtigt, {{failed}} fehlgeschlagen, {{skipped}} übersprungen, {{unaccounted}} nicht zugeordnet, von {{total}} Jobs",
+      "none": "Keine Job-Auswertung gemeldet",
+      "headerHint": "Wie viel von jedem Run überlebt hat: erfolgreich / beeinträchtigt / fehlgeschlagen / übersprungen von seinen Jobs. Für die Zahlen und die Flags «verarbeitet / läuft / geprüft» über den Balken fahren."
+    }
   },
   "status": {
     "code": "Code",
@@ -513,5 +526,140 @@
     "uploadCrawlerTitle": "Crawler JSON Upload",
     "uploadExperimentIntroText": "Bitte wählen Sie ein Experiment aus, um die Daten dazu hochzuladen. Die Datei muss im JSON-Format vorliegen.",
     "uploadExperimentTitle": "Experiment hochladen"
+  },
+  "decision": {
+    "column": "Entscheid",
+    "badge": {
+      "treatmentLost": "Treatment verloren",
+      "degraded": "Eingeschränkt",
+      "noVerdict": "Kein Befund",
+      "treatmentLostHint": "Dieser Bot war für ein Treatment konfiguriert, hat aber Kontrollgruppen-Daten erzeugt — diese Sitzung trägt kein Treatment-Signal, obwohl der Job beendet wurde.",
+      "degradedHint": "Ein Teil des Treatments wurde nicht angewendet.",
+      "noVerdictHint": "Für diesen Job wurde kein Entscheid festgehalten. Das ist nicht dasselbe wie ein sauberer Befund — der Job ist älter als die Änderung, oder der Runner wurde noch nicht neu ausgerollt."
+    },
+    "tooltip": {
+      "failedFilters": "Fehlgeschlagene Filter: {{filters}}",
+      "llmError": "LLM-Fehler: {{error}}",
+      "selectionMode": "Auswahl durch: {{mode}} (nur Beschreibung, kein Befund)"
+    },
+    "filter": {
+      "ok": "Angewendet",
+      "notRequested": "Nicht angefordert",
+      "failed": "Fehlgeschlagen"
+    },
+    "report": {
+      "title": "Entscheid-Bericht",
+      "noVerdict": "Dieser Job ruft die Entscheidungsfunktion nicht auf, es gibt also keinen Befund.",
+      "noVerdictLambda": "Für diesen Job wurde kein Befund festgehalten. Das ist kein sauberes Ergebnis — der Job ist älter als die Änderung, oder der schreibende Runner wurde noch nicht neu ausgerollt. Das archivierte Payload kann die Antwort noch enthalten.",
+      "treatmentLost": "Treatment verloren — dieser Bot war für ein Treatment konfiguriert und hat Kontrollgruppen-Daten erzeugt.",
+      "degraded": "Eingeschränkt — ein angeforderter Filter wurde nicht angewendet.",
+      "clean": "Für diesen Entscheid wurde keine Einschränkung gemeldet.",
+      "filters": "Filter",
+      "selectionMode": "Auswahl durch",
+      "selectionModeHint": "beschreibt, wie das Video gewählt wurde, und ist kein Befund; „random“ ist für einen Kontroll-Bot korrekt",
+      "llm": "LLM",
+      "llmAvailable": "verfügbar",
+      "llmUnavailable": "nicht verfügbar",
+      "requested": "Angefordert",
+      "applied": "Angewendet",
+      "warnings": "Warnungen"
+    },
+    "raw": {
+      "download": "Rohdaten herunterladen",
+      "loading": "Wird geladen…",
+      "error": "Die Rohdaten konnten nicht gelesen werden. Das sagt nichts darüber aus, ob das Treatment gewirkt hat — nur, dass dieses Archiv nicht erreichbar war."
+    },
+    "alarm": {
+      "jobs": "Treatment in {{count}} Job(s) dieses Laufs verloren.",
+      "degradedJobs": "{{count}} Job(s) mit eingeschränktem Entscheid.",
+      "runJobs": "Treatment in {{count}} Job(s) verloren",
+      "runs": "Treatment in {{runs}} Lauf/Läufen verloren, {{jobs}} Job(s).",
+      "botRuns": "{{count}} Treatment verloren",
+      "experiment": "Treatment in {{count}} Lauf/Läufen in diesem Zeitfenster verloren.",
+      "hint": "Diese Sitzungen haben Kontrollgruppen-Daten erzeugt, obwohl ein Treatment konfiguriert war; ihre Beobachtungen tragen kein Treatment-Signal."
+    }
+  },
+  "statusFilter": {
+    "legend": "Status",
+    "all": "Alle",
+    "allHint": "Alle Zustände, ungefiltert.",
+    "bad": "Benötigt Aufmerksamkeit",
+    "badHint": "Fehlgeschlagen oder beeinträchtigt — die beiden Zustände, die jemand anschauen sollte. Alte Schreibweisen wie «failed» sind eingeschlossen; die API löst sie auf.",
+    "warningHint": "Abgeschlossen, aber beeinträchtigt: Etwas, worauf das Experiment angewiesen ist, ist nicht passiert.",
+    "failureHint": "Nicht abgeschlossen. Enthält auch Zeilen mit der alten Schreibweise «failed».",
+    "skippedHint": "Nie versucht.",
+    "runningHint": "Noch unterwegs.",
+    "successHint": "Abgeschlossen, ohne gemeldete Beeinträchtigung.",
+    "empty": {
+      "title": "Nichts entspricht diesem Filter",
+      "body": "Das ist eine Aussage über den Filter, nicht über den Bot: Andere Runs existieren, sie sind nur in anderen Zuständen.",
+      "showAll": "Alle anzeigen"
+    }
+  },
+  "health": {
+    "title": "Zustand",
+    "window": {
+      "legend": "Zeitfenster",
+      "24h": "24 Std.",
+      "7d": "7 Tage",
+      "all": "Alle",
+      "24hHint": "Durchläufe der letzten 24 Stunden.",
+      "7dHint": "Durchläufe der letzten 7 Tage (168 Std.).",
+      "allHint": "Das grösste Zeitfenster des Endpunkts: die letzten 30 Tage (720 Std.), nicht die gesamte Historie."
+    },
+    "needsAttentionSplit": "{{warning}} mit Warnung, {{failed}} fehlgeschlagen",
+    "unknownHint": "Durchläufe mit einem Statuscode ausserhalb der fünf kanonischen Werte. Sie werden hier gezählt und nie als Erfolg — ein unbekannter Status ist unbekannt, nicht in Ordnung.",
+    "runs": {
+      "detail": "{{running}} laufend · {{skipped}} übersprungen"
+    },
+    "jobs": {
+      "summary": "{{total}} Jobs · {{bad}} zu prüfen · {{degraded}} beeinträchtigte Entscheide",
+      "unknown": "{{count}} Jobs mit unbekanntem Status"
+    },
+    "strip": {
+      "attention": "{{bad}} von {{total}} Durchläufen zu prüfen",
+      "attentionNoTotal": "{{bad}} Durchläufe zu prüfen",
+      "clean": "Alle {{total}} Durchläufe sauber abgeschlossen",
+      "cleanNoTotal": "Keine Durchläufe zu prüfen",
+      "noRuns": "Keine Durchläufe in diesem Zeitfenster",
+      "unknownRuns": "{{unknown}} Durchläufe mit unbekanntem Status",
+      "noData": "Keine Zustandsdaten",
+      "checking": "Wird geprüft…",
+      "lastRun": "Letzter Durchlauf beendet"
+    }
+  },
+  "statusMessage": {
+    "expand": "Mehr",
+    "collapse": "Weniger",
+    "copy": "Kopieren",
+    "copyFull": "Vollständige Meldung kopieren",
+    "copied": "Kopiert",
+    "copyFailed": "Kopieren fehlgeschlagen",
+    "previousJob": "Job {{id}} öffnen — der Job, auf den dieser gewartet hat"
+  },
+  "diagnostics": {
+    "title": "Diagnose",
+    "message": "Meldung des Runners",
+    "noMessage": "Der Runner hat für diesen Job keine Meldung hinterlegt.",
+    "startedAt": "Gestartet",
+    "finishedAt": "Beendet",
+    "notReported": "nicht gemeldet",
+    "captchaFound": "Captcha-Zeichenfolge auf der Seite gefunden",
+    "captchaHint": "Ein Teilstring-Treffer im Seitenquelltext: eine captcha-ähnliche Zeichenfolge war im HTML vorhanden. Das heisst nicht, dass ein Captcha angezeigt wurde, die Sitzung blockiert war oder ein Captcha gelöst wurde — ein Signal für gelöste Captchas schreibt der Runner überhaupt nicht.",
+    "captcha": {
+      "yes": "Ja",
+      "no": "Nein",
+      "unknown": "Nicht gemeldet"
+    }
+  },
+  "liveness": {
+    "live": "Live · Aktualisierung alle 15 s",
+    "hint": "Diese Ansicht lädt sich neu, solange ein Run läuft, und pausiert, wenn der Tab im Hintergrund ist."
+  },
+  "runAlarm": {
+    "failureTitle": "Run fehlgeschlagen",
+    "failureBody": "{{name}} (Q-{{id}}) ist soeben fehlgeschlagen.",
+    "treatmentLostTitle": "Treatment verloren",
+    "treatmentLostBody": "{{name}} (Q-{{id}}) hat Daten der Kontrollgruppe erzeugt, obwohl der Bot behandelt werden sollte — diese Sitzung kann die Frage des Experiments nicht beantworten."
   }
 }

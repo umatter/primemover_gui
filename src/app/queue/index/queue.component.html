@@ -21,6 +21,13 @@
     </button>
   </div>
 
+  <!-- "Which of my runs should I look at?" — one click, answered server-side. -->
+  <app-status-filter
+    (selectedChange)="onStatusFilter($event)"
+    [selected]="statusFilter"
+    class="mb-4 block"
+  ></app-status-filter>
+
   <div class="overflow-hidden rounded-xl border border-line bg-surface shadow-sm">
     <div class="overflow-x-auto">
       <table *ngIf="entities$ | async" class="min-w-full divide-y divide-line">
@@ -40,31 +47,21 @@
                 label="{{ 'common.name' | translate }}"
               ></app-link-sortable>
             </th>
-            <th class="px-4 py-3" scope="col">
-              <app-link-sortable
-                (sortRequested)="getData()"
-                [sortBy]="SortBy.PROCESSED"
-                label="{{ 'status.processed' | translate }}"
-              ></app-link-sortable>
+            <!-- The three former columns here (processed / processing / reviewed) were
+                 bookkeeping booleans rendered Yes/No at the same weight as the run's real
+                 outcome, while the typed jobs_*_count rollup was rendered nowhere. They
+                 now live in this column's tooltip; the bar shows how much of the run
+                 actually survived. -->
+            <th class="px-4 py-3" scope="col" [attr.title]="'queue.rollup.headerHint' | translate">
+              {{ 'queue.rollup.header' | translate }}
             </th>
             <th class="px-4 py-3" scope="col">
+              <!-- Sorted by normalised severity, not by the raw string: sorting the string
+                   splits the 256 legacy 'failed' rows away from the canonical 'failure'
+                   ones and puts neither next to 'warning'. -->
               <app-link-sortable
                 (sortRequested)="getData()"
-                [sortBy]="SortBy.PROCESSING"
-                label="{{ 'status.processing' | translate }}"
-              ></app-link-sortable>
-            </th>
-            <th class="px-4 py-3" scope="col">
-              <app-link-sortable
-                (sortRequested)="getData()"
-                [sortBy]="SortBy.REVIEWED"
-                label="{{ 'status.review' | translate }}"
-              ></app-link-sortable>
-            </th>
-            <th class="px-4 py-3" scope="col">
-              <app-link-sortable
-                (sortRequested)="getData()"
-                [sortBy]="SortBy.STATUSCODE"
+                [sortBy]="SortBy.SEVERITY"
                 label="{{ 'status.label' | translate }}"
               ></app-link-sortable>
             </th>
@@ -82,9 +79,9 @@
           <tr *ngFor="let item of entities$ | async | paginate: paginationConfig" class="transition hover:bg-surface-2">
             <td class="whitespace-nowrap px-4 py-3.5 font-mono text-xs text-faint">{{ item.id }}</td>
             <td class="whitespace-nowrap px-4 py-3.5 text-sm font-medium text-ink">{{ item.name }}</td>
-            <td class="whitespace-nowrap px-4 py-3.5 text-sm text-muted">{{ item.processed ? 'Yes' : 'No' }}</td>
-            <td class="whitespace-nowrap px-4 py-3.5 text-sm text-muted">{{ item.processing ? 'Yes' : 'No' }}</td>
-            <td class="whitespace-nowrap px-4 py-3.5 text-sm text-muted">{{ item.reviewed ? 'Yes' : 'No' }}</td>
+            <td class="px-4 py-3.5 text-sm text-muted">
+              <app-job-rollup-bar [footnote]="legacyFlags(item)" [run]="item"></app-job-rollup-bar>
+            </td>
             <td class="px-4 py-3.5 text-sm text-muted">
               <app-status
                 [showMessage]="true"

@@ -26,6 +26,14 @@
     </button>
   </div>
 
+  <!-- "Which of these should I look at?" — filter[bad]=1 answers it server-side, over the
+       alias table the GUI deliberately does not own. -->
+  <app-status-filter
+    (selectedChange)="onStatusFilter($event)"
+    [selected]="statusFilter"
+    class="mb-4 block"
+  ></app-status-filter>
+
   <div class="overflow-hidden rounded-xl border border-line bg-surface shadow-sm">
     <div class="overflow-x-auto">
       <table *ngIf="entities$ | async" class="min-w-full divide-y divide-line">
@@ -53,12 +61,15 @@
               ></app-link-sortable>
             </th>
             <th class="px-4 py-3" scope="col">
+              <!-- Severity, not the raw string: 'failed' and 'failure' are the same state
+                   spelled two ways and must not sort into two blocks. -->
               <app-link-sortable
                 (sortRequested)="getData()"
-                [sortBy]="SortBy.STATUSCODE"
+                [sortBy]="SortBy.SEVERITY"
                 label="{{ 'status.label' | translate }}"
               ></app-link-sortable>
             </th>
+            <th class="px-4 py-3" scope="col">{{ 'decision.column' | translate }}</th>
             <th class="px-4 py-3" scope="col">
               <app-link-sortable
                 (sortRequested)="getData()"
@@ -79,8 +90,22 @@
                 [showMessage]="true"
                 [statusCode]="item.status_code"
                 [statusMessage]="item.status_message"
-                class="block max-w-xs"
+                class="block max-w-sm"
               ></app-status>
+              <!-- Timestamps and the captcha flag, which the API sends on every job row and
+                   this table has never shown. Collapsed by default: it is reference, not
+                   headline. -->
+              <app-job-diagnostics [job]="item" class="block max-w-sm"></app-job-diagnostics>
+            </td>
+            <!-- Did the treatment actually apply? Nothing else in this row can answer that:
+                 a lost treatment finishes green, with a valid selector and a real click. -->
+            <td class="px-4 py-3.5 text-sm text-muted">
+              <app-decision-badge [job]="item"></app-decision-badge>
+              <app-decision-report
+                *ngIf="showsDecision(item)"
+                [job]="item"
+                class="block max-w-sm"
+              ></app-decision-report>
             </td>
             <td class="whitespace-nowrap px-4 py-3.5 font-mono text-xs text-faint">Q-{{ item.queue_id }}</td>
             <td class="whitespace-nowrap px-4 py-3.5 text-right">

@@ -3,18 +3,38 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AsyncPipe, NgClass, NgForOf, NgIf } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { catchError, forkJoin, map, Observable, of, Subscription, switchMap } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  combineLatest,
+  forkJoin,
+  map,
+  Observable,
+  of,
+  shareReplay,
+  startWith,
+  Subscription,
+  switchMap
+} from 'rxjs';
 
 import { Job } from '@app/job/model/Job';
-import { Queue } from '@app/queue/model/queue';
+import { Queue, queueJobRollup } from '@app/queue/model/queue';
 import { Behavior } from '@app/behavior/behavior';
 import { BehaviorService, JobService, QueueService } from '@app/entity/service';
 import { JobFieldSchema, JobTypeSchema, JOB_TYPE_OPTIONS, JOB_TYPE_SCHEMAS } from '@app/enum/job-type-schema';
-import { normalizeStatus, QueueStatusEnum } from '@app/queue/status/status.enum';
+import { QueueStatusEnum, statusOrUnknown, UNKNOWN_STATUS } from '@app/queue/status/status.enum';
 import { StatusComponent } from '@app/queue/status/status.component';
 import { fadeIn } from '@shared/animation/trigger';
+import { anyRunning, isRunningStatus, livenessOn$, livenessTicks } from '@shared/model/liveness';
+import { RunAlarm, RunAlarmState, RunTransitionWatcher } from '@shared/model/run-transition';
 import { LoadingSpinnerComponent } from '@shared/overlay/loading-spinner/loading-spinner.component';
+import { NotificationComponent } from '@shared/overlay/notification/notification.component';
+import { VisibilityService } from '@shared/service/visibility.service';
 import { JobBehavioursComponent } from '../job-behaviours/job-behaviours.component';
+import { DecisionBadgeComponent } from '@app/job/decision/decision-badge.component';
+import { DecisionReportComponent } from '@app/job/decision/decision-report.component';
+import { decisionBadgeKind, hasDecisionReport, isDecisionJobType } from '@app/job/model/decision';
+import { JobDiagnosticsComponent } from '@app/job/diagnostics/job-diagnostics.component';
 
 /** Terminal-state tally over a run's jobs, computed from the jobs this screen already holds. */
 export interface JobOutcomeCounts {
@@ -24,6 +44,35 @@ export interface JobOutcomeCounts {
   failed: number;
   skipped: number;
   running: number;
+  /**
+   * Jobs whose `status_code` is present but is none of the five canonical values (nor a
+   * known legacy alias). The API validates nothing on that field, so this is reachable.
+   *
+   * Before this bucket existed such a job fell through the `switch` into nothing while
+   * still counting towards `total`, so the tally quietly disagreed with itself — "3
+   * succeeded" out of a total of 4, with the fourth job's state never mentioned. The
+   * contract's rule is that unknown is unknown: it must be shown, not dropped and not
+   * folded into a benign bucket.
+   *
+   * A job with **no** `status_code` at all is a different thing — a step that has not run
+   * yet, which is the normal state of every job in a run being composed — and is
+   * deliberately not counted here. Turning "not started" into "unknown" would paint every
+   * freshly-authored run with a warning it has not earned.
+   */
+  unknown: number;
+  /**
+   * Jobs whose decision `degraded` — a requested filter did not apply. Counted off the
+   * verdict columns, **not** off `status_code`, because they answer different questions:
+   * a job can be `success` and still have lost its treatment.
+   */
+  decisionDegraded: number;
+  /**
+   * Jobs whose bot was treated and produced control-arm data. The alarm.
+   *
+   * Only positives are counted. A zero here is not a clean bill of health — the columns
+   * are nullable, so it also covers "no verdict was ever recorded".
+   */
+  treatmentLost: number;
 }
 
 /**
@@ -46,7 +95,11 @@ export interface JobOutcomeCounts {
     TranslateModule,
     LoadingSpinnerComponent,
     JobBehavioursComponent,
-    StatusComponent
+    StatusComponent,
+    DecisionBadgeComponent,
+    DecisionReportComponent,
+    JobDiagnosticsComponent,
+    NotificationComponent
   ],
   animations: [fadeIn]
 })
@@ -54,6 +107,24 @@ export class RunComposerComponent implements OnInit, OnDestroy {
   run$!: Observable<Queue | undefined>;
   jobs$!: Observable<Job[]>;
   isLoading$ = this.jobService.loading$;
+
+  /**
+   * True while this run (or one of its jobs) is running: what {@link livenessTicks} polls
+   * on. Also drives the small "live" marker, so the refresh is visible rather than
+   * mysterious.
+   */
+  active$!: Observable<boolean>;
+  /** True while polling is actually happening — running **and** the tab is visible. */
+  live$!: Observable<boolean>;
+
+  /**
+   * The last alarm this screen raised, or null. Rendered as a toast.
+   *
+   * One at a time: two alarms in the same tick means the run both failed and lost its
+   * treatment, and {@link RunTransitionWatcher} orders treatment loss first because that
+   * is the one a status column cannot tell you.
+   */
+  alarm: RunAlarm | null = null;
 
   /** Live, order-sorted snapshot of this run's jobs — drives ordering math. */
   jobs: Job[] = [];
@@ -63,7 +134,17 @@ export class RunComposerComponent implements OnInit, OnDestroy {
    * fail", and until 2026-08-27 it showed no job status and no error text at all — so the
    * one job that degraded or failed inside an otherwise green run was invisible here.
    */
-  counts: JobOutcomeCounts = { total: 0, succeeded: 0, warning: 0, failed: 0, skipped: 0, running: 0 };
+  counts: JobOutcomeCounts = {
+    total: 0,
+    succeeded: 0,
+    warning: 0,
+    failed: 0,
+    skipped: 0,
+    running: 0,
+    unknown: 0,
+    decisionDegraded: 0,
+    treatmentLost: 0
+  };
 
   experimentId!: number;
   botId!: number;
@@ -80,13 +161,23 @@ export class RunComposerComponent implements OnInit, OnDestroy {
 
   private subscriptions = new Subscription();
 
+  /**
+   * Drives a re-read of the run and its jobs. Every poll tick pushes here rather than
+   * calling the services directly, so the template's `run$` — which is what actually
+   * renders the status pill — is refreshed by the same mechanism.
+   */
+  private readonly refresh$ = new BehaviorSubject<number>(0);
+  private refreshCount = 0;
+  private readonly transitions = new RunTransitionWatcher();
+
   constructor(
     private route: ActivatedRoute,
     public router: Router,
     private fb: FormBuilder,
     private jobService: JobService,
     private behaviorService: BehaviorService,
-    private queueService: QueueService
+    private queueService: QueueService,
+    private visibility: VisibilityService
   ) {
     this.addForm = this.fb.group({
       name: [null, [Validators.required]],
@@ -96,14 +187,31 @@ export class RunComposerComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.run$ = this.route.paramMap.pipe(
-      switchMap((params) => {
+    // `refresh$` is part of the source so a poll tick re-reads the run itself, not only
+    // its jobs: a run that finished while this screen was open must stop saying "Running".
+    // `shareReplay` because three consumers (the template, the liveness gate and the
+    // transition watcher) read this stream and each subscription would otherwise be its
+    // own GET.
+    this.run$ = combineLatest([this.route.paramMap, this.refresh$]).pipe(
+      switchMap(([params]) => {
         this.experimentId = Number(params.get('id'));
         this.botId = Number(params.get('botId'));
-        this.runId = Number(params.get('runId'));
+        const runId = Number(params.get('runId'));
+        if (runId !== this.runId) {
+          // A different run: its predecessor's alarm history says nothing about this one.
+          this.runId = runId;
+          this.transitions.reset();
+          this.alarm = null;
+        }
         this.loadJobs();
-        return this.queueService.getByKey(this.runId);
-      })
+        // A failed read must not kill the stream: `switchMap` would propagate the error to
+        // every consumer, and the poll, the transition watcher and the template would all
+        // stop for good after one transient 500. An unreadable run is "no run yet" — the
+        // same thing the screen shows before the first response — and the next tick tries
+        // again.
+        return this.queueService.getByKey(this.runId).pipe(catchError(() => of(undefined)));
+      }),
+      shareReplay({ bufferSize: 1, refCount: true })
     );
 
     this.jobs$ = this.jobService.entities$.pipe(
@@ -115,6 +223,64 @@ export class RunComposerComponent implements OnInit, OnDestroy {
         this.counts = this.tally(jobs);
       })
     );
+
+    // `startWith(undefined)` so the gate has an answer before the run has loaded; a job
+    // list that already shows a running job is reason enough to poll.
+    this.active$ = combineLatest([this.run$.pipe(startWith(undefined)), this.jobs$]).pipe(
+      map(([run, jobs]) => isRunningStatus(run?.status_code) || anyRunning(jobs)),
+      shareReplay({ bufferSize: 1, refCount: true })
+    );
+    this.live$ = livenessOn$(this.active$, this.visibility.visible$);
+
+    this.subscriptions.add(
+      livenessTicks(this.active$, this.visibility.visible$).subscribe(() => this.refresh$.next(++this.refreshCount))
+    );
+
+    // Transition, not state: this screen re-reads the same run every 15 s, so anything
+    // keyed on "is bad" would put the same toast up four times a minute.
+    this.subscriptions.add(
+      combineLatest([this.run$, this.jobs$]).subscribe(([run, jobs]) => {
+        if (!run) return;
+        const raised = this.transitions.observeState(
+          Number(run.id),
+          (run.name ?? '').toString(),
+          this.alarmState(run, jobs)
+        );
+        if (raised.length) this.alarm = raised[0];
+      })
+    );
+  }
+
+  /**
+   * The two alarm predicates for this run, right now.
+   *
+   * `treatmentLost` is taken from the run's rollup **or** from the jobs on screen: this
+   * screen holds the jobs themselves, and their verdicts are the same evidence the
+   * server's `jobs_treatment_lost_count` is counted from — but the run object arrives
+   * from a different endpoint that may not carry the count at all. Either source saying
+   * "lost" is enough; neither saying anything is unknown, and unknown never alarms.
+   */
+  private alarmState(run: Queue, jobs: Job[]): RunAlarmState {
+    const lostJobs = jobs.filter((job) => decisionBadgeKind(job) === 'lost').length;
+    return {
+      failure: statusOrUnknown(run.status_code) === QueueStatusEnum.FAILURE,
+      treatmentLost: (queueJobRollup(run, 'treatmentLost') ?? 0) > 0 || lostJobs > 0
+    };
+  }
+
+  /** Dismiss the toast. The run keeps its state; only the interruption goes away. */
+  dismissAlarm(): void {
+    this.alarm = null;
+  }
+
+  /** Body text key for the toast, by alarm kind. */
+  get alarmBodyKey(): string {
+    return this.alarm?.kind === 'treatmentLost' ? 'runAlarm.treatmentLostBody' : 'runAlarm.failureBody';
+  }
+
+  /** Title key for the toast, by alarm kind. */
+  get alarmTitleKey(): string {
+    return this.alarm?.kind === 'treatmentLost' ? 'runAlarm.treatmentLostTitle' : 'runAlarm.failureTitle';
   }
 
   private loadJobs(): void {
@@ -128,10 +294,24 @@ export class RunComposerComponent implements OnInit, OnDestroy {
       warning: 0,
       failed: 0,
       skipped: 0,
-      running: 0
+      running: 0,
+      unknown: 0,
+      decisionDegraded: 0,
+      treatmentLost: 0
     };
     for (const job of jobs) {
-      switch (normalizeStatus(job.status_code)) {
+      // The verdict is tallied independently of the status: a treatment can be lost on a
+      // job that reported `success`, and counting it inside the status switch would make
+      // the two mutually exclusive when they are orthogonal.
+      const badge = decisionBadgeKind(job);
+      if (badge === 'lost') counts.treatmentLost++;
+      else if (badge === 'degraded') counts.decisionDegraded++;
+
+      // Absent is "has not run yet", not "unknown"; only a job that reported *something*
+      // can report something we do not understand.
+      const raw = (job.status_code ?? '').toString().trim();
+      if (!raw) continue;
+      switch (statusOrUnknown(raw)) {
         case QueueStatusEnum.SUCCESS:
           counts.succeeded++;
           break;
@@ -147,17 +327,24 @@ export class RunComposerComponent implements OnInit, OnDestroy {
         case QueueStatusEnum.RUNNING:
           counts.running++;
           break;
+        case UNKNOWN_STATUS:
         default:
+          counts.unknown++;
           break;
       }
     }
     return counts;
   }
 
+  /** Whether to offer the decision-report expander for this job (see job index). */
+  showsDecision(job: Job): boolean {
+    return hasDecisionReport(job) || isDecisionJobType(job.type);
+  }
+
   /** True once any job has reported a terminal or running state worth showing. */
   get hasJobOutcomes(): boolean {
     const c = this.counts;
-    return c.succeeded + c.warning + c.failed + c.skipped + c.running > 0;
+    return c.succeeded + c.warning + c.failed + c.skipped + c.running + c.unknown > 0;
   }
 
   /** The runner's diagnostic for a job, or '' (never the literal 'null'). */
@@ -291,9 +478,7 @@ export class RunComposerComponent implements OnInit, OnDestroy {
    * unlike swapping raw order values. Reloads afterwards so the shown sequence matches the server.
    */
   private persistOrder(orderedJobs: Job[]): void {
-    const changed = orderedJobs
-      .map((job, i) => ({ job, order: i + 1 }))
-      .filter((x) => x.job.order !== x.order);
+    const changed = orderedJobs.map((job, i) => ({ job, order: i + 1 })).filter((x) => x.job.order !== x.order);
     if (!changed.length) return;
     this.subscriptions.add(
       forkJoin(

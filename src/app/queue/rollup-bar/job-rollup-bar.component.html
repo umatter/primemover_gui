@@ -1,0 +1,22 @@
+<!-- No rollup at all: an older API sends none, and a bar of zeros would read as "nothing
+     went wrong" rather than "nobody counted". -->
+<span *ngIf="!breakdown.reported" [attr.title]="summary" class="text-xs text-faint">
+  {{ 'queue.rollup.none' | translate }}
+</span>
+
+<div
+  *ngIf="breakdown.reported"
+  [attr.aria-label]="summary"
+  [attr.title]="summary"
+  class="flex h-2 w-full min-w-[6rem] overflow-hidden rounded-full bg-surface-2"
+  data-rollup-bar
+  role="img"
+>
+  <!-- min-w keeps a single failed job among two hundred visible rather than sub-pixel. -->
+  <span
+    *ngFor="let segment of drawn"
+    [attr.data-segment]="segment.kind"
+    [class]="segmentClass(segment.kind) + ' block h-full min-w-[2px]'"
+    [style.width.%]="segment.percent"
+  ></span>
+</div>

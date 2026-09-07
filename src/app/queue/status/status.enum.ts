@@ -56,3 +56,76 @@ export function normalizeStatus(code: string | number | null | undefined): strin
   const text = (code ?? '').toString().trim().toLowerCase();
   return STATUS_ALIASES[text] ?? text;
 }
+
+/**
+ * The five canonical `status_code` values, as a union usable in a type position.
+ *
+ * Mirrors {@link QueueStatusEnum} — the template literal keeps them provably in step, so
+ * adding a member to the enum widens this union rather than letting the two drift.
+ */
+export type CanonicalStatusCode = `${QueueStatusEnum}`;
+
+/**
+ * A `status_code` as it actually arrives on the wire.
+ *
+ * The five canonical values, plus *any other string* — deliberately, because the API does
+ * not validate the field (`RunnerJobUpdateRequest` marks it `nullable` with no `in:` rule),
+ * legacy rows really do hold `failed` and `skpped`, and a future runner can invent a sixth
+ * value tomorrow. `(string & {})` keeps editor completion on the five while still typing
+ * the reality; narrowing this to `CanonicalStatusCode` would be a lie that turns every
+ * unrecognised value into a compile error instead of an "Unknown" pill.
+ */
+export type StatusCode = CanonicalStatusCode | (string & {});
+
+/** What a status resolves to when it is neither canonical nor a known alias. */
+export const UNKNOWN_STATUS = 'unknown';
+
+/** A canonical code, or the explicit `'unknown'` sentinel. Never an arbitrary string. */
+export type StatusOrUnknown = CanonicalStatusCode | typeof UNKNOWN_STATUS;
+
+/**
+ * Is an **already-normalised** code one of the five canonical values?
+ *
+ * The one place the membership test lives, so {@link isCanonicalStatus} and
+ * {@link statusOrUnknown} cannot drift apart — they answer the same question and used to
+ * carry two copies of the answer.
+ */
+function isCanonicalCode(canonical: string): boolean {
+  return (Object.values(QueueStatusEnum) as string[]).includes(canonical);
+}
+
+/** True when `code` normalises onto one of the five canonical values. */
+export function isCanonicalStatus(code: StatusCode | number | null | undefined): boolean {
+  return isCanonicalCode(normalizeStatus(code));
+}
+
+/**
+ * Canonical code, or `'unknown'` — the form to switch on.
+ *
+ * `normalizeStatus` returns unrecognised input verbatim, which is right for rendering but
+ * wrong for control flow: a `switch` over it needs a `default`, and a `default` is exactly
+ * where an unrecognised status gets silently dropped into no bucket (or, worse, into a
+ * benign one). Switching over this instead makes the fall-through explicit and typed:
+ * every unrecognised value — and only an unrecognised value — arrives as `UNKNOWN_STATUS`.
+ *
+ * An **absent** status (null, undefined, '') is a different question from an
+ * unrecognised one — "not reported yet" versus "reported something we do not
+ * understand" — and this function does not answer it: it maps both onto
+ * `'unknown'`. Callers that care (a run with no `status_code` may simply be scheduled)
+ * must test for absence *before* calling.
+ */
+export function statusOrUnknown(code: StatusCode | number | null | undefined): StatusOrUnknown {
+  const canonical = normalizeStatus(code);
+  return isCanonicalCode(canonical) ? (canonical as CanonicalStatusCode) : UNKNOWN_STATUS;
+}
+
+/**
+ * "A human should look at this": `failure OR warning`, the contract's `is_bad`.
+ *
+ * Never `failure` alone — using that predicate is what hid silent treatment-arm
+ * degradation, which is the whole reason `warning` exists.
+ */
+export function isBadStatus(code: StatusCode | number | null | undefined): boolean {
+  const canonical = statusOrUnknown(code);
+  return canonical === QueueStatusEnum.FAILURE || canonical === QueueStatusEnum.WARNING;
+}

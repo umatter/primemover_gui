@@ -105,13 +105,15 @@
         </p>
       </button>
 
+      <!-- Health: whether this study needs attention, without opening it. Neutral grey
+           against an API that reports neither `runs_bad_count` nor `/health` -- absence of
+           evidence is never rendered as evidence of health. -->
+      <app-health-strip class="mt-3 block" [experiment]="item"></app-health-strip>
+
       <div class="mt-4 flex items-center justify-between border-t border-line pt-3.5">
         <div class="min-w-0">
           <p class="truncate text-xs text-faint">
             <span class="text-muted">{{ item.contact }}</span>
-          </p>
-          <p class="mt-0.5 text-xs text-faint">
-            {{ 'projects.updated' | translate }} · {{ item.updated_at | date: 'dd MMM yyyy' }}
           </p>
         </div>
 
