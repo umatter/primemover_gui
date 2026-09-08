@@ -32,6 +32,7 @@ describe('BotDetailComponent (Slice B — run status)', () => {
             loading$: of(false),
             getWithQuery: () => {},
             clearCache: () => {},
+            cancel: () => {},
             errors$: EMPTY
           }
         },
@@ -224,6 +225,7 @@ describe('BotDetailComponent (Slice B — run status)', () => {
               loading$: of(false),
               getWithQuery: () => {},
               clearCache: () => {},
+              cancel: () => {},
               errors$: EMPTY
             }
           },
@@ -345,6 +347,7 @@ describe('BotDetailComponent (Slice B — run status)', () => {
               loading$: of(false),
               getWithQuery: () => {},
               clearCache: () => {},
+              cancel: () => {},
               errors$: EMPTY
             }
           },
@@ -460,22 +463,24 @@ describe('BotDetailComponent (Slice B — run status)', () => {
 describe('BotDetailComponent (Phase 2 — the run status chips)', () => {
   let getWithQuery: jasmine.Spy;
   let clearCache: jasmine.Spy;
+  let cancel: jasmine.Spy;
   let errors$: Subject<unknown>;
 
-  const boot = (runs: unknown[]): ComponentFixture<BotDetailComponent> => {
+  const boot = (runs: unknown[], bot: Record<string, unknown> = {}): ComponentFixture<BotDetailComponent> => {
     TestBed.resetTestingModule();
     getWithQuery = jasmine.createSpy('getWithQuery');
     clearCache = jasmine.createSpy('clearCache');
+    cancel = jasmine.createSpy('cancel');
     errors$ = new Subject<unknown>();
 
     TestBed.configureTestingModule({
       imports: [BotDetailComponent, TranslateModule.forRoot(), NoopAnimationsModule],
       providers: [
         provideRouter([]),
-        { provide: CrawlerService, useValue: { getByKey: () => of({ id: 1, name: 'Bot' }) } },
+        { provide: CrawlerService, useValue: { getByKey: () => of({ id: 1, name: 'Bot', ...bot }) } },
         {
           provide: QueueService,
-          useValue: { entities$: of(runs), loading$: of(false), getWithQuery, clearCache, errors$: errors$ }
+          useValue: { entities$: of(runs), loading$: of(false), getWithQuery, clearCache, cancel, errors$: errors$ }
         },
         { provide: ActivatedRoute, useValue: { paramMap: of({ get: () => '1' }) } }
       ]
@@ -601,6 +606,157 @@ describe('BotDetailComponent (Phase 2 — the run status chips)', () => {
     expect(el.textContent).toContain('workspace.botDetail.noRuns.title');
     expect(el.textContent).not.toContain('statusFilter.empty.title');
   });
+  /**
+   * Phase 2 against Phase 5 — the interaction the change set shipped without noticing.
+   *
+   * `filter[bad]` matches failure|warning, so a `running` run cannot survive it. With the
+   * one-shot default in force the list is therefore never able to contain a running run,
+   * `anyRunning()` is false by construction, the 15 s poll never opens, and bot detail
+   * goes back to being the frozen snapshot Phase 5 was written to end — while the reader
+   * has not touched a control.
+   */
+  describe('the one-shot default against the liveness gate', () => {
+    it('defers while a run is still going, so the poll can start', () => {
+      const f = boot([
+        { id: 1, crawler_id: 1, name: 'Failed earlier', status_code: 'failure' },
+        { id: 2, crawler_id: 1, name: 'In flight', status_code: 'running' }
+      ]);
+
+      expect(f.componentInstance.statusFilter)
+        .withContext('narrowing to filter[bad] would drop the running run and close the poll gate')
+        .toBe('all');
+      expect(lastQuery()['filter[bad]']).toBeUndefined();
+
+      let live = false;
+      const sub = f.componentInstance.active$.subscribe((on) => (live = on));
+      expect(live).withContext('the run that is actually running is still in the list').toBeTrue();
+      sub.unsubscribe();
+    });
+
+    it('still fires once the last run has finished — deferred, not skipped', () => {
+      const runs$ = new BehaviorSubject<Queue[]>([
+        { id: 1, crawler_id: 1, name: 'In flight', status_code: 'running' } as Queue
+      ]);
+      TestBed.resetTestingModule();
+      getWithQuery = jasmine.createSpy('getWithQuery');
+      TestBed.configureTestingModule({
+        imports: [BotDetailComponent, TranslateModule.forRoot(), NoopAnimationsModule],
+        providers: [
+          provideRouter([]),
+          { provide: CrawlerService, useValue: { getByKey: () => of({ id: 1, name: 'Bot' }) } },
+          {
+            provide: QueueService,
+            useValue: {
+              entities$: runs$,
+              loading$: of(false),
+              getWithQuery,
+              clearCache: () => {},
+              cancel: () => {},
+              errors$: EMPTY
+            }
+          },
+          { provide: ActivatedRoute, useValue: { paramMap: of({ get: () => '1' }) } }
+        ]
+      });
+      const f = TestBed.createComponent(BotDetailComponent);
+      f.componentInstance.experimentId = 1;
+      f.componentInstance.botId = 1;
+      f.detectChanges();
+      expect(f.componentInstance.statusFilter).toBe('all');
+
+      runs$.next([{ id: 1, crawler_id: 1, name: 'In flight', status_code: 'failure' } as Queue]);
+      f.detectChanges();
+
+      expect(f.componentInstance.statusFilter).toBe('bad');
+      // ...and the toast still fired on that same emission: the narrowing must not eat the
+      // transition that caused it.
+      expect(f.componentInstance.alarm?.kind).toBe('failure');
+      f.destroy();
+    });
+
+    it('shows a run the user just created by dropping back to "All"', () => {
+      // A new run arrives with status_code NULL, so any chip but "All" excludes it — and
+      // the automatic one is a chip the user never chose.
+      const f = boot([{ id: 2, crawler_id: 1, name: 'Degraded', status_code: 'warning' }]);
+      expect(f.componentInstance.statusFilter).toBe('bad');
+
+      f.componentInstance.onRunCreated();
+
+      expect(f.componentInstance.statusFilter).toBe('all');
+      expect(lastQuery()['filter[bad]']).toBeUndefined();
+    });
+  });
+
+  /**
+   * Phase 5's other collision with the chip: the bot-level treatment-loss alarm.
+   *
+   * `filter[bad]` is a `status_code` predicate and a treatment-lost run is routinely
+   * `success` with every job `success` — the API's own docblock says so. Reducing the
+   * banner over the filtered list therefore zeroed the one alarm the change set exists to
+   * raise, on the very screen the automatic "Needs attention" filter had just opened.
+   */
+  describe('the treatment-loss alarm against the status filter', () => {
+    const banner = (f: ComponentFixture<BotDetailComponent>): HTMLElement | null =>
+      f.nativeElement.querySelector('[data-testid="bot-treatment-lost"]');
+
+    it('survives a filter that hides the run that lost the treatment', () => {
+      // What the server returns under filter[bad]: only the failed run. The success run
+      // carrying 40 lost-treatment jobs is not in the response at all.
+      const f = boot([{ id: 1, crawler_id: 1, name: 'Failed', status_code: 'failure' }], {
+        latest_queues_treatment_lost: 1
+      });
+      f.detectChanges();
+
+      expect(f.componentInstance.statusFilter).toBe('bad');
+      expect(banner(f)).withContext('the alarm must not be reducible away by a view filter').not.toBeNull();
+      expect(banner(f)!.textContent).toContain('decision.alarm.runsUnlisted');
+    });
+
+    it('says nothing when the API reports no treatment loss for this bot', () => {
+      const f = boot([{ id: 1, crawler_id: 1, name: 'Failed', status_code: 'failure' }], {
+        latest_queues_treatment_lost: 0
+      });
+      f.detectChanges();
+
+      expect(banner(f)).toBeNull();
+    });
+
+    it('says nothing at all when the API never reported the count — absent is unknown', () => {
+      const f = boot([{ id: 1, crawler_id: 1, name: 'Failed', status_code: 'failure' }]);
+      f.detectChanges();
+
+      expect(banner(f)).toBeNull();
+    });
+
+    it('names the jobs when the list is showing every run that lost one', () => {
+      const f = boot(
+        [{ id: 1, crawler_id: 1, name: 'Green but void', status_code: 'success', jobs_treatment_lost_count: 40 }],
+        { latest_queues_treatment_lost: 1 }
+      );
+      f.detectChanges();
+
+      expect(banner(f)!.textContent).toContain('decision.alarm.runs');
+      expect(banner(f)!.textContent).not.toContain('decision.alarm.runsUnlisted');
+    });
+  });
+
+  /**
+   * The chip fires a server-side query per change, and `clearCache()` only defends the
+   * sequential case. Two chips a few hundred milliseconds apart leave two requests live and
+   * ngrx/data merges both results, so the list becomes the union while the chip claims one
+   * filter.
+   */
+  it('cancels the run query the previous chip issued', () => {
+    const f = boot([{ id: 1, crawler_id: 1, name: 'Fine', status_code: 'success' }]);
+    f.componentInstance.onStatusFilter('failure');
+    const superseded = (getWithQuery.calls.mostRecent().args[1] as { correlationId: unknown }).correlationId;
+
+    f.componentInstance.onStatusFilter('warning');
+
+    expect(superseded).toBeTruthy();
+    expect(cancel).toHaveBeenCalledWith(superseded, jasmine.any(String));
+  });
+
   describe('against an API that does not know filter[bad] yet', () => {
     const queryFailed = (): void => {
       errors$.next({ payload: { entityOp: EntityOp.QUERY_MANY_ERROR } });
@@ -678,7 +834,14 @@ describe('BotDetailComponent (Phase 5 — liveness and transition alarms)', () =
         { provide: CrawlerService, useValue: { getByKey: () => of({ id: 1, name: 'Bot' }) } },
         {
           provide: QueueService,
-          useValue: { entities$, loading$: of(false), getWithQuery, clearCache: () => {}, errors$: EMPTY }
+          useValue: {
+            entities$,
+            loading$: of(false),
+            getWithQuery,
+            clearCache: () => {},
+            cancel: () => {},
+            errors$: EMPTY
+          }
         },
         { provide: ActivatedRoute, useValue: { paramMap: of({ get: () => '1' }) } },
         { provide: VisibilityService, useValue: { visible$ } }

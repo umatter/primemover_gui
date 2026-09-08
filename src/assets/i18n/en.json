@@ -51,7 +51,8 @@
       "running": "Running",
       "succeeded": "Succeeded",
       "warning": "Degraded",
-      "failed": "Failed"
+      "failed": "Failed",
+      "unknown": "Unknown"
     },
     "nextStep": {
       "title": "Finish setting up your experiment",
@@ -76,7 +77,7 @@
         "body": "A bot is one simulated user. Add a bot to define who browses the platform and how."
       },
       "profile": "Profile",
-      "runCounts": "{{total}} runs in the last 24 h · {{succeeded}} succeeded · {{warning}} reported warning · {{degraded}} with degraded jobs · {{failed}} failed · {{inProgress}} still going · {{treatmentLost}} treatment lost"
+      "runCounts": "{{total}} runs in the last 24 h · {{succeeded}} succeeded · {{warning}} reported warning · {{degraded}} with degraded jobs · {{failed}} failed · {{inProgress}} unaccounted for (still going, skipped or unrecognised) · {{treatmentLost}} treatment lost"
     },
     "addBotPanel": {
       "title": "Add a bot",
@@ -157,7 +158,9 @@
       "addError": "Couldn't add the job. Please try again.",
       "degradedNotice": "Some jobs finished but degraded — their data was not written, or a filter this bot requested could not be applied. (A video picked at random is normal for a control bot; it is a problem only when a treatment was requested and did not take effect.) Check those jobs before using this run's data.",
       "tallyHint": "Counted from the jobs below. The run's own status above is what the runner reported.",
-      "unknownHint": "The API reported a status this app does not recognise. Not a success — check the job."
+      "unknownHint": "The API reported a status this app does not recognise. Not a success — check the job.",
+      "partialTally": "showing {{shown}} of {{total}} jobs",
+      "partialTallyHint": "This page loaded the first jobs of the run only. The alarm figures above come from the API’s count over the whole run; the tally beside them counts the jobs on screen."
     },
     "behaviours": {
       "title": "Behaviours",
@@ -576,7 +579,8 @@
       "runs": "Treatment lost in {{runs}} run(s), {{jobs}} job(s).",
       "botRuns": "{{count}} treatment lost",
       "experiment": "Treatment lost in {{count}} run(s) in this window.",
-      "hint": "Those sessions produced control-arm data although a treatment was configured, so their observations carry no treatment signal."
+      "hint": "Those sessions produced control-arm data although a treatment was configured, so their observations carry no treatment signal.",
+      "runsUnlisted": "Treatment lost in {{runs}} run(s) of this bot in the last 24 h — not all of them are accounted for in the list below."
     }
   },
   "statusFilter": {
@@ -625,7 +629,13 @@
       "unknownRuns": "{{unknown}} runs with an unrecognised status",
       "noData": "No health data",
       "checking": "Checking…",
-      "lastRun": "Last run finished"
+      "lastRun": "Last run finished",
+      "jobsAttention": "{{badJobs}} of {{totalJobs}} jobs need attention",
+      "jobsAttentionHint": "Jobs the contract calls bad: failed or completed-but-degraded. A run can report success while the jobs inside it did not.",
+      "running": "{{running}} of {{total}} runs still running",
+      "cleanWithSkipped": "{{success}} of {{total}} runs completed cleanly · {{skipped}} skipped",
+      "unknownJobs": "{{unknownJobs}} jobs with an unrecognised status",
+      "unaccountedRuns": "{{unaccounted}} of {{total}} runs unaccounted for"
     }
   },
   "statusMessage": {

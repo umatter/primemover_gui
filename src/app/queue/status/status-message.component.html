@@ -30,15 +30,28 @@
     {{ (expanded ? 'statusMessage.collapse' : 'statusMessage.expand') | translate }}
   </button>
 
+  <!-- No `aria-label` here on purpose. It used to be pinned to "Copy the full message",
+       which overrides the element's own text for the accessible name — so the label that
+       actually changes ("Copied", and more to the point "Copy failed") was never announced,
+       and the button was a WCAG 2.5.3 label-in-name mismatch the moment it said "Copied".
+       The visible text is the accessible name; the longer wording is the hover hint. -->
   <button
     (click)="copy($event)"
-    [attr.aria-label]="'statusMessage.copyFull' | translate"
+    [attr.title]="'statusMessage.copyFull' | translate"
     class="inline-flex flex-shrink-0 items-center rounded border border-line px-1.5 py-0.5 text-[11px] font-medium text-muted transition hover:bg-surface-2 hover:text-ink focus:outline-none focus:ring-2 focus:ring-brand/30"
     data-testid="status-message-copy"
     type="button"
   >
     {{ copyLabelKey | translate }}
   </button>
+
+  <!-- A renamed button is a name change, not an event: a screen reader on the lab box (an
+       insecure origin, where both copy paths can be refused) would otherwise be told
+       nothing at all about a copy that did not happen. Empty at rest so the region has
+       nothing to announce until there is something to say. -->
+  <span aria-live="polite" class="sr-only" data-testid="status-message-copy-status" role="status">{{
+    copyOutcomeKey ? (copyOutcomeKey | translate) : ''
+  }}</span>
 
   <!-- The remainder, expanded in place. Nothing here is truncated, and `pre-wrap` keeps
        the runner's own `;` separators readable across a wrapped line. -->

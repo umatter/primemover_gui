@@ -57,14 +57,35 @@
        A lost treatment is not "a run went a bit wrong" — those runs finished, often
        green, and produced control-arm data while configured to be treated, so their
        observations cannot answer the question the experiment asks. Positive counts only:
-       the source column is nullable, so a zero would assert something nobody measured. -->
+       the source column is nullable, so a zero would assert something nobody measured.
+
+       Counted from a source the status chip cannot narrow (see TreatmentLostSummary): a
+       treatment-lost run is routinely `success`, so the "Needs attention" filter this
+       screen opens on would otherwise hide the one run the banner exists for. When the
+       list below is not showing all of them, the wording says so rather than quoting a job
+       count that covers only the visible ones. -->
   <ng-container *ngIf="treatmentLost$ | async as lost">
     <p
       *ngIf="lost.runs"
       class="animate-fade-up mt-8 rounded-xl border border-danger/40 bg-danger-tint px-4 py-3 text-sm font-semibold text-danger"
+      data-testid="bot-treatment-lost"
       role="alert"
     >
-      {{ 'decision.alarm.runs' | translate: { runs: lost.runs, jobs: lost.jobs } }}
+      <ng-container *ngIf="treatmentLostFullyListed(lost)">
+        {{ 'decision.alarm.runs' | translate: { runs: lost.runs, jobs: lost.jobs } }}
+      </ng-container>
+      <ng-container *ngIf="!treatmentLostFullyListed(lost)">
+        {{ 'decision.alarm.runsUnlisted' | translate: { runs: lost.runs } }}
+        <button
+          *ngIf="statusFilter !== 'all'"
+          (click)="onStatusFilter('all')"
+          class="ml-1 underline decoration-dotted underline-offset-2 hover:no-underline"
+          data-testid="bot-treatment-lost-showall"
+          type="button"
+        >
+          {{ 'statusFilter.empty.showAll' | translate }}
+        </button>
+      </ng-container>
       <span class="mt-0.5 block font-normal">{{ 'decision.alarm.hint' | translate }}</span>
     </p>
   </ng-container>

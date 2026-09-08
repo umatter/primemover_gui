@@ -16,9 +16,16 @@ import { StatusFilterKey, STATUS_FILTER_OPTIONS, StatusFilterOption } from '@sha
  * **Keyboard.** This is a radio group, not seven independent toggles: exactly one is
  * active and the choices are mutually exclusive, so it implements the ARIA radiogroup
  * pattern — roving tabindex (one Tab stop for the whole group), arrow keys to move between
- * chips, Home/End to jump to the ends, and Space/Enter from the native `<button>`. Moving
- * with an arrow key also selects, which is the pattern's behaviour and the right one here:
- * every chip is a cheap, reversible view change.
+ * chips, Home/End to jump to the ends, Space/Enter to commit.
+ *
+ * **Arrow keys move focus and do NOT select.** That is the ARIA APG's explicit variant for
+ * a radio group whose selection has a significant side effect, and this one does: every
+ * chip is a server-side re-query. Selection-follows-focus made the last chip unreachable
+ * without firing every filter in between — six queries whose responses ngrx/data *merges*
+ * into one shared collection, so the list ended up as the union of every filter the user
+ * passed through while the chip claimed a single narrow one. A "Success" chip over a table
+ * of failures is not a slow screen, it is a wrong one. Committing on Space/Enter costs one
+ * keystroke and makes the traversal free.
  */
 @Component({
   selector: 'app-status-filter',
@@ -40,23 +47,41 @@ export class StatusFilterComponent {
   @ViewChildren('chip') private chips!: QueryList<ElementRef<HTMLButtonElement>>;
 
   /**
+   * Where the keyboard currently is, when that is somewhere other than the active chip.
+   *
+   * The roving tabindex has to follow *focus*, not selection, once the two can differ: a
+   * reader who arrows to "Failure" and then Tabs away and back must land on "Failure", not
+   * be sent back to whatever is still selected.
+   */
+  private focusedIndex: number | null = null;
+
+  /**
    * Which chip carries the group's single Tab stop.
    *
-   * Falls back to the first chip when `selected` names nothing in the list, so an
-   * unexpected value cannot leave the whole group unreachable from the keyboard.
+   * The chip the keyboard is on, if it has been moved; otherwise the active one. Falls back
+   * to the first chip when `selected` names nothing in the list, so an unexpected value
+   * cannot leave the whole group unreachable from the keyboard.
    */
   isTabStop(option: StatusFilterOption, index: number): boolean {
+    if (this.focusedIndex !== null) return index === this.focusedIndex;
     const active = this.options.some((candidate) => candidate.key === this.selected);
     return active ? option.key === this.selected : index === 0;
   }
 
   select(key: StatusFilterKey): void {
+    // Committing puts the Tab stop back on the selection: focus and selection agree again.
+    this.focusedIndex = null;
     if (key === this.selected) return;
     this.selected = key;
     this.selectedChange.emit(key);
   }
 
-  /** Arrow/Home/End navigation over the group, wrapping at both ends. */
+  /**
+   * Arrow/Home/End move focus, wrapping at both ends; Space/Enter commit.
+   *
+   * The split is the fix for the racing-query bug: arrowing past four chips to reach the
+   * fifth used to emit five selections and fire five uncancelled list queries.
+   */
   onKeydown(event: KeyboardEvent, index: number): void {
     const last = this.options.length - 1;
     let target: number | null = null;
@@ -76,13 +101,22 @@ export class StatusFilterComponent {
       case 'End':
         target = last;
         break;
+      case 'Enter':
+      case ' ':
+      case 'Spacebar':
+        // Handled here rather than left to the button's synthesised click, so the commit
+        // is the chip the keyboard is on and nothing depends on which of the two the
+        // browser dispatches first.
+        event.preventDefault();
+        this.select(this.options[index].key);
+        return;
       default:
         return;
     }
 
     event.preventDefault();
+    this.focusedIndex = target;
     this.focusChip(target);
-    this.select(this.options[target].key);
   }
 
   private focusChip(index: number): void {

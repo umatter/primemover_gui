@@ -4,6 +4,8 @@ import {
   HEALTH_WINDOWS,
   HealthCounts,
   experimentHealthState,
+  healthJobsNeedAttention,
+  healthRunsNeedAttention,
   healthTone,
   healthWindowHours,
   normalizeExperimentHealth
@@ -109,6 +111,116 @@ describe('experiment health model', () => {
       );
 
       expect(state).toBe('failure');
+    });
+  });
+
+  /**
+   * The runs and the jobs are two independent tallies API-side (`ExperimentHealth::for()`
+   * buckets them in two separate grouped queries), so "every run reported success" and
+   * "22 jobs failed" is an ordinary payload rather than a contradiction — and it is the
+   * dominant one for the whole deploy window, because a queue only reports `warning` once
+   * the new jar runs. Reading the runs alone painted that green.
+   */
+  describe('experimentHealthState — job-level badness under clean runs', () => {
+    /** Queue 845, live in the production database: 'success', 22 of 113 jobs failed. */
+    const queue845 = health({
+      runs: counts({ total: 1, success: 1 }),
+      bad_runs: 0,
+      jobs: counts({ total: 113, success: 91, failure: 22 }),
+      bad_jobs: 22
+    });
+
+    it('is red when the runs all succeeded and the jobs did not', () => {
+      expect(experimentHealthState(queue845, 0))
+        .withContext('"All 1 runs completed cleanly" for 22 failed jobs is the bug')
+        .toBe('failure');
+    });
+
+    it('is amber when the jobs merely degraded', () => {
+      const degraded = health({
+        runs: counts({ total: 4, success: 4 }),
+        bad_runs: 0,
+        jobs: counts({ total: 80, success: 76, warning: 4 }),
+        bad_jobs: 4
+      });
+
+      expect(experimentHealthState(degraded, 0)).toBe('warning');
+    });
+
+    it('trusts a server-computed bad_jobs the job buckets do not explain', () => {
+      // A legacy spelling the alias table expanded and this GUI does not model.
+      const legacy = health({
+        runs: counts({ total: 4, success: 4 }),
+        jobs: counts({ total: 40, success: 40 }),
+        bad_jobs: 3
+      });
+
+      expect(experimentHealthState(legacy, 0)).toBe('warning');
+    });
+
+    it('keeps a job with an unrecognised status out of the green', () => {
+      const unknownJobs = health({
+        runs: counts({ total: 4, success: 4 }),
+        jobs: counts({ total: 40, success: 39, unknown: 1 })
+      });
+
+      expect(experimentHealthState(unknownJobs, 0)).toBe('unknown');
+    });
+
+    it('still goes green when the jobs are as clean as the runs', () => {
+      const clean = health({
+        runs: counts({ total: 4, success: 4 }),
+        jobs: counts({ total: 40, success: 40 })
+      });
+
+      expect(experimentHealthState(clean, 0)).toBe('clean');
+    });
+
+    it('separates the two questions so the strip can say which one it is answering', () => {
+      expect(healthRunsNeedAttention(queue845)).toBeFalse();
+      expect(healthJobsNeedAttention(queue845)).toBeTrue();
+      expect(healthRunsNeedAttention(null)).toBeFalse();
+      expect(healthJobsNeedAttention(undefined)).toBeFalse();
+    });
+  });
+
+  /**
+   * `running` is rank 2 in the contract's severity ordering — above `success` and
+   * `skipped` — and the strip was the only surface that collapsed it into success.
+   */
+  describe('experimentHealthState — a window that has not finished', () => {
+    it('does not call runs that are still executing "clean"', () => {
+      const inFlight = health({ runs: counts({ total: 12, running: 12 }), bad_runs: 0 });
+
+      expect(experimentHealthState(inFlight, 0))
+        .withContext('12 runs that have not completed cannot have completed cleanly')
+        .toBe('running');
+    });
+
+    it('is neutral, never green, while work is in flight', () => {
+      expect(healthTone('running', 0)).toBe('neutral');
+    });
+
+    it('still raises the treatment alarm over an in-flight window', () => {
+      expect(healthTone('running', 3)).toBe('danger');
+    });
+
+    it('goes green once the last run has finished', () => {
+      expect(experimentHealthState(health({ runs: counts({ total: 12, success: 12 }) }), 0)).toBe('clean');
+    });
+
+    it('counts skipped runs as finished, since they are', () => {
+      const partlySkipped = health({ runs: counts({ total: 4, success: 3, skipped: 1 }) });
+
+      expect(experimentHealthState(partlySkipped, 0)).toBe('clean');
+    });
+
+    it('reports a remainder no bucket explains as unknown', () => {
+      // total 5 with 3 successes and nothing else reported: the other two are neither
+      // running, nor skipped, nor bad. That is missing information, not a clean window.
+      const short = health({ runs: counts({ total: 5, success: 3 }) });
+
+      expect(experimentHealthState(short, 0)).toBe('unknown');
     });
   });
 

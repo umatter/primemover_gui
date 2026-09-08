@@ -51,7 +51,8 @@
       "running": "Läuft",
       "succeeded": "Erfolgreich",
       "warning": "Beeinträchtigt",
-      "failed": "Fehlgeschlagen"
+      "failed": "Fehlgeschlagen",
+      "unknown": "Unbekannt"
     },
     "nextStep": {
       "title": "Schließen Sie die Einrichtung Ihres Experiments ab",
@@ -76,7 +77,7 @@
         "body": "Ein Bot ist ein simulierter Nutzer. Fügen Sie einen Bot hinzu, um festzulegen, wer die Plattform wie durchsucht."
       },
       "profile": "Profil",
-      "runCounts": "{{total}} Durchläufe in den letzten 24 Std. · {{succeeded}} erfolgreich · {{warning}} mit Warnung · {{degraded}} mit beeinträchtigten Jobs · {{failed}} fehlgeschlagen · {{inProgress}} noch laufend · {{treatmentLost}} Treatment verloren"
+      "runCounts": "{{total}} Durchläufe in den letzten 24 Std. · {{succeeded}} erfolgreich · {{warning}} mit Warnung · {{degraded}} mit beeinträchtigten Jobs · {{failed}} fehlgeschlagen · {{inProgress}} nicht zugeordnet (laufend, übersprungen oder unbekannt) · {{treatmentLost}} Treatment verloren"
     },
     "addBotPanel": {
       "title": "Bot hinzufügen",
@@ -157,7 +158,9 @@
       "addError": "Job konnte nicht hinzugefügt werden. Bitte erneut versuchen.",
       "degradedNotice": "Einige Jobs wurden abgeschlossen, aber beeinträchtigt — ihre Daten wurden nicht geschrieben, oder ein von diesem Bot angefordertes Filterkriterium konnte nicht angewendet werden. (Eine zufällige Videoauswahl ist bei einem Kontroll-Bot normal; problematisch ist sie nur, wenn eine Behandlung angefordert wurde und nicht gewirkt hat.) Prüfe diese Jobs, bevor du die Daten dieses Laufs verwendest.",
       "tallyHint": "Aus den Jobs unten gezählt. Der Status des Laufs darüber ist die Meldung des Runners.",
-      "unknownHint": "Die API meldete einen Status, den diese App nicht kennt. Kein Erfolg — prüfe den Job."
+      "unknownHint": "Die API meldete einen Status, den diese App nicht kennt. Kein Erfolg — prüfe den Job.",
+      "partialTally": "{{shown}} von {{total}} Jobs angezeigt",
+      "partialTallyHint": "Diese Seite hat nur die ersten Jobs des Laufs geladen. Die Alarmzahlen oben stammen aus der Zählung der API über den ganzen Lauf; die Aufstellung daneben zählt die Jobs auf dem Bildschirm."
     },
     "behaviours": {
       "title": "Verhalten",
@@ -576,7 +579,8 @@
       "runs": "Treatment in {{runs}} Lauf/Läufen verloren, {{jobs}} Job(s).",
       "botRuns": "{{count}} Treatment verloren",
       "experiment": "Treatment in {{count}} Lauf/Läufen in diesem Zeitfenster verloren.",
-      "hint": "Diese Sitzungen haben Kontrollgruppen-Daten erzeugt, obwohl ein Treatment konfiguriert war; ihre Beobachtungen tragen kein Treatment-Signal."
+      "hint": "Diese Sitzungen haben Kontrollgruppen-Daten erzeugt, obwohl ein Treatment konfiguriert war; ihre Beobachtungen tragen kein Treatment-Signal.",
+      "runsUnlisted": "Treatment in {{runs}} Lauf/Läufen dieses Bots in den letzten 24 h verloren — nicht alle davon sind in der Liste unten enthalten."
     }
   },
   "statusFilter": {
@@ -625,7 +629,13 @@
       "unknownRuns": "{{unknown}} Durchläufe mit unbekanntem Status",
       "noData": "Keine Zustandsdaten",
       "checking": "Wird geprüft…",
-      "lastRun": "Letzter Durchlauf beendet"
+      "lastRun": "Letzter Durchlauf beendet",
+      "jobsAttention": "{{badJobs}} von {{totalJobs}} Jobs zu prüfen",
+      "jobsAttentionHint": "Jobs, die der Kontrakt als problematisch führt: fehlgeschlagen oder abgeschlossen, aber beeinträchtigt. Ein Durchlauf kann Erfolg melden, während seine Jobs es nicht taten.",
+      "running": "{{running}} von {{total}} Durchläufen laufen noch",
+      "cleanWithSkipped": "{{success}} von {{total}} Durchläufen sauber abgeschlossen · {{skipped}} übersprungen",
+      "unknownJobs": "{{unknownJobs}} Jobs mit unbekanntem Status",
+      "unaccountedRuns": "{{unaccounted}} von {{total}} Durchläufen nicht zugeordnet"
     }
   },
   "statusMessage": {

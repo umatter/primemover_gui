@@ -15,6 +15,18 @@
     {{ 'decision.alarm.jobs' | translate: { count: treatmentLostJobs } }}
   </p>
 
+  <!-- The job-level figure, when the headline is about the runs. A run that reported
+       `success` while its jobs failed is the shape this strip used to call clean, so the
+       count that contradicts the headline is printed next to it rather than dropped. -->
+  <p
+    *ngIf="showJobsAttention"
+    class="mt-1 text-xs font-semibold"
+    [ngClass]="jobsAttentionClass"
+    [attr.title]="'health.strip.jobsAttentionHint' | translate"
+  >
+    {{ 'health.strip.jobsAttention' | translate: headlineParams }}
+  </p>
+
   <p class="mt-0.5 text-xs text-faint">
     <ng-container *ngIf="lastFinishedAt; else updatedTpl">
       {{ 'health.strip.lastRun' | translate }} · {{ lastFinishedAt | date: 'dd MMM, HH:mm' }}

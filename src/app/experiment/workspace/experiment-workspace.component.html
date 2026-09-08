@@ -309,9 +309,13 @@
             <p class="font-mono text-xs text-faint">CR-{{ bot.id }}</p>
           </div>
           <!-- The pill is the WORST status among this bot's runs in the API's 24 h window
-               (failed > warning > succeeded > still going); the tooltip and the accessible
+               (failed > warning > succeeded > unknown); the tooltip and the accessible
                name carry the counts behind it, with an em dash for anything the API does
-               not report rather than a zero that would be believed. -->
+               not report rather than a zero that would be believed.
+               'unknown' is neutral grey and does NOT pulse: it covers runs that are still
+               going, skipped, or carrying a status nobody here recognises, and the API
+               sends nothing that tells the three apart. A blue pulsing "Running" pill for
+               a run that will never run is the bug this state replaces. -->
           <span
             class="inline-flex flex-shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold"
             [attr.title]="'workspace.bot.runCounts' | translate: botCounts(bot)"
@@ -322,7 +326,7 @@
             "
             [ngClass]="{
               'bg-surface-2 text-muted': botState(bot) === 'idle',
-              'bg-info-tint text-info': botState(bot) === 'running',
+              'bg-surface-3 text-muted': botState(bot) === 'unknown',
               'bg-success-tint text-success': botState(bot) === 'succeeded',
               'bg-warning-tint text-warning': botState(bot) === 'warning',
               'bg-danger-tint text-danger': botState(bot) === 'failed'
@@ -331,8 +335,7 @@
             <span
               class="h-1.5 w-1.5 rounded-full"
               [ngClass]="{
-                'bg-faint': botState(bot) === 'idle',
-                'bg-info animate-pulse-soft': botState(bot) === 'running',
+                'bg-faint': botState(bot) === 'idle' || botState(bot) === 'unknown',
                 'bg-success': botState(bot) === 'succeeded',
                 'bg-warning': botState(bot) === 'warning',
                 'bg-danger': botState(bot) === 'failed'

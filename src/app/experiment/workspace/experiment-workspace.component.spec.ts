@@ -211,7 +211,17 @@ describe('ExperimentWorkspaceComponent (runs that need attention)', () => {
 
     it('counts degraded runs when the API reports some', () => {
       const f = renderWith([
-        { ...LIVE_CRAWLERS_EXP42[0], experiment_id: 42, name: 'treated bot', latest_queues_degraded: 2 },
+        // Two runs, both degraded: `latest_queues_degraded` counts runs in the same window
+        // as `latest_queues_count`, so it can never exceed it — and the tile clamps to the
+        // run count rather than printing a figure larger than the runs beside it.
+        {
+          ...LIVE_CRAWLERS_EXP42[0],
+          experiment_id: 42,
+          name: 'treated bot',
+          latest_queues_count: 2,
+          latest_queues_succeeded: 0,
+          latest_queues_degraded: 2
+        },
         { ...LIVE_CRAWLERS_EXP42[1], experiment_id: 42, name: 'control bot' }
       ]);
 
@@ -256,11 +266,14 @@ describe('ExperimentWorkspaceComponent (runs that need attention)', () => {
       expect(component.botState(stuck)).toBe('warning');
     });
 
-    it('reports succeeded once every run is accounted for, warnings included', () => {
-      // Without latest_queues_warning in the sum this bot reads 2 of 3 and stays 'running'.
+    it('leaves the run the buckets cannot explain as unknown, not as a benign state', () => {
+      // 3 runs, 2 succeeded, 0 warning, 0 failed: the third is still going, or skipped, or
+      // carrying a code nobody recognises, and the crawler rollups cannot tell the three
+      // apart. It used to read 'running' — a claim about work in flight that the payload
+      // does not support.
       expect(
         component.botState(bot({ latest_queues_count: 3, latest_queues_succeeded: 2, latest_queues_warning: 0 }))
-      ).toBe('running');
+      ).toBe('unknown');
     });
 
     it('still ranks a failure above a queue-level warning', () => {
@@ -312,10 +325,12 @@ describe('ExperimentWorkspaceComponent (runs that need attention)', () => {
       expect(component.botNeedsAttention(degraded)).toBe(1);
     });
 
-    it('leaves a genuinely in-flight bot as running', () => {
+    it('reports an unaccounted remainder as unknown rather than as running', () => {
+      // 4 runs, 1 succeeded. Three of them may be in flight — or may have been skipped
+      // hours ago. The API sends no running/skipped count, so the pill says so.
       expect(
         component.botState(bot({ latest_queues_count: 4, latest_queues_succeeded: 1, latest_queues_degraded: 0 }))
-      ).toBe('running');
+      ).toBe('unknown');
     });
   });
 
@@ -721,6 +736,194 @@ describe('ExperimentWorkspaceComponent (runs that need attention)', () => {
 
       expect(pill.getAttribute('title')).toContain('workspace.bot.runCounts');
       expect(pill.getAttribute('aria-label')).toContain('workspace.state.succeeded');
+    });
+  });
+  /**
+   * The other half of F1, left open when `latest_queues_warning` closed the `warning`
+   * hole: every run the three counted buckets cannot explain.
+   *
+   * The API appends succeeded / failed / warning / degraded / treatment_lost / count and
+   * nothing else — no skipped bucket, no running bucket, no unknown bucket. So a run the
+   * runner declined to execute (`status_code = 'skipped'` **with** a `started_at`, which
+   * is what `TaskManager` writes for SKIPPED_INACTIVE) and a run carrying a code nobody
+   * recognises (`'skpped'`, `'cancelled'`, NULL) both land in the same remainder as a run
+   * that is genuinely in flight. Rendering that remainder as a pulsing blue "Running"
+   * pill asserted the one of the three readings that is both benign and, for a skipped
+   * run, permanent.
+   */
+  describe('runs the crawler rollups cannot classify', () => {
+    const renderWith = (crawlers: unknown[]): ComponentFixture<ExperimentWorkspaceComponent> => {
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        imports: [ExperimentWorkspaceComponent, TranslateModule.forRoot(), NoopAnimationsModule],
+        providers: [
+          provideRouter([]),
+          provideMockStore({ initialState: {} }),
+          { provide: ExperimentService, useValue: { getByKey: () => of({ id: 42, name: 'Political News' }) } },
+          {
+            provide: CrawlerService,
+            useValue: { entities$: of(crawlers), loading$: of(false), getWithQuery: () => {} }
+          },
+          { provide: ActivatedRoute, useValue: { paramMap: of({ get: () => '42' }) } },
+          { provide: ExperimentHealthApiService, useValue: { health: () => of(null) } }
+        ]
+      });
+      const f = TestBed.createComponent(ExperimentWorkspaceComponent);
+      f.detectChanges();
+      return f;
+    };
+
+    it('does not call a bot whose only run was skipped "Running"', () => {
+      const skippedOnly = bot({
+        latest_queues_count: 1,
+        latest_queues_succeeded: 0,
+        latest_queues_failed: 0,
+        latest_queues_warning: 0,
+        latest_queues_degraded: 0
+      });
+
+      expect(component.botState(skippedOnly))
+        .withContext('a run that will never run must not read as one that is running')
+        .toBe('unknown');
+    });
+
+    it('does the same for a run whose status_code nobody recognises', () => {
+      // 'skpped' (the runner's typo) and 'cancelled' are counted by latest_queues_count
+      // and by none of the outcome buckets — the same remainder, the same answer.
+      const unrecognised = bot({
+        latest_queues_count: 3,
+        latest_queues_succeeded: 1,
+        latest_queues_failed: 0,
+        latest_queues_warning: 0,
+        latest_queues_degraded: 0
+      });
+
+      expect(component.botState(unrecognised)).toBe('unknown');
+    });
+
+    it('keeps succeeded, warning, failed and idle exactly as they were', () => {
+      expect(component.botState(bot({ latest_queues_count: 2, latest_queues_succeeded: 2 }))).toBe('succeeded');
+      expect(
+        component.botState(bot({ latest_queues_count: 2, latest_queues_succeeded: 1, latest_queues_warning: 1 }))
+      ).toBe('warning');
+      expect(
+        component.botState(bot({ latest_queues_count: 2, latest_queues_succeeded: 1, latest_queues_failed: 1 }))
+      ).toBe('failed');
+      expect(component.botState(bot({}))).toBe('idle');
+    });
+
+    it('renders the pill as neutral grey, with no pulse and no "Running" label', () => {
+      const f = renderWith([
+        { id: 251, experiment_id: 42, name: 'skipped bot', latest_queues_count: 1, latest_queues_succeeded: 0 }
+      ]);
+      const pill = f.nativeElement.querySelector('article span[title]') as HTMLElement;
+
+      expect(pill.textContent).toContain('workspace.state.unknown');
+      expect(pill.textContent).not.toContain('workspace.state.running');
+      expect(pill.className).toContain('bg-surface-3');
+      expect(pill.innerHTML).withContext('nothing is in flight, so nothing pulses').not.toContain('animate-pulse-soft');
+      expect(pill.innerHTML).not.toContain('bg-info');
+    });
+  });
+
+  /**
+   * Finding 26: "Needs attention" was `latest_queues_warning + latest_queues_degraded`.
+   *
+   * Those two counts overlap without either containing the other — the API side of this
+   * same change set says so in as many words and forbids the sum — so a bot whose runs
+   * each ended `DONE_JOBSWARNING` was counted twice and the tile read 10 beside a "Runs 5"
+   * tile. The figure is now the greater of the two per bot, summed across bots (whose runs
+   * cannot overlap), with both components still rendered beside it.
+   */
+  describe('the "Needs attention" arithmetic', () => {
+    const renderWith = (crawlers: unknown[]): ComponentFixture<ExperimentWorkspaceComponent> => {
+      TestBed.resetTestingModule();
+      TestBed.configureTestingModule({
+        imports: [ExperimentWorkspaceComponent, TranslateModule.forRoot(), NoopAnimationsModule],
+        providers: [
+          provideRouter([]),
+          provideMockStore({ initialState: {} }),
+          { provide: ExperimentService, useValue: { getByKey: () => of({ id: 42, name: 'Political News' }) } },
+          {
+            provide: CrawlerService,
+            useValue: { entities$: of(crawlers), loading$: of(false), getWithQuery: () => {} }
+          },
+          { provide: ActivatedRoute, useValue: { paramMap: of({ get: () => '42' }) } },
+          { provide: ExperimentHealthApiService, useValue: { health: () => of(null) } }
+        ]
+      });
+      const f = TestBed.createComponent(ExperimentWorkspaceComponent);
+      f.detectChanges();
+      return f;
+    };
+
+    const tile = (f: ComponentFixture<unknown>, key: string): HTMLElement | undefined =>
+      Array.from(f.nativeElement.querySelectorAll('section div.bg-surface') as NodeListOf<HTMLElement>).find((el) =>
+        el.textContent?.includes(key)
+      );
+
+    const tileValue = (f: ComponentFixture<unknown>, key: string): string | undefined =>
+      tile(f, key)?.querySelector('p:nth-of-type(2)')?.textContent?.trim();
+
+    /** Five runs, each ended DONE_JOBSWARNING: both counts describe the same five runs. */
+    const doubleCounted = () =>
+      bot({
+        latest_queues_count: 5,
+        latest_queues_succeeded: 0,
+        latest_queues_warning: 5,
+        latest_queues_degraded: 5
+      });
+
+    it('does not count a run twice for being both warning and degraded', () => {
+      const summary = component.buildSummary([doubleCounted()]);
+
+      expect(summary.needsAttention).toBe(5);
+      expect(summary.needsAttention)
+        .withContext('a figure larger than the run count beside it is unactionable')
+        .toBeLessThanOrEqual(summary.total);
+    });
+
+    it('keeps both components readable rather than only their combination', () => {
+      const summary = component.buildSummary([doubleCounted()]);
+
+      expect(summary.warning).toBe(5);
+      expect(summary.degraded).toBe(5);
+    });
+
+    it('still adds up across bots, whose runs cannot be the same runs', () => {
+      const summary = component.buildSummary([
+        bot({ id: 1, latest_queues_count: 2, latest_queues_succeeded: 1, latest_queues_warning: 1 }),
+        bot({ id: 2, latest_queues_count: 2, latest_queues_succeeded: 0, latest_queues_degraded: 2 })
+      ]);
+
+      expect(summary.needsAttention).toBe(3);
+    });
+
+    it('never reports more runs needing attention than the bot has runs', () => {
+      expect(
+        component.botNeedsAttention(
+          bot({ latest_queues_count: 1, latest_queues_warning: 1, latest_queues_degraded: 1 })
+        )
+      ).toBe(1);
+    });
+
+    it('renders a tile that cannot exceed the runs tile', () => {
+      const f = renderWith([
+        {
+          id: 251,
+          experiment_id: 42,
+          name: 'degraded bot',
+          latest_queues_count: 5,
+          latest_queues_succeeded: 0,
+          latest_queues_warning: 5,
+          latest_queues_degraded: 5
+        }
+      ]);
+
+      expect(tileValue(f, 'workspace.stat.runs')).toBe('5');
+      expect(tileValue(f, 'workspace.stat.needsAttention')).toBe('5');
+      // The composition is still on the card, so "5" is never mistaken for one component.
+      expect(f.nativeElement.textContent).toContain('workspace.stat.needsAttentionSplit');
     });
   });
 });

@@ -150,7 +150,18 @@ describe('HealthStripComponent', () => {
       const headline = el.querySelector('p')!;
 
       expect(headline.textContent).toContain('health.strip.attention');
-      expect(fixture.componentInstance.headlineParams).toEqual({ bad: 2, total: 9, unknown: 0 });
+      expect(fixture.componentInstance.headlineParams).toEqual({
+        bad: 2,
+        total: 9,
+        unknown: 0,
+        success: 7,
+        running: 0,
+        skipped: 0,
+        badJobs: 0,
+        totalJobs: 0,
+        unknownJobs: 0,
+        unaccounted: 0
+      });
     });
 
     it('shows the last run instead of the experiment mtime when the window has one', () => {
@@ -193,6 +204,133 @@ describe('HealthStripComponent', () => {
       expect(state(el)).withContext('the run statuses really are clean').toBe('clean');
       expect(el.textContent).toContain('decision.alarm.jobs');
       expect(el.innerHTML).withContext('but the strip is red, not green').toContain('bg-danger-tint');
+    });
+  });
+
+  /**
+   * The strip renders from two independent tallies, and only one of them used to reach
+   * it. A study whose runs all report `success` while its jobs failed was the exact shape
+   * that painted green on the triage screen while the bot detail one click deeper painted
+   * the same run red.
+   */
+  describe('when the runs are fine and the jobs are not', () => {
+    /** Queue 845, live in production: run 'success', 22 of its 113 jobs failed. */
+    const jobsBad = payload({
+      runs: counts({ total: 1, success: 1 }),
+      bad_runs: 0,
+      jobs: counts({ total: 113, success: 91, failure: 22 }),
+      bad_jobs: 22
+    });
+
+    it('is red rather than "All 1 runs completed cleanly"', () => {
+      const el = render(experiment({ runs_bad_count: 0 }), of(jobsBad));
+
+      expect(state(el)).toBe('failure');
+      expect(el.textContent).not.toContain('health.strip.clean');
+      expect(el.innerHTML).toContain('bg-danger');
+    });
+
+    it('says what is wrong instead of "0 of 1 runs need attention"', () => {
+      const el = render(experiment({ runs_bad_count: 0 }), of(jobsBad));
+
+      expect(fixture.componentInstance.headlineKey).toBe('health.strip.jobsAttention');
+      expect(fixture.componentInstance.headlineParams['badJobs']).toBe(22);
+      expect(fixture.componentInstance.headlineParams['totalJobs']).toBe(113);
+      expect(el.textContent).toContain('health.strip.jobsAttention');
+    });
+
+    it('turns amber, not red, when the jobs only degraded', () => {
+      const el = render(
+        experiment({ runs_bad_count: 0 }),
+        of(
+          payload({
+            runs: counts({ total: 3, success: 3 }),
+            jobs: counts({ total: 60, success: 56, warning: 4 }),
+            bad_jobs: 4
+          })
+        )
+      );
+
+      expect(state(el)).toBe('warning');
+      expect(el.innerHTML).toContain('bg-warning');
+      expect(el.innerHTML).not.toContain('bg-danger');
+    });
+
+    it('adds the job figure under a run-driven headline instead of dropping it', () => {
+      const el = render(
+        experiment({ runs_bad_count: 1 }),
+        of(
+          payload({
+            runs: counts({ total: 6, success: 5, failure: 1 }),
+            bad_runs: 1,
+            jobs: counts({ total: 100, success: 80, failure: 20 }),
+            bad_jobs: 20
+          })
+        )
+      );
+
+      expect(fixture.componentInstance.headlineKey).toBe('health.strip.attention');
+      expect(el.textContent)
+        .withContext('the headline is about the runs; the jobs get their own line')
+        .toContain('health.strip.jobsAttention');
+    });
+
+    it('states the job figure once when it is already the headline', () => {
+      render(experiment({ runs_bad_count: 0 }), of(jobsBad));
+
+      expect(fixture.componentInstance.showJobsAttention).toBeFalse();
+    });
+
+    it('leaves a study whose jobs are as clean as its runs green', () => {
+      const el = render(
+        experiment({ runs_bad_count: 0 }),
+        of(payload({ runs: counts({ total: 6, success: 6 }), jobs: counts({ total: 90, success: 90 }) }))
+      );
+
+      expect(state(el)).toBe('clean');
+      expect(el.textContent).toContain('health.strip.clean');
+    });
+  });
+
+  describe('when the window is still running', () => {
+    it('does not claim that runs still in flight completed cleanly', () => {
+      const el = render(experiment({ runs_bad_count: 0 }), of(payload({ runs: counts({ total: 12, running: 12 }) })));
+
+      expect(state(el)).toBe('running');
+      expect(el.textContent).toContain('health.strip.running');
+      expect(el.textContent).not.toContain('health.strip.clean');
+      expect(el.innerHTML).withContext('in progress is not a clean bill of health').not.toContain('bg-success');
+    });
+
+    it('names the skipped runs rather than saying all of them completed', () => {
+      const el = render(
+        experiment({ runs_bad_count: 0 }),
+        of(payload({ runs: counts({ total: 4, success: 3, skipped: 1 }) }))
+      );
+
+      expect(state(el)).toBe('clean');
+      expect(el.textContent).toContain('health.strip.cleanWithSkipped');
+      expect(el.textContent).not.toContain('health.strip.cleanNoTotal');
+      expect(fixture.componentInstance.headlineParams['skipped']).toBe(1);
+      expect(fixture.componentInstance.headlineParams['success']).toBe(3);
+    });
+
+    it('reports runs the buckets cannot account for as unaccounted, not as clean', () => {
+      const el = render(experiment({ runs_bad_count: 0 }), of(payload({ runs: counts({ total: 5, success: 3 }) })));
+
+      expect(state(el)).toBe('unknown');
+      expect(el.textContent).toContain('health.strip.unaccountedRuns');
+      expect(fixture.componentInstance.headlineParams['unaccounted']).toBe(2);
+    });
+
+    it('names jobs with an unrecognised status when nothing worse is present', () => {
+      const el = render(
+        experiment({ runs_bad_count: 0 }),
+        of(payload({ runs: counts({ total: 2, success: 2 }), jobs: counts({ total: 20, success: 19, unknown: 1 }) }))
+      );
+
+      expect(state(el)).toBe('unknown');
+      expect(el.textContent).toContain('health.strip.unknownJobs');
     });
   });
 

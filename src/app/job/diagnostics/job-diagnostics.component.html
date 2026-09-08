@@ -9,16 +9,21 @@
     <div>
       <div class="mb-1 flex items-center gap-2">
         <p class="font-semibold uppercase tracking-wide text-faint">{{ 'diagnostics.message' | translate }}</p>
+        <!-- The visible label IS the accessible name; a static `aria-label` used to
+             override it, so "Copied" and "Copy failed" were never announced. -->
         <button
           *ngIf="message"
           (click)="copy($event)"
-          [attr.aria-label]="'statusMessage.copyFull' | translate"
+          [attr.title]="'statusMessage.copyFull' | translate"
           class="inline-flex items-center rounded border border-line px-1.5 py-0.5 text-[11px] font-medium text-muted transition hover:bg-surface hover:text-ink focus:outline-none focus:ring-2 focus:ring-brand/30"
           data-testid="diagnostics-copy"
           type="button"
         >
           {{ copyLabelKey | translate }}
         </button>
+        <span aria-live="polite" class="sr-only" data-testid="diagnostics-copy-status" role="status">{{
+          copyOutcomeKey ? (copyOutcomeKey | translate) : ''
+        }}</span>
       </div>
       <p *ngIf="message" class="whitespace-pre-wrap break-words text-muted" data-testid="diagnostics-message">
         <ng-container *ngFor="let seg of messageSegments"

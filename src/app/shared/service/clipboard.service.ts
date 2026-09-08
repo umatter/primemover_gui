@@ -37,10 +37,19 @@ export class ClipboardService {
    *
    * The textarea is off-screen rather than `display:none`: a hidden element cannot hold a
    * selection, so hiding it the obvious way makes the copy silently fail.
+   *
+   * **The removal is in a `finally`, and that is the point.** `execCommand` is absent or
+   * throws in exactly the contexts this fallback exists for (an insecure origin, a browser
+   * that has finished deprecating it), and the removal used to sit inside the `try` after
+   * it — so the throwing path, the only one that leaks, was the one with no cleanup. Each
+   * refused copy then left a readonly, focusable, tab-reachable textarea in `document.body`
+   * for the life of the page. `area.remove()` rather than `removeChild` because the throw
+   * can also come from `appendChild`, and removing a node that was never attached must not
+   * throw a second error out of the cleanup.
    */
   private copyViaTextarea(text: string): boolean {
+    const area = document.createElement('textarea');
     try {
-      const area = document.createElement('textarea');
       area.value = text;
       area.setAttribute('readonly', '');
       area.style.position = 'fixed';
@@ -48,11 +57,11 @@ export class ClipboardService {
       area.style.opacity = '0';
       document.body.appendChild(area);
       area.select();
-      const ok = document.execCommand('copy');
-      document.body.removeChild(area);
-      return ok;
+      return document.execCommand('copy');
     } catch {
       return false;
+    } finally {
+      area.remove();
     }
   }
 }

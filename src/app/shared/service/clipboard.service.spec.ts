@@ -94,6 +94,25 @@ describe('ClipboardService', () => {
     expect(document.body.querySelectorAll('textarea').length).toBe(before);
   });
 
+  /**
+   * The leak the other two cleanup tests could not see. `execCommand` throwing — absent
+   * altogether, or refused by a browser that has finished deprecating it — is the case
+   * this fallback exists for, and it was the one that left the textarea attached: the
+   * removal sat inside the `try`, after the call that throws. A researcher copying several
+   * 1800-character diagnostics accumulated one focusable, tab-reachable textarea per click.
+   */
+  it('leaves no textarea behind when the legacy path throws', async () => {
+    stubClipboard(undefined);
+    spyOn(document, 'execCommand').and.throwError('execCommand is not a function');
+    const before = document.body.querySelectorAll('textarea').length;
+
+    await expectAsync(service.copy('browser died')).toBeResolvedTo(false);
+
+    expect(document.body.querySelectorAll('textarea').length)
+      .withContext('the throwing path is the one that leaks; cleanup must not depend on it')
+      .toBe(before);
+  });
+
   it('refuses an empty payload rather than clearing the clipboard', async () => {
     const writeText = jasmine.createSpy('writeText').and.resolveTo();
     stubClipboard({ writeText });

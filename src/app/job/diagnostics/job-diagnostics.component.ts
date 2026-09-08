@@ -120,6 +120,18 @@ export class JobDiagnosticsComponent implements OnDestroy {
     return 'statusMessage.copy';
   }
 
+  /**
+   * The outcome as something to announce, or `null` while nothing has happened yet.
+   *
+   * Feeds a visually-hidden `aria-live` region. Renaming the button is a name change, not
+   * an event, so a screen-reader user was told nothing when a copy silently failed — which
+   * on an insecure origin (the lab box over plain HTTP) is a reachable outcome, not a
+   * theoretical one.
+   */
+  get copyOutcomeKey(): string | null {
+    return this.copyOutcome === null ? null : this.copyLabelKey;
+  }
+
   /** Router link for a `previous job <id>` reference. */
   jobLink(jobId: number): unknown[] {
     return [...this.jobLinkPrefix, jobId];

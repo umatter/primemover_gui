@@ -62,7 +62,8 @@ describe('JobComponent (/jobs — the decision column)', () => {
             loading$: of(false),
             pageMeta$: of({ current_page: 1, per_page: 15, total: jobs.length }),
             getWithQuery: () => {},
-            clearCache: () => {}
+            clearCache: () => {},
+            cancel: () => {}
           }
         },
         {
@@ -140,11 +141,13 @@ describe('JobComponent (/jobs — the status chips)', () => {
   let store: MockStore;
   let getWithQuery: jasmine.Spy;
   let clearCache: jasmine.Spy;
+  let cancel: jasmine.Spy;
 
   beforeEach(() => {
     TestBed.resetTestingModule();
     getWithQuery = jasmine.createSpy('getWithQuery');
     clearCache = jasmine.createSpy('clearCache');
+    cancel = jasmine.createSpy('cancel');
 
     TestBed.configureTestingModule({
       imports: [JobComponent, TranslateModule.forRoot()],
@@ -168,6 +171,7 @@ describe('JobComponent (/jobs — the status chips)', () => {
             pageMeta$: of({ current_page: 1, per_page: 15, total: 0 }),
             getWithQuery,
             clearCache,
+            cancel,
             delete: () => of(true)
           }
         },
@@ -227,6 +231,23 @@ describe('JobComponent (/jobs — the status chips)', () => {
 
     expect(dispatch).toHaveBeenCalledWith(SharedActions.requestPage({ page: 1 }));
     expect(clearCache.calls.count()).toBe(1);
+  });
+
+  /**
+   * Against ~31,600 job rows this is also six full list queries per traversal, but the
+   * reason it is a correctness bug rather than a slow one is that ngrx/data merges: the
+   * chip claims one narrow filter while the table shows the union of everything that was
+   * still in flight. Each query cancels its predecessor so the loser's result is never
+   * dispatched.
+   */
+  it('cancels the superseded query so a slower earlier response cannot merge into the list', () => {
+    clickChip('failure');
+    const superseded = (getWithQuery.calls.mostRecent().args[1] as { correlationId: unknown }).correlationId;
+
+    clickChip('bad');
+
+    expect(superseded).toBeTruthy();
+    expect(cancel).toHaveBeenCalledWith(superseded, jasmine.any(String));
   });
 
   it('sorts the status column by severity so "failed" and "failure" stay together', () => {

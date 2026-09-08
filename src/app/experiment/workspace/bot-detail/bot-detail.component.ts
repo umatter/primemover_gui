@@ -2,19 +2,20 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AsyncPipe, DatePipe, NgClass, NgForOf, NgIf } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
-import { filter, map, Observable, Subscription, switchMap } from 'rxjs';
+import { combineLatest, filter, map, Observable, shareReplay, startWith, Subscription, switchMap } from 'rxjs';
 import { EntityAction, EntityOp } from '@ngrx/data';
 
-import { Crawler } from '@app/crawler/model/crawler';
+import { Crawler, crawlerTreatmentLostRuns } from '@app/crawler/model/crawler';
 import { hasQueueJobRollup, Queue, queueJobRollup } from '@app/queue/model/queue';
 import { CrawlerService, QueueService } from '@app/entity/service';
 import { isBadStatus, QueueStatusEnum, statusOrUnknown, UNKNOWN_STATUS } from '@app/queue/status/status.enum';
 import { StatusMessageComponent } from '@app/queue/status/status-message.component';
 import { fadeIn } from '@shared/animation/trigger';
 import { StatusFilterComponent } from '@shared/filter/status-filter/status-filter.component';
-import { anyRunning, livenessOn$, livenessTicks } from '@shared/model/liveness';
+import { anyRunning, isRunningStatus, livenessOn$, livenessTicks } from '@shared/model/liveness';
 import { RunAlarm, RunTransitionWatcher } from '@shared/model/run-transition';
 import { StatusFilterKey, statusFilterParams } from '@shared/model/status-filter';
+import { SupersedingQuery } from '@shared/model/superseding-query';
 import { LoadingSpinnerComponent } from '@shared/overlay/loading-spinner/loading-spinner.component';
 import { NotificationComponent } from '@shared/overlay/notification/notification.component';
 import { VisibilityService } from '@shared/service/visibility.service';
@@ -23,19 +24,28 @@ import { RunCreateComponent } from '../run-create/run-create.component';
 export type RunState = 'scheduled' | 'running' | 'succeeded' | 'warning' | 'failed' | 'skipped' | 'unknown';
 
 /**
- * The bot-level treatment-loss alarm, counted over the runs this screen is showing.
+ * The bot-level treatment-loss alarm.
  *
- * Counted from the listed runs rather than from the crawler's appended
- * `latest_queues_treatment_lost`, because the two describe different sets — the appended
- * count covers a rolling window (24h by default) while this list is whatever the run
- * query returned — and a headline that disagrees with the rows beneath it is worse than
- * no headline. The experiment workspace, which has no runs loaded, uses the appended
- * count instead.
+ * **Not reduced over the listed runs alone, and that is the whole point.** The list is
+ * status-filtered server-side, and `filter[bad]` is a `status_code` predicate that cannot
+ * express treatment loss — the API's own docblock says such a run "can be, and normally
+ * is, `success` with every job `success`". So the moment any chip other than "All" is
+ * active (including the automatic "Needs attention" this screen opens on) the filtered
+ * list drops exactly the runs this banner exists to announce, and the alarm silently read
+ * zero on the screen a researcher opened *because* something was wrong.
+ *
+ * The run count therefore comes from the crawler's appended
+ * `latest_queues_treatment_lost`, which the status filter cannot narrow. The job count can
+ * only be counted from runs that are actually on screen, so it is reported separately and
+ * `runsListed` says how much of the alarm the list beneath is showing — never a bare zero
+ * standing in for "the filter hid them".
  */
 export interface TreatmentLostSummary {
-  /** Runs with at least one treatment-lost job. */
+  /** Runs known to have lost a treatment: the API's window count, or the listed runs. */
   runs: number;
-  /** Jobs across those runs whose treatment was lost. */
+  /** Runs *in the list below* that lost a treatment — at most {@link TreatmentLostSummary.runs}. */
+  runsListed: number;
+  /** Jobs across the listed runs whose treatment was lost. Zero when the filter hid them. */
   jobs: number;
 }
 
@@ -110,6 +120,14 @@ export class BotDetailComponent implements OnInit, OnDestroy {
   private subscriptions = new Subscription();
   private readonly transitions = new RunTransitionWatcher();
 
+  /**
+   * Every run query this screen issues — chip change, poll tick, run created — newest
+   * cancelling the one before it. `clearCache()` defends the sequential case only: two
+   * queries a few hundred milliseconds apart both land and ngrx/data merges them, so a
+   * "Failures only" list can end up holding the successes a superseded query returned.
+   */
+  private readonly runQuery = new SupersedingQuery<Queue>(this.queueService, 'bot-runs');
+
   constructor(
     private route: ActivatedRoute,
     public router: Router,
@@ -131,11 +149,32 @@ export class BotDetailComponent implements OnInit, OnDestroy {
         }
         this.loadRuns();
         return this.crawlerService.getByKey(this.botId);
-      })
+      }),
+      // Two consumers now — the template and the treatment-loss alarm — and each bare
+      // subscription would be its own GET *and* its own `loadRuns()`, because the side
+      // effect lives inside the `switchMap` above.
+      shareReplay({ bufferSize: 1, refCount: true })
     );
 
     this.runs$ = this.queueService.entities$.pipe(
       map((queues) => queues.filter((q) => Number(q.crawler_id) === Number(this.botId)))
+    );
+
+    // Transitions only. This list is re-read every 15 s while something is running, so a
+    // watcher keyed on "is bad" rather than "just became bad" would raise the same toast
+    // on every tick until the reader learned to ignore all of them.
+    //
+    // Subscribed BEFORE the auto-focus below, deliberately: both read the same `runs$`
+    // emission, and the auto-focus narrows the list. If it ran first, the emission in which
+    // a run *became* failed would be consumed by the re-query rather than by the watcher,
+    // and the run would next be seen for the first time already bad — where `observe()`
+    // treats it as a baseline and raises nothing. The toast would be lost exactly when it
+    // was earned.
+    this.subscriptions.add(
+      this.runs$.subscribe((runs) => {
+        const raised = this.transitions.observe(runs);
+        if (raised.length) this.alarm = raised[0];
+      })
     );
 
     // One-shot default: open on the runs that need attention when this bot has any.
@@ -143,9 +182,17 @@ export class BotDetailComponent implements OnInit, OnDestroy {
     // applies server-side — not on `runState()`, which escalates a 'success' run with
     // failed jobs. Defaulting on the richer verdict would switch the view to a filter that
     // then excludes the very run that triggered it.
+    //
+    // **Never while something is running.** `filter[bad]` matches failure|warning only, so
+    // a running run cannot be in the filtered list — which means `anyRunning()` is false by
+    // construction, the 15 s poll never opens, and this screen goes back to being the
+    // frozen snapshot Phase 5 was written to end. Deferring is not skipping: nothing sets
+    // `autoFocusSettled` here, so the default still fires on the emission after the last
+    // run finishes, when there is nothing left to poll for.
     this.subscriptions.add(
       this.runs$.subscribe((runs) => {
         if (this.autoFocusSettled || this.statusFilter !== 'all') return;
+        if (runs.some((run) => isRunningStatus(run.status_code))) return;
         if (!runs.some((run) => isBadStatus(run.status_code))) return;
         this.autoFocusSettled = true;
         this.autoFocused = true;
@@ -180,26 +227,23 @@ export class BotDetailComponent implements OnInit, OnDestroy {
     this.live$ = livenessOn$(this.active$, this.visibility.visible$);
     this.subscriptions.add(livenessTicks(this.active$, this.visibility.visible$).subscribe(() => this.refreshRuns()));
 
-    // Transitions only. This list is re-read every 15 s while something is running, so a
-    // watcher keyed on "is bad" rather than "just became bad" would raise the same toast
-    // on every tick until the reader learned to ignore all of them.
-    this.subscriptions.add(
-      this.runs$.subscribe((runs) => {
-        const raised = this.transitions.observe(runs);
-        if (raised.length) this.alarm = raised[0];
-      })
-    );
-
-    this.treatmentLost$ = this.runs$.pipe(
-      map((runs) =>
-        runs.reduce(
-          (acc: TreatmentLostSummary, run) => {
+    // The alarm, read from two sources because neither alone is honest here. The listed
+    // runs carry the job counts; the crawler carries a run count the status filter cannot
+    // take away. `startWith(undefined)` so the banner does not wait on the crawler read.
+    this.treatmentLost$ = combineLatest([this.runs$, this.bot$.pipe(startWith(undefined))]).pipe(
+      map(([runs, bot]) => {
+        const listed = runs.reduce(
+          (acc: { runs: number; jobs: number }, run) => {
             const lost = this.treatmentLostJobs(run);
             return lost > 0 ? { runs: acc.runs + 1, jobs: acc.jobs + lost } : acc;
           },
           { runs: 0, jobs: 0 }
-        )
-      )
+        );
+        // `null` is "the API never said", not "none" — so it can only ever raise the
+        // figure the visible runs already justify, never lower it.
+        const reported = crawlerTreatmentLostRuns(bot) ?? 0;
+        return { runs: Math.max(reported, listed.runs), runsListed: listed.runs, jobs: listed.jobs };
+      })
     );
   }
 
@@ -224,10 +268,22 @@ export class BotDetailComponent implements OnInit, OnDestroy {
    * round trip, every 15 seconds. Re-querying without it upserts the same rows in place.
    */
   private refreshRuns(): void {
-    this.queueService.getWithQuery({
+    this.runQuery.run({
       ['filter[crawler]']: String(this.botId),
       ...statusFilterParams(this.statusFilter)
     });
+  }
+
+  /**
+   * True when the runs on screen account for the whole alarm — every treatment-lost run in
+   * the window is in the list, and their job counts are known.
+   *
+   * When it is false the banner names the run count only. Quoting "N runs, 0 jobs" for an
+   * alarm whose runs the filter has hidden would read as "nothing was actually lost",
+   * which is the opposite of what the number means.
+   */
+  treatmentLostFullyListed(lost: TreatmentLostSummary): boolean {
+    return lost.runsListed >= lost.runs && lost.jobs > 0;
   }
 
   /** Dismiss the toast. The run keeps its state; only the interruption goes away. */
@@ -379,7 +435,19 @@ export class BotDetailComponent implements OnInit, OnDestroy {
     this.showNewRun = true;
   }
 
+  /**
+   * A run the user just created must be visible.
+   *
+   * It arrives with `status_code = NULL`, so any chip other than "All" excludes it — and
+   * the automatic "Needs attention" default is a chip the user never chose. The list would
+   * simply not contain the thing they had just made, with no empty-filter explanation
+   * either, because the list is not empty. Retiring the auto-default at the same time: this
+   * is a deliberate act by the user, and the one-shot must not grab the view back.
+   */
   onRunCreated(): void {
+    this.autoFocusSettled = true;
+    this.autoFocused = false;
+    this.statusFilter = 'all';
     this.loadRuns();
     this.showNewRun = false;
   }
@@ -389,6 +457,7 @@ export class BotDetailComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.runQuery.cancelInFlight();
     this.subscriptions.unsubscribe();
   }
 }

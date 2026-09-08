@@ -21,6 +21,28 @@ import {
 export const EXPERIMENT_HEALTH_MAX_CONCURRENT = 4;
 
 /**
+ * How long a health answer may be served from the cache before it is re-read.
+ *
+ * The cache used to have no expiry at all and `invalidate()` had no callers, so a strip
+ * that answered "clean" at 09:00 kept saying so for the life of the tab — through every
+ * run that failed during the afternoon — and only a full browser reload cleared it. This
+ * app is explicitly built to be left open (bot detail polls every 15 s for exactly that
+ * reader), which turns "cached for the session" into "wrong for the session".
+ *
+ * 60 s rather than the 15 s poll: `/health` is two grouped aggregate queries over the
+ * jobs table per card and a dozen cards share a page, so a per-tick re-read would be the
+ * heaviest thing this GUI does. One minute is short enough that nobody makes a decision on
+ * a materially stale strip and long enough that navigating between screens is free.
+ */
+export const EXPERIMENT_HEALTH_CACHE_MS = 60000;
+
+/** A cached answer and the moment it was requested, for {@link EXPERIMENT_HEALTH_CACHE_MS}. */
+interface CachedHealth {
+  stream: Observable<ExperimentHealth | null>;
+  at: number;
+}
+
+/**
  * Statuses that mean *this API does not have the endpoint*, as opposed to *this request
  * failed*. Only these latch the service off; a 500 or a dropped connection is transient
  * and must stay retryable.
@@ -51,7 +73,10 @@ interface PendingHealthRequest {
  * Three behaviours beyond the bare GET, each earning its keep:
  *
  * - **A cache per (experiment, window)**, shared through a `ReplaySubject`, so the twelve
- *   cards on a page and a revisit to the same page cost one request each at most.
+ *   cards on a page and a revisit to the same page cost one request each at most — for
+ *   {@link EXPERIMENT_HEALTH_CACHE_MS}, after which the entry is stale and re-read. A
+ *   health strip is the one thing in this app that must not be able to go on saying
+ *   "clean" about a study that has since failed.
  * - **A concurrency gate** ({@link EXPERIMENT_HEALTH_MAX_CONCURRENT}).
  * - **A missing-endpoint latch.** The first 404 turns the whole service off for the rest
  *   of the session, so an older API costs at most one gate-full of requests
@@ -62,7 +87,7 @@ interface PendingHealthRequest {
  */
 @Injectable({ providedIn: 'root' })
 export class ExperimentHealthApiService {
-  private readonly cache = new Map<string, Observable<ExperimentHealth | null>>();
+  private readonly cache = new Map<string, CachedHealth>();
   private readonly queue$ = new Subject<PendingHealthRequest>();
   private endpointMissing = false;
 
@@ -105,11 +130,16 @@ export class ExperimentHealthApiService {
 
     const key = `${experimentId}:${hours}`;
     const cached = this.cache.get(key);
-    if (cached) return cached;
+    // A cached answer that has aged past the TTL is not an answer any more. Dropped rather
+    // than served-and-refreshed: the strip renders whatever this stream gives it, and
+    // handing it a stale figure now to correct it later is the "green on data that is no
+    // longer true" outcome the whole change set exists to end.
+    if (cached && Date.now() - cached.at < EXPERIMENT_HEALTH_CACHE_MS) return cached.stream;
+    if (cached) this.cache.delete(key);
 
     const sink = new ReplaySubject<ExperimentHealth | null>(1);
     const stream = sink.asObservable();
-    this.cache.set(key, stream);
+    this.cache.set(key, { stream, at: Date.now() });
     this.queue$.next({ key, experimentId, hours, sink });
     return stream;
   }

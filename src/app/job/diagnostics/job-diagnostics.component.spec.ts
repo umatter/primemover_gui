@@ -80,6 +80,29 @@ describe('JobDiagnosticsComponent', () => {
       expect(copy).toHaveBeenCalledWith(MESSAGE);
       expect(component.copyLabelKey).toBe('statusMessage.copied');
     });
+
+    /**
+     * Same defect, same fix as the status-message control: a static `aria-label` overrode
+     * the element's own text, so the only two words that matter — "Copy failed" — existed
+     * on screen and nowhere in the accessibility tree.
+     */
+    it('announces the copy outcome instead of hiding it behind a static aria-label', async () => {
+      copy.and.returnValue(Promise.resolve(false));
+      render(job({ status_message: MESSAGE }));
+      const button = el('diagnostics-copy')!;
+      const live = el('diagnostics-copy-status')!;
+
+      expect(button.getAttribute('aria-label')).toBeNull();
+      expect(button.getAttribute('title')).toBe('statusMessage.copyFull');
+      expect(live.getAttribute('aria-live')).toBe('polite');
+      expect(live.textContent!.trim()).toBe('');
+
+      await component.copy();
+      fixture.detectChanges();
+
+      expect(button.textContent!.trim()).toBe('statusMessage.copyFailed');
+      expect(live.textContent!.trim()).toBe('statusMessage.copyFailed');
+    });
   });
 
   // ------------------------------------------------------------------ timestamps

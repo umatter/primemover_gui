@@ -347,6 +347,45 @@ export class RunComposerComponent implements OnInit, OnDestroy {
     return c.succeeded + c.warning + c.failed + c.skipped + c.running + c.unknown > 0;
   }
 
+  /**
+   * Jobs this run holds according to the API, or `null` when it did not say.
+   *
+   * Read from the run's own rollup, not from `jobs.length`: this screen loads
+   * `GET /jobs?filter[queue]=<id>` with no `per_page`, and the API paginates at 15. On
+   * this box 131 of 635 runs hold more than that and 96 hold 284, so `jobs` is routinely
+   * the first page of a much longer run.
+   */
+  runJobTotal(run: Queue | null | undefined): number | null {
+    return queueJobRollup(run, 'total');
+  }
+
+  /** True when the jobs on screen are only part of the run — the tally must say so. */
+  jobsTruncated(run: Queue | null | undefined): boolean {
+    const total = this.runJobTotal(run);
+    return total !== null && total > this.jobs.length;
+  }
+
+  /**
+   * Whole-run treatment-lost count for the banner.
+   *
+   * The server's per-run rollup first — the same number {@link alarmState} already trusts
+   * for the toast — falling back to what the loaded page shows when an older API sends no
+   * rollup. Tallying the banner off `jobs` alone is how a 284-job run whose treatment was
+   * lost on jobs 40-120 rendered **no alarm at all** on the one screen dedicated to it.
+   *
+   * `Math.max` rather than "rollup if present": both count the same set, the rollup covers
+   * the whole run and the page covers part of it, so neither can legitimately exceed the
+   * other and taking the larger can only ever fail towards showing the alarm.
+   */
+  treatmentLostTotal(run: Queue | null | undefined): number {
+    return Math.max(queueJobRollup(run, 'treatmentLost') ?? 0, this.counts.treatmentLost);
+  }
+
+  /** Whole-run degraded-decision count for the banner. Same two sources, same reasoning. */
+  decisionDegradedTotal(run: Queue | null | undefined): number {
+    return Math.max(queueJobRollup(run, 'degraded') ?? 0, this.counts.decisionDegraded);
+  }
+
   /** The runner's diagnostic for a job, or '' (never the literal 'null'). */
   jobMessage(job: Job): string {
     return (job.status_message ?? '').toString().trim();

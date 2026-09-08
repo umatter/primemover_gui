@@ -84,11 +84,16 @@ export function healthWindowHours(key: HealthWindowKey | null | undefined): numb
 /**
  * What a health strip is saying.
  *
- * Four states, and the ordering between them is the contract's severity ordering with the
- * benign end collapsed: `failure` outranks `warning`, `warning` outranks `unknown`, and
- * `clean` is only reached when nothing else applies **and** runs actually exist.
+ * Five states, and the ordering between them is the contract's severity ordering with the
+ * benign end collapsed: `failure` outranks `warning`, `warning` outranks `unknown`,
+ * `unknown` outranks `running`, and `clean` is only reached when nothing else applies,
+ * runs actually exist **and** every one of them has finished.
+ *
+ * `running` is not a mild `clean`. A window that is still executing has not completed
+ * anything yet, cleanly or otherwise, and the one claim the strip must never make about
+ * work in flight is that it went well.
  */
-export type HealthState = 'failure' | 'warning' | 'unknown' | 'clean';
+export type HealthState = 'failure' | 'warning' | 'unknown' | 'running' | 'clean';
 
 /** A count off the wire, or `null` when the field was not sent at all. */
 export function healthCount(value: unknown): number | null {
@@ -153,6 +158,30 @@ export function normalizeExperimentHealth(payload: unknown): ExperimentHealth | 
 }
 
 /**
+ * Runs in the window a human should look at: the contract's `is_bad`, `failure OR
+ * warning`, plus a server-computed `bad_runs` the two buckets do not explain (a legacy
+ * spelling the server expanded through its alias table and this GUI does not model).
+ */
+export function healthRunsNeedAttention(health: ExperimentHealth | null | undefined): boolean {
+  if (!health) return false;
+  return health.runs.failure > 0 || health.runs.warning > 0 || health.bad_runs > 0;
+}
+
+/**
+ * The same question one level down, over the jobs those runs contained.
+ *
+ * It is a **separate** question, not a detail of the one above: the API buckets runs and
+ * jobs in two independent grouped queries, so `runs.failure === 0` with `jobs.failure > 0`
+ * is an ordinary result rather than an inconsistency. Live example: queue 845 reported
+ * `status_code = 'success'`, `status_message = 'done'`, with 22 of its 113 jobs failed.
+ * Reading only the runs is exactly how that experiment renders green.
+ */
+export function healthJobsNeedAttention(health: ExperimentHealth | null | undefined): boolean {
+  if (!health) return false;
+  return health.jobs.failure > 0 || health.jobs.warning > 0 || health.bad_jobs > 0;
+}
+
+/**
  * The strip's state, from whatever is actually known.
  *
  * `health` is the full breakdown from `/experiments/{id}/health`; `badRuns` is the
@@ -162,12 +191,20 @@ export function normalizeExperimentHealth(payload: unknown): ExperimentHealth | 
  *
  * The rules, in order:
  *
- * - a failed run outranks everything — red;
- * - a `warning` run, **or** a `bad_runs` the two buckets do not explain (a legacy spelling
- *   the server counted and we did not model), is amber. Over-reporting "look at this" is
+ * - a failed run outranks everything — red. So does a failed **job**: the run that
+ *   carried it routinely reports `success`, and until the new jar is everywhere a
+ *   degraded run is spelled `success` on the queue row with the only evidence in the job
+ *   counts. Dropping them is what let a study with 22 failed jobs read "completed
+ *   cleanly";
+ * - a `warning` run, **or** a `bad_runs` the two buckets do not explain, is amber — and so
+ *   is a `warning`/bad job under otherwise clean runs. Over-reporting "look at this" is
  *   the safe direction; under-reporting it is the bug this change set exists to fix;
- * - runs with an unrecognised status, with nothing worse present, are **grey, not green**;
- * - green needs runs that exist and nothing outstanding about any of them;
+ * - runs *or jobs* with an unrecognised status, with nothing worse present, are **grey,
+ *   not green**, and so is a total the buckets cannot account for;
+ * - a window still executing is `running`, never `clean`: those runs have not completed,
+ *   so nothing may claim they completed cleanly;
+ * - green needs runs that exist, nothing outstanding about any of them, and every one of
+ *   them finished;
  * - no runs in the window is *no data*, not a clean bill of health.
  *
  * With no health payload the count alone cannot say whether the bad runs failed or merely
@@ -178,10 +215,16 @@ export function experimentHealthState(
   badRuns: number | null
 ): HealthState {
   if (health) {
-    if (health.runs.failure > 0) return 'failure';
-    if (health.runs.warning > 0 || health.bad_runs > 0) return 'warning';
-    if (health.runs.unknown > 0) return 'unknown';
-    return health.runs.total > 0 ? 'clean' : 'unknown';
+    if (health.runs.failure > 0 || health.jobs.failure > 0) return 'failure';
+    if (healthRunsNeedAttention(health) || healthJobsNeedAttention(health)) return 'warning';
+    if (health.runs.unknown > 0 || health.jobs.unknown > 0) return 'unknown';
+    if (health.runs.total <= 0) return 'unknown';
+    // Nothing bad and nothing unrecognised is left, so every run is success, skipped or
+    // running. A shortfall against `total` is a remainder no bucket explains: unknown,
+    // never rounded into either of the two benign readings below.
+    const settled = health.runs.success + health.runs.skipped;
+    if (settled + health.runs.running < health.runs.total) return 'unknown';
+    return health.runs.running > 0 ? 'running' : 'clean';
   }
   if (badRuns === null) return 'unknown';
   return badRuns > 0 ? 'warning' : 'clean';
@@ -205,6 +248,8 @@ export function healthTone(state: HealthState, treatmentLostJobs: number = 0): H
       return 'warning';
     case 'clean':
       return 'success';
+    // `running` and `unknown` are both neutral grey. Green is reserved for a window that
+    // finished and finished well; work still in flight has not earned it yet.
     default:
       return 'neutral';
   }

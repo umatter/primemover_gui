@@ -31,6 +31,7 @@ import { DecisionReportComponent } from '@app/job/decision/decision-report.compo
 import { hasDecisionReport, isDecisionJobType } from '@app/job/model/decision';
 import { StatusFilterComponent } from '@shared/filter/status-filter/status-filter.component';
 import { StatusFilterKey, statusFilterParams } from '@shared/model/status-filter';
+import { SupersedingQuery } from '@shared/model/superseding-query';
 
 @Component({
   selector: 'app-job',
@@ -76,6 +77,13 @@ export class JobComponent implements OnDestroy {
   protected readonly SortBy = SortBy;
   private subscriptions = new Subscription();
 
+  /**
+   * Every list query this screen issues, newest cancelling the one before it. See
+   * {@link SupersedingQuery}: `clearCache()` handles the sequential case only, and chips
+   * clicked or arrowed through faster than the API answers are not sequential.
+   */
+  private readonly listQuery = new SupersedingQuery<Job>(this.entityService, 'jobs');
+
   constructor(
     private store: Store,
     private entityService: JobService,
@@ -99,7 +107,7 @@ export class JobComponent implements OnDestroy {
     this.subscriptions.add(
       this.queryFilter$.pipe().subscribe(() => {
         this.entityService.clearCache();
-        this.entityService.getWithQuery(this.queryParams());
+        this.listQuery.run(this.queryParams());
       })
     );
   }
@@ -126,7 +134,7 @@ export class JobComponent implements OnDestroy {
     this.statusFilter = key;
     this.store.dispatch(SharedActions.requestPage({ page: 1 }));
     this.entityService.clearCache();
-    this.entityService.getWithQuery(this.queryParams());
+    this.listQuery.run(this.queryParams());
   }
 
   initPagination(): void {
@@ -162,6 +170,7 @@ export class JobComponent implements OnDestroy {
   }
 
   ngOnDestroy() {
+    this.listQuery.cancelInFlight();
     this.subscriptions.unsubscribe();
   }
 

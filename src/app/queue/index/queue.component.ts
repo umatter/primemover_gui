@@ -26,6 +26,7 @@ import { StatusComponent } from '@app/queue/status/status.component';
 import { SortBy } from '@shared/model/sort';
 import { StatusFilterComponent } from '@shared/filter/status-filter/status-filter.component';
 import { StatusFilterKey, statusFilterParams } from '@shared/model/status-filter';
+import { SupersedingQuery } from '@shared/model/superseding-query';
 import { JobRollupBarComponent } from '@app/queue/rollup-bar/job-rollup-bar.component';
 
 @Component({
@@ -72,6 +73,15 @@ export class QueueComponent implements OnDestroy {
   protected readonly SortBy = SortBy;
   private subscriptions = new Subscription();
 
+  /**
+   * Every list query this screen issues, newest cancelling the one before it.
+   *
+   * `clearCache()` alone only defends the sequential case: six chips clicked (or arrowed)
+   * through in a second produce six clears that all happen before any response, and the
+   * six responses then merge into the emptied collection together.
+   */
+  private readonly listQuery = new SupersedingQuery<Queue>(this.entityService, 'queues');
+
   constructor(
     private store: Store,
     private experimentService: ExperimentApiService,
@@ -95,7 +105,7 @@ export class QueueComponent implements OnDestroy {
     this.subscriptions.add(
       this.queryFilter$.pipe().subscribe(() => {
         this.entityService.clearCache();
-        this.entityService.getWithQuery(this.queryParams());
+        this.listQuery.run(this.queryParams());
       })
     );
   }
@@ -125,7 +135,7 @@ export class QueueComponent implements OnDestroy {
     this.statusFilter = key;
     this.store.dispatch(SharedActions.requestPage({ page: 1 }));
     this.entityService.clearCache();
-    this.entityService.getWithQuery(this.queryParams());
+    this.listQuery.run(this.queryParams());
   }
 
   /**
@@ -177,6 +187,7 @@ export class QueueComponent implements OnDestroy {
   }
 
   ngOnDestroy() {
+    this.listQuery.cancelInFlight();
     this.subscriptions.unsubscribe();
   }
 }

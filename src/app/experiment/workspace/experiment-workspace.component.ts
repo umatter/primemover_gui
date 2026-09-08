@@ -38,15 +38,25 @@ interface RunSummary {
    */
   degraded: number;
   /**
-   * The "Needs attention" headline: `warning + degraded`.
+   * The "Needs attention" headline: `max(warning, degraded)` **per bot**, summed.
    *
-   * The two components overlap — a run that reports `warning` on the queue usually has
-   * degraded jobs too — and the API sends no union count, so this sum can exceed the true
-   * number of distinct runs. It is deliberately the *upper* bound rather than
-   * `max(warning, degraded)`: under-reporting how much needs attention is the exact
-   * failure the `warning` state was introduced to end, and the tile's tooltip names both
-   * components so nobody has to guess at the composition. The exact figure needs a single
-   * API-side count (`runs_bad_count`, contract §3.4) rather than arithmetic here.
+   * **Not** `warning + degraded`. Those two counts overlap without either containing the
+   * other — a run that reports `warning` on the queue usually has degraded jobs too, and
+   * is counted by both — so adding them double-counts: five runs that each ended
+   * `DONE_JOBSWARNING` arrive as `warning: 5, degraded: 5` and rendered "10" beside a
+   * "Runs 5" tile. A figure larger than the number of runs it sits next to is not a
+   * cautious over-estimate, it is a number nobody can act on, and the API side of this
+   * same change set forbids the sum in as many words (`CrawlerController`: "Overlaps
+   * latest_queues_warning without containing it or being contained by it -- never add the
+   * two together").
+   *
+   * The maximum is taken per bot and only then summed: two *different* bots cannot share
+   * a run, so their attention counts are disjoint, while inside one bot the overlap is
+   * unknown. That is the tightest bound the crawler rollups support — at least this many
+   * distinct runs need attention — and it can never exceed the run count beside it.
+   * Both components are rendered next to it and in the tooltip, so the composition is
+   * never guesswork; the exact union needs a single API-side count (`runs_bad_count`,
+   * contract §3.4) that the crawler rollups do not carry.
    */
   needsAttention: number;
   /**
@@ -176,7 +186,9 @@ export class ExperimentWorkspaceComponent implements OnInit, OnDestroy {
       failed,
       warning,
       degraded,
-      needsAttention: warning + degraded,
+      // Per bot the greater of the two, never their sum: they describe overlapping sets
+      // of runs (see RunSummary.needsAttention). Across bots the sets are disjoint.
+      needsAttention: bots.reduce((acc, b) => acc + this.botNeedsAttention(b), 0),
       attentionAvailable,
       treatmentLost,
       treatmentLostAvailable,
@@ -206,14 +218,19 @@ export class ExperimentWorkspaceComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * Runs of this bot a human should look at. Same upper-bound caveat as
-   * {@link RunSummary.needsAttention}: the two counts can describe the same run.
+   * Runs of this bot a human should look at: `max(warning, degraded)`, clamped to the
+   * bot's run count.
    *
-   * Treatment-lost runs are **not** added in. They get their own red marker; folding the
-   * alarm into an amber sum is how it would stop being an alarm.
+   * The same overlap as {@link RunSummary.needsAttention} — the two counts routinely
+   * describe the *same* run — so they are never added: a bot with one warning run that
+   * also carried a warning job would otherwise report "2 Needs attention" beside "0/1".
+   *
+   * Treatment-lost runs are **not** added in either. They get their own red marker;
+   * folding the alarm into an amber sum is how it would stop being an alarm.
    */
   botNeedsAttention(bot: Crawler): number {
-    return this.botWarning(bot) + this.botDegraded(bot);
+    const total = bot.latest_queues_count || 0;
+    return Math.min(Math.max(this.botWarning(bot), this.botDegraded(bot)), total);
   }
 
   /**
@@ -223,8 +240,9 @@ export class ExperimentWorkspaceComponent implements OnInit, OnDestroy {
    * exactly where a confident zero would be believed. `inProgress` is the remainder of
    * `latest_queues_count` once succeeded, warning and failed are taken out — runs that are
    * still going, or skipped, or carrying a status nobody here recognises; the API sends no
-   * breakdown finer than that, and it is clamped at zero so an inconsistent rollup cannot
-   * render a negative.
+   * breakdown finer than that, so the label says "unaccounted for" rather than naming the
+   * one of the three that happens to be the most reassuring. It is clamped at zero so an
+   * inconsistent rollup cannot render a negative.
    *
    * The window is the API's own fixed 24 h crawler window, which is **not** the window the
    * header selector controls — the crawler endpoint takes no `hours` parameter — so the
@@ -260,18 +278,31 @@ export class ExperimentWorkspaceComponent implements OnInit, OnDestroy {
    * `warning` sits between `failed` and `succeeded`: those runs finished, so calling them
    * "Succeeded" is what hid degraded treatment arms, but they are not failures either.
    *
-   * The `running` fall-through used to be a trap. A run whose **own** `status_code` is
-   * `warning` is counted by none of `latest_queues_succeeded`, `_failed` or (before this
-   * change) `_degraded` — that last one is derived from the jobs, and a queue can report
-   * `warning` with no `warning` job at all. So `succeeded >= total` was never reached and
-   * the bot showed a pulsing blue "Running" pill forever, for a run that had finished
-   * hours earlier in a state the researcher most needed to see. `latest_queues_warning`
-   * closes that: a run is "accounted for" once it lands in succeeded, warning or failed.
+   * The `running` fall-through used to be a trap, twice over.
    *
-   * The field is absent on the API deployed today, which reads as 0 here — the same
-   * behaviour as before this change, never worse.
+   * The first half is fixed: a run whose **own** `status_code` is `warning` is counted by
+   * none of `latest_queues_succeeded`, `_failed` or (before this change) `_degraded` —
+   * that last one is derived from the jobs, and a queue can report `warning` with no
+   * `warning` job at all. So `succeeded >= total` was never reached and the bot showed a
+   * pulsing blue "Running" pill forever, for a run that had finished hours earlier in the
+   * state the researcher most needed to see. `latest_queues_warning` closes that: a run is
+   * "accounted for" once it lands in succeeded, warning or failed.
+   *
+   * The second half is why the remainder now reads **`unknown`, not `running`**. The API
+   * appends no skipped, running or unrecognised count — `latest_queues_count` minus the
+   * three buckets above covers all three at once — so the remainder is precisely the set
+   * of runs this screen cannot classify. A run the runner declined to execute
+   * (`status_code = 'skipped'`, with a `started_at`, so it is inside the window) and a run
+   * carrying a code nobody recognises (`'skpped'`, `'cancelled'`, NULL) both land there,
+   * and both used to render as a pulsing blue "Running" pill that would never resolve.
+   * "Running" is a claim about work in flight; the honest answer, and the one the contract
+   * insists on, is that we do not know — rendered in the same neutral grey the run list on
+   * bot detail already uses for an unrecognised status.
+   *
+   * `latest_queues_warning` is absent on the API deployed today, which reads as 0 here —
+   * such a bot lands in `unknown` rather than in a green or blue state it has not earned.
    */
-  botState(bot: Crawler): 'idle' | 'running' | 'failed' | 'warning' | 'succeeded' {
+  botState(bot: Crawler): 'idle' | 'unknown' | 'failed' | 'warning' | 'succeeded' {
     const total = bot.latest_queues_count || 0;
     // No runs in the window at all: 'idle', which also keeps every ratio below off a
     // zero denominator.
@@ -282,7 +313,7 @@ export class ExperimentWorkspaceComponent implements OnInit, OnDestroy {
     if (failed > 0) return 'failed';
     if (warning > 0 || this.botDegraded(bot) > 0) return 'warning';
     if (succeeded + warning + failed >= total) return 'succeeded';
-    return 'running';
+    return 'unknown';
   }
 
   /** Switch the health window. `hours` is resolved once, in the model's table. */

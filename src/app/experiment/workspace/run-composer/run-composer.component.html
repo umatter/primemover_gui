@@ -60,10 +60,21 @@
            status line in the header — that is the runner's account, this is a second one
            derived from the jobs, and the two can disagree. -->
       <p
-        *ngIf="hasJobOutcomes"
+        *ngIf="hasJobOutcomes || jobsTruncated(run)"
         class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-faint"
         [title]="'workspace.composer.tallyHint' | translate"
       >
+        <!-- The tally counts the jobs on screen, and this screen loads one page of them.
+             Saying so is the difference between "8 succeeded" meaning 8 of 8 and meaning 8
+             of 284. -->
+        <span
+          *ngIf="jobsTruncated(run)"
+          class="font-semibold text-muted"
+          data-testid="composer-partial-tally"
+          [attr.title]="'workspace.composer.partialTallyHint' | translate"
+        >
+          {{ 'workspace.composer.partialTally' | translate: { shown: jobs.length, total: runJobTotal(run) } }}
+        </span>
         <span *ngIf="counts.succeeded" class="text-success">
           {{ counts.succeeded }} {{ 'status.success' | translate }}
         </span>
@@ -93,21 +104,23 @@
          question this experiment asks. Rendered only when positive — a zero would be
          meaningless, since the underlying columns are NULL for every pre-deploy job. -->
     <p
-      *ngIf="counts.treatmentLost"
+      *ngIf="treatmentLostTotal(run)"
       class="mb-4 rounded-md border border-danger/40 bg-danger-tint px-3 py-2 text-sm font-semibold text-danger"
+      data-testid="composer-treatment-lost"
       role="alert"
     >
-      {{ 'decision.alarm.jobs' | translate: { count: counts.treatmentLost } }}
+      {{ 'decision.alarm.jobs' | translate: { count: treatmentLostTotal(run) } }}
       <span class="block font-normal">{{ 'decision.alarm.hint' | translate }}</span>
     </p>
 
     <!-- A decision that degraded without losing the whole treatment: part of it applied. -->
     <p
-      *ngIf="counts.decisionDegraded"
+      *ngIf="decisionDegradedTotal(run)"
       class="mb-4 rounded-md bg-warning-tint px-3 py-2 text-sm text-warning"
+      data-testid="composer-decision-degraded"
       role="status"
     >
-      {{ 'decision.alarm.degradedJobs' | translate: { count: counts.decisionDegraded } }}
+      {{ 'decision.alarm.degradedJobs' | translate: { count: decisionDegradedTotal(run) } }}
     </p>
 
     <!-- A run that completed while jobs degraded is a treatment arm that quietly became a control. -->

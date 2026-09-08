@@ -183,6 +183,42 @@ describe('StatusMessageComponent (the status_message disclosure)', () => {
 
       expect(copy).not.toHaveBeenCalled();
     });
+
+    /**
+     * The control's accessible name has to be the label the reader can see change. It used
+     * to carry a static `aria-label` ("Copy the full message"), and an `aria-label` always
+     * wins over element content — so "Copied" and, far worse, "Copy failed" were rendered
+     * and never announced. On the lab box, reached over plain HTTP, a refused copy is a
+     * real outcome: the reader pasted nothing and reported the diagnostic as missing.
+     */
+    it('lets the visible label be the accessible name, so "Copy failed" is announced', async () => {
+      copy.and.returnValue(Promise.resolve(false));
+      render(LAMBDA);
+      const button = el('status-message-copy')!;
+
+      expect(button.getAttribute('aria-label'))
+        .withContext('a static aria-label would override the label that actually changes')
+        .toBeNull();
+      expect(button.getAttribute('title')).toBe('statusMessage.copyFull');
+
+      await component.copy();
+      fixture.detectChanges();
+
+      expect(button.textContent!.trim()).toBe('statusMessage.copyFailed');
+    });
+
+    it('announces the outcome through a live region rather than silently renaming a button', async () => {
+      render(LAMBDA);
+      const live = el('status-message-copy-status')!;
+
+      expect(live.getAttribute('aria-live')).toBe('polite');
+      expect(live.textContent!.trim()).withContext('nothing to announce at rest').toBe('');
+
+      await component.copy();
+      fixture.detectChanges();
+
+      expect(live.textContent!.trim()).toBe('statusMessage.copied');
+    });
   });
 
   // ------------------------------------------------------------------ the cascade link

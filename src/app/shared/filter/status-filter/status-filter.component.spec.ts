@@ -104,40 +104,97 @@ describe('StatusFilterComponent', () => {
       expect(chip('all').getAttribute('tabindex')).toBe('0');
     });
 
-    it('moves and selects with the arrow keys, wrapping at both ends', () => {
+    it('moves focus with the arrow keys, wrapping at both ends', () => {
+      chip('all').focus();
+
       press('ArrowRight', 'all');
-      expect(fixture.componentInstance.selected).toBe('bad');
+      expect(document.activeElement).toBe(chip('bad'));
 
       press('ArrowLeft', 'bad');
-      expect(fixture.componentInstance.selected).toBe('all');
+      expect(document.activeElement).toBe(chip('all'));
 
       // wraps backwards from the first chip to the last
       press('ArrowLeft', 'all');
-      expect(fixture.componentInstance.selected).toBe('success');
+      expect(document.activeElement).toBe(chip('success'));
 
       // and forwards from the last back to the first
       press('ArrowRight', 'success');
-      expect(fixture.componentInstance.selected).toBe('all');
+      expect(document.activeElement).toBe(chip('all'));
     });
 
     it('jumps to the ends with Home and End', () => {
+      chip('all').focus();
+
       press('End', 'all');
-      expect(fixture.componentInstance.selected).toBe('success');
+      expect(document.activeElement).toBe(chip('success'));
 
       press('Home', 'success');
-      expect(fixture.componentInstance.selected).toBe('all');
+      expect(document.activeElement).toBe(chip('all'));
     });
 
-    it('moves focus with the selection so the next arrow key continues from there', () => {
+    /**
+     * The bug this split exists for. Selection used to follow focus, so the only way to
+     * reach the last chip was to select the five in between — six `selectedChange`
+     * emissions, six `clearCache()` + `getWithQuery()` pairs, and six responses that
+     * ngrx/data MERGES into one shared collection. The chip then read "Success" over a
+     * table holding failures, warnings and skipped runs: the union of everything the
+     * keyboard passed through. Arrow keys move; Space and Enter choose.
+     */
+    it('arrowing across the group selects nothing — the traversal fires no query', () => {
+      const seen: StatusFilterKey[] = [];
+      fixture.componentInstance.selectedChange.subscribe((key: StatusFilterKey) => seen.push(key));
+      chip('all').focus();
+
+      press('ArrowRight', 'all');
+      press('ArrowRight', 'bad');
+      press('ArrowRight', 'warning');
+      press('ArrowRight', 'failure');
+      press('ArrowRight', 'skipped');
+      press('ArrowRight', 'running');
+
+      expect(seen).withContext('five intermediate filters must not be queried on the way').toEqual([]);
+      expect(fixture.componentInstance.selected).toBe('all');
+      expect(document.activeElement).toBe(chip('success'));
+    });
+
+    it('commits the focused chip on Enter, and on Space, exactly once', () => {
+      const seen: StatusFilterKey[] = [];
+      fixture.componentInstance.selectedChange.subscribe((key: StatusFilterKey) => seen.push(key));
+      chip('all').focus();
+
+      press('ArrowRight', 'all');
+      press('Enter', 'bad');
+      expect(seen).toEqual(['bad']);
+      expect(chip('bad').getAttribute('aria-checked')).toBe('true');
+
+      press('ArrowRight', 'bad');
+      press(' ', 'warning');
+      expect(seen).toEqual(['bad', 'warning']);
+    });
+
+    it('keeps the single tab stop on the chip the keyboard is on, not the one still selected', () => {
       chip('all').focus();
       press('ArrowRight', 'all');
+      press('ArrowRight', 'bad');
 
-      expect(document.activeElement).toBe(chip('bad'));
+      // Tabbing away and back has to return to where the reader left the group.
+      expect(chips().filter((button) => button.getAttribute('tabindex') === '0').length).toBe(1);
+      expect(chip('warning').getAttribute('tabindex')).toBe('0');
+      expect(chip('all').getAttribute('tabindex')).toBe('-1');
+    });
+
+    it('puts the tab stop back on the selection once a choice is committed', () => {
+      chip('all').focus();
+      press('ArrowRight', 'all');
+      press('Enter', 'bad');
+
+      expect(chip('bad').getAttribute('tabindex')).toBe('0');
     });
 
     it('ignores keys that are not navigation', () => {
       press('a', 'all');
       expect(fixture.componentInstance.selected).toBe('all');
+      expect(document.activeElement).not.toBe(chip('bad'));
     });
   });
 

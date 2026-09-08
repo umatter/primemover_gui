@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 
-import { ExperimentHealthApiService } from './experiment-health-api.service';
+import { EXPERIMENT_HEALTH_CACHE_MS, ExperimentHealthApiService } from './experiment-health-api.service';
 import { AppConfig } from '@app/app-config';
 import { ExperimentHealth } from '@app/experiment/model/health';
 import { CONTEXT } from '@shared/error-handler/http-context';
@@ -129,6 +129,46 @@ describe('ExperimentHealthApiService', () => {
     refreshed.flush(body({ bad_runs: 2 }));
 
     expect(received?.bad_runs).toBe(2);
+  });
+
+  /**
+   * The cache had no expiry and `invalidate()` had no callers, so a strip that answered
+   * "clean" once kept answering "clean" for the life of the tab — through every run that
+   * failed afterwards — and nothing short of a browser reload cleared it. This app is
+   * built to be left open all afternoon, which is what turned "cached for the session"
+   * into "wrong for the session".
+   */
+  describe('staleness', () => {
+    beforeEach(() => jasmine.clock().install().mockDate(new Date('2026-09-08T09:00:00Z')));
+    afterEach(() => jasmine.clock().uninstall());
+
+    it('still serves the cached answer just inside the TTL', () => {
+      let received: ExperimentHealth | null | undefined;
+      service.health(42, 24).subscribe();
+      http.expectOne((r) => r.url.includes('/health')).flush(body({ bad_runs: 1 }));
+
+      jasmine.clock().tick(EXPERIMENT_HEALTH_CACHE_MS - 1);
+      service.health(42, 24).subscribe((health) => (received = health));
+
+      http.expectNone((r) => r.url.includes('/health'));
+      // Stated as an expectation as well as an `expectNone`: the reader of this suite has
+      // to be able to tell a spec that asserts nothing from one whose assertions are all
+      // in the http mock, and a genuinely empty spec must not hide among these.
+      expect(received?.bad_runs).withContext('the cached answer, not a fresh request').toBe(1);
+    });
+
+    it('re-reads once the answer is older than the TTL, so a green strip cannot go on lying', () => {
+      let received: ExperimentHealth | null | undefined;
+      service.health(42, 24).subscribe();
+      http.expectOne((r) => r.url.includes('/health')).flush(body({ bad_runs: 0 }));
+
+      // The reader left the tab open; five runs failed over the afternoon.
+      jasmine.clock().tick(EXPERIMENT_HEALTH_CACHE_MS + 1);
+      service.health(42, 24).subscribe((health) => (received = health));
+
+      http.expectOne((r) => r.url.includes('/health')).flush(body({ bad_runs: 5 }));
+      expect(received?.bad_runs).withContext('the morning figure must not survive the afternoon').toBe(5);
+    });
   });
 
   it('never asks for an experiment it has no id for', () => {

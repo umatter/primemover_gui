@@ -40,6 +40,7 @@ describe('QueueComponent (/queues — finding the bad runs)', () => {
   let store: MockStore;
   let getWithQuery: jasmine.Spy;
   let clearCache: jasmine.Spy;
+  let cancel: jasmine.Spy;
 
   const run = (over: Partial<Queue>): Queue =>
     ({
@@ -56,6 +57,7 @@ describe('QueueComponent (/queues — finding the bad runs)', () => {
   const build = (runs: Queue[] = [run({})]): void => {
     getWithQuery = jasmine.createSpy('getWithQuery');
     clearCache = jasmine.createSpy('clearCache');
+    cancel = jasmine.createSpy('cancel');
 
     TestBed.configureTestingModule({
       imports: [QueueComponent, TranslateModule.forRoot()],
@@ -77,6 +79,7 @@ describe('QueueComponent (/queues — finding the bad runs)', () => {
             pageMeta$: of({ current_page: 1, per_page: 15, total: runs.length }),
             getWithQuery,
             clearCache,
+            cancel,
             delete: () => of(true)
           }
         },
@@ -184,6 +187,28 @@ describe('QueueComponent (/queues — finding the bad runs)', () => {
       clickChip('bad');
 
       expect(getWithQuery.calls.count()).toBe(before + 3);
+    });
+
+    /**
+     * `clearCache()` is not enough on its own. It fires immediately, long before any
+     * response; three chips clicked faster than the API answers leave three requests live,
+     * and ngrx/data MERGES all three results into the emptied collection — so the chip
+     * reads "Needs attention" over a table that also holds the successes the first query
+     * returned. Each query therefore carries a correlation id and cancels its predecessor,
+     * which `EntityEffects.persist$` races against the response.
+     */
+    it('cancels the superseded query, so a slower earlier response cannot merge into the list', () => {
+      build();
+      clickChip('failure');
+      const superseded = (getWithQuery.calls.mostRecent().args[1] as { correlationId: unknown }).correlationId;
+
+      clickChip('warning');
+
+      expect(superseded).toBeTruthy();
+      expect(cancel).toHaveBeenCalledWith(superseded, jasmine.any(String));
+      expect((getWithQuery.calls.mostRecent().args[1] as { correlationId: unknown }).correlationId).not.toBe(
+        superseded
+      );
     });
   });
 

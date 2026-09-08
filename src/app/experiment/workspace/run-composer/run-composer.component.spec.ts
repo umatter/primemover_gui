@@ -486,3 +486,124 @@ describe('RunComposerComponent (Phase 5 — liveness and transition alarms)', ()
     });
   });
 });
+
+/**
+ * The alarm banners against pagination.
+ *
+ * `loadJobs()` issues `GET /jobs?filter[queue]=<id>` with no `per_page`, and the API
+ * paginates at 15. On this box 131 of 635 runs hold more than that and 96 hold 284 — so
+ * `jobs` is routinely the first page of a much longer run, and a tally over it is a tally
+ * over a sample. On a 284-job run whose treatment was lost on jobs 40-120 the red banner
+ * did not render **at all**, on the one screen dedicated to that run, while the toast path
+ * beside it read the server's whole-run count and knew perfectly well.
+ */
+describe('RunComposerComponent (Phase 4 — alarm counts over the whole run)', () => {
+  let fixture: ComponentFixture<RunComposerComponent>;
+  let component: RunComposerComponent;
+  let jobs$: BehaviorSubject<Job[]>;
+  let currentRun: Queue;
+
+  const job = (over: Partial<Job>): Job => ({ id: 1, queue_id: 9, order: 1, active: 1, ...over }) as Job;
+
+  const render = (run: Partial<Queue>, jobs: Job[]): void => {
+    currentRun = { id: 9, name: 'Run', ...run } as Queue;
+    // `runId` is assigned inside run$'s switchMap, which the template subscribes to only
+    // after ngOnInit — by which time the jobs$ filter has already run against an undefined
+    // id. Seeding it is the same shortcut the Slice C block takes.
+    component.experimentId = 1;
+    component.botId = 1;
+    component.runId = 9;
+    jobs$.next(jobs);
+    fixture.detectChanges();
+  };
+
+  const el = (testId: string): HTMLElement | null => fixture.nativeElement.querySelector(`[data-testid="${testId}"]`);
+
+  beforeEach(async () => {
+    jobs$ = new BehaviorSubject<Job[]>([]);
+    currentRun = { id: 9, name: 'Run' } as Queue;
+
+    await TestBed.configureTestingModule({
+      imports: [RunComposerComponent, TranslateModule.forRoot(), NoopAnimationsModule],
+      providers: [
+        provideRouter([]),
+        {
+          provide: JobService,
+          useValue: {
+            entities$: jobs$,
+            loading$: of(false),
+            getWithQuery: () => {},
+            add: () => of({}),
+            update: () => of({}),
+            delete: () => of(1)
+          }
+        },
+        { provide: BehaviorService, useValue: { add: () => of({}) } },
+        { provide: QueueService, useValue: { getByKey: () => of(currentRun) } },
+        { provide: ActivatedRoute, useValue: { paramMap: of({ get: (k: string) => (k === 'runId' ? '9' : '1') }) } },
+        {
+          provide: DecisionApiService,
+          useValue: { decisionUrl: (id: number) => `/api/v1/jobs/${id}/decision`, fetchDecision: () => of({}) }
+        }
+      ]
+    }).compileComponents();
+
+    fixture = TestBed.createComponent(RunComposerComponent);
+    component = fixture.componentInstance;
+  });
+
+  it('raises the treatment-lost banner from the run rollup when the loaded page shows none', () => {
+    const page = Array.from({ length: 15 }, (_, i) => job({ id: i + 1, order: i + 1, status_code: 'success' }));
+
+    render({ jobs_count: 284, jobs_succeeded_count: 284, jobs_treatment_lost_count: 40 }, page);
+
+    expect(component.counts.treatmentLost).withContext('nothing on this page lost anything').toBe(0);
+    expect(el('composer-treatment-lost'))
+      .withContext('40 void sessions must not be invisible because they are on page 3')
+      .not.toBeNull();
+    expect(component.treatmentLostTotal(currentRun)).toBe(40);
+  });
+
+  it('raises the degraded banner from the run rollup for the same reason', () => {
+    render({ jobs_count: 284, jobs_degraded_count: 12 }, [job({ id: 1, status_code: 'success' })]);
+
+    expect(el('composer-decision-degraded')).not.toBeNull();
+    expect(component.decisionDegradedTotal(currentRun)).toBe(12);
+  });
+
+  it('still reads the loaded jobs when the API sends no rollup at all', () => {
+    // An older API: absent is unknown, and the verdicts on screen are then the only
+    // evidence there is. They must not be discarded in favour of the missing count.
+    render({}, [job({ id: 1, type: 'lambdasingleselectjob', status_code: 'success', decision_treatment_lost: true })]);
+
+    expect(component.treatmentLostTotal(currentRun)).toBe(1);
+    expect(el('composer-treatment-lost')).not.toBeNull();
+  });
+
+  it('says the tally covers only the jobs on screen', () => {
+    const page = Array.from({ length: 15 }, (_, i) => job({ id: i + 1, order: i + 1, status_code: 'success' }));
+
+    render({ jobs_count: 284, jobs_succeeded_count: 284 }, page);
+
+    expect(el('composer-partial-tally')).withContext('"15 success" out of 284 is not a tally').not.toBeNull();
+    expect(el('composer-partial-tally')!.textContent).toContain('workspace.composer.partialTally');
+  });
+
+  it('says nothing about truncation when the whole run is on screen', () => {
+    render({ jobs_count: 2, jobs_succeeded_count: 2 }, [
+      job({ id: 1, order: 1, status_code: 'success' }),
+      job({ id: 2, order: 2, status_code: 'success' })
+    ]);
+
+    expect(el('composer-partial-tally')).toBeNull();
+  });
+
+  it('claims no alarm the run does not report — a zero rollup is not an alarm', () => {
+    render({ jobs_count: 284, jobs_treatment_lost_count: 0, jobs_degraded_count: 0 }, [
+      job({ id: 1, status_code: 'success' })
+    ]);
+
+    expect(el('composer-treatment-lost')).toBeNull();
+    expect(el('composer-decision-degraded')).toBeNull();
+  });
+});
