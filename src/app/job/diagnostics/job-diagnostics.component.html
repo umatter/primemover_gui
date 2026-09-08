@@ -1,0 +1,72 @@
+<details *ngIf="job" class="mt-2 rounded-lg border border-line bg-surface-2/60 text-xs" data-testid="job-diagnostics">
+  <summary class="cursor-pointer select-none px-3 py-2 font-medium text-muted transition hover:text-brand">
+    {{ 'diagnostics.title' | translate }}
+  </summary>
+
+  <div class="space-y-3 border-t border-line px-3 py-3">
+    <!-- The runner's diagnostic, complete and selectable. No truncation here: this
+         expander is the place the full text is supposed to be readable. -->
+    <div>
+      <div class="mb-1 flex items-center gap-2">
+        <p class="font-semibold uppercase tracking-wide text-faint">{{ 'diagnostics.message' | translate }}</p>
+        <!-- The visible label IS the accessible name; a static `aria-label` used to
+             override it, so "Copied" and "Copy failed" were never announced. -->
+        <button
+          *ngIf="message"
+          (click)="copy($event)"
+          [attr.title]="'statusMessage.copyFull' | translate"
+          class="inline-flex items-center rounded border border-line px-1.5 py-0.5 text-[11px] font-medium text-muted transition hover:bg-surface hover:text-ink focus:outline-none focus:ring-2 focus:ring-brand/30"
+          data-testid="diagnostics-copy"
+          type="button"
+        >
+          {{ copyLabelKey | translate }}
+        </button>
+        <span aria-live="polite" class="sr-only" data-testid="diagnostics-copy-status" role="status">{{
+          copyOutcomeKey ? (copyOutcomeKey | translate) : ''
+        }}</span>
+      </div>
+      <p *ngIf="message" class="whitespace-pre-wrap break-words text-muted" data-testid="diagnostics-message">
+        <ng-container *ngFor="let seg of messageSegments"
+          ><a
+            *ngIf="seg.jobId"
+            (click)="$event.stopPropagation()"
+            [routerLink]="jobLink(seg.jobId)"
+            [title]="'statusMessage.previousJob' | translate: { id: seg.jobId }"
+            class="font-medium text-brand underline decoration-dotted underline-offset-2 hover:text-brand-hover"
+            >{{ seg.text }}</a
+          ><span *ngIf="!seg.jobId">{{ seg.text }}</span></ng-container
+        >
+      </p>
+      <p *ngIf="!message" class="text-faint">{{ 'diagnostics.noMessage' | translate }}</p>
+    </div>
+
+    <!-- Timestamps. An absent one reads "not reported", not as a dash that could be
+         mistaken for "instant" or "never ran". -->
+    <div class="grid grid-cols-1 gap-x-4 gap-y-1 sm:grid-cols-2">
+      <p class="text-muted">
+        <span class="font-semibold uppercase tracking-wide text-faint">{{ 'diagnostics.startedAt' | translate }}:</span>
+        <span *ngIf="startedAt" class="font-mono">{{ startedAt | date: 'dd MMM yyyy, HH:mm:ss' }}</span>
+        <span *ngIf="!startedAt" class="text-faint">{{ 'diagnostics.notReported' | translate }}</span>
+      </p>
+      <p class="text-muted">
+        <span class="font-semibold uppercase tracking-wide text-faint"
+          >{{ 'diagnostics.finishedAt' | translate }}:</span
+        >
+        <span *ngIf="finishedAt" class="font-mono">{{ finishedAt | date: 'dd MMM yyyy, HH:mm:ss' }}</span>
+        <span *ngIf="!finishedAt" class="text-faint">{{ 'diagnostics.notReported' | translate }}</span>
+      </p>
+    </div>
+
+    <!-- captcha_found, named for what it actually is. `captcha_solved` is deliberately
+         absent: the runner never writes it, so rendering it would invent a signal. -->
+    <div>
+      <p class="text-muted">
+        <span class="font-semibold uppercase tracking-wide text-faint"
+          >{{ 'diagnostics.captchaFound' | translate }}:</span
+        >
+        <span data-testid="diagnostics-captcha">{{ captchaLabelKey | translate }}</span>
+      </p>
+      <p class="mt-0.5 text-faint">{{ 'diagnostics.captchaHint' | translate }}</p>
+    </div>
+  </div>
+</details>

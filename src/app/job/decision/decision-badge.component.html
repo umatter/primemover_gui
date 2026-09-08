@@ -1,0 +1,24 @@
+<!-- role="img" + aria-label so the verdict AND its explanation are announced as one
+     label; the tooltip alone is invisible to a screen reader and unreachable on touch. -->
+<span
+  *ngIf="kind !== 'none'"
+  [attr.aria-label]="(labelKey | translate) + (tooltip ? ' — ' + tooltip : '')"
+  [attr.title]="tooltip || null"
+  [attr.data-decision]="kind"
+  class="inline-flex flex-shrink-0 items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-semibold"
+  [class.bg-danger-tint]="kind === 'lost'"
+  [class.text-danger]="kind === 'lost'"
+  [class.bg-warning-tint]="kind === 'degraded'"
+  [class.text-warning]="kind === 'degraded'"
+  [class.bg-surface-3]="kind === 'unknown'"
+  [class.text-muted]="kind === 'unknown'"
+  role="img"
+>
+  <span
+    class="h-1.5 w-1.5 rounded-full"
+    [class.bg-danger]="kind === 'lost'"
+    [class.bg-warning]="kind === 'degraded'"
+    [class.bg-faint]="kind === 'unknown'"
+  ></span>
+  {{ labelKey | translate }}
+</span>

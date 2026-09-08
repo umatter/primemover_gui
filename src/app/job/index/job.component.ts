@@ -25,6 +25,13 @@ import { HeroiconDownloadComponent } from '@shared/icon/heroicon-download/heroic
 import { StatusComponent } from '@app/queue/status/status.component';
 import { HeroiconDownloadArchiveComponent } from '@shared/icon/heroicon-download-archive/heroicon-download-archive.component';
 import { SortBy } from '@shared/model/sort';
+import { DecisionBadgeComponent } from '@app/job/decision/decision-badge.component';
+import { JobDiagnosticsComponent } from '@app/job/diagnostics/job-diagnostics.component';
+import { DecisionReportComponent } from '@app/job/decision/decision-report.component';
+import { hasDecisionReport, isDecisionJobType } from '@app/job/model/decision';
+import { StatusFilterComponent } from '@shared/filter/status-filter/status-filter.component';
+import { StatusFilterKey, statusFilterParams } from '@shared/model/status-filter';
+import { SupersedingQuery } from '@shared/model/superseding-query';
 
 @Component({
   selector: 'app-job',
@@ -47,7 +54,11 @@ import { SortBy } from '@shared/model/sort';
     NgClass,
     HeroiconDownloadComponent,
     StatusComponent,
-    HeroiconDownloadArchiveComponent
+    HeroiconDownloadArchiveComponent,
+    DecisionBadgeComponent,
+    DecisionReportComponent,
+    JobDiagnosticsComponent,
+    StatusFilterComponent
   ],
   standalone: true
 })
@@ -61,8 +72,17 @@ export class JobComponent implements OnDestroy {
   pageMeta$: Observable<Meta>;
   error$: Observable<any>;
   downloadSuccess$: Observable<any>;
+  /** The active status chip. Server-side; see {@link statusFilterParams}. */
+  statusFilter: StatusFilterKey = 'all';
   protected readonly SortBy = SortBy;
   private subscriptions = new Subscription();
+
+  /**
+   * Every list query this screen issues, newest cancelling the one before it. See
+   * {@link SupersedingQuery}: `clearCache()` handles the sequential case only, and chips
+   * clicked or arrowed through faster than the API answers are not sequential.
+   */
+  private readonly listQuery = new SupersedingQuery<Job>(this.entityService, 'jobs');
 
   constructor(
     private store: Store,
@@ -87,9 +107,34 @@ export class JobComponent implements OnDestroy {
     this.subscriptions.add(
       this.queryFilter$.pipe().subscribe(() => {
         this.entityService.clearCache();
-        this.entityService.getWithQuery(this.apiService.getParams());
+        this.listQuery.run(this.queryParams());
       })
     );
+  }
+
+  /**
+   * The shared filters and sort, plus the status chip's own parameters.
+   *
+   * Screen-local rather than in the shared `queryFilter` store slice: that slice is global
+   * and is rendered as removable badges in the app header, so a status chosen here would
+   * follow the user to `/queues` and show up as a badge nobody asked for.
+   */
+  queryParams(): { [name: string]: any } {
+    return { ...this.apiService.getParams(), ...statusFilterParams(this.statusFilter) };
+  }
+
+  /**
+   * Re-query on a chip click, back to page 1.
+   *
+   * Not via `getData()`, which adds a new `queryFilter$` subscription on every call — a
+   * control the user clicks repeatedly would multiply the requests the next filter change
+   * fires.
+   */
+  onStatusFilter(key: StatusFilterKey): void {
+    this.statusFilter = key;
+    this.store.dispatch(SharedActions.requestPage({ page: 1 }));
+    this.entityService.clearCache();
+    this.listQuery.run(this.queryParams());
   }
 
   initPagination(): void {
@@ -125,7 +170,20 @@ export class JobComponent implements OnDestroy {
   }
 
   ngOnDestroy() {
+    this.listQuery.cancelInFlight();
     this.subscriptions.unsubscribe();
+  }
+
+  /**
+   * Whether to offer the decision-report expander on this row.
+   *
+   * Shown for every job that carries a verdict, and for every job type that calls the
+   * decision function even when it carries none — because "nothing was recorded" is the
+   * answer a researcher needs to see on a lambda job, and because the archived payload in
+   * MinIO may still hold the verdict the columns do not.
+   */
+  showsDecision(job: Job): boolean {
+    return hasDecisionReport(job) || isDecisionJobType(job.type);
   }
 
   selectJob(item: Job) {

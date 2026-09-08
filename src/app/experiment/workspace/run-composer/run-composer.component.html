@@ -1,3 +1,13 @@
+<!-- Raised only on a TRANSITION into failure or treatment loss, never on the state
+     itself: this screen re-reads the same run every 15 s while it is active. -->
+<app-notification
+  *ngIf="alarm"
+  (closeRequested)="dismissAlarm()"
+  [bodyText]="alarmBodyKey | translate: { name: alarm.runName, id: alarm.runId }"
+  [titleText]="alarmTitleKey | translate"
+  [typeError]="true"
+></app-notification>
+
 <a
   [routerLink]="['/experiments', experimentId, 'bots', botId]"
   class="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-muted transition hover:text-brand"
@@ -14,7 +24,9 @@
     <h1 class="mt-1 font-display text-3xl font-semibold tracking-tight text-ink">{{ run.name }}</h1>
     <p class="mt-2 text-sm text-muted">{{ 'workspace.composer.subtitle' | translate }}</p>
 
-    <!-- Run outcome: the status the runner reported, plus its diagnostic as text. -->
+    <!-- PRIMARY: the run's own status and diagnostic, exactly as the runner reported them.
+         The per-job tally further down is a *reconstruction* of the same run from its jobs
+         and can disagree with this line; this one is what was actually recorded. -->
     <div *ngIf="run.status_code || runMessage(run)" class="mt-3">
       <app-status
         [showMessage]="true"
@@ -23,6 +35,19 @@
         class="block max-w-prose"
       ></app-status>
     </div>
+
+    <!-- Nothing in this app used to refresh, so a "Running" pill stayed running until the
+         user navigated away and back. It now re-reads itself every 15 s while something is
+         actually running, and says so rather than doing it invisibly. -->
+    <p
+      *ngIf="live$ | async"
+      class="mt-2 inline-flex items-center gap-1.5 text-xs text-muted"
+      data-testid="live-marker"
+      role="status"
+    >
+      <span class="h-1.5 w-1.5 animate-pulse-soft rounded-full bg-info"></span>
+      {{ 'liveness.live' | translate }}
+    </p>
   </header>
 
   <!-- Job sequence -->
@@ -30,8 +55,26 @@
     <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
       <h2 class="font-display text-xl font-semibold text-ink">{{ 'workspace.composer.jobs' | translate }}</h2>
 
-      <!-- Outcome tally, so one degraded job in an otherwise green run is not invisible. -->
-      <p *ngIf="hasJobOutcomes" class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted">
+      <!-- SECONDARY: outcome tally counted from the jobs on this screen, so one degraded
+           job in an otherwise green run is not invisible. Subordinate to the run's own
+           status line in the header — that is the runner's account, this is a second one
+           derived from the jobs, and the two can disagree. -->
+      <p
+        *ngIf="hasJobOutcomes || jobsTruncated(run)"
+        class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-faint"
+        [title]="'workspace.composer.tallyHint' | translate"
+      >
+        <!-- The tally counts the jobs on screen, and this screen loads one page of them.
+             Saying so is the difference between "8 succeeded" meaning 8 of 8 and meaning 8
+             of 284. -->
+        <span
+          *ngIf="jobsTruncated(run)"
+          class="font-semibold text-muted"
+          data-testid="composer-partial-tally"
+          [attr.title]="'workspace.composer.partialTallyHint' | translate"
+        >
+          {{ 'workspace.composer.partialTally' | translate: { shown: jobs.length, total: runJobTotal(run) } }}
+        </span>
         <span *ngIf="counts.succeeded" class="text-success">
           {{ counts.succeeded }} {{ 'status.success' | translate }}
         </span>
@@ -43,15 +86,52 @@
         </span>
         <span *ngIf="counts.skipped">{{ counts.skipped }} {{ 'status.skipped' | translate }}</span>
         <span *ngIf="counts.running" class="text-info">{{ counts.running }} {{ 'status.running' | translate }}</span>
+        <!-- A status the API sent but this GUI does not recognise. Shown rather than
+             dropped: a silently missing job is how a tally under-reports without saying so. -->
+        <span
+          *ngIf="counts.unknown"
+          class="font-semibold text-muted"
+          [attr.title]="'workspace.composer.unknownHint' | translate"
+        >
+          {{ counts.unknown }} {{ 'status.unknown' | translate }}
+        </span>
       </p>
     </div>
+
+    <!-- TOP-LINE ALARM. Above the generic warning and visually louder, because it is a
+         different claim: not "some work was lost" but "these sessions produced control-arm
+         data while configured to be treated", so their observations cannot answer the
+         question this experiment asks. Rendered only when positive — a zero would be
+         meaningless, since the underlying columns are NULL for every pre-deploy job. -->
+    <p
+      *ngIf="treatmentLostTotal(run)"
+      class="mb-4 rounded-md border border-danger/40 bg-danger-tint px-3 py-2 text-sm font-semibold text-danger"
+      data-testid="composer-treatment-lost"
+      role="alert"
+    >
+      {{ 'decision.alarm.jobs' | translate: { count: treatmentLostTotal(run) } }}
+      <span class="block font-normal">{{ 'decision.alarm.hint' | translate }}</span>
+    </p>
+
+    <!-- A decision that degraded without losing the whole treatment: part of it applied. -->
+    <p
+      *ngIf="decisionDegradedTotal(run)"
+      class="mb-4 rounded-md bg-warning-tint px-3 py-2 text-sm text-warning"
+      data-testid="composer-decision-degraded"
+      role="status"
+    >
+      {{ 'decision.alarm.degradedJobs' | translate: { count: decisionDegradedTotal(run) } }}
+    </p>
 
     <!-- A run that completed while jobs degraded is a treatment arm that quietly became a control. -->
     <p *ngIf="counts.warning" class="mb-4 rounded-md bg-warning-tint px-3 py-2 text-sm text-warning" role="status">
       {{ 'workspace.composer.degradedNotice' | translate }}
     </p>
 
-    <p *ngIf="jobs.length === 0" class="rounded-xl border border-dashed border-line-strong bg-brand-tint/40 px-6 py-6 text-sm text-muted">
+    <p
+      *ngIf="jobs.length === 0"
+      class="rounded-xl border border-dashed border-line-strong bg-brand-tint/40 px-6 py-6 text-sm text-muted"
+    >
       {{ 'workspace.composer.empty' | translate }}
     </p>
 
@@ -61,7 +141,9 @@
         class="flex items-start gap-3 rounded-xl border border-line bg-surface p-3"
         [ngClass]="{ 'opacity-60': !job.active }"
       >
-        <span class="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-surface-2 font-mono text-xs text-muted">
+        <span
+          class="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-surface-2 font-mono text-xs text-muted"
+        >
           {{ i + 1 }}
         </span>
         <div class="min-w-0 flex-1">
@@ -75,37 +157,74 @@
             [statusMessage]="job.status_message"
             class="mt-1.5 block min-w-0"
           ></app-status>
+          <!-- The decision verdict, which the status above cannot carry: a lost treatment
+               finishes as a perfectly ordinary job. -->
+          <app-decision-badge [job]="job" class="mt-1.5 block"></app-decision-badge>
+          <app-decision-report *ngIf="showsDecision(job)" [job]="job"></app-decision-report>
+          <!-- Timestamps, the full message and the captcha flag. Deliberately no
+               `captcha_solved`: the runner never writes it. -->
+          <app-job-diagnostics [job]="job"></app-job-diagnostics>
         </div>
 
         <!-- reorder -->
         <div class="flex flex-col">
-          <button type="button" (click)="moveUp(job)" [disabled]="first"
-            class="text-faint transition hover:text-brand disabled:opacity-30" [attr.aria-label]="'workspace.composer.moveUp' | translate">
-            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 15l-6-6-6 6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <button
+            type="button"
+            (click)="moveUp(job)"
+            [disabled]="first"
+            class="text-faint transition hover:text-brand disabled:opacity-30"
+            [attr.aria-label]="'workspace.composer.moveUp' | translate"
+          >
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M18 15l-6-6-6 6" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
           </button>
-          <button type="button" (click)="moveDown(job)" [disabled]="last"
-            class="text-faint transition hover:text-brand disabled:opacity-30" [attr.aria-label]="'workspace.composer.moveDown' | translate">
-            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <button
+            type="button"
+            (click)="moveDown(job)"
+            [disabled]="last"
+            class="text-faint transition hover:text-brand disabled:opacity-30"
+            [attr.aria-label]="'workspace.composer.moveDown' | translate"
+          >
+            <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M6 9l6 6 6-6" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
           </button>
         </div>
 
         <!-- behaviours (Slice D) -->
-        <button type="button" (click)="editBehaviours(job)"
-          class="rounded-md border border-line px-2.5 py-1 text-xs font-medium text-ink transition hover:bg-surface-2">
+        <button
+          type="button"
+          (click)="editBehaviours(job)"
+          class="rounded-md border border-line px-2.5 py-1 text-xs font-medium text-ink transition hover:bg-surface-2"
+        >
           {{ 'workspace.composer.behaviours' | translate }}
         </button>
 
         <!-- active toggle -->
-        <button type="button" (click)="toggleActive(job)"
+        <button
+          type="button"
+          (click)="toggleActive(job)"
           class="rounded-md px-2.5 py-1 text-xs font-semibold transition"
-          [ngClass]="job.active ? 'bg-success-tint text-success' : 'bg-surface-2 text-muted'">
+          [ngClass]="job.active ? 'bg-success-tint text-success' : 'bg-surface-2 text-muted'"
+        >
           {{ (job.active ? 'workspace.composer.active' : 'workspace.composer.inactive') | translate }}
         </button>
 
         <!-- remove -->
-        <button type="button" (click)="removeJob(job)"
-          class="text-faint transition hover:text-danger" [attr.aria-label]="'workspace.composer.remove' | translate">
-          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M6 7h12M9 7V5h6v2M10 11v6M14 11v6M7 7l1 12h8l1-12" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <button
+          type="button"
+          (click)="removeJob(job)"
+          class="text-faint transition hover:text-danger"
+          [attr.aria-label]="'workspace.composer.remove' | translate"
+        >
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+            <path
+              d="M6 7h12M9 7V5h6v2M10 11v6M14 11v6M7 7l1 12h8l1-12"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
         </button>
       </li>
     </ol>
@@ -117,43 +236,74 @@
     <form [formGroup]="addForm" (ngSubmit)="addJob()">
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
-          <label for="job-type" class="mb-1 block text-sm font-medium text-ink">{{ 'workspace.composer.type' | translate }}</label>
-          <select id="job-type" formControlName="type" (change)="onTypeChange()"
-            class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand">
+          <label for="job-type" class="mb-1 block text-sm font-medium text-ink">{{
+            'workspace.composer.type' | translate
+          }}</label>
+          <select
+            id="job-type"
+            formControlName="type"
+            (change)="onTypeChange()"
+            class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+          >
             <option [ngValue]="null" disabled>{{ 'workspace.composer.chooseType' | translate }}</option>
             <option *ngFor="let t of jobTypes" [ngValue]="t.apiType">{{ t.displayName }}</option>
           </select>
-          <p *ngIf="hasError('type', 'required')" class="mt-1 text-xs text-danger">{{ 'workspace.composer.typeRequired' | translate }}</p>
+          <p *ngIf="hasError('type', 'required')" class="mt-1 text-xs text-danger">
+            {{ 'workspace.composer.typeRequired' | translate }}
+          </p>
         </div>
         <div>
-          <label for="job-name" class="mb-1 block text-sm font-medium text-ink">{{ 'workspace.composer.name' | translate }}</label>
-          <input id="job-name" type="text" formControlName="name"
+          <label for="job-name" class="mb-1 block text-sm font-medium text-ink">{{
+            'workspace.composer.name' | translate
+          }}</label>
+          <input
+            id="job-name"
+            type="text"
+            formControlName="name"
             class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink placeholder:text-faint focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
-            [placeholder]="'workspace.composer.namePlaceholder' | translate" />
-          <p *ngIf="hasError('name', 'required')" class="mt-1 text-xs text-danger">{{ 'workspace.composer.nameRequired' | translate }}</p>
+            [placeholder]="'workspace.composer.namePlaceholder' | translate"
+          />
+          <p *ngIf="hasError('name', 'required')" class="mt-1 text-xs text-danger">
+            {{ 'workspace.composer.nameRequired' | translate }}
+          </p>
         </div>
       </div>
 
       <!-- Type-specific parameter fields (become the job's behaviours) -->
       <div *ngIf="currentFields.length" [formGroup]="fieldsForm" class="mt-5 border-t border-line pt-5">
-        <p class="mb-3 text-xs font-medium uppercase tracking-wide text-faint">{{ 'workspace.composer.details' | translate }}</p>
+        <p class="mb-3 text-xs font-medium uppercase tracking-wide text-faint">
+          {{ 'workspace.composer.details' | translate }}
+        </p>
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div *ngFor="let f of currentFields">
             <label [for]="'field-' + f.name" class="mb-1 block text-sm font-medium text-ink">
               {{ f.name }}
-              <span *ngIf="!f.required" class="font-normal text-faint">({{ 'workspace.runPanel.optional' | translate }})</span>
+              <span *ngIf="!f.required" class="font-normal text-faint"
+                >({{ 'workspace.runPanel.optional' | translate }})</span
+              >
             </label>
 
-            <select *ngIf="f.options" [id]="'field-' + f.name" [formControlName]="f.name"
-              class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand">
+            <select
+              *ngIf="f.options"
+              [id]="'field-' + f.name"
+              [formControlName]="f.name"
+              class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+            >
               <option *ngFor="let opt of f.options" [ngValue]="opt">{{ opt }}</option>
             </select>
 
-            <input *ngIf="!f.options" [id]="'field-' + f.name" type="text" [formControlName]="f.name"
+            <input
+              *ngIf="!f.options"
+              [id]="'field-' + f.name"
+              type="text"
+              [formControlName]="f.name"
               class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink placeholder:text-faint focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
-              [placeholder]="f.description || f.name" />
+              [placeholder]="f.description || f.name"
+            />
 
-            <p *ngIf="fieldHasError(f.name)" class="mt-1 text-xs text-danger">{{ 'workspace.composer.fieldRequired' | translate }}</p>
+            <p *ngIf="fieldHasError(f.name)" class="mt-1 text-xs text-danger">
+              {{ 'workspace.composer.fieldRequired' | translate }}
+            </p>
             <p *ngIf="f.description && !fieldHasError(f.name)" class="mt-1 text-xs text-faint">{{ f.description }}</p>
           </div>
         </div>
@@ -164,9 +314,13 @@
       </p>
 
       <div class="mt-5 flex justify-end">
-        <button type="submit"
-          class="inline-flex items-center gap-2 rounded-md bg-brand px-4 py-2 text-sm font-semibold text-on-brand transition hover:bg-brand-hover">
-          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <button
+          type="submit"
+          class="inline-flex items-center gap-2 rounded-md bg-brand px-4 py-2 text-sm font-semibold text-on-brand transition hover:bg-brand-hover"
+        >
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+            <path d="M12 5v14M5 12h14" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
           {{ 'workspace.composer.addJob' | translate }}
         </button>
       </div>
@@ -174,11 +328,7 @@
   </section>
 
   <!-- Per-job behaviours editor (Slice D) -->
-  <app-job-behaviours
-    *ngIf="behavioursJob"
-    [job]="behavioursJob"
-    (closed)="closeBehaviours()"
-  ></app-job-behaviours>
+  <app-job-behaviours *ngIf="behavioursJob" [job]="behavioursJob" (closed)="closeBehaviours()"></app-job-behaviours>
 </ng-container>
 
 <ng-template #loadingTpl>

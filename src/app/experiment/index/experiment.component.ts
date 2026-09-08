@@ -22,6 +22,7 @@ import { HeroiconUploadComponent } from '@shared/icon/heroicon-upload/heroicon-u
 import { ControlsComponent } from '@shared/pagination/controls/controls.component';
 import { HeroiconDownloadArchiveComponent } from '@shared/icon/heroicon-download-archive/heroicon-download-archive.component';
 import { SortBy } from '@shared/model/sort';
+import { HealthStripComponent } from '@app/experiment/health/health-strip.component';
 
 @Component({
   selector: 'app-experiment',
@@ -42,7 +43,8 @@ import { SortBy } from '@shared/model/sort';
     ControlsComponent,
     NgForOf,
     NgxPaginationModule,
-    HeroiconDownloadArchiveComponent
+    HeroiconDownloadArchiveComponent,
+    HealthStripComponent
   ],
   animations: [fadeIn]
 })

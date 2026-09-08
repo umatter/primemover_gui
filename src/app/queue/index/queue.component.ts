@@ -19,11 +19,15 @@ import { LoadingSpinnerComponent } from '@shared/overlay/loading-spinner/loading
 import { HeroiconTrashComponent } from '@shared/icon/heroicon-trash/heroicon-trash.component';
 import { ControlsComponent } from '@shared/pagination/controls/controls.component';
 import { ConfirmationModalComponent } from '@shared/dialog/confirmation-modal/confirmation-modal.component';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { AsyncPipe, NgClass, NgForOf, NgIf } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { StatusComponent } from '@app/queue/status/status.component';
 import { SortBy } from '@shared/model/sort';
+import { StatusFilterComponent } from '@shared/filter/status-filter/status-filter.component';
+import { StatusFilterKey, statusFilterParams } from '@shared/model/status-filter';
+import { SupersedingQuery } from '@shared/model/superseding-query';
+import { JobRollupBarComponent } from '@app/queue/rollup-bar/job-rollup-bar.component';
 
 @Component({
   selector: 'app-queue',
@@ -50,7 +54,9 @@ import { SortBy } from '@shared/model/sort';
     NgClass,
     NgForOf,
     NgxPaginationModule,
-    StatusComponent
+    StatusComponent,
+    StatusFilterComponent,
+    JobRollupBarComponent
   ],
   standalone: true
 })
@@ -62,14 +68,26 @@ export class QueueComponent implements OnDestroy {
   queryFilter$: Observable<QueryFilter[]>;
   currentQueue$: Observable<Queue>;
   pageMeta$: Observable<Meta>;
+  /** The active status chip. Server-side; see {@link statusFilterParams}. */
+  statusFilter: StatusFilterKey = 'all';
   protected readonly SortBy = SortBy;
   private subscriptions = new Subscription();
+
+  /**
+   * Every list query this screen issues, newest cancelling the one before it.
+   *
+   * `clearCache()` alone only defends the sequential case: six chips clicked (or arrowed)
+   * through in a second produce six clears that all happen before any response, and the
+   * six responses then merge into the emptied collection together.
+   */
+  private readonly listQuery = new SupersedingQuery<Queue>(this.entityService, 'queues');
 
   constructor(
     private store: Store,
     private experimentService: ExperimentApiService,
     private entityService: QueueService,
-    private apiService: QueueApiService
+    private apiService: QueueApiService,
+    private translate: TranslateService
   ) {
     this.isLoading$ = entityService.loading$;
     this.entities$ = entityService.entities$;
@@ -87,9 +105,54 @@ export class QueueComponent implements OnDestroy {
     this.subscriptions.add(
       this.queryFilter$.pipe().subscribe(() => {
         this.entityService.clearCache();
-        this.entityService.getWithQuery(this.apiService.getParams());
+        this.listQuery.run(this.queryParams());
       })
     );
+  }
+
+  /**
+   * The full query: the shared filters and sort the API service builds, plus the status
+   * chip's own parameters.
+   *
+   * The chip is not routed through the shared `queryFilter` store slice on purpose. That
+   * slice is global — one selection would follow the user from `/queues` to `/jobs` — and
+   * it is rendered as removable badges in the app header, where "Status / 1" would be a
+   * puzzle. Screen-local state, one merge point.
+   */
+  queryParams(): { [name: string]: any } {
+    return { ...this.apiService.getParams(), ...statusFilterParams(this.statusFilter) };
+  }
+
+  /**
+   * Re-query on a chip click, resetting to page 1.
+   *
+   * Deliberately not via `getData()`: that method adds a fresh `queryFilter$` subscription
+   * every time it is called, so driving it from a control the user clicks repeatedly would
+   * multiply the requests fired by the next unrelated filter change. Page 1 matters too —
+   * page 3 of "all runs" is not page 3 of "the failed ones".
+   */
+  onStatusFilter(key: StatusFilterKey): void {
+    this.statusFilter = key;
+    this.store.dispatch(SharedActions.requestPage({ page: 1 }));
+    this.entityService.clearCache();
+    this.listQuery.run(this.queryParams());
+  }
+
+  /**
+   * The three legacy booleans this row used to spend three columns on, as one sentence.
+   *
+   * They are bookkeeping flags the runner sets while working a queue, not a status: a run
+   * stopped mid-flight sits at `processing=1, processed=0` forever. Kept because that is
+   * still the only way to see a queue the runner picked up and never finished — but on
+   * hover, not at the same weight as the run's actual outcome.
+   */
+  legacyFlags(queue: Queue): string {
+    const yesNo = (value: number | boolean): string => this.translate.instant(value ? 'common.yes' : 'common.no');
+    return [
+      `${this.translate.instant('status.processed')}: ${yesNo(queue.processed)}`,
+      `${this.translate.instant('status.processing')}: ${yesNo(queue.processing)}`,
+      `${this.translate.instant('status.review')}: ${yesNo(queue.reviewed)}`
+    ].join(' · ');
   }
 
   initPagination(): void {
@@ -124,6 +187,7 @@ export class QueueComponent implements OnDestroy {
   }
 
   ngOnDestroy() {
+    this.listQuery.cancelInFlight();
     this.subscriptions.unsubscribe();
   }
 }

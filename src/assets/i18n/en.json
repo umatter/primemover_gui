@@ -51,7 +51,8 @@
       "running": "Running",
       "succeeded": "Succeeded",
       "warning": "Degraded",
-      "failed": "Failed"
+      "failed": "Failed",
+      "unknown": "Unknown"
     },
     "nextStep": {
       "title": "Finish setting up your experiment",
@@ -62,9 +63,9 @@
       "bots": "Bots",
       "runs": "Runs",
       "succeeded": "Succeeded",
-      "degraded": "Degraded",
-      "degradedHint": "Finished, but jobs degraded",
-      "failed": "Failed"
+      "failed": "Failed",
+      "needsAttention": "Needs attention",
+      "needsAttentionSplit": "{{warning}} runs reported warning, {{degraded}} runs had degraded jobs"
     },
     "bot": {
       "identity": "Browser identity",
@@ -75,7 +76,8 @@
         "title": "No bots yet",
         "body": "A bot is one simulated user. Add a bot to define who browses the platform and how."
       },
-      "profile": "Profile"
+      "profile": "Profile",
+      "runCounts": "{{total}} runs in the last 24 h · {{succeeded}} succeeded · {{warning}} reported warning · {{degraded}} with degraded jobs · {{failed}} failed · {{inProgress}} unaccounted for (still going, skipped or unrecognised) · {{treatmentLost}} treatment lost"
     },
     "addBotPanel": {
       "title": "Add a bot",
@@ -120,7 +122,9 @@
       "jobsSucceeded": "jobs succeeded",
       "jobsDegraded": "jobs degraded",
       "jobsFailed": "jobs failed",
-      "jobsSkipped": "jobs skipped"
+      "jobsSkipped": "jobs skipped",
+      "unknown": "Unknown",
+      "rollupHint": "Counted from this run's jobs by the API. The line above is what the runner itself reported."
     },
     "botDetail": {
       "back": "Back to experiment",
@@ -152,7 +156,11 @@
       "details": "Details",
       "fieldRequired": "Required.",
       "addError": "Couldn't add the job. Please try again.",
-      "degradedNotice": "Some jobs finished but degraded — their data was not written, or a filter this bot requested could not be applied. (A video picked at random is normal for a control bot; it is a problem only when a treatment was requested and did not take effect.) Check those jobs before using this run's data."
+      "degradedNotice": "Some jobs finished but degraded — their data was not written, or a filter this bot requested could not be applied. (A video picked at random is normal for a control bot; it is a problem only when a treatment was requested and did not take effect.) Check those jobs before using this run's data.",
+      "tallyHint": "Counted from the jobs below. The run's own status above is what the runner reported.",
+      "unknownHint": "The API reported a status this app does not recognise. Not a success — check the job.",
+      "partialTally": "showing {{shown}} of {{total}} jobs",
+      "partialTallyHint": "This page loaded the first jobs of the run only. The alarm figures above come from the API’s count over the whole run; the tally beside them counts the jobs on screen."
     },
     "behaviours": {
       "title": "Behaviours",
@@ -324,7 +332,9 @@
     "updatedAt": "Updated at",
     "username": "User Name",
     "usernamePlaceholder": "",
-    "usernameRequiredError": "Username is required"
+    "usernameRequiredError": "Username is required",
+    "yes": "Yes",
+    "no": "No"
   },
   "config": {
     "add": "Add configuration",
@@ -481,7 +491,13 @@
     "startAt": "Start date/time",
     "startedAt": "Started",
     "timezone": "Timezone",
-    "timezoneOffset": "UTC offset"
+    "timezoneOffset": "UTC offset",
+    "rollup": {
+      "header": "Jobs",
+      "label": "{{succeeded}} succeeded, {{warning}} degraded, {{failed}} failed, {{skipped}} skipped, {{unaccounted}} unaccounted for, of {{total}} jobs",
+      "none": "No job rollup reported",
+      "headerHint": "How much of each run survived: succeeded / degraded / failed / skipped of its jobs. Hover a bar for the numbers, and for the run’s processed / running / review flags."
+    }
   },
   "status": {
     "code": "Code",
@@ -513,5 +529,147 @@
     "uploadCrawlerTitle": "Upload crawler data",
     "uploadExperimentIntroText": "In order to upload experiment data you need to have selected the experiment first. Upload data requires a valid JSON file. See API-docs for details.",
     "uploadExperimentTitle": "Upload experiment data"
+  },
+  "decision": {
+    "column": "Decision",
+    "badge": {
+      "treatmentLost": "Treatment lost",
+      "degraded": "Degraded",
+      "noVerdict": "No verdict",
+      "treatmentLostHint": "This bot was configured to be treated but produced control-arm data — this session carries no treatment signal, even though the job finished.",
+      "degradedHint": "Part of the treatment did not apply.",
+      "noVerdictHint": "No decision verdict was recorded for this job. Not the same as a clean one — it predates the change, or the runner has not been redeployed."
+    },
+    "tooltip": {
+      "failedFilters": "Filters that failed: {{filters}}",
+      "llmError": "LLM error: {{error}}",
+      "selectionMode": "Chosen by: {{mode}} (description only, not a verdict)"
+    },
+    "filter": {
+      "ok": "Applied",
+      "notRequested": "Not requested",
+      "failed": "Failed"
+    },
+    "report": {
+      "title": "Decision report",
+      "noVerdict": "This job does not call the decision function, so there is no verdict to show.",
+      "noVerdictLambda": "No verdict was recorded for this job. That is not a clean result — the job predates the change, or the runner writing it has not been redeployed. The archived payload may still hold the answer.",
+      "treatmentLost": "Treatment lost — this bot was configured to be treated and produced control-arm data.",
+      "degraded": "Degraded — a requested filter did not apply.",
+      "clean": "No degradation reported for this decision.",
+      "filters": "Filters",
+      "selectionMode": "Chosen by",
+      "selectionModeHint": "a description of how the video was picked, not a verdict; “random” is correct for a control bot",
+      "llm": "LLM",
+      "llmAvailable": "available",
+      "llmUnavailable": "unavailable",
+      "requested": "Requested",
+      "applied": "Applied",
+      "warnings": "Warnings"
+    },
+    "raw": {
+      "download": "Download raw payload",
+      "loading": "Fetching…",
+      "error": "The raw payload could not be read. That says nothing about whether the treatment applied — only that this archive could not be reached."
+    },
+    "alarm": {
+      "jobs": "Treatment lost in {{count}} job(s) of this run.",
+      "degradedJobs": "{{count}} job(s) had a degraded decision.",
+      "runJobs": "Treatment lost in {{count}} job(s)",
+      "runs": "Treatment lost in {{runs}} run(s), {{jobs}} job(s).",
+      "botRuns": "{{count}} treatment lost",
+      "experiment": "Treatment lost in {{count}} run(s) in this window.",
+      "hint": "Those sessions produced control-arm data although a treatment was configured, so their observations carry no treatment signal.",
+      "runsUnlisted": "Treatment lost in {{runs}} run(s) of this bot in the last 24 h — not all of them are accounted for in the list below."
+    }
+  },
+  "statusFilter": {
+    "legend": "Status",
+    "all": "All",
+    "allHint": "Every state, unfiltered.",
+    "bad": "Needs attention",
+    "badHint": "Failed or degraded — the two states a human should look at. Legacy spellings such as \"failed\" are included; the API expands them.",
+    "warningHint": "Completed, but degraded: something the experiment cares about did not happen.",
+    "failureHint": "Did not complete. Includes rows recorded with the legacy spelling \"failed\".",
+    "skippedHint": "Never attempted.",
+    "runningHint": "Still in flight.",
+    "successHint": "Completed with nothing reported as degraded.",
+    "empty": {
+      "title": "Nothing matches this filter",
+      "body": "That is a statement about the filter, not about the bot: other runs exist, they are just in other states.",
+      "showAll": "Show all"
+    }
+  },
+  "health": {
+    "title": "Health",
+    "window": {
+      "legend": "Window",
+      "24h": "24 h",
+      "7d": "7 d",
+      "all": "All",
+      "24hHint": "Runs from the last 24 hours.",
+      "7dHint": "Runs from the last 7 days (168 h).",
+      "allHint": "The endpoint's maximum window: the last 30 days (720 h), not the whole history."
+    },
+    "needsAttentionSplit": "{{warning}} reported warning, {{failed}} failed",
+    "unknownHint": "Runs whose status code is none of the five canonical values. Counted here and never as successes — an unrecognised status is unknown, not fine.",
+    "runs": {
+      "detail": "{{running}} running · {{skipped}} skipped"
+    },
+    "jobs": {
+      "summary": "{{total}} jobs · {{bad}} need attention · {{degraded}} degraded decisions",
+      "unknown": "{{count}} jobs with an unrecognised status"
+    },
+    "strip": {
+      "attention": "{{bad}} of {{total}} runs need attention",
+      "attentionNoTotal": "{{bad}} runs need attention",
+      "clean": "All {{total}} runs completed cleanly",
+      "cleanNoTotal": "No runs need attention",
+      "noRuns": "No runs in this window",
+      "unknownRuns": "{{unknown}} runs with an unrecognised status",
+      "noData": "No health data",
+      "checking": "Checking…",
+      "lastRun": "Last run finished",
+      "jobsAttention": "{{badJobs}} of {{totalJobs}} jobs need attention",
+      "jobsAttentionHint": "Jobs the contract calls bad: failed or completed-but-degraded. A run can report success while the jobs inside it did not.",
+      "running": "{{running}} of {{total}} runs still running",
+      "cleanWithSkipped": "{{success}} of {{total}} runs completed cleanly · {{skipped}} skipped",
+      "unknownJobs": "{{unknownJobs}} jobs with an unrecognised status",
+      "unaccountedRuns": "{{unaccounted}} of {{total}} runs unaccounted for"
+    }
+  },
+  "statusMessage": {
+    "expand": "More",
+    "collapse": "Less",
+    "copy": "Copy",
+    "copyFull": "Copy the full message",
+    "copied": "Copied",
+    "copyFailed": "Copy failed",
+    "previousJob": "Open job {{id}} — the job this one waited on"
+  },
+  "diagnostics": {
+    "title": "Diagnostics",
+    "message": "Runner message",
+    "noMessage": "The runner recorded no message for this job.",
+    "startedAt": "Started",
+    "finishedAt": "Finished",
+    "notReported": "not reported",
+    "captchaFound": "Captcha string seen on page",
+    "captchaHint": "A substring match on the page source: a captcha-like string was present in the HTML. It does not say a captcha was shown, blocked the session, or was solved — the runner records no solved-captcha signal at all.",
+    "captcha": {
+      "yes": "Yes",
+      "no": "No",
+      "unknown": "Not reported"
+    }
+  },
+  "liveness": {
+    "live": "Live · refreshing every 15 s",
+    "hint": "This view re-reads itself while a run is going, and pauses while the tab is in the background."
+  },
+  "runAlarm": {
+    "failureTitle": "Run failed",
+    "failureBody": "{{name}} (Q-{{id}}) has just failed.",
+    "treatmentLostTitle": "Treatment lost",
+    "treatmentLostBody": "{{name}} (Q-{{id}}) produced control-arm data while configured to be treated — this session cannot answer the experiment's question."
   }
 }
