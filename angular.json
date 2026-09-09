@@ -149,7 +149,8 @@
               "app/core/auth/login/login.component.spec.ts",
               "app/shared/overlay/notification/notification.component.spec.ts",
               "app/shared/store/shared.effects.spec.ts",
-              "app/shared/layout/user-setting/user-setting.component.spec.ts"
+              "app/shared/layout/user-setting/user-setting.component.spec.ts",
+              "app/queue/create/queue-create.format.spec.ts"
             ]
           }
         },
