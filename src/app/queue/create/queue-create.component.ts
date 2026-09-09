@@ -27,6 +27,20 @@ import { LoadingSpinnerComponent } from '@shared/overlay/loading-spinner/loading
 
 export const TIMEZONE = 'Europe/Berlin';
 
+/**
+ * The shape `start_at` is prefilled in, matching the datetime-local input.
+ *
+ * HH, not hh. Lowercase hh is the 12-HOUR clock, and this value is posted
+ * straight back by onSave(): picking an existing run scheduled for 14:00
+ * prefilled the form with 02:00 and silently rewrote the run twelve hours
+ * earlier. Midnight was worse -- 00:00 prefilled as 12:00, twelve hours late.
+ * Morning runs were unaffected, which is why it survived; every other date
+ * format in this app already uses HH.
+ *
+ * Exported so a test can pin it without standing the whole component up.
+ */
+export const START_AT_FORMAT = 'yyyy-MM-ddTHH:mm';
+
 @Component({
   selector: 'app-queue-create',
   templateUrl: './queue-create.component.html',
@@ -170,7 +184,7 @@ export class QueueCreateComponent implements OnInit, OnDestroy {
   setFormValuesToSelectedEntity(formValue: Queue): void {
     this.entityForm.patchValue({
       ...formValue,
-      start_at: this.datePipe.transform(formValue.start_at, 'yyyy-MM-ddThh:mm')
+      start_at: this.datePipe.transform(formValue.start_at, START_AT_FORMAT)
     });
     this.queueAutocompletion.setValue(formValue.name);
     this.crawlerAutocompletion.setValue(formValue.crawler.name);

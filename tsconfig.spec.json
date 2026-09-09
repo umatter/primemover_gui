@@ -18,6 +18,7 @@
     "src/app/job/index/job.component.spec.ts",
     "src/app/job/model/decision.spec.ts",
     "src/app/job/decision/*.spec.ts",
+    "src/app/queue/create/queue-create.format.spec.ts",
     "src/app/queue/index/queue.component.spec.ts",
     "src/app/queue/rollup-bar/job-rollup-bar.component.spec.ts",
     "src/app/shared/filter/status-filter/status-filter.component.spec.ts",
