@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
-import { ExperimentService } from './proxy-api.service';
+import { ProxyApiService } from './proxy-api.service';
 
-describe('ExperimentService', () => {
-  let service: ExperimentService;
+describe('ProxyApiService', () => {
+  let service: ProxyApiService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(ExperimentService);
+    service = TestBed.inject(ProxyApiService);
   });
 
   it('should be created', () => {

@@ -1,14 +1,14 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CrawlerCreateComponent } from './experiment-create.component';
+import { CrawlerCreateComponent } from './crawler-create.component';
 
-describe('ExperimentCreateComponent', () => {
+describe('CrawlerCreateComponent', () => {
   let component: CrawlerCreateComponent;
   let fixture: ComponentFixture<CrawlerCreateComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [CrawlerCreateComponent]
+      imports: [CrawlerCreateComponent]
     }).compileComponents();
 
     fixture = TestBed.createComponent(CrawlerCreateComponent);
