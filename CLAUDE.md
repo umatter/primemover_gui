@@ -27,6 +27,20 @@ the count rises. Standalone components in specs need `imports:`, not
 `OnPush` component will not re-render from a field assigned by the test — go
 through a real DOM event.
 
+## Dates: `HH`, never `hh`
+
+Angular's DatePipe reads lowercase `hh` as the **12-hour** clock
+(`dateGetter(Hours, 2, -12)`). Every date format in this app uses `HH`; the one
+exception was `queue-create.component.ts`, which prefilled a run's `start_at`
+through `'yyyy-MM-ddThh:mm'` and posted the form value straight back -- so
+picking an existing run scheduled for 14:00 prefilled 02:00 and saving rewrote
+the run twelve hours earlier. Midnight went the other way, 00:00 to 12:00.
+Morning runs were unaffected, which is why it survived. Nothing errored; the run
+simply moved.
+
+Pinned by `queue-create.format.spec.ts`. Any format string that reaches the API
+deserves the same treatment.
+
 ## Deployment
 
 One image, any deployment: `Dockerfile` builds the prod bundle and serves it
