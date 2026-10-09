@@ -30,11 +30,6 @@ export class ProxyApiService {
     return this.http.get<[]>(`${this.config.apiBaseUrl}/proxies`);
   }
 
-  public search(keyword: string) {
-    return this.http.get<[]>(`${this.config.apiBaseUrl}/proxies?filter[search]=${keyword}
-    `);
-  }
-
   getPaginateArgs(meta: Meta): PaginatePipeArgs {
     return this.paginationService.getPipeArgs(meta, PaginationType.PROXY);
   }

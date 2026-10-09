@@ -26,15 +26,6 @@ export class AgentApiService {
     private paginationService: PaginationService
   ) {}
 
-  public simpleIndex(): Observable<[]> {
-    return this.http.get<[]>(`${this.config.apiBaseUrl}/agents-list`);
-  }
-
-  search(keyword: string) {
-    return this.http.get<[]>(`${this.config.apiBaseUrl}/agents?filter[search]=${keyword}
-    `);
-  }
-
   getPaginateArgs(meta: Meta): PaginatePipeArgs {
     return this.paginationService.getPipeArgs(meta, PaginationType.AGENT);
   }

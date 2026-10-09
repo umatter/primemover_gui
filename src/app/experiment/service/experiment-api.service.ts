@@ -29,18 +29,9 @@ export class ExperimentApiService {
     private paginationService: PaginationService
   ) {}
 
-  public simpleIndex(): Observable<[]> {
-    return this.http.get<[]>(`${this.config.apiBaseUrl}/experiments-list`);
-  }
-
   /** The runner accounts an experiment can be assigned to, default flagged. */
   public runners(): Observable<Runner[]> {
     return this.http.get<Runner[]>(`${this.config.apiBaseUrl}/runners`);
-  }
-
-  public search(keyword: string): Observable<any[]> {
-    return this.http.get<[]>(`${this.config.apiBaseUrl}/experiments?filter[name]=${keyword}
-    `);
   }
 
   public download(experimentId: any): Observable<HttpResponse<any>> {

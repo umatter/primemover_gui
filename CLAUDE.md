@@ -16,16 +16,16 @@ npm run lint         # eslint + stylelint --fix
 npm run format       # prettier --write .
 ```
 
-## Tests: the curated spec list
+## Tests: every spec runs
 
-`ng test` runs only the specs listed in `tsconfig.spec.json` (`include`) **and**
-`angular.json` (`test.include`). ~80 auto-generated `should create` stubs are
-quarantined that way. A new `*.spec.ts` outside the list is compiled by nobody
-and the "Executed N of N" count does not move — add it to both lists and check
-the count rises. Standalone components in specs need `imports:`, not
-`declarations:`; components with animations need `NoopAnimationsModule`; an
-`OnPush` component will not re-render from a field assigned by the test — go
-through a real DOM event.
+`ng test` runs every `src/**/*.spec.ts` (`tsconfig.spec.json` `include` and
+`angular.json` `test.include`). The ~73 auto-generated `should create` stubs
+that used to be quarantined there never ran and were deleted (#50) — don't
+recreate scaffolds that assert nothing. Standalone components in specs need
+`imports:`, not `declarations:`; components with animations need
+`NoopAnimationsModule`; an `OnPush` component will not re-render from a field
+assigned by the test — go through a real DOM event. Set inputs with
+`fixture.componentRef.setInput()` when the component reacts in `ngOnChanges`.
 
 ## Dates: `HH`, never `hh`
 

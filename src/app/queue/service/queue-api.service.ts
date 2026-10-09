@@ -28,11 +28,6 @@ export class QueueApiService {
     private paginationService: PaginationService
   ) {}
 
-  public search(keyword: string) {
-    return this.http.get<[]>(`${this.config.apiBaseUrl}/queues?filter[name]=${keyword}
-    `);
-  }
-
   getPaginateArgs(meta: Meta): PaginatePipeArgs {
     return this.paginationService.getPipeArgs(meta, PaginationType.QUEUE);
   }
