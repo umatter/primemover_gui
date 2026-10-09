@@ -11,9 +11,14 @@ import { CrawlerService, QueueService } from '@app/entity/service';
 import { Queue } from '@app/queue/model/queue';
 import { VisibilityService } from '@shared/service/visibility.service';
 import { ProfileApiService } from '../profile/profile-api.service';
+import { TreatmentApiService } from '../treatment/treatment-api.service';
 
-/** The embedded Profile panel (F1) has its own spec; here it only needs to stay quiet. */
+/** The embedded Profile (F1) and Treatment (F2) panels have their own specs; here they only need to stay quiet. */
 const PROFILE_API_STUB = { provide: ProfileApiService, useValue: { load: () => NEVER, savePreferences: () => NEVER } };
+const TREATMENT_API_STUB = {
+  provide: TreatmentApiService,
+  useValue: { load: () => NEVER, save: () => NEVER, create: () => NEVER }
+};
 
 /**
  * Slice B acceptance (docs/specs/runs-and-bots.md §5): a run's status is shown honestly —
@@ -28,6 +33,7 @@ describe('BotDetailComponent (Slice B — run status)', () => {
       imports: [BotDetailComponent, TranslateModule.forRoot(), NoopAnimationsModule],
       providers: [
         PROFILE_API_STUB,
+        TREATMENT_API_STUB,
         provideRouter([]),
         { provide: CrawlerService, useValue: { getByKey: () => of({ id: 1, name: 'Bot' }) } },
         {
@@ -222,6 +228,7 @@ describe('BotDetailComponent (Slice B — run status)', () => {
         imports: [BotDetailComponent, TranslateModule.forRoot(), NoopAnimationsModule],
         providers: [
           PROFILE_API_STUB,
+          TREATMENT_API_STUB,
           provideRouter([]),
           { provide: CrawlerService, useValue: { getByKey: () => of({ id: 1, name: 'Bot' }) } },
           {
@@ -345,6 +352,7 @@ describe('BotDetailComponent (Slice B — run status)', () => {
         imports: [BotDetailComponent, TranslateModule.forRoot(), NoopAnimationsModule],
         providers: [
           PROFILE_API_STUB,
+          TREATMENT_API_STUB,
           provideRouter([]),
           { provide: CrawlerService, useValue: { getByKey: () => of({ id: 1, name: 'Bot' }) } },
           {
@@ -484,6 +492,7 @@ describe('BotDetailComponent (Phase 2 — the run status chips)', () => {
       imports: [BotDetailComponent, TranslateModule.forRoot(), NoopAnimationsModule],
       providers: [
         PROFILE_API_STUB,
+        TREATMENT_API_STUB,
         provideRouter([]),
         { provide: CrawlerService, useValue: { getByKey: () => of({ id: 1, name: 'Bot', ...bot }) } },
         {
@@ -651,6 +660,7 @@ describe('BotDetailComponent (Phase 2 — the run status chips)', () => {
         imports: [BotDetailComponent, TranslateModule.forRoot(), NoopAnimationsModule],
         providers: [
           PROFILE_API_STUB,
+          TREATMENT_API_STUB,
           provideRouter([]),
           { provide: CrawlerService, useValue: { getByKey: () => of({ id: 1, name: 'Bot' }) } },
           {
@@ -840,6 +850,7 @@ describe('BotDetailComponent (Phase 5 — liveness and transition alarms)', () =
       imports: [BotDetailComponent, TranslateModule.forRoot(), NoopAnimationsModule],
       providers: [
         PROFILE_API_STUB,
+        TREATMENT_API_STUB,
         provideRouter([]),
         { provide: CrawlerService, useValue: { getByKey: () => of({ id: 1, name: 'Bot' }) } },
         {

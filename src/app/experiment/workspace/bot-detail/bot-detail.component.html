@@ -253,6 +253,10 @@
     </ul>
   </section>
 
+  <!-- F2: the bot's treatment — what the runner selects with. Above the profile: it is
+       what makes this bot a treatment or a control. -->
+  <app-bot-treatment [configurationId]="bot.configuration_id ?? bot.configuration?.id ?? null"></app-bot-treatment>
+
   <!-- F1: the bot's profile. Below the runs on purpose — this screen is mostly visited to
        see how the bot is doing; its setup is the second question. -->
   <app-bot-profile [configurationId]="bot.configuration_id ?? bot.configuration?.id ?? null"></app-bot-profile>

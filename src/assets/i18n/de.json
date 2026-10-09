@@ -212,6 +212,82 @@
         "cookieKey": "Braucht einen Schlüssel \"accept_all\", z. B. {\"accept_all\": true}. Alles andere ignoriert der Runner.",
         "generic": "Das Profil konnte nicht gespeichert werden."
       }
+    },
+    "treatment": {
+      "title": "Treatment",
+      "subtitle": "Wonach dieser Bot sucht und welche Ergebnisse er wählt. Der Runner bewertet jedes Ergebnis nach der politischen Position des Bots im Vergleich zum Medium – diese Zahlen sind die Manipulation des Experiments.",
+      "loading": "Treatment wird geladen…",
+      "save": "Treatment speichern",
+      "saving": "Wird gespeichert…",
+      "makeControl": "Zur Kontrolle machen",
+      "shared": "Von {{count}} Bots geteilt – Änderungen gelten für alle",
+      "multiple": "Diese Konfiguration hat {{count}} Parameterzeilen. Der Runner verwendet die erste (#{{id}}), die hier angezeigt wird.",
+      "noneBody": "Kein Treatment gesetzt. Der Runner hat keine Parameter zur Auswahl von Ergebnissen; die Entscheidungen dieses Bots sind nicht gesteuert.",
+      "setUp": "Treatment einrichten (startet als Kontrolle)",
+      "position": "Politische Position (−1 bis 1)",
+      "remove": "Entfernen",
+      "arm": {
+        "control": "Kontrolle",
+        "treatment": "Treatment",
+        "none": "Kein Treatment",
+        "unknown": "Arm unbekannt"
+      },
+      "weight": {
+        "pi": {
+          "label": "Politische Position",
+          "hint": "−1 links … 0 Mitte … 1 rechts. Ergebnisse von Medien nahe dieser Position werden höher bewertet."
+        },
+        "psi": {
+          "label": "Stärke des Bewertungsfilters",
+          "hint": "Geht an die YouTube-Entscheidungsfunktion. 0 fordert keinen Bewertungsfilter an."
+        },
+        "kappa": {
+          "label": "Engagement-Stufe",
+          "hint": "Ganze Zahl ≥ 0, geht an die YouTube-Entscheidungsfunktion. 0 = keine."
+        },
+        "tau": {
+          "label": "Distanzkosten",
+          "hint": "Wie stark ideologische Distanz zu einem Medium dessen Bewertung senkt. 0 = gleichgültig."
+        },
+        "alpha": {
+          "label": "Bonus für bekannte Medien",
+          "hint": "Zusätzliche Bewertung für Ergebnisse eines Mediums aus der Liste unten."
+        },
+        "beta": {
+          "label": "Rang-Abzug",
+          "hint": "Bewertungsverlust pro Position weiter unten in der Ergebnisliste. 0 = Rang egal."
+        }
+      },
+      "terms": {
+        "title": "Suchbegriffe",
+        "hint": "Wonach der Bot suchen darf, jeweils mit politischer Position.",
+        "empty": "Keine Suchbegriffe.",
+        "term": "Suchbegriff",
+        "add": "Suchbegriff hinzufügen"
+      },
+      "outlets": {
+        "title": "Medien",
+        "hint": "Medien, die der Bot kennt, jeweils mit politischer Position. Ein Ergebnis zählt als dieses Medium, wenn seine Adresse auf dieser Domain liegt.",
+        "empty": "Keine Medien.",
+        "domain": "Domain",
+        "url": "Startseite (optional)",
+        "add": "Medium hinzufügen",
+        "savedAs": "Gespeichert als {{domain}} – die Form, die der Runner vergleicht"
+      },
+      "csv": {
+        "terms": "CSV einfügen (term,pi)",
+        "outlets": "CSV einfügen (domain,url,pi)",
+        "import": "Zeilen anhängen",
+        "bad": "Nicht importiert: Zeile(n) {{lines}} unlesbar."
+      },
+      "error": {
+        "position": "Muss zwischen −1 und 1 liegen.",
+        "number": "Muss eine Zahl sein.",
+        "kappa": "Muss eine ganze Zahl ab 0 sein.",
+        "term": "Der Suchbegriff ist leer.",
+        "domain": "Die Domain ist leer.",
+        "generic": "Das Treatment konnte nicht gespeichert werden."
+      }
     }
   },
   "wizard": {

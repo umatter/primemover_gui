@@ -401,6 +401,19 @@
             <span class="text-faint">{{ 'workspace.bot.profile' | translate }}:</span>
             {{ bot.configuration?.name || '—' }}
           </span>
+          <!-- F2: the arm, by the runner's rule. Nothing when the API did not say. -->
+          <span
+            *ngIf="botArm(bot) !== 'unknown'"
+            [ngClass]="{
+              'bg-surface-3 text-muted': botArm(bot) === 'control',
+              'bg-brand-tint text-brand': botArm(bot) === 'treatment',
+              'bg-warning-tint text-warning': botArm(bot) === 'none'
+            }"
+            class="inline-flex items-center rounded-full px-2 py-0.5 font-semibold"
+            [attr.data-testid]="'bot-arm-' + bot.id"
+          >
+            {{ 'workspace.treatment.arm.' + botArm(bot) | translate }}
+          </span>
         </div>
       </article>
     </div>

@@ -22,6 +22,7 @@ import { LoadingSpinnerComponent } from '@shared/overlay/loading-spinner/loading
 import { HeroiconUploadComponent } from '@shared/icon/heroicon-upload/heroicon-upload.component';
 import { HeroiconDownloadArchiveComponent } from '@shared/icon/heroicon-download-archive/heroicon-download-archive.component';
 import { AddBotComponent } from './add-bot/add-bot.component';
+import { Arm, armOf } from './treatment/treatment-model';
 
 interface RunSummary {
   total: number;
@@ -272,6 +273,15 @@ export class ExperimentWorkspaceComponent implements OnInit, OnDestroy {
   botProgress(bot: Crawler): number {
     const total = bot.latest_queues_count || 0;
     return total ? Math.round(((bot.latest_queues_succeeded || 0) / total) * 100) : 0;
+  }
+
+  /**
+   * The bot's arm, from the params the crawler list embeds in its configuration (F2).
+   * 'unknown' — no configuration, or an API that does not embed params — renders nothing:
+   * a card must not call a bot "Control" on evidence it never received.
+   */
+  botArm(bot: Crawler): Arm {
+    return bot.configuration ? armOf(bot.configuration.params) : 'unknown';
   }
 
   /**
