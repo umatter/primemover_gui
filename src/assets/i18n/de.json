@@ -238,12 +238,12 @@
           "hint": "−1 links … 0 Mitte … 1 rechts. Ergebnisse von Medien nahe dieser Position werden höher bewertet."
         },
         "psi": {
-          "label": "Stärke des Bewertungsfilters",
-          "hint": "Geht an die YouTube-Entscheidungsfunktion. 0 fordert keinen Bewertungsfilter an."
+          "label": "Beeinflussbarkeit",
+          "hint": "0 bis 1: wie stark dieser Bot durch das Gesehene beeinflusst werden kann. Geht auch an die YouTube-Entscheidungsfunktion."
         },
         "kappa": {
-          "label": "Engagement-Stufe",
-          "hint": "Ganze Zahl ≥ 0, geht an die YouTube-Entscheidungsfunktion. 0 = keine."
+          "label": "Beeinflussbar",
+          "hint": "0, 1 oder 2: ob dieser Bot überhaupt beeinflussbar ist (0 = nein). Geht auch an die YouTube-Entscheidungsfunktion."
         },
         "tau": {
           "label": "Distanzkosten",
