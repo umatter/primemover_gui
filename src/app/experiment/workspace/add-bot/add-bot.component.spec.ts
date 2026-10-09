@@ -5,12 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { of, throwError } from 'rxjs';
 
 import { AddBotComponent } from './add-bot.component';
-import {
-  AgentService,
-  ConfigurationService,
-  CrawlerService,
-  ProxyService
-} from '@app/entity/service';
+import { AgentService, ConfigurationService, CrawlerService, ProxyService } from '@app/entity/service';
 
 /**
  * Slice A acceptance (docs/specs/runs-and-bots.md §5):
@@ -54,7 +49,8 @@ describe('AddBotComponent (Slice A — add bot to experiment)', () => {
       description: '',
       agent_id: 1,
       proxy_id: 2,
-      configuration_id: 3
+      configuration_id: 3,
+      testing: false
     });
     component.save();
 
@@ -83,7 +79,8 @@ describe('AddBotComponent (Slice A — add bot to experiment)', () => {
       description: '',
       agent_id: 1,
       proxy_id: 2,
-      configuration_id: 3
+      configuration_id: 3,
+      testing: false
     });
     component.save();
 

@@ -79,7 +79,8 @@
       "profile": "Profil",
       "runCounts": "{{total}} Durchläufe in den letzten 24 Std. · {{succeeded}} erfolgreich · {{warning}} mit Warnung · {{degraded}} mit beeinträchtigten Jobs · {{failed}} fehlgeschlagen · {{inProgress}} nicht zugeordnet (laufend, übersprungen oder unbekannt) · {{treatmentLost}} Treatment verloren",
       "ready": "Bereit",
-      "stepsLeft": "Noch {{count}} Einrichtungsschritt(e)"
+      "stepsLeft": "Noch {{count}} Einrichtungsschritt(e)",
+      "test": "Test"
     },
     "addBotPanel": {
       "title": "Bot hinzufügen",
@@ -98,7 +99,9 @@
       "editTitle": "Bot-Einrichtung bearbeiten",
       "editSubtitle": "Ändere Browser-Identität, Verbindung und Profil dieses Bots. Seine Läufe behalten ihren Verlauf.",
       "editSave": "Einrichtung speichern",
-      "editError": "Die Einrichtung konnte nicht gespeichert werden. Bitte versuche es erneut."
+      "editError": "Die Einrichtung konnte nicht gespeichert werden. Bitte versuche es erneut.",
+      "testing": "Test-Bot",
+      "testingHint": "Ein Runner im Produktionsmodus überspringt Test-Bots; nur ein im Testmodus gestarteter Runner führt sie aus. Damit lässt sich eine Einrichtung ausprobieren, ohne Studiendaten zu erzeugen."
     },
     "runPanel": {
       "title": "Lauf planen",
@@ -322,6 +325,15 @@
         "unknown": "von hier nicht erkennbar"
       },
       "afterProfile": "braucht zuerst ein Profil"
+    },
+    "watched": {
+      "title": "Verlauf",
+      "hint": "Was die Entscheidungen dieses Bots ausgewählt haben, neueste zuerst. Der Filter „bereits gesehen“ liest diese Liste.",
+      "loading": "Verlauf wird geladen…",
+      "empty": "Noch nichts angesehen.",
+      "unavailable": "Der Verlauf ist auf diesem Server nicht verfügbar.",
+      "error": "Der Verlauf konnte nicht geladen werden.",
+      "position": "#{{n}}, neueste zuerst"
     }
   },
   "wizard": {

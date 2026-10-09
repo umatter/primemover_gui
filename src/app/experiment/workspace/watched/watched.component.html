@@ -1,0 +1,30 @@
+<details
+  #panel
+  (toggle)="onToggle(panel.open)"
+  class="mt-8 rounded-xl border border-line bg-surface"
+  data-testid="watched-panel"
+>
+  <summary class="flex cursor-pointer items-center justify-between gap-3 px-4 py-3">
+    <span>
+      <span class="font-display text-lg font-semibold text-ink">{{ 'workspace.watched.title' | translate }}</span>
+      <span *ngIf="state === 'loaded'" class="ml-2 text-sm text-muted">({{ ids.length }})</span>
+    </span>
+    <span class="text-xs text-muted">{{ 'workspace.watched.hint' | translate }}</span>
+  </summary>
+
+  <div class="border-t border-line px-4 py-3 text-sm">
+    <p *ngIf="state === 'loading'" class="text-muted" role="status">{{ 'workspace.watched.loading' | translate }}</p>
+    <p *ngIf="state === 'empty'" class="text-muted">{{ 'workspace.watched.empty' | translate }}</p>
+    <p *ngIf="state === 'unavailable'" class="text-muted">{{ 'workspace.watched.unavailable' | translate }}</p>
+    <p *ngIf="state === 'error'" class="text-danger" role="alert">{{ 'workspace.watched.error' | translate }}</p>
+    <ol *ngIf="state === 'loaded'" class="flex flex-wrap gap-2" data-testid="watched-list">
+      <li
+        *ngFor="let id of ids; let i = index"
+        [title]="'workspace.watched.position' | translate: { n: i + 1 }"
+        class="rounded bg-surface-2 px-2 py-0.5 font-mono text-xs text-ink"
+      >
+        {{ id }}
+      </li>
+    </ol>
+  </div>
+</details>

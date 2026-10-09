@@ -64,7 +64,9 @@ export class AddBotComponent implements OnInit, OnDestroy {
       description: [''],
       agent_id: [null, [Validators.required]],
       proxy_id: [null, [Validators.required]],
-      configuration_id: [null, [Validators.required]]
+      configuration_id: [null, [Validators.required]],
+      // F3: a runner in production mode skips test bots (crawlers-unprocessed is testing = 0).
+      testing: [false]
     });
 
     this.librariesReady$ = combineLatest([this.agents$, this.proxies$, this.configurations$]).pipe(
@@ -83,7 +85,8 @@ export class AddBotComponent implements OnInit, OnDestroy {
         description: this.bot.description ?? '',
         agent_id: this.bot.agent_id ?? this.bot.agent?.id ?? null,
         proxy_id: this.bot.proxy_id ?? this.bot.proxy?.id ?? null,
-        configuration_id: this.bot.configuration_id ?? this.bot.configuration?.id ?? null
+        configuration_id: this.bot.configuration_id ?? this.bot.configuration?.id ?? null,
+        testing: Boolean(Number(this.bot.testing ?? 0))
       });
     }
     // Load Library building blocks so the selects can populate.
@@ -107,6 +110,9 @@ export class AddBotComponent implements OnInit, OnDestroy {
 
     const payload = {
       ...this.form.value,
+      // Empty is "no description": sending '' would turn a stored null into an empty
+      // string just because the panel was opened and saved.
+      description: String(this.form.value.description ?? '').trim() || null,
       experiment_id: this.experimentId
     };
 

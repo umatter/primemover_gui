@@ -54,6 +54,8 @@ export interface Crawler {
   agent?: Agent | null;
   proxy?: Proxy | null;
   configuration_id?: number | null;
+  /** 1/0 from the API. Test bots are only run by a runner started in test mode. */
+  testing?: number | boolean;
   configuration?: Configuration | null;
 }
 

@@ -103,6 +103,20 @@
         </p>
       </div>
 
+      <!-- F3: test bot -->
+      <label class="flex items-start gap-3 rounded-lg border border-line bg-surface-2/40 p-3" for="bot-testing">
+        <input
+          class="mt-0.5 h-4 w-4 rounded border-line-strong text-brand focus:ring-brand"
+          formControlName="testing"
+          id="bot-testing"
+          type="checkbox"
+        />
+        <span>
+          <span class="block text-sm font-medium text-ink">{{ 'workspace.addBotPanel.testing' | translate }}</span>
+          <span class="block text-xs text-muted">{{ 'workspace.addBotPanel.testingHint' | translate }}</span>
+        </span>
+      </label>
+
       <!-- Submit error -->
       <p *ngIf="errorKey" class="rounded-md bg-danger-tint px-3 py-2 text-sm text-danger">
         {{ errorKey | translate }}
