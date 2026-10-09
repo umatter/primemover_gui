@@ -101,7 +101,10 @@
       "editSave": "Save setup",
       "editError": "Couldn't save the bot's setup. Please try again.",
       "testing": "Test bot",
-      "testingHint": "A runner in production mode skips test bots; only a runner started in test mode runs them. Use it to try a setup without producing study data."
+      "testingHint": "A runner in production mode skips test bots; only a runner started in test mode runs them. Use it to try a setup without producing study data.",
+      "description": "Description",
+      "optional": "optional",
+      "descriptionPlaceholder": "What this bot stands for in the study, e.g. right-leaning persona"
     },
     "runPanel": {
       "title": "Schedule a run",
