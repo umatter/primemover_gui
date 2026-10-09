@@ -18,11 +18,11 @@ export type PreferenceKind = 'location' | 'cookie' | 'usageType' | 'weight' | 't
 export type CookieMode = 'accept' | 'reject' | 'custom';
 
 /**
- * Suggestions, not a closed list. The vocabulary is unresolved upstream: the designer's
- * default is `only_search`, its docs use the three plural forms. A stored value outside
- * the list is shown as it is.
+ * The canonical vocabulary: what `primemover_py` validates (`only_search | only_direct |
+ * both`) and the designer's default uses. The designer DOCS' plural forms are wrong.
+ * Suggestions, not a closed list: a stored value outside it is shown as it is.
  */
-export const USAGE_TYPE_SUGGESTIONS = ['only_search', 'only_searches', 'only_visits', 'searches_and_visits'];
+export const USAGE_TYPE_SUGGESTIONS = ['only_search', 'only_direct', 'both'];
 
 export const DEFAULT_PREFERENCES: ReadonlyArray<{ name: string; value: string }> = [
   { name: 'location', value: 'US-IL-CHICAGO' },
