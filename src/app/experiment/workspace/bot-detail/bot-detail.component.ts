@@ -2,7 +2,17 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AsyncPipe, DatePipe, NgClass, NgForOf, NgIf } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
-import { combineLatest, filter, map, Observable, shareReplay, startWith, Subscription, switchMap } from 'rxjs';
+import {
+  BehaviorSubject,
+  combineLatest,
+  filter,
+  map,
+  Observable,
+  shareReplay,
+  startWith,
+  Subscription,
+  switchMap
+} from 'rxjs';
 import { EntityAction, EntityOp } from '@ngrx/data';
 
 import { Crawler, crawlerTreatmentLostRuns } from '@app/crawler/model/crawler';
@@ -19,7 +29,9 @@ import { SupersedingQuery } from '@shared/model/superseding-query';
 import { LoadingSpinnerComponent } from '@shared/overlay/loading-spinner/loading-spinner.component';
 import { NotificationComponent } from '@shared/overlay/notification/notification.component';
 import { VisibilityService } from '@shared/service/visibility.service';
+import { AddBotComponent } from '../add-bot/add-bot.component';
 import { ProfileComponent } from '../profile/profile.component';
+import { SetupChecklistComponent, SetupFix } from '../setup/setup-checklist.component';
 import { RunCreateComponent } from '../run-create/run-create.component';
 import { TreatmentComponent } from '../treatment/treatment.component';
 
@@ -61,6 +73,7 @@ export interface TreatmentLostSummary {
   templateUrl: './bot-detail.component.html',
   standalone: true,
   imports: [
+    AddBotComponent,
     AsyncPipe,
     DatePipe,
     NgIf,
@@ -72,6 +85,7 @@ export interface TreatmentLostSummary {
     NotificationComponent,
     ProfileComponent,
     RunCreateComponent,
+    SetupChecklistComponent,
     StatusFilterComponent,
     StatusMessageComponent,
     TreatmentComponent
@@ -100,6 +114,11 @@ export class BotDetailComponent implements OnInit, OnDestroy {
   experimentId!: number;
   botId!: number;
   showNewRun = false;
+  /** F4c: the add-bot panel, in edit mode for this bot. */
+  showEditSetup = false;
+
+  /** Re-reads the bot after its setup was edited; the route alone would not. */
+  private readonly botRefresh$ = new BehaviorSubject<void>(undefined);
 
   /**
    * The active status chip for the run list. Applied server-side, like every other chip in
@@ -141,8 +160,8 @@ export class BotDetailComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.bot$ = this.route.paramMap.pipe(
-      switchMap((params) => {
+    this.bot$ = combineLatest([this.route.paramMap, this.botRefresh$]).pipe(
+      switchMap(([params]) => {
         this.experimentId = Number(params.get('id'));
         const botId = Number(params.get('botId'));
         if (botId !== this.botId) {
@@ -458,6 +477,23 @@ export class BotDetailComponent implements OnInit, OnDestroy {
 
   onNewRunClosed(): void {
     this.showNewRun = false;
+  }
+
+  /** The checklist's one action per unmet item. */
+  onSetupFix(fix: SetupFix): void {
+    if (fix === 'editSetup') this.showEditSetup = true;
+    if (fix === 'newRun') this.newRun();
+    if (fix === 'treatment') document.getElementById('treatment-heading')?.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  onSetupSaved(): void {
+    this.showEditSetup = false;
+    this.botRefresh$.next();
+  }
+
+  /** The checklist's run count: only an unfiltered list can say "no runs". */
+  runCountFor(runs: Queue[] | null): number | null {
+    return this.statusFilter === 'all' && runs ? runs.length : null;
   }
 
   ngOnDestroy(): void {

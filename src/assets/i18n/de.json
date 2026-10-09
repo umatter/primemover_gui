@@ -77,7 +77,9 @@
         "body": "Ein Bot ist ein simulierter Nutzer. Fügen Sie einen Bot hinzu, um festzulegen, wer die Plattform wie durchsucht."
       },
       "profile": "Profil",
-      "runCounts": "{{total}} Durchläufe in den letzten 24 Std. · {{succeeded}} erfolgreich · {{warning}} mit Warnung · {{degraded}} mit beeinträchtigten Jobs · {{failed}} fehlgeschlagen · {{inProgress}} nicht zugeordnet (laufend, übersprungen oder unbekannt) · {{treatmentLost}} Treatment verloren"
+      "runCounts": "{{total}} Durchläufe in den letzten 24 Std. · {{succeeded}} erfolgreich · {{warning}} mit Warnung · {{degraded}} mit beeinträchtigten Jobs · {{failed}} fehlgeschlagen · {{inProgress}} nicht zugeordnet (laufend, übersprungen oder unbekannt) · {{treatmentLost}} Treatment verloren",
+      "ready": "Bereit",
+      "stepsLeft": "Noch {{count}} Einrichtungsschritt(e)"
     },
     "addBotPanel": {
       "title": "Bot hinzufügen",
@@ -92,7 +94,11 @@
       "cancel": "Abbrechen",
       "save": "Bot hinzufügen",
       "saving": "Wird hinzugefügt…",
-      "error": "Bot konnte nicht hinzugefügt werden. Bitte erneut versuchen."
+      "error": "Bot konnte nicht hinzugefügt werden. Bitte erneut versuchen.",
+      "editTitle": "Bot-Einrichtung bearbeiten",
+      "editSubtitle": "Ändere Browser-Identität, Verbindung und Profil dieses Bots. Seine Läufe behalten ihren Verlauf.",
+      "editSave": "Einrichtung speichern",
+      "editError": "Die Einrichtung konnte nicht gespeichert werden. Bitte versuche es erneut."
     },
     "runPanel": {
       "title": "Lauf planen",
@@ -132,7 +138,8 @@
       "noRuns": {
         "title": "Noch keine Läufe",
         "body": "Plane einen Lauf, um diesem Bot eine Sitzung zu geben."
-      }
+      },
+      "editSetup": "Einrichtung bearbeiten"
     },
     "composer": {
       "back": "Zurück zum Bot",
@@ -160,7 +167,9 @@
       "tallyHint": "Aus den Jobs unten gezählt. Der Status des Laufs darüber ist die Meldung des Runners.",
       "unknownHint": "Die API meldete einen Status, den diese App nicht kennt. Kein Erfolg — prüfe den Job.",
       "partialTally": "{{shown}} von {{total}} Jobs angezeigt",
-      "partialTallyHint": "Diese Seite hat nur die ersten Jobs des Laufs geladen. Die Alarmzahlen oben stammen aus der Zählung der API über den ganzen Lauf; die Aufstellung daneben zählt die Jobs auf dem Bildschirm."
+      "partialTallyHint": "Diese Seite hat nur die ersten Jobs des Laufs geladen. Die Alarmzahlen oben stammen aus der Zählung der API über den ganzen Lauf; die Aufstellung daneben zählt die Jobs auf dem Bildschirm.",
+      "incomplete": "{{count}} Job(s) fehlt eine Pflichteinstellung. Dieser Lauf ist aktiv und startet zur geplanten Zeit – behebe das vorher.",
+      "missing": "Fehlt:"
     },
     "behaviours": {
       "title": "Verhalten",
@@ -173,12 +182,15 @@
       "required": "Erforderlich.",
       "add": "Verhalten hinzufügen",
       "done": "Fertig",
-      "remove": "Verhalten entfernen"
+      "remove": "Verhalten entfernen",
+      "notInSchema": "nicht im Schema",
+      "suggestions": "Einstellungen dieses Job-Typs (* Pflicht). Zum Ausfüllen anklicken.",
+      "missingRequired": "fehlt noch: {{names}}"
     },
     "profile": {
       "title": "Profil",
       "subtitle": "Wer dieser Bot beim Surfen ist: Standort, Cookie-Zustimmung, Nutzungsart und die Gewichte, die die YouTube-Entscheidungsfunktion liest. Gilt für alle Läufe dieses Bots.",
-      "none": "Dieser Bot hat keine Konfiguration und damit kein Profil. Wähle beim Einrichten des Bots eine unter Bibliothek.",
+      "none": "Dieser Bot hat noch kein Profil, hier gibt es also nichts zu bearbeiten. Wähle eines über „Einrichtung bearbeiten“ oben.",
       "loading": "Profil wird geladen…",
       "empty": "Noch keine Einstellungen gesetzt.",
       "save": "Profil speichern",
@@ -221,7 +233,7 @@
       "saving": "Wird gespeichert…",
       "makeControl": "Zur Kontrolle machen",
       "shared": "Von {{count}} Bots geteilt – Änderungen gelten für alle",
-      "multiple": "Diese Konfiguration hat {{count}} Parameterzeilen. Der Runner verwendet die erste (#{{id}}), die hier angezeigt wird.",
+      "multiple": "Dieses Profil hat {{count}} Parameterzeilen. Der Runner verwendet die erste (#{{id}}), die hier angezeigt wird.",
       "noneBody": "Kein Treatment gesetzt. Der Runner hat keine Parameter zur Auswahl von Ergebnissen; die Entscheidungen dieses Bots sind nicht gesteuert.",
       "setUp": "Treatment einrichten (startet als Kontrolle)",
       "position": "Politische Position (−1 bis 1)",
@@ -288,6 +300,28 @@
         "domain": "Die Domain ist leer.",
         "generic": "Das Treatment konnte nicht gespeichert werden."
       }
+    },
+    "setup": {
+      "title": "Dieser Bot braucht noch {{count}} Schritt(e), bevor seine Läufe aussagekräftig sind",
+      "ready": "Einrichtung vollständig: Identität, Verbindung, Profil, Treatment und Läufe sind vorhanden.",
+      "item": {
+        "identity": "Browser-Identität",
+        "connection": "Verbindung",
+        "profile": "Profil",
+        "treatment": "Treatment",
+        "runs": "Mindestens ein Lauf"
+      },
+      "fix": {
+        "editSetup": "Einrichtung bearbeiten",
+        "treatment": "Treatment einrichten",
+        "newRun": "Neuer Lauf"
+      },
+      "state": {
+        "true": "erledigt",
+        "false": "fehlt",
+        "unknown": "von hier nicht erkennbar"
+      },
+      "afterProfile": "braucht zuerst ein Profil"
     }
   },
   "wizard": {

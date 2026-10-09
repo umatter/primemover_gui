@@ -128,6 +128,17 @@
       {{ 'workspace.composer.degradedNotice' | translate }}
     </p>
 
+    <!-- F4a: a run is live from creation (queues.active defaults to 1), so an incomplete
+         job is otherwise found by the runner, at the run's start time, as a failure. -->
+    <p
+      *ngIf="incompleteJobs"
+      class="mb-4 rounded-md border border-warning/40 bg-warning-tint px-3 py-2 text-sm text-warning"
+      data-testid="run-incomplete"
+      role="status"
+    >
+      {{ 'workspace.composer.incomplete' | translate: { count: incompleteJobs } }}
+    </p>
+
     <p
       *ngIf="jobs.length === 0"
       class="rounded-xl border border-dashed border-line-strong bg-brand-tint/40 px-6 py-6 text-sm text-muted"
@@ -149,6 +160,20 @@
         <div class="min-w-0 flex-1">
           <p class="truncate text-sm font-semibold text-ink">{{ job.name }}</p>
           <p class="font-mono text-xs text-faint">{{ job.type }}</p>
+          <p
+            *ngIf="missing(job).length"
+            [attr.data-testid]="'job-missing-' + job.id"
+            class="mt-1 inline-flex flex-wrap items-center gap-1 text-xs font-semibold text-warning"
+          >
+            {{ 'workspace.composer.missing' | translate }}
+            <button
+              (click)="editBehaviours(job)"
+              class="font-mono underline decoration-dotted underline-offset-2 hover:no-underline"
+              type="button"
+            >
+              {{ missing(job).join(', ') }}
+            </button>
+          </p>
           <!-- Per-job status_code + the runner's status_message, as text. -->
           <app-status
             *ngIf="job.status_code || jobMessage(job)"

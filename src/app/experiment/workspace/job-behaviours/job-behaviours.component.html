@@ -25,7 +25,16 @@
         [ngClass]="{ 'opacity-60': !b.active }"
       >
         <div class="min-w-0 flex-1">
-          <p class="truncate text-sm font-semibold text-ink">{{ b.name }}</p>
+          <p class="flex items-center gap-2 truncate text-sm font-semibold text-ink">
+            {{ b.name }}
+            <!-- Kept and editable: the runner may know settings this GUI's schema does not. -->
+            <span
+              *ngIf="notInSchema(b)"
+              [attr.data-testid]="'beh-unknown-' + b.name"
+              class="rounded bg-surface-3 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-muted"
+              >{{ 'workspace.behaviours.notInSchema' | translate }}</span
+            >
+          </p>
           <p class="truncate font-mono text-xs text-muted">{{ b.value }}</p>
         </div>
         <button
@@ -43,7 +52,11 @@
           [attr.aria-label]="'workspace.behaviours.remove' | translate"
         >
           <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-            <path d="M6 7h12M9 7V5h6v2M10 11v6M14 11v6M7 7l1 12h8l1-12" stroke-linecap="round" stroke-linejoin="round" />
+            <path
+              d="M6 7h12M9 7V5h6v2M10 11v6M14 11v6M7 7l1 12h8l1-12"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
           </svg>
         </button>
       </li>
@@ -54,30 +67,94 @@
       </p>
     </ng-template>
 
+    <!-- F4b: what this job type uses and has not got yet. Required first, and flagged,
+         because a run is live from creation and the runner is where a gap shows up. -->
+    <div *ngIf="suggestions.length" class="mb-4">
+      <p class="mb-2 text-xs text-muted">
+        {{ 'workspace.behaviours.suggestions' | translate }}
+        <span *ngIf="missingRequired.length" class="font-semibold text-warning">
+          · {{ 'workspace.behaviours.missingRequired' | translate: { names: missingRequired.join(', ') } }}
+        </span>
+      </p>
+      <div class="flex flex-wrap gap-2">
+        <button
+          *ngFor="let f of suggestions"
+          (click)="pickField(f)"
+          [attr.data-testid]="'beh-suggest-' + f.name"
+          [ngClass]="
+            f.required
+              ? 'border-warning/50 bg-warning-tint text-warning hover:bg-warning-tint/70'
+              : 'border-line bg-surface text-ink hover:bg-surface-2'
+          "
+          [title]="f.description || f.name"
+          class="rounded-md border px-2.5 py-1 font-mono text-xs font-semibold transition"
+          type="button"
+        >
+          {{ f.name }}<span *ngIf="f.required" aria-hidden="true">*</span>
+        </button>
+      </div>
+    </div>
+
     <!-- Add behaviour -->
     <form [formGroup]="addForm" (ngSubmit)="addBehaviour()" class="grid grid-cols-1 gap-3 sm:grid-cols-2">
       <div>
-        <label for="beh-name" class="mb-1 block text-sm font-medium text-ink">{{ 'workspace.behaviours.name' | translate }}</label>
-        <input id="beh-name" type="text" formControlName="name"
+        <label for="beh-name" class="mb-1 block text-sm font-medium text-ink">{{
+          'workspace.behaviours.name' | translate
+        }}</label>
+        <input
+          id="beh-name"
+          type="text"
+          formControlName="name"
+          (input)="onNameInput()"
           class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink placeholder:text-faint focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
-          [placeholder]="'workspace.behaviours.namePlaceholder' | translate" />
-        <p *ngIf="hasError('name', 'required')" class="mt-1 text-xs text-danger">{{ 'workspace.behaviours.required' | translate }}</p>
+          [placeholder]="'workspace.behaviours.namePlaceholder' | translate"
+        />
+        <p *ngIf="hasError('name', 'required')" class="mt-1 text-xs text-danger">
+          {{ 'workspace.behaviours.required' | translate }}
+        </p>
       </div>
       <div>
-        <label for="beh-value" class="mb-1 block text-sm font-medium text-ink">{{ 'workspace.behaviours.value' | translate }}</label>
-        <input id="beh-value" type="text" formControlName="value"
-          class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink placeholder:text-faint focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
-          [placeholder]="'workspace.behaviours.valuePlaceholder' | translate" />
-        <p *ngIf="hasError('value', 'required')" class="mt-1 text-xs text-danger">{{ 'workspace.behaviours.required' | translate }}</p>
+        <label for="beh-value" class="mb-1 block text-sm font-medium text-ink">{{
+          'workspace.behaviours.value' | translate
+        }}</label>
+        <select
+          *ngIf="selectedField?.options?.length; else freeValue"
+          id="beh-value-select"
+          formControlName="value"
+          [attr.aria-label]="'workspace.behaviours.value' | translate"
+          class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+        >
+          <option *ngFor="let o of selectedField?.options" [value]="o">{{ o }}</option>
+        </select>
+        <ng-template #freeValue>
+          <input
+            id="beh-value"
+            type="text"
+            formControlName="value"
+            class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink placeholder:text-faint focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+            [placeholder]="'workspace.behaviours.valuePlaceholder' | translate"
+          />
+        </ng-template>
+        <p *ngIf="selectedField?.description" class="mt-1 text-xs text-faint">{{ selectedField?.description }}</p>
+        <p *ngIf="hasError('value', 'required')" class="mt-1 text-xs text-danger">
+          {{ 'workspace.behaviours.required' | translate }}
+        </p>
       </div>
       <div class="sm:col-span-2 flex items-center justify-between pt-1">
-        <button type="button" (click)="cancel()"
-          class="rounded-md border border-line bg-surface px-4 py-2 text-sm font-medium text-ink transition hover:bg-surface-2">
+        <button
+          type="button"
+          (click)="cancel()"
+          class="rounded-md border border-line bg-surface px-4 py-2 text-sm font-medium text-ink transition hover:bg-surface-2"
+        >
           {{ 'workspace.behaviours.done' | translate }}
         </button>
-        <button type="submit"
-          class="inline-flex items-center gap-2 rounded-md bg-brand px-4 py-2 text-sm font-semibold text-on-brand transition hover:bg-brand-hover">
-          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <button
+          type="submit"
+          class="inline-flex items-center gap-2 rounded-md bg-brand px-4 py-2 text-sm font-semibold text-on-brand transition hover:bg-brand-hover"
+        >
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+            <path d="M12 5v14M5 12h14" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
           {{ 'workspace.behaviours.add' | translate }}
         </button>
       </div>

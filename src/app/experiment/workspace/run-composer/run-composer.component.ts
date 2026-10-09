@@ -22,6 +22,7 @@ import { Queue, queueJobRollup } from '@app/queue/model/queue';
 import { Behavior } from '@app/behavior/behavior';
 import { BehaviorService, JobService, QueueService } from '@app/entity/service';
 import { JobFieldSchema, JobTypeSchema, JOB_TYPE_OPTIONS, JOB_TYPE_SCHEMAS } from '@app/enum/job-type-schema';
+import { missingRequired } from '../setup/job-settings';
 import { QueueStatusEnum, statusOrUnknown, UNKNOWN_STATUS } from '@app/queue/status/status.enum';
 import { StatusComponent } from '@app/queue/status/status.component';
 import { fadeIn } from '@shared/animation/trigger';
@@ -155,6 +156,15 @@ export class RunComposerComponent implements OnInit, OnDestroy {
   fieldsForm: FormGroup;
   currentFields: JobFieldSchema[] = [];
   behavioursJob: Job | null = null;
+
+  /**
+   * F4a. This run's behaviours by job id, from the shared ngrx-data cache — the behaviours
+   * modal and add-job write through the same cache, so the flags follow their edits.
+   * `behavioursKnown` stays false until a load succeeds: an API that cannot answer
+   * `filter[queue]` must produce no flags, not a flag on every job.
+   */
+  behavioursKnown = false;
+  private behavioursByJob = new Map<number, Behavior[]>();
   addErrorKey: string | null = null;
 
   readonly jobTypes: JobTypeSchema[] = JOB_TYPE_OPTIONS;
@@ -202,6 +212,7 @@ export class RunComposerComponent implements OnInit, OnDestroy {
           this.runId = runId;
           this.transitions.reset();
           this.alarm = null;
+          this.loadBehaviours();
         }
         this.loadJobs();
         // A failed read must not kill the stream: `switchMap` would propagate the error to
@@ -216,6 +227,16 @@ export class RunComposerComponent implements OnInit, OnDestroy {
 
     this.jobs$ = this.jobService.entities$.pipe(
       map((jobs) => jobs.filter((j) => Number(j.queue_id) === Number(this.runId)).sort((a, b) => a.order - b.order))
+    );
+    this.subscriptions.add(
+      this.behaviorService.entities$.subscribe((behaviours) => {
+        const byJob = new Map<number, Behavior[]>();
+        for (const b of behaviours) {
+          const id = Number(b.job_id);
+          byJob.set(id, [...(byJob.get(id) ?? []), b]);
+        }
+        this.behavioursByJob = byJob;
+      })
     );
     this.subscriptions.add(
       this.jobs$.subscribe((jobs) => {
@@ -541,6 +562,29 @@ export class RunComposerComponent implements OnInit, OnDestroy {
 
   closeBehaviours(): void {
     this.behavioursJob = null;
+    // The modal writes through the cache already; re-reading catches anything it could
+    // not see, such as a behaviour another tab added.
+    this.loadBehaviours();
+  }
+
+  /** Required settings of this job's type with no active behaviour; [] when unknowable. */
+  missing(job: Job): string[] {
+    if (!this.behavioursKnown) return [];
+    return missingRequired(job.type, this.behavioursByJob.get(Number(job.id)) ?? []);
+  }
+
+  get incompleteJobs(): number {
+    return this.jobs.filter((j) => this.missing(j).length > 0).length;
+  }
+
+  /** Every behaviour of every job in the run, one request (umatter/primemover_api#89). */
+  private loadBehaviours(): void {
+    this.subscriptions.add(
+      this.behaviorService.getWithQuery({ ['filter[queue]']: String(this.runId), per_page: '500' }).subscribe({
+        next: () => (this.behavioursKnown = true),
+        error: () => (this.behavioursKnown = false)
+      })
+    );
   }
 
   ngOnDestroy(): void {

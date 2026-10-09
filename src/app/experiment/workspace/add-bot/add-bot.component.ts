@@ -29,7 +29,14 @@ import { fadeIn } from '@shared/animation/trigger';
 })
 export class AddBotComponent implements OnInit, OnDestroy {
   @Input({ required: true }) experimentId!: number;
+  /**
+   * F4c: set to edit this bot's setup instead of adding one. The bot page's checklist
+   * points here when an identity, connection or profile is missing — there was no other
+   * place in the GUI to change them after creation.
+   */
+  @Input() bot: Crawler | null = null;
   @Output() created = new EventEmitter<Crawler>();
+  @Output() saved = new EventEmitter<Crawler>();
   @Output() closed = new EventEmitter<void>();
 
   form: FormGroup;
@@ -65,7 +72,20 @@ export class AddBotComponent implements OnInit, OnDestroy {
     );
   }
 
+  get editing(): boolean {
+    return this.bot !== null;
+  }
+
   ngOnInit(): void {
+    if (this.bot) {
+      this.form.patchValue({
+        name: this.bot.name,
+        description: this.bot.description ?? '',
+        agent_id: this.bot.agent_id ?? this.bot.agent?.id ?? null,
+        proxy_id: this.bot.proxy_id ?? this.bot.proxy?.id ?? null,
+        configuration_id: this.bot.configuration_id ?? this.bot.configuration?.id ?? null
+      });
+    }
     // Load Library building blocks so the selects can populate.
     this.agentService.getAll();
     this.proxyService.getAll();
@@ -89,6 +109,22 @@ export class AddBotComponent implements OnInit, OnDestroy {
       ...this.form.value,
       experiment_id: this.experimentId
     };
+
+    if (this.bot) {
+      this.subscriptions.add(
+        this.crawlerService.update({ id: this.bot.id, ...payload } as unknown as Crawler).subscribe({
+          next: (bot: Crawler) => {
+            this.submitting = false;
+            this.saved.emit(bot);
+          },
+          error: () => {
+            this.submitting = false;
+            this.errorKey = 'workspace.addBotPanel.editError';
+          }
+        })
+      );
+      return;
+    }
 
     this.subscriptions.add(
       this.crawlerService.add(payload as unknown as Crawler).subscribe({

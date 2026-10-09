@@ -12,8 +12,12 @@
     aria-modal="true"
   >
     <header class="mb-5">
-      <h2 class="font-display text-xl font-semibold text-ink">{{ 'workspace.addBotPanel.title' | translate }}</h2>
-      <p class="mt-1 text-sm text-muted">{{ 'workspace.addBotPanel.subtitle' | translate }}</p>
+      <h2 class="font-display text-xl font-semibold text-ink">
+        {{ (editing ? 'workspace.addBotPanel.editTitle' : 'workspace.addBotPanel.title') | translate }}
+      </h2>
+      <p class="mt-1 text-sm text-muted">
+        {{ (editing ? 'workspace.addBotPanel.editSubtitle' : 'workspace.addBotPanel.subtitle') | translate }}
+      </p>
     </header>
 
     <!-- Library not ready: guide to create building blocks first -->
@@ -118,7 +122,12 @@
           [disabled]="submitting"
           class="inline-flex items-center gap-2 rounded-md bg-brand px-4 py-2 text-sm font-semibold text-on-brand transition hover:bg-brand-hover disabled:opacity-60"
         >
-          {{ (submitting ? 'workspace.addBotPanel.saving' : 'workspace.addBotPanel.save') | translate }}
+          <ng-container *ngIf="!editing">
+            {{ (submitting ? 'workspace.addBotPanel.saving' : 'workspace.addBotPanel.save') | translate }}
+          </ng-container>
+          <ng-container *ngIf="editing">
+            {{ (submitting ? 'workspace.addBotPanel.saving' : 'workspace.addBotPanel.editSave') | translate }}
+          </ng-container>
         </button>
       </div>
     </form>

@@ -77,6 +77,8 @@ describe('RunComposerComponent (integration — add job then render)', () => {
     // initial loads: GET run + GET jobs (empty)
     flush('GET', '/queues/9', { data: { id: 9, name: 'Run' } });
     flush('GET', '/jobs/', { data: [] });
+    // F4a: the run's behaviours, one request, for the missing-settings flags.
+    flush('GET', '/behaviors/', { data: [] });
     tick();
     fixture.detectChanges();
 
@@ -89,7 +91,9 @@ describe('RunComposerComponent (integration — add job then render)', () => {
     tick();
 
     // POST /jobs → server returns the created job (with id + queue_id)
-    const posted = flush('POST', '/jobs/', { data: { id: 100, name: 'Open home', type: 'visitjob', queue_id: 9, order: 1, active: 1 } });
+    const posted = flush('POST', '/jobs/', {
+      data: { id: 100, name: 'Open home', type: 'visitjob', queue_id: 9, order: 1, active: 1 }
+    });
     expect(posted).toBe(1);
     tick();
 
@@ -98,7 +102,9 @@ describe('RunComposerComponent (integration — add job then render)', () => {
     tick();
 
     // reload after add: GET jobs now returns the job
-    flush('GET', '/jobs/', { data: [{ id: 100, name: 'Open home', type: 'visitjob', queue_id: 9, order: 1, active: 1 }] });
+    flush('GET', '/jobs/', {
+      data: [{ id: 100, name: 'Open home', type: 'visitjob', queue_id: 9, order: 1, active: 1 }]
+    });
     tick();
     fixture.detectChanges();
 
@@ -112,6 +118,8 @@ describe('RunComposerComponent (integration — add job then render)', () => {
     fixture.detectChanges();
     flush('GET', '/queues/9', { data: { id: 9, name: 'Run' } });
     flush('GET', '/jobs/', { data: [] });
+    // F4a: the run's behaviours, one request, for the missing-settings flags.
+    flush('GET', '/behaviors/', { data: [] });
     tick();
     fixture.detectChanges();
 
@@ -136,11 +144,15 @@ describe('RunComposerComponent (integration — add job then render)', () => {
 
     const posts = http.match((r) => r.method === 'POST' && r.url.includes('/jobs/'));
     expect(posts.length).withContext('clicking Add must POST a job').toBe(1);
-    posts.forEach((r) => r.flush({ data: { id: 100, name: 'Open home', type: 'visitjob', queue_id: 9, order: 1, active: 1 } }));
+    posts.forEach((r) =>
+      r.flush({ data: { id: 100, name: 'Open home', type: 'visitjob', queue_id: 9, order: 1, active: 1 } })
+    );
     tick();
     flush('POST', '/behaviors/', { data: { id: 500, name: 'url', value: 'https://youtube.com', job_id: 100 } });
     tick();
-    flush('GET', '/jobs/', { data: [{ id: 100, name: 'Open home', type: 'visitjob', queue_id: 9, order: 1, active: 1 }] });
+    flush('GET', '/jobs/', {
+      data: [{ id: 100, name: 'Open home', type: 'visitjob', queue_id: 9, order: 1, active: 1 }]
+    });
     tick();
     fixture.detectChanges();
   }));
