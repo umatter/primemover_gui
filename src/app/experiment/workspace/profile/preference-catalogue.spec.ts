@@ -5,7 +5,8 @@ import {
   isDecisionWeight,
   missingDefaults,
   preferenceKind,
-  preferenceError
+  preferenceError,
+  USAGE_TYPE_SUGGESTIONS
 } from './preference-catalogue';
 
 /** F1 (docs/specs/gui-finalisation.md): the known-preference catalogue. */
@@ -54,6 +55,10 @@ describe('preference catalogue', () => {
     expect(preferenceError('weight', '')).toBe('workspace.profile.error.number');
     expect(preferenceError('text', '')).toBeNull();
     expect(preferenceError('location', 'anything')).toBeNull();
+  });
+
+  it('suggests the canonical usage_type vocabulary', () => {
+    expect(USAGE_TYPE_SUGGESTIONS).toEqual(['only_search', 'only_direct', 'both']);
   });
 
   it('offers the designer defaults that are missing, and only those', () => {

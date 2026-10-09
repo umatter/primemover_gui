@@ -3,6 +3,10 @@ import { MediaOutlet, Param, SearchTerm } from '@app/config/model/param';
 /**
  * The treatment's rules, shared by the bot page and the workspace cards.
  *
+ * Parameter meanings are primemover_py's (`src/base/BaseConfig.py`): pi political
+ * orientation, psi persuadability [0, 1], kappa persuadability indicator {0, 1, 2}, alpha
+ * shift, tau "transportation cost" of ideological distance, beta scale (rank).
+ *
  * Mirrors the runner, not a guess about it:
  *  - it reads the FIRST params row the API lists (`PrimemoverApiConverter`, `params.get(0)`);
  *  - control arm ⇔ pi = psi = kappa = tau = 0 (`LambdaSelectJobHandler`, the rule
