@@ -294,6 +294,20 @@
         </div>
       </div>
 
+      <div class="mt-4">
+        <label class="mb-1 block text-sm font-medium text-ink" for="job-description">
+          {{ 'workspace.composer.description' | translate }}
+          <span class="font-normal text-faint">({{ 'workspace.runPanel.optional' | translate }})</span>
+        </label>
+        <input
+          class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink placeholder:text-faint focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+          formControlName="description"
+          id="job-description"
+          [placeholder]="'workspace.composer.descriptionPlaceholder' | translate"
+          type="text"
+        />
+      </div>
+
       <!-- Type-specific parameter fields (become the job's behaviours) -->
       <div *ngIf="currentFields.length" [formGroup]="fieldsForm" class="mt-5 border-t border-line pt-5">
         <p class="mb-3 text-xs font-medium uppercase tracking-wide text-faint">

@@ -175,7 +175,9 @@
       "partialTally": "{{shown}} von {{total}} Jobs angezeigt",
       "partialTallyHint": "Diese Seite hat nur die ersten Jobs des Laufs geladen. Die Alarmzahlen oben stammen aus der Zählung der API über den ganzen Lauf; die Aufstellung daneben zählt die Jobs auf dem Bildschirm.",
       "incomplete": "{{count}} Job(s) fehlt eine Pflichteinstellung. Dieser Lauf ist aktiv und startet zur geplanten Zeit – behebe das vorher.",
-      "missing": "Fehlt:"
+      "missing": "Fehlt:",
+      "description": "Beschreibung",
+      "descriptionPlaceholder": "Wofür dieser Schritt ist, z. B. Cookie-Banner akzeptieren"
     },
     "behaviours": {
       "title": "Verhalten",

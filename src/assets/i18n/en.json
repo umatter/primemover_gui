@@ -175,7 +175,9 @@
       "partialTally": "showing {{shown}} of {{total}} jobs",
       "partialTallyHint": "This page loaded the first jobs of the run only. The alarm figures above come from the API’s count over the whole run; the tally beside them counts the jobs on screen.",
       "incomplete": "{{count}} job(s) are missing a required setting. This run is live and will be picked up at its start time, so fix them before then.",
-      "missing": "Missing:"
+      "missing": "Missing:",
+      "description": "Description",
+      "descriptionPlaceholder": "What this step is for, e.g. accept the cookie banner"
     },
     "behaviours": {
       "title": "Behaviours",

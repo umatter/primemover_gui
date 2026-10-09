@@ -191,7 +191,9 @@ export class RunComposerComponent implements OnInit, OnDestroy {
   ) {
     this.addForm = this.fb.group({
       name: [null, [Validators.required]],
-      type: [null, [Validators.required]]
+      type: [null, [Validators.required]],
+      // F6: what this step is for. Optional; the runner does not read it.
+      description: ['']
     });
     this.fieldsForm = this.fb.group({});
   }
