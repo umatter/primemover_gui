@@ -213,7 +213,7 @@
       "hint": {
         "location": "Format CC-ST-CITY, e.g. US-IL-CHICAGO",
         "cookie": "How the bot answers cookie banners",
-        "usageType": "e.g. only_search, only_visits, searches_and_visits"
+        "usageType": "only_search, only_direct or both"
       },
       "cookie": {
         "accept": "Accept all cookies",
@@ -253,12 +253,12 @@
           "hint": "−1 left … 0 centre … 1 right. Results from outlets near this position score higher."
         },
         "psi": {
-          "label": "Rating filter strength",
-          "hint": "Sent to the YouTube decision function. 0 requests no rating filter."
+          "label": "Persuadability",
+          "hint": "0 to 1: how far this bot can be moved by what it sees. Also sent to the YouTube decision function."
         },
         "kappa": {
-          "label": "Engagement level",
-          "hint": "Whole number ≥ 0, sent to the YouTube decision function. 0 = none."
+          "label": "Persuadable",
+          "hint": "0, 1 or 2: whether this bot can be persuaded at all (0 = not). Also sent to the YouTube decision function."
         },
         "tau": {
           "label": "Distance cost",
