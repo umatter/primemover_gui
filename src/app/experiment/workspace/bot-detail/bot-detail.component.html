@@ -253,6 +253,10 @@
     </ul>
   </section>
 
+  <!-- F1: the bot's profile. Below the runs on purpose — this screen is mostly visited to
+       see how the bot is doing; its setup is the second question. -->
+  <app-bot-profile [configurationId]="bot.configuration_id ?? bot.configuration?.id ?? null"></app-bot-profile>
+
   <!-- New-run panel -->
   <app-run-create
     *ngIf="showNewRun"

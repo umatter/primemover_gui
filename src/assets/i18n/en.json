@@ -174,6 +174,44 @@
       "add": "Add behaviour",
       "done": "Done",
       "remove": "Remove behaviour"
+    },
+    "profile": {
+      "title": "Profile",
+      "subtitle": "Who this bot is when it browses: its location, cookie consent, how it uses the platform, and the weights the YouTube decision function reads. Shared by every run of this bot.",
+      "none": "This bot has no configuration, so it has no profile to edit. Pick one under Library when you set the bot up.",
+      "loading": "Loading profile…",
+      "empty": "No preferences set yet.",
+      "save": "Save profile",
+      "saving": "Saving…",
+      "unsaved": "{{count}} unsaved change(s)",
+      "defaultsHint": "Not set yet: {{names}}. The experiment designer gives every bot these.",
+      "addDefaults": "Add defaults",
+      "decisionGroup": "YouTube decision function",
+      "decisionHint": "Numbers passed to the decision function when it picks what this bot watches. Their range is defined by that service.",
+      "newName": "New preference",
+      "newValue": "Value",
+      "add": "Add",
+      "new": "New, not saved yet",
+      "discard": "Discard",
+      "deactivate": "Deactivate",
+      "reactivate": "Reactivate",
+      "hint": {
+        "location": "Format CC-ST-CITY, e.g. US-IL-CHICAGO",
+        "cookie": "How the bot answers cookie banners",
+        "usageType": "e.g. only_search, only_visits, searches_and_visits"
+      },
+      "cookie": {
+        "accept": "Accept all cookies",
+        "reject": "Reject all cookies",
+        "custom": "Custom (JSON)"
+      },
+      "error": {
+        "duplicate": "Already set. Edit the existing row instead.",
+        "number": "Must be a number.",
+        "cookieJson": "Not valid JSON.",
+        "cookieKey": "Needs an \"accept_all\" key, e.g. {\"accept_all\": true}. The runner ignores anything else.",
+        "generic": "The profile could not be saved."
+      }
     }
   },
   "wizard": {

@@ -1,0 +1,251 @@
+<section class="mt-8" aria-labelledby="profile-heading">
+  <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <h2 id="profile-heading" class="font-display text-xl font-semibold text-ink">
+        {{ 'workspace.profile.title' | translate }}
+      </h2>
+      <p class="mt-1 max-w-prose text-sm text-muted">{{ 'workspace.profile.subtitle' | translate }}</p>
+    </div>
+    <div *ngIf="configuration" class="flex flex-shrink-0 items-center gap-3">
+      <span *ngIf="dirtyRows.length" class="text-xs text-muted" role="status">
+        {{ 'workspace.profile.unsaved' | translate: { count: dirtyRows.length } }}
+      </span>
+      <button
+        (click)="save()"
+        [disabled]="!canSave"
+        class="inline-flex items-center gap-2 rounded-md bg-brand px-4 py-2 text-sm font-semibold text-on-brand transition hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-50"
+        data-testid="profile-save"
+        type="button"
+      >
+        {{ (saving ? 'workspace.profile.saving' : 'workspace.profile.save') | translate }}
+      </button>
+    </div>
+  </div>
+
+  <!-- A bot without a configuration has nothing to edit, and saying so beats an empty table. -->
+  <p
+    *ngIf="!hasConfiguration"
+    class="rounded-lg border border-dashed border-line-strong bg-surface-2 px-4 py-3 text-sm text-muted"
+    data-testid="profile-none"
+  >
+    {{ 'workspace.profile.none' | translate }}
+  </p>
+
+  <p *ngIf="loading" class="text-sm text-muted" role="status">{{ 'workspace.profile.loading' | translate }}</p>
+
+  <!-- The API's own words: a 403 must read as "not yours", not as a generic failure.
+       Edits are kept, so the message sits above them rather than replacing them. -->
+  <p
+    *ngIf="error"
+    class="mb-4 rounded-lg border border-danger/40 bg-danger-tint px-4 py-3 text-sm text-danger"
+    data-testid="profile-error"
+    role="alert"
+  >
+    {{ error | translate }}
+  </p>
+
+  <ng-container *ngIf="configuration">
+    <p class="mb-4 text-xs text-faint">
+      <span class="font-mono">CF-{{ configuration.id }}</span> · {{ configuration.name }}
+    </p>
+
+    <div
+      *ngIf="missingDefaults.length"
+      class="mb-4 flex flex-col items-start gap-3 rounded-lg border border-dashed border-line-strong bg-brand-tint/40 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+    >
+      <p class="text-sm text-muted">
+        {{ 'workspace.profile.defaultsHint' | translate: { names: missingDefaultNames() } }}
+      </p>
+      <button
+        (click)="addDefaults()"
+        class="rounded-md border border-line-strong px-3 py-1.5 text-sm font-semibold text-ink transition hover:bg-surface-3"
+        data-testid="profile-add-defaults"
+        type="button"
+      >
+        {{ 'workspace.profile.addDefaults' | translate }}
+      </button>
+    </div>
+
+    <p
+      *ngIf="!rows.length"
+      class="mb-4 rounded-lg border border-dashed border-line-strong bg-surface-2 px-4 py-3 text-sm text-muted"
+    >
+      {{ 'workspace.profile.empty' | translate }}
+    </p>
+
+    <ul *ngIf="generalRows.length" class="space-y-2">
+      <ng-container *ngFor="let row of generalRows; trackBy: trackByName">
+        <ng-container *ngTemplateOutlet="rowTpl; context: { $implicit: row }"></ng-container>
+      </ng-container>
+    </ul>
+
+    <ng-container *ngIf="decisionRows.length">
+      <h3 class="mb-1 mt-6 text-sm font-semibold text-ink">{{ 'workspace.profile.decisionGroup' | translate }}</h3>
+      <p class="mb-3 max-w-prose text-xs text-muted">{{ 'workspace.profile.decisionHint' | translate }}</p>
+      <ul class="grid grid-cols-1 gap-2 md:grid-cols-2">
+        <ng-container *ngFor="let row of decisionRows; trackBy: trackByName">
+          <ng-container *ngTemplateOutlet="rowTpl; context: { $implicit: row }"></ng-container>
+        </ng-container>
+      </ul>
+    </ng-container>
+
+    <!-- Add a preference -->
+    <form
+      (ngSubmit)="addPreference()"
+      [formGroup]="addForm"
+      class="mt-6 grid grid-cols-1 gap-3 rounded-lg border border-line bg-surface p-4 sm:grid-cols-[1fr_1fr_auto] sm:items-end"
+    >
+      <div>
+        <label class="mb-1 block text-sm font-medium text-ink" for="pref-name">
+          {{ 'workspace.profile.newName' | translate }}
+        </label>
+        <input
+          class="block w-full rounded-md border border-line bg-surface px-3 py-2 font-mono text-sm text-ink placeholder:text-faint focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+          formControlName="name"
+          id="pref-name"
+          placeholder="ideology"
+          type="text"
+        />
+      </div>
+      <div>
+        <label class="mb-1 block text-sm font-medium text-ink" for="pref-value">
+          {{ 'workspace.profile.newValue' | translate }}
+        </label>
+        <input
+          class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink placeholder:text-faint focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+          formControlName="value"
+          id="pref-value"
+          type="text"
+        />
+      </div>
+      <button
+        class="inline-flex items-center justify-center gap-2 rounded-md border border-line-strong px-4 py-2 text-sm font-semibold text-ink transition hover:bg-surface-3"
+        type="submit"
+      >
+        <svg
+          aria-hidden="true"
+          class="h-4 w-4"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.8"
+          viewBox="0 0 24 24"
+        >
+          <path d="M12 5v14M5 12h14" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        {{ 'workspace.profile.add' | translate }}
+      </button>
+      <p *ngIf="addError" class="text-xs text-danger sm:col-span-3" role="alert">{{ addError | translate }}</p>
+    </form>
+  </ng-container>
+</section>
+
+<!-- One preference. Typed control by kind; a deactivated row stays visible and greyed,
+     because the API keeps it and the runner simply skips it. -->
+<ng-template #rowTpl let-row>
+  <li
+    [attr.data-testid]="'profile-row-' + row.name"
+    [ngClass]="{ 'opacity-60': !row.active, 'border-brand/50': isDirty(row) }"
+    class="rounded-lg border border-line bg-surface-2/40 p-3"
+  >
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-start">
+      <div class="min-w-0 sm:w-56 sm:flex-shrink-0">
+        <p class="truncate font-mono text-sm font-semibold text-ink">{{ row.name }}</p>
+        <p *ngIf="row.description && row.description !== row.name" class="mt-0.5 text-xs text-muted">
+          {{ row.description }}
+        </p>
+        <p *ngIf="row.kind !== 'text' && row.kind !== 'weight'" class="mt-0.5 text-xs text-faint">
+          {{ 'workspace.profile.hint.' + row.kind | translate }}
+        </p>
+        <p *ngIf="!row.original" class="mt-0.5 text-xs font-semibold text-brand">
+          {{ 'workspace.profile.new' | translate }}
+        </p>
+      </div>
+
+      <div class="min-w-0 flex-1">
+        <ng-container>
+          <!-- cookie_pref: the two presets the runner understands, or raw JSON -->
+          <div *ngIf="row.kind === 'cookie'" class="space-y-2">
+            <select
+              (ngModelChange)="setCookieMode(row, $event)"
+              [attr.aria-label]="row.name"
+              [disabled]="!row.active"
+              [ngModel]="row.cookieMode"
+              class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+            >
+              <option value="accept">{{ 'workspace.profile.cookie.accept' | translate }}</option>
+              <option value="reject">{{ 'workspace.profile.cookie.reject' | translate }}</option>
+              <option value="custom">{{ 'workspace.profile.cookie.custom' | translate }}</option>
+            </select>
+            <textarea
+              (ngModelChange)="setValue(row, $event)"
+              *ngIf="row.cookieMode === 'custom'"
+              [attr.aria-label]="row.name"
+              [disabled]="!row.active"
+              [ngModel]="row.value"
+              class="block w-full rounded-md border border-line bg-surface px-3 py-2 font-mono text-xs text-ink focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+              rows="2"
+            ></textarea>
+          </div>
+
+          <input
+            (ngModelChange)="setValue(row, $event)"
+            *ngIf="row.kind === 'weight'"
+            [attr.aria-label]="row.name"
+            [disabled]="!row.active"
+            [ngModel]="row.value"
+            class="block w-full rounded-md border border-line bg-surface px-3 py-2 font-mono text-sm text-ink focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+            inputmode="decimal"
+            type="text"
+          />
+
+          <ng-container *ngIf="row.kind === 'usageType'">
+            <input
+              (ngModelChange)="setValue(row, $event)"
+              [attr.aria-label]="row.name"
+              [disabled]="!row.active"
+              [ngModel]="row.value"
+              class="block w-full rounded-md border border-line bg-surface px-3 py-2 font-mono text-sm text-ink focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+              list="usage-type-suggestions"
+              type="text"
+            />
+            <datalist id="usage-type-suggestions">
+              <option *ngFor="let s of usageTypeSuggestions" [value]="s"></option>
+            </datalist>
+          </ng-container>
+
+          <input
+            (ngModelChange)="setValue(row, $event)"
+            *ngIf="row.kind === 'location' || row.kind === 'text'"
+            [attr.aria-label]="row.name"
+            [disabled]="!row.active"
+            [ngModel]="row.value"
+            [placeholder]="row.kind === 'location' ? 'US-IL-CHICAGO' : ''"
+            class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink placeholder:text-faint focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+            type="text"
+          />
+        </ng-container>
+        <p *ngIf="rowError(row) as err" class="mt-1 text-xs text-danger">{{ err | translate }}</p>
+      </div>
+
+      <div class="flex flex-shrink-0 items-center gap-2">
+        <button
+          (click)="discard(row)"
+          *ngIf="!row.original"
+          class="rounded-md px-2.5 py-1 text-xs font-semibold text-muted transition hover:text-danger"
+          type="button"
+        >
+          {{ 'workspace.profile.discard' | translate }}
+        </button>
+        <button
+          (click)="toggleActive(row)"
+          *ngIf="row.original"
+          [attr.aria-pressed]="!row.active"
+          class="rounded-md border border-line px-2.5 py-1 text-xs font-semibold text-muted transition hover:bg-surface-3 hover:text-ink"
+          type="button"
+        >
+          {{ (row.active ? 'workspace.profile.deactivate' : 'workspace.profile.reactivate') | translate }}
+        </button>
+      </div>
+    </div>
+  </li>
+</ng-template>
