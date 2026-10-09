@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { AuthGuard } from '@core/guards/auth.guard';
 import { AgentComponent } from './index/agent.component';
 import { AgentEditComponent } from '@app/agent/edit/agent-edit.component';
+import { AgentCreateComponent } from '@app/agent/create/agent-create.component';
 
 export const agentRoutes: Routes = [
   {
@@ -14,6 +15,10 @@ export const agentRoutes: Routes = [
       {
         path: '',
         component: AgentComponent
+      },
+      {
+        path: 'create',
+        component: AgentCreateComponent
       },
       {
         path: ':id/edit',

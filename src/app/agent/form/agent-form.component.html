@@ -27,14 +27,15 @@
         <label class="mb-1.5 block text-sm font-medium text-ink" for="identification">{{
           'common.identification' | translate
         }}</label>
-        <input
+        <!-- F6: the API accepts exactly these (IdentificationEnum); free text was a 422. -->
+        <select
           formControlName="identification"
           id="identification"
           name="identification"
-          type="text"
-          placeholder="{{ 'common.identificationPlaceholder' | translate }}"
-          class="w-full rounded-md border border-line bg-surface px-3.5 py-2.5 text-sm text-ink shadow-xs transition placeholder:text-faint focus:border-brand focus:ring-2 focus:ring-brand/20"
-        />
+          class="w-full rounded-md border border-line bg-surface px-3.5 py-2.5 text-sm text-ink shadow-xs transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+        >
+          <option *ngFor="let i of identifications" [value]="i">{{ i }}</option>
+        </select>
         <p *ngIf="hasError('identification', 'required')" @fadeIn class="mt-1.5 text-xs text-danger">
           {{ 'common.identificationRequiredError' | translate }}
         </p>
