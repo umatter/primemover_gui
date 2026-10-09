@@ -198,7 +198,7 @@
       "hint": {
         "location": "Format CC-ST-CITY, e.g. US-IL-CHICAGO",
         "cookie": "How the bot answers cookie banners",
-        "usageType": "e.g. only_search, only_visits, searches_and_visits"
+        "usageType": "only_search, only_direct or both"
       },
       "cookie": {
         "accept": "Accept all cookies",
