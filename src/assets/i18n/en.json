@@ -103,7 +103,9 @@
       "testing": "Test bot",
       "testingHint": "A runner in production mode skips test bots; only a runner started in test mode runs them. Use it to try a setup without producing study data.",
       "search": "Search the Library",
-      "searchPlaceholder": "Search by name or id…"
+      "searchPlaceholder": "Search by name or id…",
+      "refused": "Used by another study's bots, or not yours to use. Choose another.",
+      "refusedError": "Some of this setup can't be used for your bot. See the marked fields."
     },
     "runPanel": {
       "title": "Schedule a run",
