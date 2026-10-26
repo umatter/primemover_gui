@@ -1,3 +1,5 @@
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, provideRouter } from '@angular/router';
@@ -5,6 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { EMPTY, of } from 'rxjs';
 
 import { BotDetailComponent } from './bot-detail.component';
+import { AppConfig } from '@app/app-config';
 import { CrawlerService, QueueService } from '@app/entity/service';
 import { VisibilityService } from '@shared/service/visibility.service';
 
@@ -20,6 +23,10 @@ describe('BotDetailComponent (R2.4 — renders from its route)', () => {
       imports: [BotDetailComponent, TranslateModule.forRoot(), NoopAnimationsModule],
       providers: [
         provideRouter([]),
+        // The page's other panels load through HttpClient; their requests just stay pending.
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: AppConfig, useValue: { apiBaseUrl: '' } },
         { provide: CrawlerService, useValue: { getByKey: () => of({ id: 18, name: 'Red' }) } },
         {
           provide: QueueService,
