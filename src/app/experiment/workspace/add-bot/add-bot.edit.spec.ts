@@ -18,7 +18,7 @@ describe('AddBotComponent (F4c — edit an existing bot)', () => {
   let add: jasmine.Spy;
   let update: jasmine.Spy;
 
-  const list = () => ({ entities$: of([{ id: 1 }]), getAll: () => {} });
+  const list = () => ({ entities$: of([{ id: 1 }]), getAll: () => {}, getByKey: () => of({ id: 1 }) });
   const existing = {
     id: 18,
     name: 'Red',

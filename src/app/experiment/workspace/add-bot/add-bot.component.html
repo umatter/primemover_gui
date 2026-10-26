@@ -54,6 +54,15 @@
         <label for="bot-agent" class="mb-1 block text-sm font-medium text-ink">
           {{ 'workspace.bot.identity' | translate }}
         </label>
+        <input
+          type="search"
+          class="mb-2 block w-full rounded-md border border-line bg-surface px-3 py-1.5 text-sm text-ink placeholder:text-faint focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+          [attr.aria-label]="'workspace.addBotPanel.search' | translate"
+          [attr.aria-controls]="'bot-agent'"
+          [attr.data-testid]="'search-agent'"
+          [placeholder]="'workspace.addBotPanel.searchPlaceholder' | translate"
+          (input)="searchLibrary('agent', $any($event.target).value)"
+        />
         <select
           id="bot-agent"
           formControlName="agent_id"
@@ -72,6 +81,15 @@
         <label for="bot-proxy" class="mb-1 block text-sm font-medium text-ink">
           {{ 'workspace.bot.connection' | translate }}
         </label>
+        <input
+          type="search"
+          class="mb-2 block w-full rounded-md border border-line bg-surface px-3 py-1.5 text-sm text-ink placeholder:text-faint focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+          [attr.aria-label]="'workspace.addBotPanel.search' | translate"
+          [attr.aria-controls]="'bot-proxy'"
+          [attr.data-testid]="'search-proxy'"
+          [placeholder]="'workspace.addBotPanel.searchPlaceholder' | translate"
+          (input)="searchLibrary('proxy', $any($event.target).value)"
+        />
         <select
           id="bot-proxy"
           formControlName="proxy_id"
@@ -90,6 +108,15 @@
         <label for="bot-config" class="mb-1 block text-sm font-medium text-ink">
           {{ 'workspace.bot.profile' | translate }}
         </label>
+        <input
+          type="search"
+          class="mb-2 block w-full rounded-md border border-line bg-surface px-3 py-1.5 text-sm text-ink placeholder:text-faint focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+          [attr.aria-label]="'workspace.addBotPanel.search' | translate"
+          [attr.aria-controls]="'bot-config'"
+          [attr.data-testid]="'search-configuration'"
+          [placeholder]="'workspace.addBotPanel.searchPlaceholder' | translate"
+          (input)="searchLibrary('configuration', $any($event.target).value)"
+        />
         <select
           id="bot-config"
           formControlName="configuration_id"

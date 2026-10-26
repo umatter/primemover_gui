@@ -1,9 +1,23 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { AsyncPipe, NgForOf, NgIf } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { combineLatest, map, Observable, Subscription } from 'rxjs';
+import { EntityCollectionServiceBase } from '@ngrx/data';
+import {
+  BehaviorSubject,
+  catchError,
+  combineLatest,
+  debounceTime,
+  distinctUntilChanged,
+  EMPTY,
+  filter,
+  map,
+  Observable,
+  startWith,
+  Subscription,
+  switchMap
+} from 'rxjs';
 
 import { Crawler } from '@app/crawler/model/crawler';
 import { Agent } from '@app/agent/model/agent';
@@ -11,6 +25,15 @@ import { Proxy } from '@app/proxy/model/proxy';
 import { Configuration } from '@app/config/model/config';
 import { AgentService, ConfigurationService, CrawlerService, ProxyService } from '@app/entity/service';
 import { fadeIn } from '@shared/animation/trigger';
+
+/** The three Library blocks a bot is composed from. */
+export type LibraryKind = 'agent' | 'proxy' | 'configuration';
+
+interface LibraryItem {
+  id: number;
+  name?: string;
+  description?: string | null;
+}
 
 /**
  * Slice A — workspace-native "Add bot" panel (docs/specs/runs-and-bots.md §5).
@@ -43,9 +66,20 @@ export class AddBotComponent implements OnInit, OnDestroy {
   submitting = false;
   errorKey: string | null = null;
 
-  agents$: Observable<Agent[]> = this.agentService.entities$;
-  proxies$: Observable<Proxy[]> = this.proxyService.entities$;
-  configurations$: Observable<Configuration[]> = this.configurationService.entities$;
+  /**
+   * The select options. `getAll()` returns the API's first page only, the newest 15 across
+   * all researchers (review on #63), so each select also has a search box, backed by the
+   * list's `filter[search]`, and the bot's current items are loaded by id.
+   */
+  agents$: Observable<Agent[]>;
+  proxies$: Observable<Proxy[]>;
+  configurations$: Observable<Configuration[]>;
+
+  private readonly searchTerms: Record<LibraryKind, BehaviorSubject<string>> = {
+    agent: new BehaviorSubject(''),
+    proxy: new BehaviorSubject(''),
+    configuration: new BehaviorSubject('')
+  };
 
   /** True once every required Library category has at least one entry to pick from. */
   librariesReady$: Observable<boolean>;
@@ -69,9 +103,16 @@ export class AddBotComponent implements OnInit, OnDestroy {
       testing: [false]
     });
 
-    this.librariesReady$ = combineLatest([this.agents$, this.proxies$, this.configurations$]).pipe(
-      map(([agents, proxies, configs]) => agents.length > 0 && proxies.length > 0 && configs.length > 0)
-    );
+    this.agents$ = this.libraryOptions(this.agentService, 'agent', 'agent_id');
+    this.proxies$ = this.libraryOptions(this.proxyService, 'proxy', 'proxy_id');
+    this.configurations$ = this.libraryOptions(this.configurationService, 'configuration', 'configuration_id');
+
+    // From the caches, not the options: a search that matches nothing is not an empty Library.
+    this.librariesReady$ = combineLatest([
+      this.agentService.entities$,
+      this.proxyService.entities$,
+      this.configurationService.entities$
+    ]).pipe(map(([agents, proxies, configs]) => agents.length > 0 && proxies.length > 0 && configs.length > 0));
   }
 
   get editing(): boolean {
@@ -93,6 +134,15 @@ export class AddBotComponent implements OnInit, OnDestroy {
     this.agentService.getAll();
     this.proxyService.getAll();
     this.configurationService.getAll();
+    // The bot's own items are rarely among the newest 15; without them the selects show blank.
+    const { agent_id, proxy_id, configuration_id } = this.form.value;
+    this.loadById(this.agentService, agent_id);
+    this.loadById(this.proxyService, proxy_id);
+    this.loadById(this.configurationService, configuration_id);
+  }
+
+  searchLibrary(kind: LibraryKind, term: string): void {
+    this.searchTerms[kind].next(term);
   }
 
   hasError(controlName: string, errorName: string): boolean {
@@ -152,5 +202,57 @@ export class AddBotComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
+  }
+
+  /**
+   * One select's options: the cache, narrowed to the search term (as the API matches it:
+   * id, name, description), newest first. The selected item always stays in the list, so a
+   * search never blanks the select. A non-empty term also asks the API, whose results join
+   * the cache.
+   */
+  private libraryOptions<T extends LibraryItem>(
+    service: EntityCollectionServiceBase<T>,
+    kind: LibraryKind,
+    controlName: string
+  ): Observable<T[]> {
+    const term$ = this.searchTerms[kind].pipe(
+      map((t) => t.trim()),
+      distinctUntilChanged()
+    );
+    this.subscriptions.add(
+      term$
+        .pipe(
+          debounceTime(250),
+          filter((t) => t !== ''),
+          switchMap((t) => service.getWithQuery({ ['filter[search]']: t }).pipe(catchError(() => EMPTY)))
+        )
+        .subscribe()
+    );
+
+    const control = this.form.get(controlName) as FormControl;
+    return combineLatest([service.entities$, term$, control.valueChanges.pipe(startWith(control.value))]).pipe(
+      map(([items, term, selected]) => {
+        const needle = term.toLowerCase();
+        return items
+          .filter(
+            (item) =>
+              !needle ||
+              Number(item.id) === Number(selected) ||
+              [String(item.id), item.name ?? '', item.description ?? ''].some((f) => f.toLowerCase().includes(needle))
+          )
+          .sort((a, b) => Number(b.id) - Number(a.id));
+      })
+    );
+  }
+
+  private loadById<T>(service: EntityCollectionServiceBase<T>, id: number | null | undefined): void {
+    if (id === null || id === undefined) return;
+    // A failed load leaves the select as it was; the id is still saved unchanged.
+    this.subscriptions.add(
+      service
+        .getByKey(id)
+        .pipe(catchError(() => EMPTY))
+        .subscribe()
+    );
   }
 }
