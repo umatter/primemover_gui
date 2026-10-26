@@ -100,7 +100,9 @@
       "editSave": "Einrichtung speichern",
       "editError": "Die Einrichtung konnte nicht gespeichert werden. Bitte versuche es erneut.",
       "search": "Bibliothek durchsuchen",
-      "searchPlaceholder": "Nach Name oder ID suchen…"
+      "searchPlaceholder": "Nach Name oder ID suchen…",
+      "refused": "Wird von Bots einer anderen Studie verwendet oder gehört nicht dir. Wähle etwas anderes.",
+      "refusedError": "Ein Teil dieser Einrichtung kann für deinen Bot nicht verwendet werden. Siehe die markierten Felder."
     },
     "runPanel": {
       "title": "Lauf planen",

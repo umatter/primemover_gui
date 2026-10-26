@@ -29,6 +29,21 @@ import { fadeIn } from '@shared/animation/trigger';
 /** The three Library blocks a bot is composed from. */
 export type LibraryKind = 'agent' | 'proxy' | 'configuration';
 
+const SETUP_FIELDS = ['agent_id', 'proxy_id', 'configuration_id'] as const;
+export type SetupField = (typeof SETUP_FIELDS)[number];
+
+/**
+ * The setup fields a 422 names. ngrx-data rejects with a DataServiceError whose `error` is the
+ * HttpErrorResponse; Laravel's field errors are in that response's body.
+ */
+export function refusedSetupFields(err: unknown): SetupField[] {
+  const e = err as { status?: number; error?: { status?: number; error?: { errors?: object } } } | null;
+  const response = typeof e?.status === 'number' ? e : e?.error;
+  if (response?.status !== 422) return [];
+  const errors = (response as { error?: { errors?: object } }).error?.errors ?? {};
+  return SETUP_FIELDS.filter((f) => f in errors);
+}
+
 interface LibraryItem {
   id: number;
   name?: string;
@@ -80,6 +95,15 @@ export class AddBotComponent implements OnInit, OnDestroy {
     proxy: new BehaviorSubject(''),
     configuration: new BehaviorSubject('')
   };
+  /** The ids the API's search returned for a term, per select. */
+  private readonly found: Record<LibraryKind, BehaviorSubject<{ term: string; ids: Set<number> }>> = {
+    agent: new BehaviorSubject({ term: '', ids: new Set<number>() }),
+    proxy: new BehaviorSubject({ term: '', ids: new Set<number>() }),
+    configuration: new BehaviorSubject({ term: '', ids: new Set<number>() })
+  };
+
+  /** R1.6: setup fields the API refused on the last save (422), e.g. another study's item. */
+  refused: Partial<Record<SetupField, true>> = {};
 
   /** True once every required Library category has at least one entry to pick from. */
   librariesReady$: Observable<boolean>;
@@ -154,6 +178,7 @@ export class AddBotComponent implements OnInit, OnDestroy {
     }
     this.submitting = true;
     this.errorKey = null;
+    this.refused = {};
 
     const payload = {
       ...this.form.value,
@@ -167,10 +192,7 @@ export class AddBotComponent implements OnInit, OnDestroy {
             this.submitting = false;
             this.saved.emit(bot);
           },
-          error: () => {
-            this.submitting = false;
-            this.errorKey = 'workspace.addBotPanel.editError';
-          }
+          error: (err: unknown) => this.failed(err, 'workspace.addBotPanel.editError')
         })
       );
       return;
@@ -182,10 +204,7 @@ export class AddBotComponent implements OnInit, OnDestroy {
           this.submitting = false;
           this.created.emit(bot);
         },
-        error: () => {
-          this.submitting = false;
-          this.errorKey = 'workspace.addBotPanel.error';
-        }
+        error: (err: unknown) => this.failed(err, 'workspace.addBotPanel.error')
       })
     );
   }
@@ -194,15 +213,22 @@ export class AddBotComponent implements OnInit, OnDestroy {
     this.closed.emit();
   }
 
+  private failed(err: unknown, genericKey: string): void {
+    this.submitting = false;
+    const fields = refusedSetupFields(err);
+    this.refused = Object.fromEntries(fields.map((f) => [f, true]));
+    this.errorKey = fields.length ? 'workspace.addBotPanel.refusedError' : genericKey;
+  }
+
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
   }
 
   /**
-   * One select's options: the cache, narrowed to the search term (as the API matches it:
-   * id, name, description), newest first. The selected item always stays in the list, so a
-   * search never blanks the select. A non-empty term also asks the API, whose results join
-   * the cache.
+   * One select's options: the cache, newest first, narrowed to a search term. An item stays
+   * when its id, name or description contains the term, or when the API's search returned it
+   * (that also matches hostname, Multilogin id, location, …), and the selected item always
+   * stays, so a search never blanks the select. The API answers with its first page, 15 hits.
    */
   private libraryOptions<T extends LibraryItem>(
     service: EntityCollectionServiceBase<T>,
@@ -218,20 +244,33 @@ export class AddBotComponent implements OnInit, OnDestroy {
         .pipe(
           debounceTime(250),
           filter((t) => t !== ''),
-          switchMap((t) => service.getWithQuery({ ['filter[search]']: t }).pipe(catchError(() => EMPTY)))
+          switchMap((t) =>
+            service.getWithQuery({ ['filter[search]']: t }).pipe(
+              map((items) => ({ term: t, ids: new Set(items.map((i) => Number(i.id))) })),
+              catchError(() => EMPTY)
+            )
+          )
         )
-        .subscribe()
+        .subscribe((found) => this.found[kind].next(found))
     );
 
     const control = this.form.get(controlName) as FormControl;
-    return combineLatest([service.entities$, term$, control.valueChanges.pipe(startWith(control.value))]).pipe(
-      map(([items, term, selected]) => {
+    return combineLatest([
+      service.entities$,
+      term$,
+      this.found[kind],
+      control.valueChanges.pipe(startWith(control.value))
+    ]).pipe(
+      map(([items, term, found, selected]) => {
         const needle = term.toLowerCase();
+        const foundIds = found.term === term ? found.ids : new Set<number>();
         return items
           .filter(
             (item) =>
               !needle ||
               Number(item.id) === Number(selected) ||
+              // The API matches more than these (hostname, Multilogin id, …): what it found counts.
+              foundIds.has(Number(item.id)) ||
               [String(item.id), item.name ?? '', item.description ?? ''].some((f) => f.toLowerCase().includes(needle))
           )
           .sort((a, b) => Number(b.id) - Number(a.id));

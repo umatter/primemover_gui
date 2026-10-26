@@ -100,7 +100,9 @@
       "editSave": "Save setup",
       "editError": "Couldn't save the bot's setup. Please try again.",
       "search": "Search the Library",
-      "searchPlaceholder": "Search by name or id…"
+      "searchPlaceholder": "Search by name or id…",
+      "refused": "Used by another study's bots, or not yours to use. Choose another.",
+      "refusedError": "Some of this setup can't be used for your bot. See the marked fields."
     },
     "runPanel": {
       "title": "Schedule a run",
