@@ -73,7 +73,8 @@ export class ProfileComponent implements OnChanges, OnDestroy {
   ) {
     this.addForm = this.fb.group({
       name: ['', [Validators.required]],
-      value: ['', [Validators.required]]
+      // Checked in addPreference(), with the same rule as the rows (requiredError).
+      value: ['']
     });
   }
 
@@ -131,8 +132,8 @@ export class ProfileComponent implements OnChanges, OnDestroy {
 
   /**
    * i18n key for why this row cannot be saved, or null. A switched-off row is checked for
-   * emptiness only: switching off a malformed value must stay possible, an empty one is a
-   * 500 from the API.
+   * emptiness only: switching off a malformed value must stay possible, but the API refuses
+   * an empty one whether or not it is active (umatter/primemover_api#87).
    */
   rowError(row: PreferenceRow): string | null {
     return row.active ? preferenceError(row.kind, row.value) : requiredError(row.value);
