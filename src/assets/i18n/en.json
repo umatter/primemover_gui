@@ -98,7 +98,9 @@
       "editTitle": "Edit bot setup",
       "editSubtitle": "Change which browser identity, connection and profile this bot uses. Its runs keep their history.",
       "editSave": "Save setup",
-      "editError": "Couldn't save the bot's setup. Please try again."
+      "editError": "Couldn't save the bot's setup. Please try again.",
+      "search": "Search the Library",
+      "searchPlaceholder": "Search by name or id…"
     },
     "runPanel": {
       "title": "Schedule a run",

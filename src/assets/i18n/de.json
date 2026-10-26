@@ -98,7 +98,9 @@
       "editTitle": "Bot-Einrichtung bearbeiten",
       "editSubtitle": "Ändere Browser-Identität, Verbindung und Profil dieses Bots. Seine Läufe behalten ihren Verlauf.",
       "editSave": "Einrichtung speichern",
-      "editError": "Die Einrichtung konnte nicht gespeichert werden. Bitte versuche es erneut."
+      "editError": "Die Einrichtung konnte nicht gespeichert werden. Bitte versuche es erneut.",
+      "search": "Bibliothek durchsuchen",
+      "searchPlaceholder": "Nach Name oder ID suchen…"
     },
     "runPanel": {
       "title": "Lauf planen",
