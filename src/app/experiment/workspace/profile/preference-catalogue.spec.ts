@@ -52,9 +52,15 @@ describe('preference catalogue', () => {
     expect(preferenceError('weight', '0.25')).toBeNull();
     expect(preferenceError('weight', '-1')).toBeNull();
     expect(preferenceError('weight', 'high')).toBe('workspace.profile.error.number');
-    expect(preferenceError('weight', '')).toBe('workspace.profile.error.number');
-    expect(preferenceError('text', '')).toBeNull();
     expect(preferenceError('location', 'anything')).toBeNull();
+  });
+
+  // The API turns "" and whitespace into null, and the column is NOT NULL (review on #59).
+  it('requires a non-empty value for every kind', () => {
+    for (const kind of ['text', 'location', 'usageType', 'weight', 'cookie'] as const) {
+      expect(preferenceError(kind, '')).withContext(kind).toBe('workspace.profile.error.required');
+      expect(preferenceError(kind, '   ')).withContext(kind).toBe('workspace.profile.error.required');
+    }
   });
 
   it('suggests the canonical usage_type vocabulary', () => {

@@ -210,7 +210,8 @@
         "number": "Muss eine Zahl sein.",
         "cookieJson": "Kein gültiges JSON.",
         "cookieKey": "Braucht einen Schlüssel \"accept_all\", z. B. {\"accept_all\": true}. Alles andere ignoriert der Runner.",
-        "generic": "Das Profil konnte nicht gespeichert werden."
+        "generic": "Das Profil konnte nicht gespeichert werden.",
+        "required": "Bitte einen Wert eingeben."
       }
     },
     "treatment": {
