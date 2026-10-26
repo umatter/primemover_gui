@@ -137,8 +137,12 @@ export class BotDetailComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.bot$ = this.route.paramMap.pipe(
-      switchMap((params) => {
+    // The ids are read when the route emits, ahead of the first render. Set inside `bot$`
+    // below, they changed only once the template's async pipe subscribed, after the back
+    // link had rendered: NG0100 on every visit. Subscribed first, this also runs before
+    // `bot$` on every later emission.
+    this.subscriptions.add(
+      this.route.paramMap.subscribe((params) => {
         this.experimentId = Number(params.get('id'));
         const botId = Number(params.get('botId'));
         if (botId !== this.botId) {
@@ -147,6 +151,11 @@ export class BotDetailComponent implements OnInit, OnDestroy {
           this.transitions.reset();
           this.alarm = null;
         }
+      })
+    );
+
+    this.bot$ = this.route.paramMap.pipe(
+      switchMap(() => {
         this.loadRuns();
         return this.crawlerService.getByKey(this.botId);
       }),
