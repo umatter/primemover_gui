@@ -101,7 +101,9 @@
       "editSave": "Einrichtung speichern",
       "editError": "Die Einrichtung konnte nicht gespeichert werden. Bitte versuche es erneut.",
       "testing": "Test-Bot",
-      "testingHint": "Ein Runner im Produktionsmodus überspringt Test-Bots; nur ein im Testmodus gestarteter Runner führt sie aus. Damit lässt sich eine Einrichtung ausprobieren, ohne Studiendaten zu erzeugen."
+      "testingHint": "Ein Runner im Produktionsmodus überspringt Test-Bots; nur ein im Testmodus gestarteter Runner führt sie aus. Damit lässt sich eine Einrichtung ausprobieren, ohne Studiendaten zu erzeugen.",
+      "search": "Bibliothek durchsuchen",
+      "searchPlaceholder": "Nach Name oder ID suchen…"
     },
     "runPanel": {
       "title": "Lauf planen",
@@ -225,7 +227,8 @@
         "number": "Muss eine Zahl sein.",
         "cookieJson": "Kein gültiges JSON.",
         "cookieKey": "Braucht einen Schlüssel \"accept_all\", z. B. {\"accept_all\": true}. Alles andere ignoriert der Runner.",
-        "generic": "Das Profil konnte nicht gespeichert werden."
+        "generic": "Das Profil konnte nicht gespeichert werden.",
+        "required": "Bitte einen Wert eingeben."
       }
     },
     "treatment": {

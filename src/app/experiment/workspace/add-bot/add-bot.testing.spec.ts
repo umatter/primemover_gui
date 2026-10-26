@@ -15,7 +15,7 @@ describe('AddBotComponent (F3 — test bot)', () => {
   let add: jasmine.Spy;
   let update: jasmine.Spy;
 
-  const list = () => ({ entities$: of([{ id: 1 }]), getAll: () => {} });
+  const list = () => ({ entities$: of([{ id: 1 }]), getAll: () => {}, getByKey: () => of({ id: 1 }) });
 
   async function create(bot: Crawler | null = null): Promise<void> {
     add = jasmine.createSpy('add').and.callFake((c: any) => of({ id: 99, ...c }));

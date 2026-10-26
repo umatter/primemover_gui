@@ -129,6 +129,43 @@ describe('ProfileComponent (F1 — bot profile / preferences)', () => {
     expect(save).not.toHaveBeenCalled();
   });
 
+  it('blocks save for an empty value, even on a row that is switched off', async () => {
+    await create();
+
+    // Free text has no format check, but the API still refuses an empty value.
+    component.setValue(row('location'), '  ');
+    expect(component.rowError(row('location'))).toBe('workspace.profile.error.required');
+    expect(component.canSave).toBeFalse();
+
+    component.toggleActive(row('location'));
+    expect(component.rowError(row('location'))).toBe('workspace.profile.error.required');
+    expect(component.canSave).toBeFalse();
+
+    component.save();
+    expect(save).not.toHaveBeenCalled();
+  });
+
+  it('checks a switched-off row for emptiness only', async () => {
+    await create();
+
+    component.setCookieMode(row('cookie_pref'), 'custom');
+    component.setValue(row('cookie_pref'), 'not json');
+    component.toggleActive(row('cookie_pref'));
+
+    expect(component.rowError(row('cookie_pref'))).toBeNull();
+    expect(component.canSave).toBeTrue();
+  });
+
+  it('refuses to add a preference without a value', async () => {
+    await create();
+
+    component.addForm.setValue({ name: 'ideology', value: '   ' });
+    component.addPreference();
+
+    expect(component.addError).toBe('workspace.profile.error.required');
+    expect(row('ideology')).toBeUndefined();
+  });
+
   it('adds a new preference, and refuses a name that is already set', async () => {
     await create();
 
