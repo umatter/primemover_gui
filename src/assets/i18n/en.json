@@ -222,7 +222,8 @@
         "number": "Must be a number.",
         "cookieJson": "Not valid JSON.",
         "cookieKey": "Needs an \"accept_all\" key, e.g. {\"accept_all\": true}. The runner ignores anything else.",
-        "generic": "The profile could not be saved."
+        "generic": "The profile could not be saved.",
+        "required": "Enter a value."
       }
     },
     "treatment": {

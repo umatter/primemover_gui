@@ -61,10 +61,20 @@ export function cookieValue(mode: Exclude<CookieMode, 'custom'>): string {
   return COOKIE_VALUES[mode];
 }
 
+/**
+ * Why an empty value cannot be saved, or null. Applies to every row, switched off or not:
+ * the API turns "" and whitespace into null and the column is NOT NULL.
+ */
+export function requiredError(value: string): string | null {
+  return value.trim() === '' ? 'workspace.profile.error.required' : null;
+}
+
 /** An i18n key describing why a value cannot be saved, or null when it can. */
 export function preferenceError(kind: PreferenceKind, value: string): string | null {
+  const required = requiredError(value);
+  if (required) return required;
   if (kind === 'weight') {
-    return value.trim() !== '' && Number.isFinite(Number(value)) ? null : 'workspace.profile.error.number';
+    return Number.isFinite(Number(value)) ? null : 'workspace.profile.error.number';
   }
   if (kind === 'cookie') {
     let parsed: unknown;
