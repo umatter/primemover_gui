@@ -16,7 +16,8 @@ import {
   shareReplay,
   startWith,
   Subscription,
-  switchMap
+  switchMap,
+  take
 } from 'rxjs';
 
 import { Job } from '@app/job/model/Job';
@@ -28,6 +29,7 @@ import { missingRequired } from '../setup/job-settings';
 import { QueueStatusEnum, statusOrUnknown, UNKNOWN_STATUS } from '@app/queue/status/status.enum';
 import { StatusComponent } from '@app/queue/status/status.component';
 import { fadeIn } from '@shared/animation/trigger';
+import { Meta } from '@shared/pagination/model';
 import { anyRunning, isRunningStatus, livenessOn$, livenessTicks } from '@shared/model/liveness';
 import { RunAlarm, RunAlarmState, RunTransitionWatcher } from '@shared/model/run-transition';
 import { LoadingSpinnerComponent } from '@shared/overlay/loading-spinner/loading-spinner.component';
@@ -221,7 +223,7 @@ export class RunComposerComponent implements OnInit, OnDestroy {
           this.runId = runId;
           this.transitions.reset();
           this.alarm = null;
-          this.loadBehaviours();
+          this.loadBehaviours(true);
         }
         this.loadJobs();
         // A failed read must not kill the stream: `switchMap` would propagate the error to
@@ -588,21 +590,33 @@ export class RunComposerComponent implements OnInit, OnDestroy {
 
   /**
    * Every behaviour of every job in the run (umatter/primemover_api#89), in pages of the
-   * API's maximum, 500. A run can hold more (784 on ex63), so pages are read until one comes
-   * back short, and the flags count as known only once the last one is in.
+   * API's maximum, 500. A run can hold more (784 on ex63), so pages are read up to the
+   * response's `meta.last_page` (a short page ends it when an older API sends no meta), and
+   * the flags count as known only once the last one is in. `reset` (a different run) hides
+   * them until then; a re-read of the same run keeps showing the cached state.
    */
-  private loadBehaviours(): void {
+  private loadBehaviours(reset = false): void {
     const runId = String(this.runId);
-    const page = (n: number): Observable<Behavior[]> =>
-      this.behaviorService.getWithQuery({
-        ['filter[queue]']: runId,
-        per_page: String(BEHAVIOUR_PAGE),
-        page: String(n)
-      });
+    const page = (n: number): Observable<{ n: number; last: boolean }> =>
+      this.behaviorService
+        .getWithQuery({ ['filter[queue]']: runId, per_page: String(BEHAVIOUR_PAGE), page: String(n) })
+        .pipe(
+          // The meta of this response: the reducer stores it before the result is emitted.
+          switchMap((rows) =>
+            this.behaviorService.pageMeta$.pipe(
+              take(1),
+              map((meta: Meta | null | undefined) => ({
+                n,
+                last: meta?.last_page ? n >= Number(meta.last_page) : rows.length < BEHAVIOUR_PAGE
+              }))
+            )
+          )
+        );
 
+    if (reset) this.behavioursKnown = false;
     this.behaviourLoad.unsubscribe();
     this.behaviourLoad = page(1)
-      .pipe(expand((rows, i) => (rows.length < BEHAVIOUR_PAGE ? EMPTY : page(i + 2))))
+      .pipe(expand((p) => (p.last ? EMPTY : page(p.n + 1))))
       .subscribe({
         complete: () => (this.behavioursKnown = true),
         error: () => (this.behavioursKnown = false)

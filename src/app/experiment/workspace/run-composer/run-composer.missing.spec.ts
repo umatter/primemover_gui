@@ -2,13 +2,14 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, provideRouter } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { BehaviorSubject, of, Subject, throwError } from 'rxjs';
+import { BehaviorSubject, map, of, Subject, throwError } from 'rxjs';
 
 import { RunComposerComponent } from './run-composer.component';
 import { Behavior } from '@app/behavior/behavior';
 import { BehaviorService, JobService, QueueService } from '@app/entity/service';
 import { Job } from '@app/job/model/Job';
 import { DecisionApiService } from '@app/job/service/decision-api.service';
+import { Meta } from '@shared/pagination/model';
 
 /**
  * F4a (docs/specs/gui-finalisation.md): a run is live from creation, so a job missing a
@@ -32,7 +33,12 @@ describe('RunComposerComponent (F4a — missing required settings)', () => {
     job({ id: 4, order: 4, type: 'teleportjob' })
   ];
 
+  let pageMeta$: BehaviorSubject<Partial<Meta> | null>;
+  let params$: BehaviorSubject<string>;
+
   async function create(query: () => any = () => of([])): Promise<void> {
+    pageMeta$ = new BehaviorSubject<Partial<Meta> | null>(null);
+    params$ = new BehaviorSubject('9');
     behaviours$ = new BehaviorSubject<Behavior[]>([
       behaviour(1, 'url'),
       behaviour(2, 'seconds', false),
@@ -54,13 +60,21 @@ describe('RunComposerComponent (F4a — missing required settings)', () => {
         },
         {
           provide: BehaviorService,
-          useValue: { entities$: behaviours$.asObservable(), getWithQuery: behaviourQuery, add: () => of({}) }
+          useValue: {
+            entities$: behaviours$.asObservable(),
+            getWithQuery: behaviourQuery,
+            pageMeta$: pageMeta$.asObservable(),
+            add: () => of({})
+          }
         },
         {
           provide: QueueService,
           useValue: { getByKey: () => of({ id: 9, name: 'Run', start_at: '2030-01-01T10:00:00' }) }
         },
-        { provide: ActivatedRoute, useValue: { paramMap: of({ get: (k: string) => (k === 'runId' ? '9' : '1') }) } },
+        {
+          provide: ActivatedRoute,
+          useValue: { paramMap: params$.pipe(map((run) => ({ get: (k: string) => (k === 'runId' ? run : '1') }))) }
+        },
         { provide: DecisionApiService, useValue: { decisionUrl: () => '', fetchDecision: () => of({}) } }
       ]
     }).compileComponents();
@@ -72,7 +86,7 @@ describe('RunComposerComponent (F4a — missing required settings)', () => {
     fixture.detectChanges();
   }
 
-  it("loads the whole run's behaviours in one call", async () => {
+  it("loads a short run's behaviours in one call, filtered by run", async () => {
     await create();
     expect(behaviourQuery).toHaveBeenCalledOnceWith({ ['filter[queue]']: '9', per_page: '500', page: '1' });
   });
@@ -88,6 +102,18 @@ describe('RunComposerComponent (F4a — missing required settings)', () => {
         [{ ['filter[queue]']: '9', per_page: '500', page: '1' }],
         [{ ['filter[queue]']: '9', per_page: '500', page: '2' }]
       ]);
+      expect(component.missing(JOBS[2])).toEqual(['selector']);
+    });
+
+    it("follows the response's last_page rather than the page length", async () => {
+      // A page one row short (e.g. a delete in flight) must not end the read early.
+      await create(() => {
+        const n = behaviourQuery.calls.count();
+        pageMeta$.next({ current_page: n, last_page: 2 });
+        return of(page(n === 1 ? 499 : 500));
+      });
+
+      expect(behaviourQuery.calls.count()).toBe(2);
       expect(component.missing(JOBS[2])).toEqual(['selector']);
     });
 
@@ -140,5 +166,20 @@ describe('RunComposerComponent (F4a — missing required settings)', () => {
     expect(component.missing(JOBS[2])).toEqual([]);
     expect(component.incompleteJobs).toBe(0);
     expect(fixture.nativeElement.querySelector('[data-testid="run-incomplete"]')).toBeNull();
+  });
+
+  it('hides the flags while a different run loads, rather than judging it by a stale cache', async () => {
+    const next = new Subject<Behavior[]>();
+    await create(() => (behaviourQuery.calls.count() === 1 ? of([]) : next));
+    expect(component.behavioursKnown).toBeTrue();
+
+    params$.next('10');
+    jobs$.next([job({ id: 7, queue_id: 10, order: 1, type: 'visitjob' })]);
+    fixture.detectChanges();
+    expect(component.missing(component.jobs[0])).toEqual([]);
+
+    next.next([]);
+    next.complete();
+    expect(component.missing(component.jobs[0])).toEqual(['url']);
   });
 });

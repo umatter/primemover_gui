@@ -77,6 +77,7 @@
           [attr.data-testid]="'search-agent'"
           [placeholder]="'workspace.addBotPanel.searchPlaceholder' | translate"
           (input)="searchLibrary('agent', $any($event.target).value)"
+          (keydown.enter)="$event.preventDefault()"
         />
         <select
           id="bot-agent"
@@ -84,10 +85,13 @@
           class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
         >
           <option [ngValue]="null" disabled>{{ 'workspace.addBotPanel.choose' | translate }}</option>
-          <option *ngFor="let agent of agents$ | async" [ngValue]="agent.id">{{ agent.name }}</option>
+          <option *ngFor="let agent of agents$ | async" [ngValue]="agent.id">{{ agent.name }} · #{{ agent.id }}</option>
         </select>
         <p *ngIf="hasError('agent_id', 'required')" class="mt-1 text-xs text-danger">
           {{ 'workspace.addBotPanel.fieldRequired' | translate }}
+        </p>
+        <p *ngIf="refused.agent_id" class="mt-1 text-xs text-danger" data-testid="refused-agent_id">
+          {{ 'workspace.addBotPanel.refused' | translate }}
         </p>
       </div>
 
@@ -104,6 +108,7 @@
           [attr.data-testid]="'search-proxy'"
           [placeholder]="'workspace.addBotPanel.searchPlaceholder' | translate"
           (input)="searchLibrary('proxy', $any($event.target).value)"
+          (keydown.enter)="$event.preventDefault()"
         />
         <select
           id="bot-proxy"
@@ -111,10 +116,15 @@
           class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
         >
           <option [ngValue]="null" disabled>{{ 'workspace.addBotPanel.choose' | translate }}</option>
-          <option *ngFor="let proxy of proxies$ | async" [ngValue]="proxy.id">{{ proxy.name }}</option>
+          <option *ngFor="let proxy of proxies$ | async" [ngValue]="proxy.id">
+            {{ proxy.name }} · #{{ proxy.id }}
+          </option>
         </select>
         <p *ngIf="hasError('proxy_id', 'required')" class="mt-1 text-xs text-danger">
           {{ 'workspace.addBotPanel.fieldRequired' | translate }}
+        </p>
+        <p *ngIf="refused.proxy_id" class="mt-1 text-xs text-danger" data-testid="refused-proxy_id">
+          {{ 'workspace.addBotPanel.refused' | translate }}
         </p>
       </div>
 
@@ -131,6 +141,7 @@
           [attr.data-testid]="'search-configuration'"
           [placeholder]="'workspace.addBotPanel.searchPlaceholder' | translate"
           (input)="searchLibrary('configuration', $any($event.target).value)"
+          (keydown.enter)="$event.preventDefault()"
         />
         <select
           id="bot-config"
@@ -138,10 +149,15 @@
           class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
         >
           <option [ngValue]="null" disabled>{{ 'workspace.addBotPanel.choose' | translate }}</option>
-          <option *ngFor="let config of configurations$ | async" [ngValue]="config.id">{{ config.name }}</option>
+          <option *ngFor="let config of configurations$ | async" [ngValue]="config.id">
+            {{ config.name }} · #{{ config.id }}
+          </option>
         </select>
         <p *ngIf="hasError('configuration_id', 'required')" class="mt-1 text-xs text-danger">
           {{ 'workspace.addBotPanel.fieldRequired' | translate }}
+        </p>
+        <p *ngIf="refused.configuration_id" class="mt-1 text-xs text-danger" data-testid="refused-configuration_id">
+          {{ 'workspace.addBotPanel.refused' | translate }}
         </p>
       </div>
 

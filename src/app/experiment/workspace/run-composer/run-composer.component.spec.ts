@@ -46,7 +46,10 @@ describe('RunComposerComponent (Slice C — compose job sequence)', () => {
             delete: jobDelete
           }
         },
-        { provide: BehaviorService, useValue: { add: behaviorAdd, entities$: of([]), getWithQuery: () => of([]) } },
+        {
+          provide: BehaviorService,
+          useValue: { add: behaviorAdd, entities$: of([]), getWithQuery: () => of([]), pageMeta$: of(null) }
+        },
         { provide: QueueService, useValue: { getByKey: () => of({ id: 9, name: 'Run' }) } },
         { provide: ActivatedRoute, useValue: { paramMap: of({ get: (k: string) => (k === 'runId' ? '9' : '1') }) } },
         // The per-job decision expander reaches the API for the raw payload; stubbed so
@@ -374,7 +377,10 @@ describe('RunComposerComponent (Phase 5 — liveness and transition alarms)', ()
             delete: () => of(1)
           }
         },
-        { provide: BehaviorService, useValue: { add: () => of({}), entities$: of([]), getWithQuery: () => of([]) } },
+        {
+          provide: BehaviorService,
+          useValue: { add: () => of({}), entities$: of([]), getWithQuery: () => of([]), pageMeta$: of(null) }
+        },
         { provide: QueueService, useValue: { getByKey } },
         { provide: ActivatedRoute, useValue: { paramMap: of({ get: (k: string) => (k === 'runId' ? '9' : '1') }) } },
         {
@@ -551,7 +557,10 @@ describe('RunComposerComponent (Phase 4 — alarm counts over the whole run)', (
             delete: () => of(1)
           }
         },
-        { provide: BehaviorService, useValue: { add: () => of({}), entities$: of([]), getWithQuery: () => of([]) } },
+        {
+          provide: BehaviorService,
+          useValue: { add: () => of({}), entities$: of([]), getWithQuery: () => of([]), pageMeta$: of(null) }
+        },
         { provide: QueueService, useValue: { getByKey: () => of(currentRun) } },
         { provide: ActivatedRoute, useValue: { paramMap: of({ get: (k: string) => (k === 'runId' ? '9' : '1') }) } },
         {

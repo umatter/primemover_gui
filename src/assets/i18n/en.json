@@ -106,7 +106,9 @@
       "optional": "optional",
       "descriptionPlaceholder": "What this bot stands for in the study, e.g. right-leaning persona",
       "search": "Search the Library",
-      "searchPlaceholder": "Search by name or id…"
+      "searchPlaceholder": "Search by name or id…",
+      "refused": "Used by another study's bots, or not yours to use. Choose another.",
+      "refusedError": "Some of this setup can't be used for your bot. See the marked fields."
     },
     "runPanel": {
       "title": "Schedule a run",

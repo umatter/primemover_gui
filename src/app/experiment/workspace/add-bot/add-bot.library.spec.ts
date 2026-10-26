@@ -1,8 +1,9 @@
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { HttpErrorResponse } from '@angular/common/http';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { BehaviorSubject, firstValueFrom, of } from 'rxjs';
+import { BehaviorSubject, firstValueFrom, Observable, of, throwError } from 'rxjs';
 
 import { AddBotComponent } from './add-bot.component';
 import { AgentService, ConfigurationService, CrawlerService, ProxyService } from '@app/entity/service';
@@ -51,13 +52,22 @@ describe('AddBotComponent (R1.5 — the whole Library is reachable)', () => {
     };
   }
 
-  async function create(bot: Crawler | null, proxyAnswer?: (q?: unknown) => Item[]): Promise<void> {
+  let crawlerUpdate: jasmine.Spy;
+  let crawlerAdd: jasmine.Spy;
+
+  async function create(
+    bot: Crawler | null,
+    proxyAnswer?: (q?: unknown) => Item[],
+    save: () => Observable<unknown> = () => of({})
+  ): Promise<void> {
     services = { agent: library(), proxy: library(proxyAnswer), configuration: library() };
+    crawlerUpdate = jasmine.createSpy('update').and.callFake(save);
+    crawlerAdd = jasmine.createSpy('add').and.callFake(save);
     await TestBed.configureTestingModule({
       imports: [AddBotComponent, TranslateModule.forRoot(), NoopAnimationsModule],
       providers: [
         provideRouter([]),
-        { provide: CrawlerService, useValue: { add: () => of({}), update: () => of({}) } },
+        { provide: CrawlerService, useValue: { add: crawlerAdd, update: crawlerUpdate } },
         { provide: AgentService, useValue: services.agent },
         { provide: ProxyService, useValue: services.proxy },
         { provide: ConfigurationService, useValue: services.configuration }
@@ -94,7 +104,7 @@ describe('AddBotComponent (R1.5 — the whole Library is reachable)', () => {
     expect(services.proxy.getByKey).not.toHaveBeenCalled(); // the bot has none
 
     const agentSelect: HTMLSelectElement = fixture.nativeElement.querySelector('#bot-agent');
-    expect(agentSelect.selectedOptions[0].textContent!.trim()).toBe('item 12');
+    expect(agentSelect.selectedOptions[0].textContent!.trim()).toBe('item 12 · #12');
   });
 
   it('loads nothing by id for a new bot', async () => {
@@ -113,7 +123,17 @@ describe('AddBotComponent (R1.5 — the whole Library is reachable)', () => {
     fixture.detectChanges();
 
     expect(services.proxy.getWithQuery).toHaveBeenCalledOnceWith({ ['filter[search]']: 'Berlin' });
-    expect(optionsOf('bot-proxy')).toEqual(['Berlin exit', 'Berlin old exit']);
+    expect(optionsOf('bot-proxy')).toEqual(['Berlin exit · #900', 'Berlin old exit · #3']);
+  }));
+
+  it('keeps what the API found by a field the GUI does not match, e.g. a hostname', fakeAsync(async () => {
+    await create(null, () => [{ id: 4, name: 'residential B' }]);
+
+    component.searchLibrary('proxy', 'gate.multilogin.com');
+    tick(250);
+    fixture.detectChanges();
+
+    expect(optionsOf('bot-proxy')).toEqual(['residential B · #4']);
   }));
 
   it('narrows the options to the term but keeps the selected item', fakeAsync(async () => {
@@ -124,8 +144,19 @@ describe('AddBotComponent (R1.5 — the whole Library is reachable)', () => {
     tick(250);
     fixture.detectChanges();
 
-    expect(optionsOf('bot-proxy')).toEqual(['newest identity', 'Berlin exit']);
+    expect(optionsOf('bot-proxy')).toEqual(['newest identity · #901', 'Berlin exit · #900']);
   }));
+
+  it('does not submit the form when Enter is pressed in a search box', async () => {
+    await create(oldBot);
+    const search: HTMLInputElement = fixture.nativeElement.querySelector('[data-testid="search-agent"]');
+
+    const enter = new KeyboardEvent('keydown', { key: 'Enter', cancelable: true, bubbles: true });
+    search.dispatchEvent(enter);
+
+    expect(enter.defaultPrevented).toBeTrue();
+    expect(crawlerUpdate).not.toHaveBeenCalled();
+  });
 
   it('does not query for an empty term, and an empty result is not an empty Library', fakeAsync(async () => {
     await create(null);
@@ -139,4 +170,60 @@ describe('AddBotComponent (R1.5 — the whole Library is reachable)', () => {
     expect(await firstValueFrom(component.agents$)).toEqual([]);
     expect(await firstValueFrom(component.librariesReady$)).toBeTrue();
   }));
+
+  // R1.6: since umatter/primemover_api#91 another study's item is a 422 on its field. ngrx-data
+  // rejects with a DataServiceError whose `error` is the HttpErrorResponse.
+  describe('a save the API refuses', () => {
+    const refusal = (errors: Record<string, string[]>) => () =>
+      throwError(() => ({ error: new HttpErrorResponse({ status: 422, error: { message: 'invalid', errors } }) }));
+    const marked = () =>
+      Array.from(fixture.nativeElement.querySelectorAll('[data-testid^="refused-"]') as NodeListOf<HTMLElement>).map(
+        (el) => el.dataset['testid']
+      );
+
+    it('marks each refused setup field, on edit', async () => {
+      await create(
+        oldBot,
+        undefined,
+        refusal({
+          configuration_id: ['The selected configuration id could not be found.'],
+          agent_id: ['The selected agent id could not be found.']
+        })
+      );
+      component.form.patchValue({ proxy_id: 900 }); // oldBot has none; the form requires one
+
+      component.save();
+      fixture.detectChanges();
+
+      expect(marked()).toEqual(['refused-agent_id', 'refused-configuration_id']);
+      expect(component.errorKey).toBe('workspace.addBotPanel.refusedError');
+    });
+
+    it('marks them on add too, and clears them on the next save', async () => {
+      await create(null, undefined, refusal({ proxy_id: ['The selected proxy id could not be found.'] }));
+      component.form.patchValue({ name: 'b', agent_id: 901, proxy_id: 900, configuration_id: 901 });
+
+      component.save();
+      fixture.detectChanges();
+      expect(marked()).toEqual(['refused-proxy_id']);
+
+      crawlerAdd.and.callFake(() => of({ id: 1 }));
+      component.save();
+      fixture.detectChanges();
+      expect(marked()).toEqual([]);
+    });
+
+    it('keeps the generic message for any other failure', async () => {
+      await create(oldBot, undefined, () =>
+        throwError(() => ({ error: new HttpErrorResponse({ status: 500, error: { message: 'boom' } }) }))
+      );
+      component.form.patchValue({ proxy_id: 900 });
+
+      component.save();
+      fixture.detectChanges();
+
+      expect(marked()).toEqual([]);
+      expect(component.errorKey).toBe('workspace.addBotPanel.editError');
+    });
+  });
 });
