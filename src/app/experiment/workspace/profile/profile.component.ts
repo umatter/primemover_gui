@@ -16,6 +16,7 @@ import {
   preferenceError,
   PreferenceKind,
   preferenceKind,
+  requiredError,
   USAGE_TYPE_SUGGESTIONS
 } from './preference-catalogue';
 import { ProfileApiService } from './profile-api.service';
@@ -72,7 +73,7 @@ export class ProfileComponent implements OnChanges, OnDestroy {
   ) {
     this.addForm = this.fb.group({
       name: ['', [Validators.required]],
-      value: ['']
+      value: ['', [Validators.required]]
     });
   }
 
@@ -128,9 +129,13 @@ export class ProfileComponent implements OnChanges, OnDestroy {
     return row.value !== row.original.value || row.active !== Boolean(Number(row.original.active));
   }
 
-  /** i18n key for why this row cannot be saved, or null. An inactive row is never blocked. */
+  /**
+   * i18n key for why this row cannot be saved, or null. A switched-off row is checked for
+   * emptiness only: switching off a malformed value must stay possible, an empty one is a
+   * 500 from the API.
+   */
   rowError(row: PreferenceRow): string | null {
-    return row.active ? preferenceError(row.kind, row.value) : null;
+    return row.active ? preferenceError(row.kind, row.value) : requiredError(row.value);
   }
 
   setValue(row: PreferenceRow, value: string): void {
@@ -163,7 +168,10 @@ export class ProfileComponent implements OnChanges, OnDestroy {
       this.addError = 'workspace.profile.error.duplicate';
       return;
     }
-    this.rows = [...this.rows, this.newRow(name, String(this.addForm.value.value ?? ''))];
+    const value = String(this.addForm.value.value ?? '');
+    this.addError = requiredError(value);
+    if (this.addError) return;
+    this.rows = [...this.rows, this.newRow(name, value)];
     this.addForm.reset({ name: '', value: '' });
   }
 

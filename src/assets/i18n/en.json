@@ -104,7 +104,9 @@
       "testingHint": "A runner in production mode skips test bots; only a runner started in test mode runs them. Use it to try a setup without producing study data.",
       "description": "Description",
       "optional": "optional",
-      "descriptionPlaceholder": "What this bot stands for in the study, e.g. right-leaning persona"
+      "descriptionPlaceholder": "What this bot stands for in the study, e.g. right-leaning persona",
+      "search": "Search the Library",
+      "searchPlaceholder": "Search by name or id…"
     },
     "runPanel": {
       "title": "Schedule a run",
@@ -230,7 +232,8 @@
         "number": "Must be a number.",
         "cookieJson": "Not valid JSON.",
         "cookieKey": "Needs an \"accept_all\" key, e.g. {\"accept_all\": true}. The runner ignores anything else.",
-        "generic": "The profile could not be saved."
+        "generic": "The profile could not be saved.",
+        "required": "Enter a value."
       }
     },
     "treatment": {

@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, provideRouter } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { BehaviorSubject, of, throwError } from 'rxjs';
+import { BehaviorSubject, of, Subject, throwError } from 'rxjs';
 
 import { RunComposerComponent } from './run-composer.component';
 import { Behavior } from '@app/behavior/behavior';
@@ -74,7 +74,40 @@ describe('RunComposerComponent (F4a — missing required settings)', () => {
 
   it("loads the whole run's behaviours in one call", async () => {
     await create();
-    expect(behaviourQuery).toHaveBeenCalledOnceWith({ ['filter[queue]']: '9', per_page: '500' });
+    expect(behaviourQuery).toHaveBeenCalledOnceWith({ ['filter[queue]']: '9', per_page: '500', page: '1' });
+  });
+
+  // On ex63, 167 of 31,790 runs hold more than 500 behaviours (review on #63).
+  describe('a run with more behaviours than one page', () => {
+    const page = (n: number) => Array.from({ length: n }, (_, i) => behaviour(1000 + i, 'url'));
+
+    it('keeps reading pages until one comes back short', async () => {
+      await create(() => (behaviourQuery.calls.count() === 1 ? of(page(500)) : of(page(284))));
+
+      expect(behaviourQuery.calls.allArgs()).toEqual([
+        [{ ['filter[queue]']: '9', per_page: '500', page: '1' }],
+        [{ ['filter[queue]']: '9', per_page: '500', page: '2' }]
+      ]);
+      expect(component.missing(JOBS[2])).toEqual(['selector']);
+    });
+
+    it('shows no flags until the last page is in', async () => {
+      const second = new Subject<Behavior[]>();
+      await create(() => (behaviourQuery.calls.count() === 1 ? of(page(500)) : second));
+
+      expect(component.missing(JOBS[2])).toEqual([]);
+
+      second.next(page(3));
+      second.complete();
+      expect(component.missing(JOBS[2])).toEqual(['selector']);
+    });
+
+    it('shows no flags when a later page fails', async () => {
+      await create(() => (behaviourQuery.calls.count() === 1 ? of(page(500)) : throwError(() => new Error('502'))));
+
+      expect(component.missing(JOBS[2])).toEqual([]);
+      expect(component.incompleteJobs).toBe(0);
+    });
   });
 
   it('flags required settings without an ACTIVE behaviour, per job', async () => {

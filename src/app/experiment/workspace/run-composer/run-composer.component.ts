@@ -7,6 +7,8 @@ import {
   BehaviorSubject,
   catchError,
   combineLatest,
+  EMPTY,
+  expand,
   forkJoin,
   map,
   Observable,
@@ -75,6 +77,9 @@ export interface JobOutcomeCounts {
    */
   treatmentLost: number;
 }
+
+/** `GET behaviors` caps `per_page` at this (BehaviorRepository::MAX_PER_PAGE). */
+const BEHAVIOUR_PAGE = 500;
 
 /**
  * Slice C — Run composer: authors the ordered Job sequence of a Run (Queue) at
@@ -165,6 +170,8 @@ export class RunComposerComponent implements OnInit, OnDestroy {
    */
   behavioursKnown = false;
   private behavioursByJob = new Map<number, Behavior[]>();
+  /** The run's behaviour load in flight; a new run (or a re-read) replaces it. */
+  private behaviourLoad = new Subscription();
   addErrorKey: string | null = null;
 
   readonly jobTypes: JobTypeSchema[] = JOB_TYPE_OPTIONS;
@@ -579,17 +586,31 @@ export class RunComposerComponent implements OnInit, OnDestroy {
     return this.jobs.filter((j) => this.missing(j).length > 0).length;
   }
 
-  /** Every behaviour of every job in the run, one request (umatter/primemover_api#89). */
+  /**
+   * Every behaviour of every job in the run (umatter/primemover_api#89), in pages of the
+   * API's maximum, 500. A run can hold more (784 on ex63), so pages are read until one comes
+   * back short, and the flags count as known only once the last one is in.
+   */
   private loadBehaviours(): void {
-    this.subscriptions.add(
-      this.behaviorService.getWithQuery({ ['filter[queue]']: String(this.runId), per_page: '500' }).subscribe({
-        next: () => (this.behavioursKnown = true),
+    const runId = String(this.runId);
+    const page = (n: number): Observable<Behavior[]> =>
+      this.behaviorService.getWithQuery({
+        ['filter[queue]']: runId,
+        per_page: String(BEHAVIOUR_PAGE),
+        page: String(n)
+      });
+
+    this.behaviourLoad.unsubscribe();
+    this.behaviourLoad = page(1)
+      .pipe(expand((rows, i) => (rows.length < BEHAVIOUR_PAGE ? EMPTY : page(i + 2))))
+      .subscribe({
+        complete: () => (this.behavioursKnown = true),
         error: () => (this.behavioursKnown = false)
-      })
-    );
+      });
   }
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
+    this.behaviourLoad.unsubscribe();
   }
 }
