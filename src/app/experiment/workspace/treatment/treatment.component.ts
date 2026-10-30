@@ -38,6 +38,8 @@ export type Weight = 'pi' | 'psi' | 'kappa' | 'tau' | 'alpha' | 'beta';
 export class TreatmentComponent implements OnChanges, OnDestroy {
   /** The bot's configuration_id; null or undefined for a bot without one. */
   @Input() configurationId: number | null | undefined;
+  /** #72: the bot belongs to a study defined by a pmspec lock (or that is not known yet). */
+  @Input() readOnly = false;
 
   configuration: Configuration | null = null;
   /** The row being edited, as last stored. Null when the configuration has none. */
@@ -110,7 +112,7 @@ export class TreatmentComponent implements OnChanges, OnDestroy {
   }
 
   get canSave(): boolean {
-    return !this.saving && this.dirty && Object.keys(this.errors).length === 0;
+    return !this.readOnly && !this.saving && this.dirty && Object.keys(this.errors).length === 0;
   }
 
   setWeight(weight: Weight, value: number | string | null): void {
@@ -179,7 +181,7 @@ export class TreatmentComponent implements OnChanges, OnDestroy {
 
   /** A legacy configuration without params gets one, in the control arm. */
   setUp(): void {
-    if (!this.configuration) return;
+    if (!this.configuration || this.readOnly) return;
     this.saving = true;
     this.error = null;
     this.subscriptions.add(

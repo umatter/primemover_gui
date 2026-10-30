@@ -7,7 +7,7 @@ import { BehaviorSubject, EMPTY, NEVER, of, Subject } from 'rxjs';
 import { EntityOp } from '@ngrx/data';
 
 import { BotDetailComponent } from './bot-detail.component';
-import { CrawlerService, QueueService } from '@app/entity/service';
+import { CrawlerService, ExperimentService, QueueService } from '@app/entity/service';
 import { Queue } from '@app/queue/model/queue';
 import { VisibilityService } from '@shared/service/visibility.service';
 import { ProfileApiService } from '../profile/profile-api.service';
@@ -21,6 +21,8 @@ const TREATMENT_API_STUB = {
   useValue: { load: () => NEVER, save: () => NEVER, create: () => NEVER }
 };
 const WATCHED_API_STUB = { provide: WatchedApiService, useValue: { watched: () => NEVER } };
+/** An experiment with no pmspec lock: its bots are editable (#72). */
+const FREE_EXPERIMENT_STUB = { provide: ExperimentService, useValue: { getByKey: () => of({ id: 1, preferences: [] }) } };
 
 /**
  * Slice B acceptance (docs/specs/runs-and-bots.md §5): a run's status is shown honestly —
@@ -38,6 +40,7 @@ describe('BotDetailComponent (Slice B — run status)', () => {
         TREATMENT_API_STUB,
         WATCHED_API_STUB,
         provideRouter([]),
+        FREE_EXPERIMENT_STUB,
         { provide: CrawlerService, useValue: { getByKey: () => of({ id: 1, name: 'Bot' }) } },
         {
           provide: QueueService,
@@ -234,6 +237,7 @@ describe('BotDetailComponent (Slice B — run status)', () => {
           TREATMENT_API_STUB,
           WATCHED_API_STUB,
           provideRouter([]),
+          FREE_EXPERIMENT_STUB,
           { provide: CrawlerService, useValue: { getByKey: () => of({ id: 1, name: 'Bot' }) } },
           {
             provide: QueueService,
@@ -359,6 +363,7 @@ describe('BotDetailComponent (Slice B — run status)', () => {
           TREATMENT_API_STUB,
           WATCHED_API_STUB,
           provideRouter([]),
+          FREE_EXPERIMENT_STUB,
           { provide: CrawlerService, useValue: { getByKey: () => of({ id: 1, name: 'Bot' }) } },
           {
             provide: QueueService,
@@ -500,6 +505,7 @@ describe('BotDetailComponent (Phase 2 — the run status chips)', () => {
         TREATMENT_API_STUB,
         WATCHED_API_STUB,
         provideRouter([]),
+        FREE_EXPERIMENT_STUB,
         { provide: CrawlerService, useValue: { getByKey: () => of({ id: 1, name: 'Bot', ...bot }) } },
         {
           provide: QueueService,
@@ -669,6 +675,7 @@ describe('BotDetailComponent (Phase 2 — the run status chips)', () => {
           TREATMENT_API_STUB,
           WATCHED_API_STUB,
           provideRouter([]),
+          FREE_EXPERIMENT_STUB,
           { provide: CrawlerService, useValue: { getByKey: () => of({ id: 1, name: 'Bot' }) } },
           {
             provide: QueueService,
@@ -860,6 +867,7 @@ describe('BotDetailComponent (Phase 5 — liveness and transition alarms)', () =
         TREATMENT_API_STUB,
         WATCHED_API_STUB,
         provideRouter([]),
+        FREE_EXPERIMENT_STUB,
         { provide: CrawlerService, useValue: { getByKey: () => of({ id: 1, name: 'Bot' }) } },
         {
           provide: QueueService,
