@@ -15,6 +15,7 @@
     "format": "prettier --write .",
     "format.check": "prettier --check ."
   },
+  "license": "MIT",
   "private": true,
   "dependencies": {
     "@angular/animations": "^17.3",
