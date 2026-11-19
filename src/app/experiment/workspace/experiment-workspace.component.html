@@ -181,6 +181,38 @@
         {{ 'health.strip.lastRun' | translate }} · {{ health.last_finished_at | date: 'dd MMM, HH:mm' }}
       </span>
     </div>
+
+    <!-- Bots that have stopped starting. A run that fails before its first job is one more
+         'failure' in the tiles above, and five of them in a row from the same bot look
+         like five unrelated bad runs: in experiment 240 four bots were dead for a week
+         that way. This names the bots, and says since when and why. -->
+    <div
+      *ngIf="health.bots_not_starting?.length"
+      class="mt-3 rounded-lg border border-danger/40 bg-danger/5 p-3 text-sm"
+      role="alert"
+      data-testid="bots-not-starting"
+    >
+      <p class="font-semibold text-danger" [attr.title]="'health.notStarting.hint' | translate">
+        {{ 'health.notStarting.title' | translate: { count: health.bots_not_starting!.length } }}
+      </p>
+      <ul class="mt-1 space-y-1">
+        <li *ngFor="let bot of health.bots_not_starting" class="text-ink">
+          <a
+            class="font-medium underline decoration-dotted hover:text-brand"
+            [routerLink]="['/experiments', experimentId, 'bots', bot.crawler_id]"
+            >{{ bot.name || ('health.notStarting.unnamed' | translate: { id: bot.crawler_id }) }}</a
+          >
+          <span class="text-muted">
+            ·
+            {{ 'health.notStarting.streak' | translate: { count: bot.consecutive } }}
+            <ng-container *ngIf="bot.since">
+              · {{ 'health.notStarting.since' | translate }} {{ bot.since | date: 'dd MMM, HH:mm' }}
+            </ng-container>
+          </span>
+          <span *ngIf="bot.reason" class="block text-xs text-muted">{{ bot.reason }}</span>
+        </li>
+      </ul>
+    </div>
   </section>
 
   <!-- ============================== Run summary (fallback) ==============================

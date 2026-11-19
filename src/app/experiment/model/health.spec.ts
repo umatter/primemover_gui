@@ -46,6 +46,7 @@ describe('experiment health model', () => {
     bad_jobs: 0,
     treatment_lost_jobs: 0,
     degraded_jobs: 0,
+    bots_not_starting: [],
     last_finished_at: null,
     ...over
   });
@@ -270,6 +271,42 @@ describe('experiment health model', () => {
   });
 
   describe('normalizeExperimentHealth', () => {
+    it('reads the bots that are not starting, coercing numbers and dropping unusable entries', () => {
+      const parsed = normalizeExperimentHealth({
+        runs: {},
+        bots_not_starting: [
+          {
+            crawler_id: '2029',
+            name: 'pilot_24',
+            consecutive: '34',
+            since: '2026-11-10T12:50:33+01:00',
+            latest_run_id: 58510,
+            reason: 'initialisation failed - Multilogin LOCK_PROFILE_ERROR'
+          },
+          { crawler_id: 2036, name: '', consecutive: 1, since: null, latest_run_id: 7, reason: null },
+          { name: 'no id' },
+          'nonsense'
+        ]
+      })!;
+
+      expect(parsed.bots_not_starting).toEqual([
+        {
+          crawler_id: 2029,
+          name: 'pilot_24',
+          consecutive: 34,
+          since: '2026-11-10T12:50:33+01:00',
+          latest_run_id: 58510,
+          reason: 'initialisation failed - Multilogin LOCK_PROFILE_ERROR'
+        },
+        { crawler_id: 2036, name: null, consecutive: 1, since: null, latest_run_id: 7, reason: null }
+      ]);
+    });
+
+    it('keeps "the API does not report the list" apart from "no bot is failing to start"', () => {
+      expect(normalizeExperimentHealth({ runs: {} })!.bots_not_starting).toBeNull();
+      expect(normalizeExperimentHealth({ runs: {}, bots_not_starting: [] })!.bots_not_starting).toEqual([]);
+    });
+
     const payload = {
       experiment_id: 42,
       window_hours: 24,

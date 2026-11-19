@@ -34,6 +34,22 @@ export interface HealthCounts {
   unknown: number;
 }
 
+/**
+ * A bot whose latest finished run in the window never started: the run ended `failure`
+ * and none of its jobs ran (the browser or profile did not come up).
+ */
+export interface BotNotStarting {
+  crawler_id: number;
+  name: string | null;
+  /** Such runs in a row, back from the latest finished run, inside the window. */
+  consecutive: number;
+  /** `started_at` of the first run of that streak inside the window. */
+  since: string | null;
+  latest_run_id: number;
+  /** The latest run's `status_message` — what the runner said went wrong. */
+  reason: string | null;
+}
+
 /** The `/experiments/{id}/health` response. */
 export interface ExperimentHealth {
   experiment_id: number;
@@ -49,6 +65,12 @@ export interface ExperimentHealth {
   treatment_lost_jobs: number;
   /** Jobs where a requested filter did not apply (§7.3). */
   degraded_jobs: number;
+  /**
+   * Bots that have stopped starting, longest streak first. `null` when the API does not
+   * report the list (a build that predates it): unknown, which is not the same as `[]`,
+   * "every bot's latest run started".
+   */
+  bots_not_starting: BotNotStarting[] | null;
   last_finished_at: string | null;
 }
 
@@ -121,6 +143,26 @@ function counts(raw: unknown): HealthCounts {
 }
 
 /**
+ * The `bots_not_starting` list, or `null` if the payload does not carry one. Entries
+ * without a usable bot id are dropped: there would be nothing to name or link to.
+ */
+function botsNotStarting(value: unknown): BotNotStarting[] | null {
+  if (!Array.isArray(value)) return null;
+  const text = (v: unknown): string | null => (typeof v === 'string' && v ? v : null);
+  return value
+    .filter((entry): entry is Record<string, unknown> => !!entry && typeof entry === 'object')
+    .map((entry) => ({
+      crawler_id: count(entry['crawler_id']),
+      name: text(entry['name']),
+      consecutive: count(entry['consecutive']),
+      since: text(entry['since']),
+      latest_run_id: count(entry['latest_run_id']),
+      reason: text(entry['reason'])
+    }))
+    .filter((bot) => bot.crawler_id > 0);
+}
+
+/**
  * Parse a `/health` payload, or `null` if it is not one.
  *
  * Tolerant on purpose in two directions, because both have bitten this GUI before:
@@ -153,6 +195,7 @@ export function normalizeExperimentHealth(payload: unknown): ExperimentHealth | 
     bad_jobs: healthCount(body['bad_jobs']) ?? jobs.failure + jobs.warning,
     treatment_lost_jobs: count(body['treatment_lost_jobs']),
     degraded_jobs: count(body['degraded_jobs']),
+    bots_not_starting: botsNotStarting(body['bots_not_starting']),
     last_finished_at: typeof lastFinished === 'string' && lastFinished ? lastFinished : null
   };
 }

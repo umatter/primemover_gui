@@ -620,6 +620,13 @@
       "summary": "{{total}} Jobs · {{bad}} zu prüfen · {{degraded}} beeinträchtigte Entscheide",
       "unknown": "{{count}} Jobs mit unbekanntem Status"
     },
+    "notStarting": {
+      "title": "{{count}} Bot(s) starten nicht",
+      "hint": "Der letzte abgeschlossene Durchlauf jedes dieser Bots ist vor dem ersten Job fehlgeschlagen: Browser oder Profil sind nicht gestartet. Gezählt im gewählten Zeitfenster.",
+      "streak": "{{count}} Durchlauf/Durchläufe in Folge nicht gestartet",
+      "since": "seit",
+      "unnamed": "Bot {{id}}"
+    },
     "strip": {
       "attention": "{{bad}} von {{total}} Durchläufen zu prüfen",
       "attentionNoTotal": "{{bad}} Durchläufe zu prüfen",
