@@ -620,6 +620,13 @@
       "summary": "{{total}} jobs · {{bad}} need attention · {{degraded}} degraded decisions",
       "unknown": "{{count}} jobs with an unrecognised status"
     },
+    "notStarting": {
+      "title": "{{count}} bot(s) are not starting",
+      "hint": "The latest finished run of each of these bots failed before its first job: the browser or profile did not come up. Counted inside the selected window.",
+      "streak": "{{count}} run(s) in a row never started",
+      "since": "since",
+      "unnamed": "Bot {{id}}"
+    },
     "strip": {
       "attention": "{{bad}} of {{total}} runs need attention",
       "attentionNoTotal": "{{bad}} runs need attention",

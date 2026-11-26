@@ -499,6 +499,7 @@ describe('ExperimentWorkspaceComponent (runs that need attention)', () => {
       bad_jobs: 20,
       treatment_lost_jobs: 0,
       degraded_jobs: 15,
+      bots_not_starting: [],
       last_finished_at: '2026-09-07T06:00:00Z',
       ...over
     });
@@ -612,6 +613,7 @@ describe('ExperimentWorkspaceComponent (runs that need attention)', () => {
       bad_jobs: 0,
       treatment_lost_jobs: 0,
       degraded_jobs: 0,
+      bots_not_starting: [],
       last_finished_at: null
     };
 
@@ -654,6 +656,50 @@ describe('ExperimentWorkspaceComponent (runs that need attention)', () => {
       component2.setWindow('24h');
 
       expect(healthSpy.calls.count()).toBe(before);
+    });
+
+    it('says nothing about starting when every bot started, or when the API does not say', () => {
+      expect(fixture2.nativeElement.querySelector('[data-testid="bots-not-starting"]')).toBeNull();
+
+      healthSpy.and.returnValue(of({ ...health, bots_not_starting: null }));
+      component2.setWindow('7d');
+      fixture2.detectChanges();
+
+      expect(fixture2.nativeElement.querySelector('[data-testid="bots-not-starting"]')).toBeNull();
+    });
+
+    it('names each bot that has stopped starting, with its streak, its reason and a link', () => {
+      healthSpy.and.returnValue(
+        of({
+          ...health,
+          bots_not_starting: [
+            {
+              crawler_id: 2029,
+              name: 'pilot_24',
+              consecutive: 34,
+              since: '2026-11-10T12:50:33+01:00',
+              latest_run_id: 58510,
+              reason: 'initialisation failed - Multilogin LOCK_PROFILE_ERROR'
+            },
+            { crawler_id: 2036, name: null, consecutive: 1, since: null, latest_run_id: 7, reason: null }
+          ]
+        })
+      );
+      component2.setWindow('7d');
+      fixture2.detectChanges();
+
+      const notice = fixture2.nativeElement.querySelector('[data-testid="bots-not-starting"]') as HTMLElement;
+      expect(notice).not.toBeNull();
+      expect(notice.getAttribute('role')).toBe('alert');
+
+      const rows = Array.from(notice.querySelectorAll('li')) as HTMLElement[];
+      expect(rows.length).toBe(2);
+      expect(rows[0].textContent).toContain('pilot_24');
+      expect(rows[0].textContent).toContain('10 Nov');
+      expect(rows[0].textContent).toContain('Multilogin LOCK_PROFILE_ERROR');
+      expect(rows[0].querySelector('a')!.getAttribute('href')).toBe('/experiments/42/bots/2029');
+      expect(rows[1].querySelector('a')!.getAttribute('href')).toBe('/experiments/42/bots/2036');
+      expect(notice.textContent).not.toContain('undefined');
     });
 
     it('renders one chip per window, with the selection announced', () => {

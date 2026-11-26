@@ -38,6 +38,7 @@ describe('HealthStripComponent', () => {
     bad_jobs: 0,
     treatment_lost_jobs: 0,
     degraded_jobs: 0,
+    bots_not_starting: [],
     last_finished_at: null,
     ...over
   });
