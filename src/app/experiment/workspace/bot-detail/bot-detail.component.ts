@@ -19,6 +19,7 @@ import { SupersedingQuery } from '@shared/model/superseding-query';
 import { LoadingSpinnerComponent } from '@shared/overlay/loading-spinner/loading-spinner.component';
 import { NotificationComponent } from '@shared/overlay/notification/notification.component';
 import { VisibilityService } from '@shared/service/visibility.service';
+import { ProfileComponent } from '../profile/profile.component';
 import { RunCreateComponent } from '../run-create/run-create.component';
 
 export type RunState = 'scheduled' | 'running' | 'succeeded' | 'warning' | 'failed' | 'skipped' | 'unknown';
@@ -68,6 +69,7 @@ export interface TreatmentLostSummary {
     TranslateModule,
     LoadingSpinnerComponent,
     NotificationComponent,
+    ProfileComponent,
     RunCreateComponent,
     StatusFilterComponent,
     StatusMessageComponent

@@ -51,6 +51,7 @@ export interface Crawler {
   experiment_id: number;
   agent?: Agent;
   proxy?: Proxy;
+  configuration_id?: number | null;
   configuration?: Configuration;
 }
 

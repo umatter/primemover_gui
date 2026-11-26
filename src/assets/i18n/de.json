@@ -174,6 +174,45 @@
       "add": "Verhalten hinzufügen",
       "done": "Fertig",
       "remove": "Verhalten entfernen"
+    },
+    "profile": {
+      "title": "Profil",
+      "subtitle": "Wer dieser Bot beim Surfen ist: Standort, Cookie-Zustimmung, Nutzungsart und die Gewichte, die die YouTube-Entscheidungsfunktion liest. Gilt für alle Läufe dieses Bots.",
+      "none": "Dieser Bot hat keine Konfiguration und damit kein Profil. Wähle beim Einrichten des Bots eine unter Bibliothek.",
+      "loading": "Profil wird geladen…",
+      "empty": "Noch keine Einstellungen gesetzt.",
+      "save": "Profil speichern",
+      "saving": "Wird gespeichert…",
+      "unsaved": "{{count}} ungespeicherte Änderung(en)",
+      "defaultsHint": "Noch nicht gesetzt: {{names}}. Der Experiment-Designer gibt jedem Bot diese Werte.",
+      "addDefaults": "Standardwerte hinzufügen",
+      "decisionGroup": "YouTube-Entscheidungsfunktion",
+      "decisionHint": "Zahlen für die Entscheidungsfunktion, wenn sie wählt, was dieser Bot ansieht. Ihr Wertebereich wird von diesem Dienst festgelegt.",
+      "newName": "Neue Einstellung",
+      "newValue": "Wert",
+      "add": "Hinzufügen",
+      "new": "Neu, noch nicht gespeichert",
+      "discard": "Verwerfen",
+      "deactivate": "Deaktivieren",
+      "reactivate": "Reaktivieren",
+      "hint": {
+        "location": "Format CC-ST-STADT, z. B. US-IL-CHICAGO",
+        "cookie": "Wie der Bot auf Cookie-Banner antwortet",
+        "usageType": "only_search, only_direct oder both"
+      },
+      "cookie": {
+        "accept": "Alle Cookies akzeptieren",
+        "reject": "Alle Cookies ablehnen",
+        "custom": "Benutzerdefiniert (JSON)"
+      },
+      "error": {
+        "duplicate": "Bereits gesetzt. Bearbeite stattdessen die bestehende Zeile.",
+        "number": "Muss eine Zahl sein.",
+        "cookieJson": "Kein gültiges JSON.",
+        "cookieKey": "Braucht einen Schlüssel \"accept_all\", z. B. {\"accept_all\": true}. Alles andere ignoriert der Runner.",
+        "generic": "Das Profil konnte nicht gespeichert werden.",
+        "required": "Bitte einen Wert eingeben."
+      }
     }
   },
   "wizard": {
