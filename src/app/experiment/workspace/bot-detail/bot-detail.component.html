@@ -51,6 +51,7 @@
       <div class="flex flex-shrink-0 items-center gap-2">
         <button
           (click)="showEditSetup = true"
+          *ngIf="!readOnly"
           class="inline-flex items-center rounded-md border border-line-strong px-3 py-1.5 text-sm font-semibold text-ink transition hover:bg-surface-3"
           data-testid="edit-setup"
           type="button"
@@ -71,10 +72,22 @@
     </div>
   </header>
 
+  <!-- #72: a study uploaded from a pmspec lock is its randomization record. Its bots are
+       read-only here; changing one would make it disagree with the lock without an error. -->
+  <p
+    *ngIf="readOnly"
+    class="animate-fade-up mt-6 rounded-xl border border-line-strong bg-surface-2 px-4 py-3 text-sm text-ink"
+    data-testid="bot-read-only"
+    role="note"
+  >
+    {{ (editState === 'locked' ? 'workspace.botDetail.readOnly.locked' : 'workspace.botDetail.readOnly.unknown') | translate }}
+  </p>
+
   <!-- F4c: what this bot still needs before its runs mean anything, each with its fix. -->
   <app-setup-checklist
     (fix)="onSetupFix($event)"
     [bot]="bot"
+    [readOnly]="readOnly"
     [runCount]="runCountFor(runs$ | async)"
   ></app-setup-checklist>
 
@@ -280,11 +293,17 @@
 
   <!-- F2: the bot's treatment — what the runner selects with. Above the profile: it is
        what makes this bot a treatment or a control. -->
-  <app-bot-treatment [configurationId]="bot.configuration_id ?? bot.configuration?.id ?? null"></app-bot-treatment>
+  <app-bot-treatment
+    [configurationId]="bot.configuration_id ?? bot.configuration?.id ?? null"
+    [readOnly]="readOnly"
+  ></app-bot-treatment>
 
   <!-- F1: the bot's profile. Below the runs on purpose — this screen is mostly visited to
        see how the bot is doing; its setup is the second question. -->
-  <app-bot-profile [configurationId]="bot.configuration_id ?? bot.configuration?.id ?? null"></app-bot-profile>
+  <app-bot-profile
+    [configurationId]="bot.configuration_id ?? bot.configuration?.id ?? null"
+    [readOnly]="readOnly"
+  ></app-bot-profile>
 
   <!-- F3: what this bot's decisions selected. Collapsed, loaded on first open. -->
   <app-bot-watched [botId]="bot.id"></app-bot-watched>
@@ -293,7 +312,7 @@
   <app-add-bot
     (closed)="showEditSetup = false"
     (saved)="onSetupSaved()"
-    *ngIf="showEditSetup"
+    *ngIf="showEditSetup && !readOnly"
     [bot]="bot"
     [experimentId]="experimentId"
   ></app-add-bot>

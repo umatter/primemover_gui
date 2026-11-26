@@ -149,7 +149,11 @@
         "title": "No runs yet",
         "body": "Schedule a run to give this bot a session to execute."
       },
-      "editSetup": "Edit setup"
+      "editSetup": "Edit setup",
+      "readOnly": {
+        "locked": "This study was uploaded from a pmspec lock, so its bots are read-only here. Change them through pmspec: a runs lock with an updates: block.",
+        "unknown": "Checking whether this study is defined by a pmspec lock. Until that is known, its bots are read-only here."
+      }
     },
     "composer": {
       "back": "Back to bot",

@@ -149,7 +149,11 @@
         "title": "Noch keine Läufe",
         "body": "Plane einen Lauf, um diesem Bot eine Sitzung zu geben."
       },
-      "editSetup": "Einrichtung bearbeiten"
+      "editSetup": "Einrichtung bearbeiten",
+      "readOnly": {
+        "locked": "Diese Studie wurde aus einem pmspec-Lock hochgeladen, daher sind ihre Bots hier schreibgeschützt. Änderungen laufen über pmspec: ein Runs-Lock mit einem updates:-Block.",
+        "unknown": "Es wird geprüft, ob diese Studie durch einen pmspec-Lock festgelegt ist. Bis das feststeht, sind ihre Bots hier schreibgeschützt."
+      }
     },
     "composer": {
       "back": "Zurück zum Bot",

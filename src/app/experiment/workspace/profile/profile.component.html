@@ -1,4 +1,7 @@
 <section class="mt-8" aria-labelledby="profile-heading">
+  <!-- #72: a study defined by a pmspec lock is changed through pmspec, never here. A
+       disabled fieldset disables every control inside it; `contents` keeps the layout. -->
+  <fieldset [disabled]="readOnly" class="contents" data-testid="profile-fieldset">
   <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
     <div>
       <h2 id="profile-heading" class="font-display text-xl font-semibold text-ink">
@@ -137,6 +140,7 @@
       <p *ngIf="addError" class="text-xs text-danger sm:col-span-3" role="alert">{{ addError | translate }}</p>
     </form>
   </ng-container>
+  </fieldset>
 </section>
 
 <!-- One preference. Typed control by kind; a deactivated row stays visible and greyed,

@@ -39,6 +39,8 @@ export class SetupChecklistComponent {
   @Input({ required: true }) bot!: Crawler;
   /** Runs in the list below, or null when the list is filtered and cannot say. */
   @Input() runCount: number | null = null;
+  /** #72: the bot cannot be edited here, so only a new run is offered as a fix. */
+  @Input() readOnly = false;
   @Output() fix = new EventEmitter<SetupFix>();
 
   get items(): ChecklistItem[] {
@@ -46,7 +48,7 @@ export class SetupChecklistComponent {
     const hasProfile = all.find((s) => s.key === 'profile')?.done === true;
     const steps: ChecklistItem[] = all.map((s) => ({
       ...s,
-      fix: s.key === 'treatment' && !hasProfile ? null : FIX[s.key]
+      fix: this.readOnly || (s.key === 'treatment' && !hasProfile) ? null : FIX[s.key]
     }));
     if (this.runCount !== null) steps.push({ key: 'runs', done: this.runCount > 0, fix: 'newRun' });
     return steps;

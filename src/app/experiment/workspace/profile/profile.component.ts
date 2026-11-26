@@ -52,6 +52,8 @@ export interface PreferenceRow {
 export class ProfileComponent implements OnChanges, OnDestroy {
   /** The bot's configuration_id; null or undefined for a bot without one. */
   @Input() configurationId: number | null | undefined;
+  /** #72: the bot belongs to a study defined by a pmspec lock (or that is not known yet). */
+  @Input() readOnly = false;
 
   configuration: Configuration | null = null;
   rows: PreferenceRow[] = [];
@@ -122,7 +124,7 @@ export class ProfileComponent implements OnChanges, OnDestroy {
 
   get canSave(): boolean {
     const dirty = this.dirtyRows;
-    return !this.saving && dirty.length > 0 && dirty.every((r) => this.rowError(r) === null);
+    return !this.readOnly && !this.saving && dirty.length > 0 && dirty.every((r) => this.rowError(r) === null);
   }
 
   isDirty(row: PreferenceRow): boolean {

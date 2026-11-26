@@ -17,6 +17,28 @@ export interface Experiment {
    * 0 at the call site, or an older API renders every study green.
    */
   runs_bad_count?: number;
+  /** The experiment's own preferences; pmspec records a study's provenance here. */
+  preferences?: { name: string; value?: string | null }[];
+}
+
+/** The preference pmspec writes on every upload of a study defined by a lock. */
+export const LOCK_PREFERENCE = 'pmspec.lock_sha256';
+
+/**
+ * Whether a study's bots may be edited from the GUI (#72).
+ *
+ * `locked`: pmspec uploaded it from a lock, so its bots are the randomization record and
+ * change only through pmspec (a runs lock with `updates:`). Each upload appends its own
+ * set of `pmspec.*` rows, so presence is the test, never a single row.
+ *
+ * `unknown`: the experiment, or its preferences, could not be read. Treated as locked: a
+ * bot edited by mistake in a running study is not undone by finding out afterwards.
+ */
+export type EditState = 'free' | 'locked' | 'unknown';
+
+export function experimentEditState(experiment: Experiment | null | undefined): EditState {
+  if (!experiment || !Array.isArray(experiment.preferences)) return 'unknown';
+  return experiment.preferences.some((p) => p?.name === LOCK_PREFERENCE) ? 'locked' : 'free';
 }
 
 /**

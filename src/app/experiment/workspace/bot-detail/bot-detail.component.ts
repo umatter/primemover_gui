@@ -4,12 +4,15 @@ import { AsyncPipe, DatePipe, NgClass, NgForOf, NgIf } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
 import {
   BehaviorSubject,
+  catchError,
   combineLatest,
+  distinctUntilChanged,
   filter,
   map,
   Observable,
   shareReplay,
   startWith,
+  of,
   Subscription,
   switchMap
 } from 'rxjs';
@@ -17,7 +20,8 @@ import { EntityAction, EntityOp } from '@ngrx/data';
 
 import { Crawler, crawlerTreatmentLostRuns } from '@app/crawler/model/crawler';
 import { hasQueueJobRollup, Queue, queueJobRollup } from '@app/queue/model/queue';
-import { CrawlerService, QueueService } from '@app/entity/service';
+import { CrawlerService, ExperimentService, QueueService } from '@app/entity/service';
+import { EditState, experimentEditState } from '@app/experiment/model/experiment';
 import { isBadStatus, QueueStatusEnum, statusOrUnknown, UNKNOWN_STATUS } from '@app/queue/status/status.enum';
 import { StatusMessageComponent } from '@app/queue/status/status-message.component';
 import { fadeIn } from '@shared/animation/trigger';
@@ -119,6 +123,12 @@ export class BotDetailComponent implements OnInit, OnDestroy {
   /** F4c: the add-bot panel, in edit mode for this bot. */
   showEditSetup = false;
 
+  /**
+   * #72: whether this bot may be edited here. `unknown` until the experiment is read,
+   * and read-only like `locked`: a study defined by a pmspec lock changes through pmspec.
+   */
+  editState: EditState = 'unknown';
+
   /** Re-reads the bot after its setup was edited; the route alone would not. */
   private readonly botRefresh$ = new BehaviorSubject<void>(undefined);
 
@@ -157,13 +167,37 @@ export class BotDetailComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     public router: Router,
     private crawlerService: CrawlerService,
+    private experimentService: ExperimentService,
     private queueService: QueueService,
     private visibility: VisibilityService
   ) {}
 
   ngOnInit(): void {
-    this.bot$ = combineLatest([this.route.paramMap, this.botRefresh$]).pipe(
-      switchMap(([params]) => {
+    this.subscriptions.add(
+      this.route.paramMap
+        .pipe(
+          map((params) => Number(params.get('id'))),
+          distinctUntilChanged(),
+          switchMap((id) => {
+            this.editState = 'unknown';
+            return this.experimentService.getByKey(id).pipe(
+              map((experiment) => experimentEditState(experiment)),
+              catchError(() => of<EditState>('unknown'))
+            );
+          })
+        )
+        .subscribe((state) => {
+          this.editState = state;
+          if (state !== 'free') this.showEditSetup = false;
+        })
+    );
+
+    // The ids are read when the route emits, ahead of the first render. Set inside `bot$`
+    // below, they changed only once the template's async pipe subscribed, after the back
+    // link had rendered: NG0100 on every visit. Subscribed first, this also runs before
+    // `bot$` on every later emission.
+    this.subscriptions.add(
+      this.route.paramMap.subscribe((params) => {
         this.experimentId = Number(params.get('id'));
         const botId = Number(params.get('botId'));
         if (botId !== this.botId) {
@@ -172,6 +206,11 @@ export class BotDetailComponent implements OnInit, OnDestroy {
           this.transitions.reset();
           this.alarm = null;
         }
+      })
+    );
+
+    this.bot$ = combineLatest([this.route.paramMap, this.botRefresh$]).pipe(
+      switchMap(() => {
         this.loadRuns();
         return this.crawlerService.getByKey(this.botId);
       }),
@@ -486,7 +525,13 @@ export class BotDetailComponent implements OnInit, OnDestroy {
   }
 
   /** The checklist's one action per unmet item. */
+  /** #72: true while the bot must not be edited here (locked, or not known yet). */
+  get readOnly(): boolean {
+    return this.editState !== 'free';
+  }
+
   onSetupFix(fix: SetupFix): void {
+    if (this.readOnly && fix !== 'newRun') return;
     if (fix === 'editSetup') this.showEditSetup = true;
     if (fix === 'newRun') this.newRun();
     if (fix === 'treatment') document.getElementById('treatment-heading')?.scrollIntoView({ behavior: 'smooth' });
