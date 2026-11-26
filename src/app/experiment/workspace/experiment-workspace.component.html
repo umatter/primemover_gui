@@ -305,7 +305,15 @@
       >
         <div class="flex items-start justify-between gap-3">
           <div class="min-w-0">
-            <h3 class="truncate font-display text-base font-semibold text-ink">{{ bot.name }}</h3>
+            <h3 class="truncate font-display text-base font-semibold text-ink">
+              {{ bot.name }}
+              <span
+                *ngIf="isTestBot(bot)"
+                [attr.data-testid]="'bot-test-' + bot.id"
+                class="ml-1 rounded-full bg-info-tint px-1.5 py-0.5 align-middle font-sans text-[10px] font-semibold text-info"
+                >{{ 'workspace.bot.test' | translate }}</span
+              >
+            </h3>
             <p class="font-mono text-xs text-faint">CR-{{ bot.id }}</p>
           </div>
           <!-- The pill is the WORST status among this bot's runs in the API's 24 h window

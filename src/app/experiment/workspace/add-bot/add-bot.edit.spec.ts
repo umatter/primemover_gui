@@ -88,4 +88,11 @@ describe('AddBotComponent (F4c — edit an existing bot)', () => {
 
     expect(component.errorKey).toBe('workspace.addBotPanel.editError');
   });
+
+  it('does not turn a missing description into an empty string', async () => {
+    await create();
+    component.form.patchValue({ description: '  ', proxy_id: 4 });
+    component.save();
+    expect(update.calls.mostRecent().args[0].description).toBeNull();
+  });
 });

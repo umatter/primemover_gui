@@ -34,6 +34,7 @@ import { ProfileComponent } from '../profile/profile.component';
 import { SetupChecklistComponent, SetupFix } from '../setup/setup-checklist.component';
 import { RunCreateComponent } from '../run-create/run-create.component';
 import { TreatmentComponent } from '../treatment/treatment.component';
+import { WatchedComponent } from '../watched/watched.component';
 
 export type RunState = 'scheduled' | 'running' | 'succeeded' | 'warning' | 'failed' | 'skipped' | 'unknown';
 
@@ -88,7 +89,8 @@ export interface TreatmentLostSummary {
     SetupChecklistComponent,
     StatusFilterComponent,
     StatusMessageComponent,
-    TreatmentComponent
+    TreatmentComponent,
+    WatchedComponent
   ],
   animations: [fadeIn]
 })
@@ -477,6 +479,10 @@ export class BotDetailComponent implements OnInit, OnDestroy {
 
   onNewRunClosed(): void {
     this.showNewRun = false;
+  }
+
+  isTestBot(bot: Crawler): boolean {
+    return Boolean(Number(bot.testing ?? 0));
   }
 
   /** The checklist's one action per unmet item. */

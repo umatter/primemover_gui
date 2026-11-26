@@ -79,7 +79,8 @@
       "profile": "Profile",
       "runCounts": "{{total}} runs in the last 24 h · {{succeeded}} succeeded · {{warning}} reported warning · {{degraded}} with degraded jobs · {{failed}} failed · {{inProgress}} unaccounted for (still going, skipped or unrecognised) · {{treatmentLost}} treatment lost",
       "ready": "Ready",
-      "stepsLeft": "{{count}} setup step(s) left"
+      "stepsLeft": "{{count}} setup step(s) left",
+      "test": "Test"
     },
     "addBotPanel": {
       "title": "Add a bot",
@@ -99,6 +100,8 @@
       "editSubtitle": "Change which browser identity, connection and profile this bot uses. Its runs keep their history.",
       "editSave": "Save setup",
       "editError": "Couldn't save the bot's setup. Please try again.",
+      "testing": "Test bot",
+      "testingHint": "A runner in production mode skips test bots; only a runner started in test mode runs them. Use it to try a setup without producing study data.",
       "search": "Search the Library",
       "searchPlaceholder": "Search by name or id…",
       "refused": "Used by another study's bots, or not yours to use. Choose another.",
@@ -327,6 +330,15 @@
         "unknown": "can't tell from here"
       },
       "afterProfile": "needs a profile first"
+    },
+    "watched": {
+      "title": "Watch history",
+      "hint": "What this bot's decisions selected, newest first. The already-watched filter reads this list.",
+      "loading": "Loading watch history…",
+      "empty": "Nothing watched yet.",
+      "unavailable": "Watch history isn't available on this server.",
+      "error": "Couldn't load the watch history.",
+      "position": "#{{n}}, newest first"
     }
   },
   "wizard": {

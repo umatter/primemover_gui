@@ -285,6 +285,11 @@ export class ExperimentWorkspaceComponent implements OnInit, OnDestroy {
     return bot.configuration ? armOf(bot.configuration.params) : 'unknown';
   }
 
+  /** F3: runs only on a runner started in test mode. */
+  isTestBot(bot: Crawler): boolean {
+    return Boolean(Number(bot.testing ?? 0));
+  }
+
   /** F4c: "Ready" / "N setup steps left" from the crawler payload; null when it cannot say. */
   botReadiness(bot: Crawler): { ready: boolean; left: number } | null {
     return readiness(bot);
