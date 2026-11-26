@@ -926,4 +926,31 @@ describe('ExperimentWorkspaceComponent (runs that need attention)', () => {
       expect(f.nativeElement.textContent).toContain('workspace.stat.needsAttentionSplit');
     });
   });
+  describe('the arm on each bot card (F2)', () => {
+    const params = (pi: string) => [
+      {
+        id: 1,
+        configuration_id: 5,
+        pi,
+        psi: '0',
+        kappa: '0',
+        tau: '0',
+        alpha: '1',
+        beta: '0',
+        search_terms: '[]',
+        media_outlet_urls: '[]'
+      }
+    ];
+
+    it('reads control and treatment off the configuration the crawler list embeds', () => {
+      expect(component.botArm(bot({ configuration: { id: 5, name: 'c', params: params('0') } }))).toBe('control');
+      expect(component.botArm(bot({ configuration: { id: 5, name: 't', params: params('-0.5') } }))).toBe('treatment');
+    });
+
+    it('says none for a configuration without params, and stays silent when it cannot know', () => {
+      expect(component.botArm(bot({ configuration: { id: 5, name: 'c', params: [] } }))).toBe('none');
+      expect(component.botArm(bot({ configuration: { id: 5, name: 'c' } }))).toBe('unknown');
+      expect(component.botArm(bot({}))).toBe('unknown');
+    });
+  });
 });

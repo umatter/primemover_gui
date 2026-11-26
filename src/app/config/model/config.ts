@@ -1,3 +1,4 @@
+import { Param } from './param';
 import { Preference } from './preference';
 
 export interface Configuration {
@@ -8,4 +9,8 @@ export interface Configuration {
   active?: number | boolean;
   /** Present when the configuration is read on its own (`GET configurations/{id}`). */
   preferences?: Preference[];
+  /** The treatment. The runner uses the FIRST row; see treatment-model.ts. */
+  params?: Param[];
+  /** How many crawlers use this configuration (umatter/primemover_api#85). */
+  crawlers_count?: number;
 }

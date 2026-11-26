@@ -213,6 +213,82 @@
         "generic": "The profile could not be saved.",
         "required": "Enter a value."
       }
+    },
+    "treatment": {
+      "title": "Treatment",
+      "subtitle": "What this bot searches for and which results it picks. The runner scores every result by the bot's political position against the outlet's, so these numbers are the experiment's manipulation.",
+      "loading": "Loading treatment…",
+      "save": "Save treatment",
+      "saving": "Saving…",
+      "makeControl": "Make control",
+      "shared": "Shared by {{count}} bots: changes apply to all of them",
+      "multiple": "This configuration has {{count}} parameter rows. The runner uses the first one (#{{id}}), which is the one shown here.",
+      "noneBody": "No treatment set. The runner has no parameters to select results with, so this bot's choices are not controlled.",
+      "setUp": "Set up treatment (starts as control)",
+      "position": "Political position (−1 to 1)",
+      "remove": "Remove",
+      "arm": {
+        "control": "Control",
+        "treatment": "Treatment",
+        "none": "No treatment set",
+        "unknown": "Arm unknown"
+      },
+      "weight": {
+        "pi": {
+          "label": "Political position",
+          "hint": "−1 left … 0 centre … 1 right. Results from outlets near this position score higher."
+        },
+        "psi": {
+          "label": "Persuadability",
+          "hint": "0 to 1: how far this bot can be moved by what it sees. Also sent to the YouTube decision function."
+        },
+        "kappa": {
+          "label": "Persuadable",
+          "hint": "0, 1 or 2: whether this bot can be persuaded at all (0 = not). Also sent to the YouTube decision function."
+        },
+        "tau": {
+          "label": "Distance cost",
+          "hint": "How strongly ideological distance to an outlet lowers its score. 0 = indifferent."
+        },
+        "alpha": {
+          "label": "Known-outlet bonus",
+          "hint": "Extra score for results from an outlet in the list below."
+        },
+        "beta": {
+          "label": "Rank penalty",
+          "hint": "Score lost per position down the result list. 0 = rank does not matter."
+        }
+      },
+      "terms": {
+        "title": "Search terms",
+        "hint": "What the bot may search for, each with a political position.",
+        "empty": "No search terms.",
+        "term": "Search term",
+        "add": "Add search term"
+      },
+      "outlets": {
+        "title": "Media outlets",
+        "hint": "Outlets the bot knows, each with a political position. A result counts as this outlet when its address is on this domain.",
+        "empty": "No media outlets.",
+        "domain": "Domain",
+        "url": "Homepage (optional)",
+        "add": "Add outlet",
+        "savedAs": "Saved as {{domain}}, the form the runner matches"
+      },
+      "csv": {
+        "terms": "Paste CSV (term,pi)",
+        "outlets": "Paste CSV (domain,url,pi)",
+        "import": "Append rows",
+        "bad": "Not imported, could not read line(s) {{lines}}."
+      },
+      "error": {
+        "position": "Must be between −1 and 1.",
+        "number": "Must be a number.",
+        "kappa": "Must be a whole number, 0 or more.",
+        "term": "The search term is empty.",
+        "domain": "The domain is empty.",
+        "generic": "The treatment could not be saved."
+      }
     }
   },
   "wizard": {

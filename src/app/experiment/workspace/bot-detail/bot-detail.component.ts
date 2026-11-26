@@ -21,6 +21,7 @@ import { NotificationComponent } from '@shared/overlay/notification/notification
 import { VisibilityService } from '@shared/service/visibility.service';
 import { ProfileComponent } from '../profile/profile.component';
 import { RunCreateComponent } from '../run-create/run-create.component';
+import { TreatmentComponent } from '../treatment/treatment.component';
 
 export type RunState = 'scheduled' | 'running' | 'succeeded' | 'warning' | 'failed' | 'skipped' | 'unknown';
 
@@ -72,7 +73,8 @@ export interface TreatmentLostSummary {
     ProfileComponent,
     RunCreateComponent,
     StatusFilterComponent,
-    StatusMessageComponent
+    StatusMessageComponent,
+    TreatmentComponent
   ],
   animations: [fadeIn]
 })

@@ -1,0 +1,330 @@
+<section aria-labelledby="treatment-heading" class="mt-8">
+  <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <div>
+      <div class="flex flex-wrap items-center gap-3">
+        <h2 class="font-display text-xl font-semibold text-ink" id="treatment-heading">
+          {{ 'workspace.treatment.title' | translate }}
+        </h2>
+        <!-- The arm, from pi/psi/kappa/tau only — the runner's own rule. Previews the
+             unsaved draft, so "Make control" shows its effect before anything is sent. -->
+        <span
+          *ngIf="configuration"
+          [ngClass]="{
+            'bg-surface-3 text-muted': arm === 'control',
+            'bg-brand-tint text-brand': arm === 'treatment',
+            'bg-warning-tint text-warning': arm === 'none' || arm === 'unknown'
+          }"
+          class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold"
+          data-testid="treatment-arm"
+        >
+          {{ 'workspace.treatment.arm.' + arm | translate }}
+        </span>
+      </div>
+      <p class="mt-1 max-w-prose text-sm text-muted">{{ 'workspace.treatment.subtitle' | translate }}</p>
+    </div>
+    <div *ngIf="draft" class="flex flex-shrink-0 flex-wrap items-center gap-3">
+      <span *ngIf="sharedBy > 1" class="text-xs font-semibold text-warning" data-testid="treatment-shared" role="note">
+        {{ 'workspace.treatment.shared' | translate: { count: sharedBy } }}
+      </span>
+      <button
+        (click)="applyControlPreset()"
+        class="rounded-md border border-line-strong px-3 py-2 text-sm font-semibold text-ink transition hover:bg-surface-3"
+        data-testid="treatment-control"
+        type="button"
+      >
+        {{ 'workspace.treatment.makeControl' | translate }}
+      </button>
+      <button
+        (click)="save()"
+        [disabled]="!canSave"
+        class="inline-flex items-center gap-2 rounded-md bg-brand px-4 py-2 text-sm font-semibold text-on-brand transition hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-50"
+        data-testid="treatment-save"
+        type="button"
+      >
+        {{ (saving ? 'workspace.treatment.saving' : 'workspace.treatment.save') | translate }}
+      </button>
+    </div>
+  </div>
+
+  <p
+    *ngIf="!hasConfiguration"
+    class="rounded-lg border border-dashed border-line-strong bg-surface-2 px-4 py-3 text-sm text-muted"
+    data-testid="treatment-none-config"
+  >
+    {{ 'workspace.profile.none' | translate }}
+  </p>
+
+  <p *ngIf="loading" class="text-sm text-muted" role="status">{{ 'workspace.treatment.loading' | translate }}</p>
+
+  <p
+    *ngIf="error"
+    class="mb-4 rounded-lg border border-danger/40 bg-danger-tint px-4 py-3 text-sm text-danger"
+    data-testid="treatment-error"
+    role="alert"
+  >
+    {{ error | translate }}
+  </p>
+
+  <!-- A legacy configuration without a params row: the runner has nothing to select with. -->
+  <div
+    *ngIf="configuration && !stored"
+    class="flex flex-col items-start gap-3 rounded-lg border border-dashed border-warning/50 bg-warning-tint/40 px-4 py-3 sm:flex-row sm:items-center sm:justify-between"
+  >
+    <p class="text-sm text-ink">{{ 'workspace.treatment.noneBody' | translate }}</p>
+    <button
+      (click)="setUp()"
+      [disabled]="saving"
+      class="rounded-md bg-brand px-3 py-1.5 text-sm font-semibold text-on-brand transition hover:bg-brand-hover disabled:opacity-50"
+      data-testid="treatment-setup"
+      type="button"
+    >
+      {{ 'workspace.treatment.setUp' | translate }}
+    </button>
+  </div>
+
+  <ng-container *ngIf="draft">
+    <p *ngIf="rowCount > 1" class="mb-4 text-xs text-muted" data-testid="treatment-multiple">
+      {{ 'workspace.treatment.multiple' | translate: { count: rowCount, id: paramId } }}
+    </p>
+
+    <!-- Political position: the one weight a PI reasons about directly. -->
+    <div class="rounded-lg border border-line bg-surface p-4">
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div class="sm:w-56 sm:flex-shrink-0">
+          <label class="block text-sm font-semibold text-ink" for="treatment-pi">
+            {{ 'workspace.treatment.weight.pi.label' | translate }}
+            <span class="font-mono font-normal text-faint">pi</span>
+          </label>
+          <p class="mt-0.5 text-xs text-muted">{{ 'workspace.treatment.weight.pi.hint' | translate }}</p>
+        </div>
+        <div class="flex flex-1 items-center gap-3">
+          <span aria-hidden="true" class="text-xs text-faint">−1</span>
+          <input
+            (ngModelChange)="setWeight('pi', $event)"
+            [attr.aria-label]="'workspace.treatment.weight.pi.label' | translate"
+            [ngModel]="draft.pi"
+            class="h-2 flex-1 cursor-pointer accent-brand"
+            max="1"
+            min="-1"
+            step="0.01"
+            type="range"
+          />
+          <span aria-hidden="true" class="text-xs text-faint">1</span>
+          <input
+            (ngModelChange)="setWeight('pi', $event)"
+            [ngModel]="draft.pi"
+            class="block w-24 rounded-md border border-line bg-surface px-2 py-1.5 font-mono text-sm text-ink focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+            id="treatment-pi"
+            max="1"
+            min="-1"
+            step="0.01"
+            type="number"
+          />
+        </div>
+      </div>
+      <p *ngIf="errors['pi']" class="mt-1 text-xs text-danger">{{ errors['pi'] | translate }}</p>
+    </div>
+
+    <!-- The other weights -->
+    <div class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <div *ngFor="let w of weights" class="rounded-lg border border-line bg-surface p-3">
+        <label [for]="'treatment-' + w" class="block text-sm font-semibold text-ink">
+          {{ 'workspace.treatment.weight.' + w + '.label' | translate }}
+          <span class="font-mono font-normal text-faint">{{ w }}</span>
+        </label>
+        <p class="mb-2 mt-0.5 text-xs text-muted">{{ 'workspace.treatment.weight.' + w + '.hint' | translate }}</p>
+        <input
+          (ngModelChange)="setWeight(w, $event)"
+          [id]="'treatment-' + w"
+          [ngModel]="draft[w]"
+          [step]="w === 'kappa' ? 1 : 0.01"
+          class="block w-full rounded-md border border-line bg-surface px-2 py-1.5 font-mono text-sm text-ink focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+          type="number"
+        />
+        <p *ngIf="errors[w]" class="mt-1 text-xs text-danger">{{ errors[w] | translate }}</p>
+      </div>
+    </div>
+
+    <!-- Search terms -->
+    <h3 class="mb-1 mt-6 text-sm font-semibold text-ink">{{ 'workspace.treatment.terms.title' | translate }}</h3>
+    <p class="mb-3 max-w-prose text-xs text-muted">{{ 'workspace.treatment.terms.hint' | translate }}</p>
+    <p
+      *ngIf="!draft.search_terms.length"
+      class="mb-2 rounded-lg border border-dashed border-line-strong bg-surface-2 px-4 py-2 text-sm text-muted"
+    >
+      {{ 'workspace.treatment.terms.empty' | translate }}
+    </p>
+    <ul class="space-y-2">
+      <li
+        *ngFor="let t of draft.search_terms; let i = index; trackBy: trackByIndex"
+        class="flex items-start gap-2"
+        [attr.data-testid]="'treatment-term-' + i"
+      >
+        <div class="flex-1">
+          <input
+            [(ngModel)]="t.term"
+            [attr.aria-label]="'workspace.treatment.terms.term' | translate"
+            [placeholder]="'workspace.treatment.terms.term' | translate"
+            class="block w-full rounded-md border border-line bg-surface px-3 py-1.5 text-sm text-ink placeholder:text-faint focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+            type="text"
+          />
+          <p *ngIf="errors['search_terms.' + i] as err" class="mt-1 text-xs text-danger">{{ err | translate }}</p>
+        </div>
+        <input
+          [(ngModel)]="t.pi"
+          [attr.aria-label]="'workspace.treatment.position' | translate"
+          class="block w-24 rounded-md border border-line bg-surface px-2 py-1.5 font-mono text-sm text-ink focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+          max="1"
+          min="-1"
+          step="0.01"
+          type="number"
+        />
+        <button
+          (click)="removeTerm(i)"
+          [attr.aria-label]="'workspace.treatment.remove' | translate"
+          class="p-1.5 text-faint transition hover:text-danger"
+          type="button"
+        >
+          <svg
+            aria-hidden="true"
+            class="h-4 w-4"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            viewBox="0 0 24 24"
+          >
+            <path d="M6 6l12 12M18 6L6 18" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+      </li>
+    </ul>
+    <div class="mt-2 flex flex-col gap-2 sm:flex-row sm:items-start">
+      <button
+        (click)="addTerm()"
+        class="rounded-md border border-line-strong px-3 py-1.5 text-sm font-semibold text-ink transition hover:bg-surface-3"
+        type="button"
+      >
+        {{ 'workspace.treatment.terms.add' | translate }}
+      </button>
+      <details class="flex-1 text-sm">
+        <summary class="cursor-pointer py-1.5 text-muted hover:text-ink">
+          {{ 'workspace.treatment.csv.terms' | translate }}
+        </summary>
+        <textarea
+          [(ngModel)]="termsCsv"
+          [attr.aria-label]="'workspace.treatment.csv.terms' | translate"
+          class="mt-2 block w-full rounded-md border border-line bg-surface px-3 py-2 font-mono text-xs text-ink focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+          placeholder="term,pi&#10;climate change,-0.4"
+          rows="4"
+        ></textarea>
+        <button
+          (click)="importTerms()"
+          [disabled]="!termsCsv.trim()"
+          class="mt-2 rounded-md border border-line-strong px-3 py-1.5 text-sm font-semibold text-ink transition hover:bg-surface-3 disabled:opacity-50"
+          type="button"
+        >
+          {{ 'workspace.treatment.csv.import' | translate }}
+        </button>
+      </details>
+    </div>
+    <p *ngIf="termsBadLines.length" class="mt-1 text-xs text-warning" role="status">
+      {{ 'workspace.treatment.csv.bad' | translate: { lines: termsBadLines.join(', ') } }}
+    </p>
+
+    <!-- Media outlets -->
+    <h3 class="mb-1 mt-6 text-sm font-semibold text-ink">{{ 'workspace.treatment.outlets.title' | translate }}</h3>
+    <p class="mb-3 max-w-prose text-xs text-muted">{{ 'workspace.treatment.outlets.hint' | translate }}</p>
+    <p
+      *ngIf="!draft.media_outlet_urls.length"
+      class="mb-2 rounded-lg border border-dashed border-line-strong bg-surface-2 px-4 py-2 text-sm text-muted"
+    >
+      {{ 'workspace.treatment.outlets.empty' | translate }}
+    </p>
+    <ul class="space-y-2">
+      <li
+        *ngFor="let o of draft.media_outlet_urls; let i = index; trackBy: trackByIndex"
+        class="flex flex-wrap items-start gap-2 sm:flex-nowrap"
+        [attr.data-testid]="'treatment-outlet-' + i"
+      >
+        <div class="min-w-0 flex-1 basis-40">
+          <input
+            [(ngModel)]="o.domain"
+            [attr.aria-label]="'workspace.treatment.outlets.domain' | translate"
+            class="block w-full rounded-md border border-line bg-surface px-3 py-1.5 font-mono text-sm text-ink placeholder:text-faint focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+            placeholder="cnbc.com"
+            type="text"
+          />
+          <p *ngIf="savedDomain(o.domain) as d" class="mt-1 text-xs text-faint">
+            {{ 'workspace.treatment.outlets.savedAs' | translate: { domain: d } }}
+          </p>
+          <p *ngIf="errors['media_outlet_urls.' + i] as err" class="mt-1 text-xs text-danger">{{ err | translate }}</p>
+        </div>
+        <input
+          [(ngModel)]="o.url"
+          [attr.aria-label]="'workspace.treatment.outlets.url' | translate"
+          [placeholder]="'workspace.treatment.outlets.url' | translate"
+          class="block min-w-0 flex-1 basis-40 rounded-md border border-line bg-surface px-3 py-1.5 text-sm text-ink placeholder:text-faint focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+          type="text"
+        />
+        <input
+          [(ngModel)]="o.pi"
+          [attr.aria-label]="'workspace.treatment.position' | translate"
+          class="block w-24 rounded-md border border-line bg-surface px-2 py-1.5 font-mono text-sm text-ink focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+          max="1"
+          min="-1"
+          step="0.01"
+          type="number"
+        />
+        <button
+          (click)="removeOutlet(i)"
+          [attr.aria-label]="'workspace.treatment.remove' | translate"
+          class="p-1.5 text-faint transition hover:text-danger"
+          type="button"
+        >
+          <svg
+            aria-hidden="true"
+            class="h-4 w-4"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            viewBox="0 0 24 24"
+          >
+            <path d="M6 6l12 12M18 6L6 18" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </button>
+      </li>
+    </ul>
+    <div class="mt-2 flex flex-col gap-2 sm:flex-row sm:items-start">
+      <button
+        (click)="addOutlet()"
+        class="rounded-md border border-line-strong px-3 py-1.5 text-sm font-semibold text-ink transition hover:bg-surface-3"
+        type="button"
+      >
+        {{ 'workspace.treatment.outlets.add' | translate }}
+      </button>
+      <details class="flex-1 text-sm">
+        <summary class="cursor-pointer py-1.5 text-muted hover:text-ink">
+          {{ 'workspace.treatment.csv.outlets' | translate }}
+        </summary>
+        <textarea
+          [(ngModel)]="outletsCsv"
+          [attr.aria-label]="'workspace.treatment.csv.outlets' | translate"
+          class="mt-2 block w-full rounded-md border border-line bg-surface px-3 py-2 font-mono text-xs text-ink focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+          placeholder="domain,url,pi&#10;cnbc.com,https://www.cnbc.com/,-0.02"
+          rows="4"
+        ></textarea>
+        <button
+          (click)="importOutlets()"
+          [disabled]="!outletsCsv.trim()"
+          class="mt-2 rounded-md border border-line-strong px-3 py-1.5 text-sm font-semibold text-ink transition hover:bg-surface-3 disabled:opacity-50"
+          type="button"
+        >
+          {{ 'workspace.treatment.csv.import' | translate }}
+        </button>
+      </details>
+    </div>
+    <p *ngIf="outletsBadLines.length" class="mt-1 text-xs text-warning" role="status">
+      {{ 'workspace.treatment.csv.bad' | translate: { lines: outletsBadLines.join(', ') } }}
+    </p>
+  </ng-container>
+</section>
