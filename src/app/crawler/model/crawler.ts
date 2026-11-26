@@ -49,10 +49,12 @@ export interface Crawler {
    */
   latest_queues_treatment_lost?: number;
   experiment_id: number;
-  agent?: Agent;
-  proxy?: Proxy;
+  agent_id?: number | null;
+  proxy_id?: number | null;
+  agent?: Agent | null;
+  proxy?: Proxy | null;
   configuration_id?: number | null;
-  configuration?: Configuration;
+  configuration?: Configuration | null;
 }
 
 /** The appended run counts this GUI reads off a crawler, by short name. */

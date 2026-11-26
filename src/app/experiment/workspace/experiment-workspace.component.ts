@@ -23,6 +23,7 @@ import { HeroiconUploadComponent } from '@shared/icon/heroicon-upload/heroicon-u
 import { HeroiconDownloadArchiveComponent } from '@shared/icon/heroicon-download-archive/heroicon-download-archive.component';
 import { AddBotComponent } from './add-bot/add-bot.component';
 import { Arm, armOf } from './treatment/treatment-model';
+import { readiness } from './setup/setup-steps';
 
 interface RunSummary {
   total: number;
@@ -282,6 +283,11 @@ export class ExperimentWorkspaceComponent implements OnInit, OnDestroy {
    */
   botArm(bot: Crawler): Arm {
     return bot.configuration ? armOf(bot.configuration.params) : 'unknown';
+  }
+
+  /** F4c: "Ready" / "N setup steps left" from the crawler payload; null when it cannot say. */
+  botReadiness(bot: Crawler): { ready: boolean; left: number } | null {
+    return readiness(bot);
   }
 
   /**

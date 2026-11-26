@@ -40,18 +40,35 @@
           >
         </div>
       </div>
-      <button
-        (click)="newRun()"
-        class="inline-flex flex-shrink-0 items-center gap-1.5 rounded-md bg-brand px-3 py-1.5 text-sm font-semibold text-on-brand transition hover:bg-brand-hover"
-        type="button"
-      >
-        <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
-          <path d="M12 5v14M5 12h14" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-        {{ 'workspace.botDetail.newRun' | translate }}
-      </button>
+      <div class="flex flex-shrink-0 items-center gap-2">
+        <button
+          (click)="showEditSetup = true"
+          class="inline-flex items-center rounded-md border border-line-strong px-3 py-1.5 text-sm font-semibold text-ink transition hover:bg-surface-3"
+          data-testid="edit-setup"
+          type="button"
+        >
+          {{ 'workspace.botDetail.editSetup' | translate }}
+        </button>
+        <button
+          (click)="newRun()"
+          class="inline-flex flex-shrink-0 items-center gap-1.5 rounded-md bg-brand px-3 py-1.5 text-sm font-semibold text-on-brand transition hover:bg-brand-hover"
+          type="button"
+        >
+          <svg class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
+            <path d="M12 5v14M5 12h14" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          {{ 'workspace.botDetail.newRun' | translate }}
+        </button>
+      </div>
     </div>
   </header>
+
+  <!-- F4c: what this bot still needs before its runs mean anything, each with its fix. -->
+  <app-setup-checklist
+    (fix)="onSetupFix($event)"
+    [bot]="bot"
+    [runCount]="runCountFor(runs$ | async)"
+  ></app-setup-checklist>
 
   <!-- TOP-LINE ALARM: distinct from, and above, every generic warning on this screen.
        A lost treatment is not "a run went a bit wrong" — those runs finished, often
@@ -260,6 +277,15 @@
   <!-- F1: the bot's profile. Below the runs on purpose — this screen is mostly visited to
        see how the bot is doing; its setup is the second question. -->
   <app-bot-profile [configurationId]="bot.configuration_id ?? bot.configuration?.id ?? null"></app-bot-profile>
+
+  <!-- F4c: edit this bot's identity, connection and profile. -->
+  <app-add-bot
+    (closed)="showEditSetup = false"
+    (saved)="onSetupSaved()"
+    *ngIf="showEditSetup"
+    [bot]="bot"
+    [experimentId]="experimentId"
+  ></app-add-bot>
 
   <!-- New-run panel -->
   <app-run-create

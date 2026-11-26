@@ -7,6 +7,8 @@ import {
   BehaviorSubject,
   catchError,
   combineLatest,
+  EMPTY,
+  expand,
   forkJoin,
   map,
   Observable,
@@ -14,7 +16,8 @@ import {
   shareReplay,
   startWith,
   Subscription,
-  switchMap
+  switchMap,
+  take
 } from 'rxjs';
 
 import { Job } from '@app/job/model/Job';
@@ -22,9 +25,11 @@ import { Queue, queueJobRollup } from '@app/queue/model/queue';
 import { Behavior } from '@app/behavior/behavior';
 import { BehaviorService, JobService, QueueService } from '@app/entity/service';
 import { JobFieldSchema, JobTypeSchema, JOB_TYPE_OPTIONS, JOB_TYPE_SCHEMAS } from '@app/enum/job-type-schema';
+import { missingRequired } from '../setup/job-settings';
 import { QueueStatusEnum, statusOrUnknown, UNKNOWN_STATUS } from '@app/queue/status/status.enum';
 import { StatusComponent } from '@app/queue/status/status.component';
 import { fadeIn } from '@shared/animation/trigger';
+import { Meta } from '@shared/pagination/model';
 import { anyRunning, isRunningStatus, livenessOn$, livenessTicks } from '@shared/model/liveness';
 import { RunAlarm, RunAlarmState, RunTransitionWatcher } from '@shared/model/run-transition';
 import { LoadingSpinnerComponent } from '@shared/overlay/loading-spinner/loading-spinner.component';
@@ -74,6 +79,9 @@ export interface JobOutcomeCounts {
    */
   treatmentLost: number;
 }
+
+/** `GET behaviors` caps `per_page` at this (BehaviorRepository::MAX_PER_PAGE). */
+const BEHAVIOUR_PAGE = 500;
 
 /**
  * Slice C — Run composer: authors the ordered Job sequence of a Run (Queue) at
@@ -155,6 +163,17 @@ export class RunComposerComponent implements OnInit, OnDestroy {
   fieldsForm: FormGroup;
   currentFields: JobFieldSchema[] = [];
   behavioursJob: Job | null = null;
+
+  /**
+   * F4a. This run's behaviours by job id, from the shared ngrx-data cache — the behaviours
+   * modal and add-job write through the same cache, so the flags follow their edits.
+   * `behavioursKnown` stays false until a load succeeds: an API that cannot answer
+   * `filter[queue]` must produce no flags, not a flag on every job.
+   */
+  behavioursKnown = false;
+  private behavioursByJob = new Map<number, Behavior[]>();
+  /** The run's behaviour load in flight; a new run (or a re-read) replaces it. */
+  private behaviourLoad = new Subscription();
   addErrorKey: string | null = null;
 
   readonly jobTypes: JobTypeSchema[] = JOB_TYPE_OPTIONS;
@@ -202,6 +221,7 @@ export class RunComposerComponent implements OnInit, OnDestroy {
           this.runId = runId;
           this.transitions.reset();
           this.alarm = null;
+          this.loadBehaviours(true);
         }
         this.loadJobs();
         // A failed read must not kill the stream: `switchMap` would propagate the error to
@@ -216,6 +236,16 @@ export class RunComposerComponent implements OnInit, OnDestroy {
 
     this.jobs$ = this.jobService.entities$.pipe(
       map((jobs) => jobs.filter((j) => Number(j.queue_id) === Number(this.runId)).sort((a, b) => a.order - b.order))
+    );
+    this.subscriptions.add(
+      this.behaviorService.entities$.subscribe((behaviours) => {
+        const byJob = new Map<number, Behavior[]>();
+        for (const b of behaviours) {
+          const id = Number(b.job_id);
+          byJob.set(id, [...(byJob.get(id) ?? []), b]);
+        }
+        this.behavioursByJob = byJob;
+      })
     );
     this.subscriptions.add(
       this.jobs$.subscribe((jobs) => {
@@ -541,9 +571,58 @@ export class RunComposerComponent implements OnInit, OnDestroy {
 
   closeBehaviours(): void {
     this.behavioursJob = null;
+    // The modal writes through the cache already; re-reading catches anything it could
+    // not see, such as a behaviour another tab added.
+    this.loadBehaviours();
+  }
+
+  /** Required settings of this job's type with no active behaviour; [] when unknowable. */
+  missing(job: Job): string[] {
+    if (!this.behavioursKnown) return [];
+    return missingRequired(job.type, this.behavioursByJob.get(Number(job.id)) ?? []);
+  }
+
+  get incompleteJobs(): number {
+    return this.jobs.filter((j) => this.missing(j).length > 0).length;
+  }
+
+  /**
+   * Every behaviour of every job in the run (umatter/primemover_api#89), in pages of the
+   * API's maximum, 500. A run can hold more (784 on ex63), so pages are read up to the
+   * response's `meta.last_page` (a short page ends it when an older API sends no meta), and
+   * the flags count as known only once the last one is in. `reset` (a different run) hides
+   * them until then; a re-read of the same run keeps showing the cached state.
+   */
+  private loadBehaviours(reset = false): void {
+    const runId = String(this.runId);
+    const page = (n: number): Observable<{ n: number; last: boolean }> =>
+      this.behaviorService
+        .getWithQuery({ ['filter[queue]']: runId, per_page: String(BEHAVIOUR_PAGE), page: String(n) })
+        .pipe(
+          // The meta of this response: the reducer stores it before the result is emitted.
+          switchMap((rows) =>
+            this.behaviorService.pageMeta$.pipe(
+              take(1),
+              map((meta: Meta | null | undefined) => ({
+                n,
+                last: meta?.last_page ? n >= Number(meta.last_page) : rows.length < BEHAVIOUR_PAGE
+              }))
+            )
+          )
+        );
+
+    if (reset) this.behavioursKnown = false;
+    this.behaviourLoad.unsubscribe();
+    this.behaviourLoad = page(1)
+      .pipe(expand((p) => (p.last ? EMPTY : page(p.n + 1))))
+      .subscribe({
+        complete: () => (this.behavioursKnown = true),
+        error: () => (this.behavioursKnown = false)
+      });
   }
 
   ngOnDestroy(): void {
     this.subscriptions.unsubscribe();
+    this.behaviourLoad.unsubscribe();
   }
 }

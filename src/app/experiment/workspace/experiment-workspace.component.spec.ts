@@ -953,4 +953,35 @@ describe('ExperimentWorkspaceComponent (runs that need attention)', () => {
       expect(component.botArm(bot({}))).toBe('unknown');
     });
   });
+  describe('setup readiness on each bot card (F4c)', () => {
+    const params = [
+      {
+        id: 1,
+        configuration_id: 5,
+        pi: '0',
+        psi: '0',
+        kappa: '0',
+        tau: '0',
+        alpha: '1',
+        beta: '0',
+        search_terms: '[]',
+        media_outlet_urls: '[]'
+      }
+    ];
+
+    it('is ready with identity, connection, profile and treatment, and counts what is missing', () => {
+      const complete = bot({
+        agent_id: 1,
+        proxy_id: 2,
+        configuration_id: 5,
+        configuration: { id: 5, name: 'p', params }
+      } as any);
+      expect(component.botReadiness(complete)).toEqual({ ready: true, left: 0 });
+      expect(component.botReadiness(bot({ agent_id: 1 } as any))).toEqual({ ready: false, left: 3 });
+    });
+
+    it('says nothing when the payload does not embed the profile', () => {
+      expect(component.botReadiness(bot({ agent_id: 1, proxy_id: 2, configuration_id: 5 } as any))).toBeNull();
+    });
+  });
 });

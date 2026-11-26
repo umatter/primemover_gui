@@ -77,7 +77,9 @@
         "body": "A bot is one simulated user. Add a bot to define who browses the platform and how."
       },
       "profile": "Profile",
-      "runCounts": "{{total}} runs in the last 24 h · {{succeeded}} succeeded · {{warning}} reported warning · {{degraded}} with degraded jobs · {{failed}} failed · {{inProgress}} unaccounted for (still going, skipped or unrecognised) · {{treatmentLost}} treatment lost"
+      "runCounts": "{{total}} runs in the last 24 h · {{succeeded}} succeeded · {{warning}} reported warning · {{degraded}} with degraded jobs · {{failed}} failed · {{inProgress}} unaccounted for (still going, skipped or unrecognised) · {{treatmentLost}} treatment lost",
+      "ready": "Ready",
+      "stepsLeft": "{{count}} setup step(s) left"
     },
     "addBotPanel": {
       "title": "Add a bot",
@@ -92,7 +94,15 @@
       "cancel": "Cancel",
       "save": "Add bot",
       "saving": "Adding…",
-      "error": "Couldn't add the bot. Please try again."
+      "error": "Couldn't add the bot. Please try again.",
+      "editTitle": "Edit bot setup",
+      "editSubtitle": "Change which browser identity, connection and profile this bot uses. Its runs keep their history.",
+      "editSave": "Save setup",
+      "editError": "Couldn't save the bot's setup. Please try again.",
+      "search": "Search the Library",
+      "searchPlaceholder": "Search by name or id…",
+      "refused": "Used by another study's bots, or not yours to use. Choose another.",
+      "refusedError": "Some of this setup can't be used for your bot. See the marked fields."
     },
     "runPanel": {
       "title": "Schedule a run",
@@ -132,7 +142,8 @@
       "noRuns": {
         "title": "No runs yet",
         "body": "Schedule a run to give this bot a session to execute."
-      }
+      },
+      "editSetup": "Edit setup"
     },
     "composer": {
       "back": "Back to bot",
@@ -160,7 +171,9 @@
       "tallyHint": "Counted from the jobs below. The run's own status above is what the runner reported.",
       "unknownHint": "The API reported a status this app does not recognise. Not a success — check the job.",
       "partialTally": "showing {{shown}} of {{total}} jobs",
-      "partialTallyHint": "This page loaded the first jobs of the run only. The alarm figures above come from the API’s count over the whole run; the tally beside them counts the jobs on screen."
+      "partialTallyHint": "This page loaded the first jobs of the run only. The alarm figures above come from the API’s count over the whole run; the tally beside them counts the jobs on screen.",
+      "incomplete": "{{count}} job(s) are missing a required setting. This run is live and will be picked up at its start time, so fix them before then.",
+      "missing": "Missing:"
     },
     "behaviours": {
       "title": "Behaviours",
@@ -173,12 +186,15 @@
       "required": "Required.",
       "add": "Add behaviour",
       "done": "Done",
-      "remove": "Remove behaviour"
+      "remove": "Remove behaviour",
+      "notInSchema": "not in schema",
+      "suggestions": "Settings this job type uses (* required). Click one to fill it in.",
+      "missingRequired": "still missing: {{names}}"
     },
     "profile": {
       "title": "Profile",
       "subtitle": "Who this bot is when it browses: its location, cookie consent, how it uses the platform, and the weights the YouTube decision function reads. Shared by every run of this bot.",
-      "none": "This bot has no configuration, so it has no profile to edit. Pick one under Library when you set the bot up.",
+      "none": "This bot has no profile yet, so there is nothing to edit here. Choose one with Edit setup above.",
       "loading": "Loading profile…",
       "empty": "No preferences set yet.",
       "save": "Save profile",
@@ -222,7 +238,7 @@
       "saving": "Saving…",
       "makeControl": "Make control",
       "shared": "Shared by {{count}} bots: changes apply to all of them",
-      "multiple": "This configuration has {{count}} parameter rows. The runner uses the first one (#{{id}}), which is the one shown here.",
+      "multiple": "This profile has {{count}} parameter rows. The runner uses the first one (#{{id}}), which is the one shown here.",
       "noneBody": "No treatment set. The runner has no parameters to select results with, so this bot's choices are not controlled.",
       "setUp": "Set up treatment (starts as control)",
       "position": "Political position (−1 to 1)",
@@ -289,6 +305,28 @@
         "domain": "The domain is empty.",
         "generic": "The treatment could not be saved."
       }
+    },
+    "setup": {
+      "title": "This bot needs {{count}} more thing(s) before its runs mean anything",
+      "ready": "Setup complete: identity, connection, profile, treatment and runs are all in place.",
+      "item": {
+        "identity": "Browser identity",
+        "connection": "Connection",
+        "profile": "Profile",
+        "treatment": "Treatment",
+        "runs": "At least one run"
+      },
+      "fix": {
+        "editSetup": "Edit setup",
+        "treatment": "Set up treatment",
+        "newRun": "New run"
+      },
+      "state": {
+        "true": "done",
+        "false": "missing",
+        "unknown": "can't tell from here"
+      },
+      "afterProfile": "needs a profile first"
     }
   },
   "wizard": {
