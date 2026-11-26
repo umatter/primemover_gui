@@ -102,6 +102,9 @@
       "editError": "Die Einrichtung konnte nicht gespeichert werden. Bitte versuche es erneut.",
       "testing": "Test-Bot",
       "testingHint": "Ein Runner im Produktionsmodus überspringt Test-Bots; nur ein im Testmodus gestarteter Runner führt sie aus. Damit lässt sich eine Einrichtung ausprobieren, ohne Studiendaten zu erzeugen.",
+      "description": "Beschreibung",
+      "optional": "optional",
+      "descriptionPlaceholder": "Wofür dieser Bot in der Studie steht, z. B. rechtsgerichtete Persona",
       "search": "Bibliothek durchsuchen",
       "searchPlaceholder": "Nach Name oder ID suchen…",
       "refused": "Wird von Bots einer anderen Studie verwendet oder gehört nicht dir. Wähle etwas anderes.",
@@ -176,7 +179,9 @@
       "partialTally": "{{shown}} von {{total}} Jobs angezeigt",
       "partialTallyHint": "Diese Seite hat nur die ersten Jobs des Laufs geladen. Die Alarmzahlen oben stammen aus der Zählung der API über den ganzen Lauf; die Aufstellung daneben zählt die Jobs auf dem Bildschirm.",
       "incomplete": "{{count}} Job(s) fehlt eine Pflichteinstellung. Dieser Lauf ist aktiv und startet zur geplanten Zeit – behebe das vorher.",
-      "missing": "Fehlt:"
+      "missing": "Fehlt:",
+      "description": "Beschreibung",
+      "descriptionPlaceholder": "Wofür dieser Schritt ist, z. B. Cookie-Banner akzeptieren"
     },
     "behaviours": {
       "title": "Verhalten",
@@ -393,7 +398,9 @@
     "subtitle": "Wiederverwendbare Bausteine für Ihre Bots – verwalten Sie diese direkt, wenn Sie Feinsteuerung brauchen.",
     "agents": {
       "title": "Browser-Identitäten",
-      "body": "Der Browser-Fingerabdruck und das Login-Profil, das ein Bot zeigt."
+      "body": "Der Browser-Fingerabdruck und das Login-Profil, das ein Bot zeigt.",
+      "new": "Neue Identität",
+      "createError": "Die Identität konnte nicht erstellt werden. Prüfe die Felder und versuche es erneut."
     },
     "proxies": {
       "title": "Verbindungen",
@@ -401,7 +408,16 @@
     },
     "configs": {
       "title": "Verhalten",
-      "body": "Wiederverwendbare Verhaltenskonfigurationen für Bots."
+      "body": "Wiederverwendbare Verhaltenskonfigurationen für Bots.",
+      "new": "Neues Profil",
+      "newTitle": "Neues Profil",
+      "newBody": "Gib dem Profil einen Namen. Seine Einstellungen (Standort, Cookies, Nutzung) und sein Treatment werden auf der Seite eines Bots gesetzt, der es verwendet.",
+      "create": "Profil erstellen",
+      "createError": "Das Profil konnte nicht erstellt werden. Bitte versuche es erneut.",
+      "createdTitle": "Profil „{{name}}“ erstellt",
+      "createdBody": "Es startet im Kontrollarm. Weise es einem Bot zu (Bot hinzufügen oder Einrichtung bearbeiten) und setze dann Einstellungen und Treatment auf der Seite dieses Bots.",
+      "toExperiments": "Zu den Experimenten",
+      "another": "Weiteres erstellen"
     },
     "manage": "Verwalten"
   },

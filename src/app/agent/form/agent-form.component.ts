@@ -12,12 +12,12 @@ import { Agent } from '@app/agent/model/agent';
 import { Store } from '@ngrx/store';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
-import { AsyncPipe, NgClass, NgIf } from '@angular/common';
+import { AsyncPipe, NgClass, NgForOf, NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-agent-form',
   templateUrl: './agent-form.component.html',
-  imports: [ReactiveFormsModule, TranslateModule, AsyncPipe, NgClass, NgIf],
+  imports: [ReactiveFormsModule, TranslateModule, AsyncPipe, NgClass, NgIf, NgForOf],
   standalone: true
 })
 export class AgentFormComponent implements OnDestroy, OnInit {
@@ -26,6 +26,8 @@ export class AgentFormComponent implements OnDestroy, OnInit {
   @Output() saveClicked = new EventEmitter<Agent>();
   @Output() cancelClicked = new EventEmitter<void>();
   agentForm: FormGroup;
+  /** What the API's IdentificationEnum accepts; anything else is a 422. */
+  readonly identifications = ['mlx', 'multilogin', 'chrome', 'firefox'];
   subscriptions = new Subscription();
 
   constructor(
@@ -77,7 +79,7 @@ export class AgentFormComponent implements OnDestroy, OnInit {
       id: [null],
       name: [null, [Validators.required]],
       description: [null, [Validators.maxLength(1024)]],
-      identification: [],
+      identification: ['mlx', [Validators.required]],
       multilogin_id: [],
       multilogin_profile: [],
       location: [],
@@ -99,7 +101,8 @@ export class AgentFormComponent implements OnDestroy, OnInit {
     this.subscriptions.unsubscribe();
   }
 
+  /** Edit mode only; on /agents/create there is no agent to patch from. */
   initAgentEdit(): void {
-    this.agentForm.patchValue(this.agent);
+    if (this.agent) this.agentForm.patchValue(this.agent);
   }
 }

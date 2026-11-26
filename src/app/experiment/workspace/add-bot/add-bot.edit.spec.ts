@@ -95,4 +95,11 @@ describe('AddBotComponent (F4c — edit an existing bot)', () => {
     component.save();
     expect(update.calls.mostRecent().args[0].description).toBeNull();
   });
+
+  it('shows the description so it can be set and edited', async () => {
+    await create();
+    const field: HTMLTextAreaElement = fixture.nativeElement.querySelector('#bot-description');
+    expect(field).not.toBeNull();
+    expect(field.value).toBe('right arm');
+  });
 });

@@ -102,6 +102,9 @@
       "editError": "Couldn't save the bot's setup. Please try again.",
       "testing": "Test bot",
       "testingHint": "A runner in production mode skips test bots; only a runner started in test mode runs them. Use it to try a setup without producing study data.",
+      "description": "Description",
+      "optional": "optional",
+      "descriptionPlaceholder": "What this bot stands for in the study, e.g. right-leaning persona",
       "search": "Search the Library",
       "searchPlaceholder": "Search by name or id…",
       "refused": "Used by another study's bots, or not yours to use. Choose another.",
@@ -176,7 +179,9 @@
       "partialTally": "showing {{shown}} of {{total}} jobs",
       "partialTallyHint": "This page loaded the first jobs of the run only. The alarm figures above come from the API’s count over the whole run; the tally beside them counts the jobs on screen.",
       "incomplete": "{{count}} job(s) are missing a required setting. This run is live and will be picked up at its start time, so fix them before then.",
-      "missing": "Missing:"
+      "missing": "Missing:",
+      "description": "Description",
+      "descriptionPlaceholder": "What this step is for, e.g. accept the cookie banner"
     },
     "behaviours": {
       "title": "Behaviours",
@@ -393,7 +398,9 @@
     "subtitle": "Reusable building blocks for your bots — manage these directly when you need fine control.",
     "agents": {
       "title": "Browser identities",
-      "body": "The browser fingerprint and login profile a bot presents."
+      "body": "The browser fingerprint and login profile a bot presents.",
+      "new": "New identity",
+      "createError": "Couldn't create the identity. Check the fields and try again."
     },
     "proxies": {
       "title": "Connections",
@@ -401,7 +408,16 @@
     },
     "configs": {
       "title": "Behaviors",
-      "body": "Reusable behavior configurations for bots."
+      "body": "Reusable behavior configurations for bots.",
+      "new": "New profile",
+      "newTitle": "New profile",
+      "newBody": "Give the profile a name. Its preferences (location, cookies, usage) and its treatment are set on the page of a bot that uses it.",
+      "create": "Create profile",
+      "createError": "Couldn't create the profile. Please try again.",
+      "createdTitle": "Profile “{{name}}” created",
+      "createdBody": "It starts in the control arm. Assign it to a bot (Add bot or Edit setup), then set its preferences and treatment on that bot's page.",
+      "toExperiments": "Go to experiments",
+      "another": "Create another"
     },
     "manage": "Manage"
   },

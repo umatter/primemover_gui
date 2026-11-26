@@ -66,6 +66,19 @@ describe('RunComposerComponent (Slice C — compose job sequence)', () => {
     component.runId = 9;
   });
 
+  it('sends the optional job description with the job (F6)', () => {
+    component.jobs = [];
+    component.addForm.patchValue({ type: 'waitjob' });
+    component.onTypeChange();
+    component.addForm.patchValue({ name: 'Wait for consent page', description: 'Wait for consent page to load' });
+    component.fieldsForm.patchValue({ seconds: '3' });
+    component.addJob();
+
+    expect(jobAdd.calls.mostRecent().args[0]).toEqual(
+      jasmine.objectContaining({ name: 'Wait for consent page', description: 'Wait for consent page to load' })
+    );
+  });
+
   it('adds a job with the next order and creates its type fields as behaviours', () => {
     component.jobs = [job({ id: 1, order: 1 })];
     component.addForm.patchValue({ type: 'visitjob' });

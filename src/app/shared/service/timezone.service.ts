@@ -45,7 +45,9 @@ export class TimezoneService {
     const intl = Intl as unknown as { supportedValuesOf?: (key: string) => string[] };
     const list =
       typeof intl.supportedValuesOf === 'function' ? intl.supportedValuesOf('timeZone') : TimezoneService.FALLBACK;
-    return of(list);
+    // Intl lists canonical location zones only, without "UTC" -- the zone most studies are
+    // scheduled in. Always offer it, first.
+    return of(['UTC', ...list.filter((zone) => zone !== 'UTC')]);
   }
 
   getDetail(timezone: string): Observable<TimezoneDetail> {

@@ -49,6 +49,21 @@
         </p>
       </div>
 
+      <!-- Description: in the form all along, never rendered (found by the e2e GUI rebuild). -->
+      <div>
+        <label for="bot-description" class="mb-1 block text-sm font-medium text-ink">
+          {{ 'workspace.addBotPanel.description' | translate }}
+          <span class="font-normal text-faint">({{ 'workspace.addBotPanel.optional' | translate }})</span>
+        </label>
+        <textarea
+          id="bot-description"
+          formControlName="description"
+          rows="2"
+          class="block w-full rounded-md border border-line bg-surface px-3 py-2 text-sm text-ink placeholder:text-faint focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+          [placeholder]="'workspace.addBotPanel.descriptionPlaceholder' | translate"
+        ></textarea>
+      </div>
+
       <!-- Browser identity (agent) -->
       <div>
         <label for="bot-agent" class="mb-1 block text-sm font-medium text-ink">

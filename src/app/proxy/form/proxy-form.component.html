@@ -93,7 +93,8 @@
     </div>
 
     <!-- Username + Password (conditional) -->
-    <div *ngIf="usernamePasswortRequiredFor.includes(type.value)" class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+    <!-- Always offered: required for oxylabs/brightdata, optional (but often needed) for http. -->
+    <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
       <div>
         <label class="mb-1.5 block text-sm font-medium text-ink" for="username">{{
           'common.username' | translate
