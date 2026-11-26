@@ -50,6 +50,11 @@ be added to both lists or it is not compiled. This and the other conventions of 
 Angular 17, TypeScript, Tailwind CSS, Angular Material/CDK, NgRx with `@ngrx/data`, ngx-translate
 (English and German).
 
+## Funding
+
+Development of PrimeMover was funded by the Swiss National Science Foundation (SNSF),
+grants 100018_207698 and CRSK-1_190429.
+
 ## License
 
 MIT, see [LICENSE](LICENSE).
