@@ -1,34 +1,60 @@
-# PrimemoverFrontend
+# PrimeMover GUI
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.3.8.
+The web interface of [PrimeMover](https://github.com/umatter/primemover-orchestrator), a platform
+for running browser-automation experiments with configurable bots. The GUI is where a researcher
+creates experiments, defines bots (crawlers) with their browser profile, proxy and behaviour,
+schedules runs, and inspects what each run and job did.
 
-## Development server
+It is an Angular 17 single-page application and talks to the
+[PrimeMover API](https://github.com/umatter/primemover_api); it has no backend of its own.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+| Repository | Role |
+|---|---|
+| [primemover-orchestrator](https://github.com/umatter/primemover-orchestrator) | setup, monitoring, debugging, experiment design (`pmspec`) — start here |
+| [primemover_api](https://github.com/umatter/primemover_api) | experiment management API (Laravel) |
+| [primemover_runner](https://github.com/umatter/primemover_runner) | executes the scheduled runs in real browsers (Java) |
+| primemover_gui | this repository |
 
-## Code scaffolding
+## Run it
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+The simplest way to get a working GUI together with an API to talk to is the orchestrator's
+`orchestrator setup` / `orchestrator up`. To run only the GUI:
 
-## Build
+```bash
+docker build -t primemover-gui .
+docker run -p 8080:8080 -e API_ENDPOINT=https://<your-api-host>/api/v1 primemover-gui
+```
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+`API_ENDPOINT` is injected when the container starts, so one image serves any deployment. Leave it
+unset when the API is served on the same origin under `/api`; the bundle then falls back to
+`/api/v1`.
 
-## Running unit tests
+## Develop
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+Requires Node 22.
 
-## Running end-to-end tests
+```bash
+npm ci
+npm start             # dev server on http://localhost:4200
+npm run lint          # eslint + stylelint
+npm run test.ci       # unit tests, headless Chrome
+npm run build.prod    # production bundle in dist/
+```
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+`ng test` runs only the specs listed in `tsconfig.spec.json` and `angular.json`; a new spec has to
+be added to both lists or it is not compiled. This and the other conventions of the code base
+(state management, date formats, design system) are described in [CLAUDE.md](CLAUDE.md).
 
-## Deployment
+## Stack
 
-`docker build -t primemover-gui .` then run with `-e API_ENDPOINT=https://<api>/api/v1 -p 8080:8080`
-(omit `API_ENDPOINT` when the API is served on the same origin under `/api`).
-CI publishes `ghcr.io/umatter/primemover_gui:sha-<short>` on every `main` merge.
-Details, incl. the ex63 setup and the curated test list: [CLAUDE.md](CLAUDE.md).
+Angular 17, TypeScript, Tailwind CSS, Angular Material/CDK, NgRx with `@ngrx/data`, ngx-translate
+(English and German).
 
-## Further help
+## Funding
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+Development of PrimeMover was funded by the Swiss National Science Foundation (SNSF),
+grants 100018_207698 and CRSK-1_190429.
+
+## License
+
+MIT, see [LICENSE](LICENSE).
