@@ -26,15 +26,6 @@ export class ConfigApiService {
     private paginationService: PaginationService
   ) {}
 
-  public simpleIndex(): Observable<[]> {
-    return this.http.get<[]>(`${this.config.apiBaseUrl}/configurations-list`);
-  }
-
-  public search(keyword: string) {
-    return this.http.get<[]>(`${this.config.apiBaseUrl}/configurations?filter[search]=${keyword}
-    `);
-  }
-
   getPaginateArgs(meta: Meta): PaginatePipeArgs {
     return this.paginationService.getPipeArgs(meta, PaginationType.CONFIGURATION);
   }
